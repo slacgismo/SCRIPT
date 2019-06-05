@@ -1,0 +1,7 @@
+name: venv_script
+dependencies:
+  - python=3.6
+  - django=2.2.1
+  - pip:
+    - boto3
+    - djangorestframework==3.9.4
