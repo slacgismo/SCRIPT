@@ -23,7 +23,7 @@ conda deactivate
 # Running The Project
 ```bash
 cd script
-python manage.py runserver --settings=script.settings
+python manage.py runserver --settings=app.settings
 ```
 
 Then navigate to localhost:8000 on your browser
