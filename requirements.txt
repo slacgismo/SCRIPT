@@ -1,0 +1,5 @@
+boto3
+django==2.2.4
+djangorestframework==3.9.4
+psycopg2==2.7
+
