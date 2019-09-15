@@ -9,7 +9,7 @@ services:
     env_file:
       - 'variables.env'
     build: .
-    command: python ./script/manage.py runserver --settings=app.settings-test 0.0.0.0:8000
+    command: python ./script/manage.py runserver --settings=app.settings.test 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
