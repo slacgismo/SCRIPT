@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: continuumio/miniconda3
+
+    working_directory: /code
+
+    steps:
+      - run:
+          name: Install
+          command: |
+            apt-get update --fix-missing
+            apt-get install -y build-essential libpq-dev python-dev
+      - checkout
+      - run:
+          name: Setup env
+          command: |
+            conda init bash
+            source ~/.bashrc
+            conda env create -f script-environment.yml
+            conda activate venv_script
+            python ./script/manage.py test --settings=app.settings.dev
