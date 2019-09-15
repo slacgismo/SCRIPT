@@ -14,9 +14,10 @@ Run the dockerized Django App with dockerized PostgreSQL database using:
 docker-compose up
 ```
 
-If you make any modification on the code, you probably need to run the following command to re-build the images.
+If you make any modification on the code, you probably need to run the following command to remove the containers and volumes and re-build the images.
 
 ```bash
+docker-compose rm -f
 docker-compose build
 ```
 

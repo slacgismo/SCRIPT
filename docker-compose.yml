@@ -2,8 +2,12 @@ version: '3'
 
 services:
   db:
+    env_file:
+      - 'variables.env'
     image: postgres
   web:
+    env_file:
+      - 'variables.env'
     build: .
     command: python ./script/manage.py runserver --settings=app.settings-test 0.0.0.0:8000
     volumes:
