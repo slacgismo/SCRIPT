@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: continuumio/miniconda3
+      - image: postgres:11.5
 
     working_directory: /code
 
@@ -12,7 +13,18 @@ jobs:
           command: |
             apt-get update --fix-missing
             apt-get install -y build-essential libpq-dev python-dev
+            apt-get install -y netcat
       - checkout
+      - run:
+          name: Waiting for Postgres to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgress && exit 1
       - run:
           name: Setup env
           command: |
