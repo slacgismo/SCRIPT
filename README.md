@@ -58,3 +58,9 @@ python ./script/manage.py runserver --settings=app.settings.dev
 ```
 
 Then navigate to localhost:8000 on your browser.
+
+## Unit Tests for The Project
+
+```bash
+python ./script/manage.py test --settings=app.settings.dev
+```

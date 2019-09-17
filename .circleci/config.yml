@@ -1,33 +1,57 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
-      - image: circleci/python:3.7
-
-    working_directory: ~/SCRIPT
+      - image: continuumio/miniconda3
+      - image: postgres:11.5
+    working_directory: /code
     steps:
-      - checkout      
-      - run: 
-          name: Run Unit Tests
-          command: python -m unittest
-          
+      - run:
+          name: Install dependencies
+          command: |
+            apt-get update --fix-missing
+            apt-get install -y build-essential libpq-dev python-dev
+            apt-get install -y netcat
+      - checkout
+      - run:
+          name: Wait for PostgreSQL to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgress && exit 1
+      - run:
+          name: Setup virtual env and run tests
+          command: |
+            conda init bash
+            source ~/.bashrc
+            conda env create -f script-environment.yml
+            conda activate venv_script
+            python ./script/manage.py test --settings=app.settings.dev
+
   deploy:
     docker:
-      - image: circleci/python:3.7
-
-    working_directory: ~/SCRIPT
+      - image: continuumio/miniconda3
+      - image: postgres:11.5
+    working_directory: /code
     steps:
-      - run: |
-          echo "Hello, I'm not deploying yet, but that's ok, I will soon..."
+      - checkout
+      - run:
+          name: Deploy the project
+          command: |
+            echo "Hello, I'm not deploying yet, but that's ok, I will soon..."
 
 workflows:
   version: 2
-  build-deploy:
+  test-deploy:
     jobs:
-      - build
+      - test
       - deploy:
           requires:
-            - build
+            - test
           filters:
             branches:
               only: master
