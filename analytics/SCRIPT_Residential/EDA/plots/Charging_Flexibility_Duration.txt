@@ -1,0 +1,1 @@
+The charging flexibility increases like a logistic funciton with the duration of a session. The charging flexibility is defined as one minus the ratio of charging time to session duration. If an EV stays longer than 3 hours, it rarely charges during the remaining time. 

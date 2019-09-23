@@ -1,0 +1,1 @@
+Distribution of Charging Flexibility (ratio of unused vs charging time) for 20 Drivers. Some drivers have predictably low or high flexibility. Therefore, factoring in the driver with their history is useful to determine charging flexibility.

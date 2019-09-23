@@ -1,0 +1,1 @@
+The distribution of how much energy is charged in a session is not dependent on the geographical area of the station.
