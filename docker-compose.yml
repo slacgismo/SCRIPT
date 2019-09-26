@@ -8,10 +8,10 @@ services:
   web:
     env_file:
       - 'variables.env'
-    build: .
-    command: python ./script/manage.py runserver --settings=app.settings.test 0.0.0.0:8000
+    build: ./script
+    command: python manage.py runserver --settings=app.settings.test 0.0.0.0:8000
     volumes:
-      - .:/code
+      - ./script:/code
     ports:
       - "8000:8000"
     depends_on:
