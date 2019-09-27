@@ -6,6 +6,7 @@ SCRIPT/
         Dockerfile
         manage.py
         app/
+        script/                 ---- script web app
     s3watch/                    ---- Watch the algorithm results, trigger endpoint to update db
         Dockerfile
     ec2setup/                   ---- code running on EC2
