@@ -7,3 +7,5 @@ class OverviewMap extends React.Component {
     )
   }
 }
+
+export default OverviewMap;
