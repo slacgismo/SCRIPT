@@ -1,8 +1,20 @@
 from rest_framework import serializers
-from script.models import AlgorithmA
+from script.models import County, Energy, ChargingStation
 
 # serializer of result model
-class AlgorithmASerializer(serializers.ModelSerializer):
+
+class CountySerializer(serializers.ModelSerializer):
     class Meta:
-        model = AlgorithmA
+        model = County
+        fields = '__all__'
+
+
+class EnergySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Energy
+        fields = '__all__'
+
+class ChargingStationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChargingStation
         fields = '__all__'
