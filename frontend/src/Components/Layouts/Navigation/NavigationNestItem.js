@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import StarBorder from '@material-ui/icons/StarBorder';
 import { makeStyles } from '@material-ui/core/styles';
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
     nested: {
@@ -18,19 +18,19 @@ export default function navigationNestItem (props) {
     const classes = useStyles();
     
     return (
-    <Collapse in={props.open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItem 
-          component={Link}
-          to={props.link}
-          button 
-          className={classes.nested}>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary={props.children}/>
-          </ListItem>
-        </List>
-    </Collapse>
+      <Collapse in={props.open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem 
+            component={Link}
+            to={props.link}
+            button 
+            className={classes.nested}>
+              <ListItemIcon>
+                <StarBorder />
+              </ListItemIcon>
+              <ListItemText primary={props.children}/>
+            </ListItem>
+          </List>
+      </Collapse>
     )
 }

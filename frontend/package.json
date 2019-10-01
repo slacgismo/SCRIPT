@@ -5,13 +5,13 @@
   "dependencies": {
     "@material-ui/core": "^4.4.3",
     "@material-ui/icons": "^4.4.3",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
     "@south-paw/react-vector-maps": "^2.0.2",
+    "polished": "^3.4.1",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
     "react-router": "^5.1.0",
     "react-router-dom": "^5.1.0",
-    "polished": "^3.4.1",
-    "react-scripts": "3.1.2",
+    "react-scripts": "^1.1.5",
     "styled-components": "^4.4.0"
   },
   "scripts": {
