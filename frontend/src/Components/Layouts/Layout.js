@@ -15,7 +15,6 @@ export default function CSSGrid() {
           <Navigation />
         </Grid>        
         <Grid item xs={10} >
-           {/* TODO: add overviewMap */}
            <OverviewMap />
         </Grid>
       </Grid>
