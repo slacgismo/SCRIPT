@@ -5,30 +5,6 @@ import VectorMap from '@south-paw/react-vector-maps';
 import caMapData from '@south-paw/react-vector-maps/maps/json/usa-ca.json'
 import { Wrapper, Output, MapWrapper } from './overviewMapStyled';
 
-const StyledMap = styled(MapWrapper)`
-  svg {
-    path {
-      fill: #3d0043;
-      cursor: pointer;
-
-      &:hover {
-        fill: #90007f;
-      }
-
-      &[aria-current='true'] {
-        fill: #d52484;
-      }
-    }
-  }
-`;
-
-const Tooltip = styled.div`
-  position: absolute;
-  padding: 0.25rem;
-  background: white;
-  border: 0.2rem solid #ccc;
-`;
-
 class OverviewMap extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -38,7 +14,55 @@ class OverviewMap extends React.PureComponent {
       isTooltipVisible: false,
       tooltipY: 0,
       tooltipX: 0,
+
+      countyColors: {
+        'santa clara': '#ed3f00',
+        'san mateo': '#243ed4',
+      },
     };
+
+    const countyColors = this.state.countyColors;
+    let countyColorsCSS = '';
+    Object.keys(countyColors).forEach(county => {
+      countyColorsCSS += `
+        path[id='${county}'] {
+          fill: ${countyColors[county]};
+        }
+      `
+    });
+
+    this.StyledMap = styled(MapWrapper)`
+      svg {
+        path {
+          cursor: pointer;
+
+          &:hover {
+            opacity: 0.75;
+          }
+        }
+
+        ${countyColorsCSS}
+      }
+    `;
+
+    this.Tooltip = styled.div`
+      position: absolute;
+      padding: 0.25rem;
+      background: white;
+      border: 0.2rem solid #ccc;
+    `;
+  }
+
+  componentDidMount() {
+    // this.addColorToRegions();
+  }
+
+  // TODO: Seek for better practice
+  addColorToRegions() {
+    const countyColors = this.state.countyColors;
+    Object.keys(countyColors).forEach(county => {
+      document.getElementById(`#${ county }`).style.fill = countyColors[county]
+    })
   }
 
   onMouseOver = e => {
@@ -76,13 +100,13 @@ class OverviewMap extends React.PureComponent {
       <Wrapper
         style={{ width: "600px" }}
       >
-        <StyledMap>
+        <this.StyledMap>
           <VectorMap
             { ...caMapData }
             layerProps={ layerProps } 
           />
-          <Tooltip style={tooltipStyle}>{ current }</Tooltip>
-        </StyledMap>
+          <this.Tooltip style={tooltipStyle}>{ current }</this.Tooltip>
+        </this.StyledMap>
       </Wrapper>
     )
   }
