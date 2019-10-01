@@ -7,6 +7,7 @@ import * as serviceWorker from './serviceWorker';
 import Upload from './Components/Upload/Upload';
 import Overview from './Components/Overview/Overview';
 import Algorithms from './Components/Algorithms/Algorithms';
+import OverviewMap from './Components/OverviewMap';
 
 ReactDOM.render((
   <Router>
@@ -17,7 +18,9 @@ ReactDOM.render((
     <Route exact path="/Algorithm3" component={ Algorithms } />
     <Route exact path="/Algorithm4" component={ Algorithms } />
 
-    {/* TODO: router to overviewMap. */}
+    {/* Routes for debugging single components. */}
+    {/* TODO: delete these routes. */}
+    <Route exact path="/overview-map" component={ OverviewMap } />
   </Router>
 ), document.getElementById('root'));
 
