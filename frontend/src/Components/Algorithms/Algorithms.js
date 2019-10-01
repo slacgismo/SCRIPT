@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import Layout from './Components/Layouts/Layout'
+import Layout from '../Layouts/Layout'
 
-class App extends Component {
+class Algorithms extends Component {
   render() {
     return (
       <div display='root'min-width="100px">
@@ -13,4 +13,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Algorithms;

@@ -4,16 +4,20 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
-import OverviewMap from './components/OverviewMap'
+import Upload from './Components/Upload/Upload';
+import Overview from './Components/Overview/Overview';
+import Algorithms from './Components/Algorithms/Algorithms';
 
 ReactDOM.render((
   <Router>
-    <Route exact path="/" component={ App } />
+    <Route exact path="/" component={ Overview } />
+    <Route exact path="/Upload" component={ Upload } />
+    <Route exact path="/Algorithm1" component={ Algorithms } />
+    <Route exact path="/Algorithm2" component={ Algorithms } />
+    <Route exact path="/Algorithm3" component={ Algorithms } />
+    <Route exact path="/Algorithm4" component={ Algorithms } />
 
-    {/* Routes for debugging single components. */}
-    {/* TODO: delete these routes. */}
-    <Route exact path="/overview-map" component={ OverviewMap } />
+    {/* TODO: router to overviewMap. */}
   </Router>
 ), document.getElementById('root'));
 
