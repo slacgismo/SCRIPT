@@ -10,6 +10,7 @@ import {
   Tooltip,
   getStyledMapWrapperByCountyColors,
 } from './overviewMapStyled';
+import { countyColors } from './sampleCountyColors';
 
 class OverviewMap extends React.PureComponent {
   constructor(props) {
@@ -20,15 +21,10 @@ class OverviewMap extends React.PureComponent {
       isTooltipVisible: false,
       tooltipY: 0,
       tooltipX: 0,
-
-      countyColors: {
-        'santa clara': '#ed3f00',
-        'san mateo': '#243ed4',
-      },
     };
 
     this.StyledMap = getStyledMapWrapperByCountyColors(
-      this.state.countyColors,
+      countyColors,
     );
   }
 
