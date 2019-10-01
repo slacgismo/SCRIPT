@@ -43,3 +43,37 @@ export const MapWrapper = styled.div`
     }
   }
 `;
+
+export const Tooltip = styled.div`
+  position: absolute;
+  padding: 0.25rem;
+  background: white;
+  border: 0.2rem solid #ccc;
+`;
+
+export const getStyledMapWrapperByCountyColors = (countyColors) => {
+  let countyColorsCSS = '';
+  Object.keys(countyColors).forEach(county => {
+    countyColorsCSS += `
+      path[id='${county}'] {
+        fill: ${countyColors[county]};
+      }
+    `
+  });
+
+  const StyledMap = styled(MapWrapper)`
+    svg {
+      path {
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.75;
+        }
+      }
+
+      ${countyColorsCSS}
+    }
+  `;
+
+  return StyledMap
+}
