@@ -15,7 +15,7 @@ export default function CSSGrid() {
         </Grid>        
         <Grid item xs={10} >
            {/* TODO: add overviewMap */}
-                    
+           Fake Overview Map
         </Grid>
       </Grid>
       <Footer />
