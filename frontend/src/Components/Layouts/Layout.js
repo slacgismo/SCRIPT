@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import Header from './Header'
 import Navigation from './Navigation/Navigation'
 import Footer from './Footer'
+import OverviewMap from '../OverviewMap/OverviewMap';
 
 export default function CSSGrid() {
 
@@ -15,7 +16,7 @@ export default function CSSGrid() {
         </Grid>        
         <Grid item xs={10} >
            {/* TODO: add overviewMap */}
-           Fake Overview Map
+           <OverviewMap />
         </Grid>
       </Grid>
       <Footer />
