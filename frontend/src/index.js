@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker';
 import Upload from './Components/Upload/Upload';
 import Overview from './Components/Overview/Overview';
 import Algorithms from './Components/Algorithms/Algorithms';
-import OverviewMap from './Components/OverviewMap';
+import OverviewMap from './Components/OverviewMap/OverviewMap';
 
 ReactDOM.render((
   <Router>
