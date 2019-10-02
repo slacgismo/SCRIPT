@@ -63,6 +63,9 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
 
   const StyledMap = styled(MapWrapper)`
     svg {
+      width: 800px;
+      height: 500px;
+
       path {
         cursor: pointer;
 
