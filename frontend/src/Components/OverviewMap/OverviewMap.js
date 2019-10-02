@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import VectorMap from '@south-paw/react-vector-maps';
 import caMapData from '@south-paw/react-vector-maps/maps/json/usa-ca.json'
+import svgPanZoom from 'svg-pan-zoom'
+
 import {
   Wrapper,
   Output,
@@ -11,6 +13,7 @@ import {
   getStyledMapWrapperByCountyColors,
 } from './overviewMapStyled';
 import { countyColors } from './sampleCountyColors';
+
 
 class OverviewMap extends React.PureComponent {
   constructor(props) {
@@ -26,22 +29,11 @@ class OverviewMap extends React.PureComponent {
     this.StyledMap = getStyledMapWrapperByCountyColors(
       countyColors,
     );
+    this.Viewer = null
   }
 
-  onMouseOver = e => {
-    this.setState({ current: e.target.attributes.name.value });
-  }
-
-  onMouseMove = e => {
-    this.setState({
-      isTooltipVisible: true,
-      tooltipY: e.pageY + 10,
-      tooltipX: e.pageX + 10,
-    })
-  }
-
-  onMouseOut = () => {
-    this.setState({ current: null, isTooltipVisible: false });
+  componentDidMount() {
+    const panZoomTiger = svgPanZoom('#usa-ca');
   }
 
   render () {
@@ -60,18 +52,31 @@ class OverviewMap extends React.PureComponent {
     };
 
     return (
-      <Wrapper
-        style={{ width: "600px" }}
-      >
-        <this.StyledMap>
-          <VectorMap
-            { ...caMapData }
-            layerProps={ layerProps } 
-          />
-          <Tooltip style={tooltipStyle}>{ current }</Tooltip>
-        </this.StyledMap>
-      </Wrapper>
+      <this.StyledMap>
+        <VectorMap
+          id={"overview-map"}
+          { ...caMapData }
+          layerProps={ layerProps } 
+        />
+        <Tooltip style={tooltipStyle}>{ current }</Tooltip>
+      </this.StyledMap>
     )
+  }
+
+  onMouseOver = e => {
+    this.setState({ current: e.target.attributes.name.value });
+  }
+
+  onMouseMove = e => {
+    this.setState({
+      isTooltipVisible: true,
+      tooltipY: e.pageY + 10,
+      tooltipX: e.pageX + 10,
+    })
+  }
+
+  onMouseOut = () => {
+    this.setState({ current: null, isTooltipVisible: false });
   }
 }
 
