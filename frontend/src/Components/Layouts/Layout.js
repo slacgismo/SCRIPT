@@ -15,7 +15,7 @@ export default function CSSGrid() {
           <Navigation />
         </Grid>        
         <Grid item xs={10} >
-           <OverviewMap />
+           {/* <OverviewMap /> */}
         </Grid>
       </Grid>
       <Footer />
