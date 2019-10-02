@@ -52,18 +52,14 @@ class OverviewMap extends React.PureComponent {
     };
 
     return (
-      <div>
-        <Wrapper>
-            <this.StyledMap>
-            <VectorMap
-              id={"overview-map"}
-              { ...caMapData }
-              layerProps={ layerProps } 
-            />
-            <Tooltip style={tooltipStyle}>{ current }</Tooltip>
-          </this.StyledMap>
-        </Wrapper>
-      </div>
+      <this.StyledMap>
+        <VectorMap
+          id={"overview-map"}
+          { ...caMapData }
+          layerProps={ layerProps } 
+        />
+        <Tooltip style={tooltipStyle}>{ current }</Tooltip>
+      </this.StyledMap>
     )
   }
 

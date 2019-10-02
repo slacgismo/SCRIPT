@@ -13,9 +13,10 @@ export const Wrapper = styled.div`
 `;
 
 export const Output = styled.div`
-  padding-right: 1rem;
+  margin: 1rem;
+  padding: 1rem;
   flex: 1 1 0;
-  border-right: ${BORDER_STYLE};
+  border: ${BORDER_STYLE};
   @media (max-width: 600px) {
     padding-right: 0;
     padding-bottom: 1rem;
@@ -63,8 +64,12 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
 
   const StyledMap = styled(MapWrapper)`
     svg {
-      width: 800px;
-      height: 500px;
+      margin: 1rem;
+      padding: 1rem;
+      border: ${BORDER_STYLE};
+      width: 600px;
+      height: 300px;
+      viewBox: "500px 500px 500px 500px";
 
       path {
         cursor: pointer;
