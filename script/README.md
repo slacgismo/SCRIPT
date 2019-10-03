@@ -51,10 +51,41 @@ conda activate venv_script
 conda deactivate
 ```
 
-## Running The Project
+## Setup and launch PostgreSQL
+
+You can configure your own PostgreSQL and Django settings. However, we recommend to use dockerized PostgreSQL.
 
 ```bash
-python ./script/manage.py runserver --settings=app.settings.dev
+docker run -d --name my_postgres -v <path_to_save_postgres_data>:/var/lib/postgresql/data -p 5433:5432 -e POSTGRES_USER=script_admin -e POSTGRES_PASSWORD=script_passwd -e POSTGRES_DB=scriptdb postgres:9
+```
+
+Now, you can connect to PostgreSQL via port 5433.
+
+To stop it:
+
+```bash
+docker stop my_postgres
+```
+
+To remove the container:
+
+```bash
+docker rm /my_postgres
+```
+
+## Running The Project
+
+### Migrate your models defined in Django
+
+```bash
+python ./script/manage.py makemigrations
+python ./script/manage.py migrate
+```
+
+### Start server 
+
+```bash
+python ./script/manage.py runserver --settings=app.settings.base
 ```
 
 Then navigate to localhost:8000 on your browser.
@@ -62,5 +93,5 @@ Then navigate to localhost:8000 on your browser.
 ## Unit Tests for The Project
 
 ```bash
-python ./script/manage.py test --settings=app.settings.dev
+python ./script/manage.py test --settings=app.settings.base
 ```
