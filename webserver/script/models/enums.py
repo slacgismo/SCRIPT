@@ -1,20 +1,26 @@
 from enum import Enum
 
-class POI(Enum):
+class EnumWithChoices(Enum):
+    @classmethod
+    def choices(cls):
+        return tuple((i.name, i.value) for i in cls)
+
+
+class POI(EnumWithChoices):
     """Place of interest"""
     WP = 'Workplace'
     UK = 'Unknown'
     # [TODO] add more POIs
 
 
-class POISub(Enum):
+class POISub(EnumWithChoices):
     """Place of interest sub-category"""
     HT = 'High-Tech'
     UK = 'Unknown'
     # [TODO] add more POI sub-categories
 
 
-class ChargingConnector(Enum):
+class ChargingConnector(EnumWithChoices):
     """Charging connector type"""
     CHAdeMO = 'CHAdeMO'
     Combo = 'Combo'
@@ -23,7 +29,7 @@ class ChargingConnector(Enum):
     # [TODO] add more connector types
 
 
-class VehicleMake(Enum):
+class VehicleMake(EnumWithChoices):
     """Vehicle make"""
     Nissan = 'Nissan'
     Chevrolet = 'Chevrolet'
@@ -34,7 +40,7 @@ class VehicleMake(Enum):
     # [TODO] add more vehicle makes
 
 
-class EVType(Enum):
+class EVType(EnumWithChoices):
     """EV type"""
     PLUGIN = 'PLUGIN'
     HYBRID = 'HYBRID'

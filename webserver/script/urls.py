@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from script.views import CountyViewSet, EnergyViewSet, EnergyView, ChargingStationViewSet
+from script.views import CountyViewSet, EnergyViewSet, EnergyView
 
 # set up a router for RESTful API
 # ref1: https://www.django-rest-framework.org/api-guide/routers/
@@ -14,7 +14,6 @@ from script.views import CountyViewSet, EnergyViewSet, EnergyView, ChargingStati
 router = routers.DefaultRouter()
 router.register('county', CountyViewSet, 'county')
 router.register('energy', EnergyViewSet, 'energy')
-router.register('charging_station', ChargingStationViewSet, 'charging_station')
 
 urlpatterns = [
     path('debug/', include(router.urls)),

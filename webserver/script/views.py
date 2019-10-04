@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from rest_framework import views, viewsets, permissions, mixins, generics
-from script.models import County, Energy, ChargingStation
-from .serializers import CountySerializer, EnergySerializer, ChargingStationSerializer
+from script.models.data import County
+from script.models.statistics import Energy
+from script.serializers import CountySerializer, EnergySerializer
 from rest_framework.response import Response
 
 import json
@@ -23,14 +24,6 @@ class EnergyViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = EnergySerializer
-
-
-class ChargingStationViewSet(viewsets.ModelViewSet):
-    queryset = ChargingStation.objects.all()
-    permission_classes = [
-        permissions.AllowAny,
-    ]
-    serializer_class = ChargingStationSerializer
 
 
 class EnergyView(mixins.RetrieveModelMixin,

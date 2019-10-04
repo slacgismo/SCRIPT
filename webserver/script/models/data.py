@@ -28,14 +28,13 @@ class ChargingStation(models.Model):
 
     class Meta:
         db_table = 'script_charging_station'
-        unique_together = (('county', 'year', 'month'),)
 
 
 class ChargingPort(models.Model):
     """Charging port"""
     id = models.CharField(max_length=6, primary_key=True)
     station = models.ForeignKey(ChargingStation, on_delete=models.CASCADE)
-    connector = models.CharField(max_length=20, choices=ChargingConnector.choices, default=ChargingConnector.UK)
+    connector = models.CharField(max_length=20, choices=ChargingConnector.choices(), default=ChargingConnector.UK)
 
     class Meta:
         db_table = 'script_charging_port'
@@ -52,11 +51,11 @@ class Driver(models.Model):
 
 class Vehicle(models.Model):
     """Vehicle"""
-    make = models.CharField(VehicleMake, choices=VehicleMake.choices, default=VehicleMake.UK)
+    make = models.CharField(max_length=20, choices=VehicleMake.choices(), default=VehicleMake.UK)
     model = models.CharField(max_length=30)
     year = models.IntegerField()
     battery_capacity = models.FloatField()
-    ev_type = models.CharField(max_length=10, choices=EVType.choices, default=EVType.UK)
+    ev_type = models.CharField(max_length=10, choices=EVType.choices(), default=EVType.UK)
     max_power = models.FloatField()
 
     class Meta:
