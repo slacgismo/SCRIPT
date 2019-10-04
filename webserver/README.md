@@ -33,6 +33,8 @@ Ensure you are running the anaconda `4.5.x +`
 conda env create -f script-environment.yml
 ```
 
+If you get error installing `psycopg2`, you can probably refer to [How to install psycopg2 with “pip” on Python?](https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python).
+
 ## Updating the env after adding new packages
 
 ```bash
@@ -73,19 +75,25 @@ To remove the container:
 docker rm /my_postgres
 ```
 
+To connect to the database (you will need to install `postgresql`):
+
+```bash
+psql postgresql://script_admin:script_passwd@localhost:5433/scriptdb
+```
+
 ## Running The Project
 
 ### Migrate your models defined in Django
 
 ```bash
-python ./script/manage.py makemigrations
-python ./script/manage.py migrate
+python manage.py makemigrations script
+python manage.py migrate
 ```
 
 ### Start server 
 
 ```bash
-python ./script/manage.py runserver --settings=app.settings.base
+python manage.py runserver --settings=app.settings.base
 ```
 
 Then navigate to localhost:8000 on your browser.
@@ -93,5 +101,5 @@ Then navigate to localhost:8000 on your browser.
 ## Unit Tests for The Project
 
 ```bash
-python ./script/manage.py test --settings=app.settings.base
+python manage.py test --settings=app.settings.base
 ```

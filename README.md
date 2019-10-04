@@ -2,7 +2,7 @@
 
 ```text
 SCRIPT/
-    script/                     ---- Django web server
+    webserver/                  ---- Django web server
         Dockerfile
         manage.py
         app/
