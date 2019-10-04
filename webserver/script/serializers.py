@@ -4,12 +4,15 @@ from script.models.statistics import Energy
 
 import datetime
 
-# serializer of result model
-
 class CountySerializer(serializers.ModelSerializer):
     class Meta:
         model = County
         fields = '__all__'
+
+    def validate_residents(self, residents):
+        if residents < 0:
+            raise serializers.ValidationError("Residents must be a positive.")
+        return residents
 
 
 class EnergySerializer(serializers.ModelSerializer):

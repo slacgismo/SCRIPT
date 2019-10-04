@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'script',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# REST framework
+# https://www.django-rest-framework.org/api-guide/filtering/#djangofilterbackend
+# https://github.com/carltongibson/django-filter
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
