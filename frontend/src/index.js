@@ -8,6 +8,7 @@ import Upload from './Components/Upload/Upload';
 import Overview from './Components/Overview/Overview';
 import Algorithms from './Components/Algorithms/Algorithms';
 import OverviewMap from './Components/OverviewMap/OverviewMap';
+import ResultChart from './Components/ResultChart/ResultChart';
 
 ReactDOM.render((
   <Router>
@@ -21,6 +22,7 @@ ReactDOM.render((
     {/* Routes for debugging single components. */}
     {/* TODO: delete these routes. */}
     <Route exact path="/overview-map" component={ OverviewMap } />
+    <Route exact path="/result-chart" component={ ResultChart } />
   </Router>
 ), document.getElementById('root'));
 
