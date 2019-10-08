@@ -25,8 +25,14 @@ class ResultChart extends React.Component {
         <XYPlot height={300} width={300}>
           {/* <HorizontalGridLines /> */}
           <LineSeries data={data} />
-          <XAxis />
-          <YAxis />
+          <XAxis
+            title="Time"
+            position="end"
+          />
+          <YAxis
+            title="Energy"
+            position="end"
+          />
         </XYPlot>
       </div>
     );
