@@ -2,9 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Overview from './Components/Overview/Overview';
-<<<<<<< HEAD
-import Algorithms from './Components/Algorithms/Algorithms';
-import OverviewMap from './Components/OverviewMap/OverviewMap';
+// import OverviewMap from './Components/OverviewMap/OverviewMap';
 import ResultChart from './Components/ResultChart/ResultChart';
 import Upload from './Components/Upload/Upload';
 import Algorithm1 from './Components/Algorithms/Algorithm1';
@@ -28,7 +26,7 @@ render((
   
       {/* Routes for debugging single components. */}
       {/* TODO: delete these routes. */}
-      <Route exact path="/overview-map" component={ OverviewMap } />
+      {/* <Route exact path="/overview-map" component={ OverviewMap } /> */}
       <Route exact path="/result-chart" component={ ResultChart } />
     </Router>
 ), document.getElementById('root'));
