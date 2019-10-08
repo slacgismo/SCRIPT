@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
-import Layout from '../Layouts/Layout'
+import Base from '../../Layouts/Base'
 
 class Upload extends Component {
   render() {
     return (
-      <div display='root'min-width="100px">
-      <React.Fragment>
-        <Layout />
-      </React.Fragment>
+      <div >
+        <Base />
       </div>
     );
   }
