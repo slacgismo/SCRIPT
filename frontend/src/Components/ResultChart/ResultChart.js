@@ -1,6 +1,13 @@
 import React from 'react';
 import '../../../node_modules/react-vis/dist/style.css';
-import {XYPlot, LineSeries, HorizontalGridLines, XAxis, YAxis,} from 'react-vis';
+import {
+  XYPlot,
+  LineSeries,
+  HorizontalGridLines,
+  XAxis,
+  YAxis,
+  Borders,
+} from 'react-vis';
 
 class ResultChart extends React.Component {
   constructor(props) {
@@ -33,6 +40,12 @@ class ResultChart extends React.Component {
             title="Energy"
             position="end"
           />
+          <Borders style={{
+            bottom: {fill: '#fff'},
+            left: {fill: '#fff'},
+            right: {fill: '#fff'},
+            top: {fill: '#fff'}
+          }}/>
         </XYPlot>
       </div>
     );
