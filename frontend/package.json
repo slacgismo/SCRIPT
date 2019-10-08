@@ -5,11 +5,17 @@
   "dependencies": {
     "@material-ui/core": "^4.4.3",
     "@material-ui/icons": "^4.4.3",
+    "@south-paw/react-vector-maps": "^2.0.2",
+    "polished": "^3.4.1",
     "react": "^16.10.1",
-    "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0",
+    "react-dom": "^16.10.1",
+    "react-router": "^5.1.0",
+    "react-router-dom": "^5.1.0",
     "react-scripts": "^3.0.1",
-    "recompose": "^0.30.0"
+    "react-vis": "^1.11.7",
+    "recompose": "^0.30.0",
+    "styled-components": "^4.4.0",
+    "svg-pan-zoom": "^3.6.1"
   },
   "scripts": {
     "start": "react-scripts start & json-server --watch store.json --port 3004",
