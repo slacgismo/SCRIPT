@@ -8,6 +8,7 @@ import {
   YAxis,
   Borders,
 } from 'react-vis';
+import "./ResultChart.css"
 
 class ResultChart extends React.Component {
   constructor(props) {
@@ -28,7 +29,7 @@ class ResultChart extends React.Component {
       {x: 9, y: 5}
     ];
     return (
-      <div className="App">
+      <>
         <XYPlot height={300} width={300}>
           {/* <HorizontalGridLines /> */}
           <LineSeries data={data} />
@@ -47,7 +48,7 @@ class ResultChart extends React.Component {
             top: {fill: '#fff'}
           }}/>
         </XYPlot>
-      </div>
+      </>
     );
   }
 }
