@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
   Borders,
+  ChartLabel,
 } from 'react-vis';
 import "./ResultChart.css"
 
@@ -29,9 +30,9 @@ class ResultChart extends React.Component {
       {x: 9, y: 5}
     ];
     return (
-      <>
+      <div className="chart-grid">
         <XYPlot height={300} width={300}>
-          {/* <HorizontalGridLines /> */}
+          <HorizontalGridLines />
           <LineSeries data={data} />
           <XAxis
             title="Time"
@@ -40,15 +41,10 @@ class ResultChart extends React.Component {
           <YAxis
             title="Energy"
             position="end"
+            tickSize="10"
           />
-          <Borders style={{
-            bottom: {fill: '#fff'},
-            left: {fill: '#fff'},
-            right: {fill: '#fff'},
-            top: {fill: '#fff'}
-          }}/>
         </XYPlot>
-      </>
+      </div>
     );
   }
 }
