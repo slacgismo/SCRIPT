@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import Paperbase from './Layouts/Base'
+import Paperbase from '../../Layouts/Base'
 
-class App extends Component {
-  page = "overview";
+class About extends Component {
   render() {
     return (
       <div >
@@ -12,4 +11,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default About;
