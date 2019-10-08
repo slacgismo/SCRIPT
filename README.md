@@ -1,66 +1,24 @@
+# Structure
 
-# Get Started
-
-## Prerequisites
-
-The best way to get started is to install `docker` and `docker-compose`.
-For more details, please read [Install Docker](https://docs.docker.com/v17.09/engine/installation/) and [Install Docker Compose](https://docs.docker.com/compose/install/).
-
-## Run
-
-Run the dockerized Django App with dockerized PostgreSQL database using:
-
-```bash
-docker-compose up
-```
-
-If you make any modification on the code, you probably need to run the following command to remove the containers and volumes and re-build the images.
-
-```bash
-docker-compose rm -f
-docker-compose build
-```
-
-Then navigate to localhost:8000 on your browser.
-
-# Development Environment Setup
-
-Ensure you are running the anaconda `4.5.x +`
-
-## Creating the env
-
-```bash
-conda env create -f script-environment.yml
-```
-
-## Updating the env after adding new packages
-
-```bash
-conda env update -f script-environment.yml
-```
-
-## Starting the env
-
-```bash
-conda activate venv_script
-```
-
-## Stopping the env
-
-```bash
-conda deactivate
-```
-
-## Running The Project
-
-```bash
-python ./script/manage.py runserver --settings=app.settings.dev
-```
-
-Then navigate to localhost:8000 on your browser.
-
-## Unit Tests for The Project
-
-```bash
-python ./script/manage.py test --settings=app.settings.dev
+```text
+SCRIPT/
+    webserver/                  ---- Django web server
+        Dockerfile
+        manage.py
+        app/
+        script/                 ---- script web app
+    s3watch/                    ---- Watch the algorithm results, trigger endpoint to update db
+        Dockerfile
+    ec2setup/                   ---- code running on EC2
+        algorithms/
+        controller/
+    utils/                      ---- Utils which can be copied by all images during image build
+        aws/                    ---- used by the web server backend and s3watch
+            s3/
+            ec2/
+        upload/                 ---- shell/python script to split raw data and upload
+        lambda/                 ---- used by Terraform
+    docker-compose.yml          ---- Docker compose config
+    main.tf                     ---- Terraform config
+    variable.env                ---- Environment variables
 ```
