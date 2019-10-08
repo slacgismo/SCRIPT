@@ -64,11 +64,11 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
 
   const StyledMap = styled(MapWrapper)`
     svg {
-      margin: 1rem;
-      padding: 1rem;
+      margin: 0;
+      padding: 0;
       border: ${BORDER_STYLE};
-      width: 600px;
-      height: 300px;
+      width: 100%;
+      height: 85vh;
       viewBox: "500px 500px 500px 500px";
       path {
         cursor: pointer;
