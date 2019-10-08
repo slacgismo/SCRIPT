@@ -7,6 +7,7 @@ import Slider from '@material-ui/core/Slider';
 import VolumeDown from '@material-ui/icons/VolumeDown';
 import VolumeUp from '@material-ui/icons/VolumeUp';
 import Button from '@material-ui/core/Button';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -53,97 +54,105 @@ const currencies = [
 ];
 
 
-export default function Scenario() {
-  const classes = useStyles();
-  const [values, setValues] = React.useState({
-    name: 'Cat in the Hat',
-    age: '',
-    multiline: 'Controlled',
-    currency: 'EUR',
-  });
+export default function Scenario () {
+  
+    const runAlgorithm = async () => {
+      const counties = await axios.get('http://127.0.0.1:8000/api/county');
+      console.log(counties)
+    }
+  
+    const classes = useStyles();
+    const [values, setValues] = React.useState({
+      name: 'Cat in the Hat',
+      age: '',
+      multiline: 'Controlled',
+      currency: 'EUR',
+    });
+  
+    const [volvalue, setValue] = React.useState(30);
+  
+    const handleChange2 = (event, newValue) => {
+      setValue(newValue);
+    };
+  
+    const handleChange = name => event => {
+      setValues({ ...values, [name]: event.target.value });
+    };
 
-  const [volvalue, setValue] = React.useState(30);
-
-  const handleChange2 = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleChange = name => event => {
-    setValues({ ...values, [name]: event.target.value });
-  };
-
-  return (
+    return (
       <div>
-    {/* <form  className={classes.container} noValidate autoComplete="off"> */}
-    <form noValidate autoComplete="off">
-      <TextField
-        required
-        id="standard-required"
-        label="Required"
-        defaultValue="2019"
-        className={classes.textField}
-        margin="normal"
-      />
-      <TextField
-        id="standard-select-currency-native"
-        select
-        label="Select your county"
-        className={classes.textField}
-        value={values.currency}
-        onChange={handleChange('currency')}
-        SelectProps={{
-          native: true,
-          MenuProps: {
-            className: classes.menu,
-          },
-        }}
-        margin="normal"
-      >
-        {currencies.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.value}
-          </option>
-        ))}
-      </TextField>
-
-      <TextField
-        id="standard-helperText"
-        label="Some important text"
-        defaultValue="Default Value"
-        className={classes.textField}
-        margin="normal"
-      />
-      <TextField
-        id="standard-with-placeholder"
-        label="With placeholder"
-        placeholder="Placeholder"
-        className={classes.textField}
-        margin="normal"
-      />
-   
-    <div className={classes.root}>
-    <br></br>
-      <Typography id="continuous-slider" gutterBottom>
-        Charging Control
-      </Typography>
-      <Grid container spacing={2}>
-        <Grid item>
-          <VolumeDown />
-        </Grid>
-        <Grid item xs>
-          <Slider value={volvalue} onChange={handleChange2} aria-labelledby="continuous-slider" />
-        </Grid>
-        <Grid item>
-          <VolumeUp />
-        </Grid>
-      </Grid>
-    </div>
-    <br></br>
-    <Button variant="contained" color="primary" className={classes.button}>
-        Run
-    </Button>
-    </form>
+        {/* <form  className={classes.container} noValidate autoComplete="off"> */}
+        <form noValidate autoComplete="off">
+          <TextField
+            required
+            id="standard-required"
+            label="Required"
+            defaultValue="2019"
+            className={classes.textField}
+            margin="normal"
+          />
+          <TextField
+            id="standard-select-currency-native"
+            select
+            label="Select your county"
+            className={classes.textField}
+            value={values.currency}
+            onChange={handleChange('currency')}
+            SelectProps={{
+              native: true,
+              MenuProps: {
+                className: classes.menu,
+              },
+            }}
+            margin="normal"
+          >
+            {currencies.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.value}
+              </option>
+            ))}
+          </TextField>
     
-    </div>
-  );
+          <TextField
+            id="standard-helperText"
+            label="Some important text"
+            defaultValue="Default Value"
+            className={classes.textField}
+            margin="normal"
+          />
+          <TextField
+            id="standard-with-placeholder"
+            label="With placeholder"
+            placeholder="Placeholder"
+            className={classes.textField}
+            margin="normal"
+          />
+      
+        <div className={classes.root}>
+        <br></br>
+          <Typography id="continuous-slider" gutterBottom>
+            Charging Control
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item>
+              <VolumeDown />
+            </Grid>
+            <Grid item xs>
+              <Slider value={volvalue} onChange={handleChange2} aria-labelledby="continuous-slider" />
+            </Grid>
+            <Grid item>
+              <VolumeUp />
+            </Grid>
+          </Grid>
+        </div>
+        <br></br>
+        <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
+            Run
+        </Button>
+        </form>
+      
+      </div>
+    );
+  
+  
 }
