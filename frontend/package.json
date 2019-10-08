@@ -1,40 +1,36 @@
 {
-  "name": "frontend",
+  "name": "writers-blog",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.4.3",
     "@material-ui/icons": "^4.4.3",
-    "@south-paw/react-vector-maps": "^2.0.2",
-    "polished": "^3.4.1",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",
     "react-router": "^5.1.0",
     "react-router-dom": "^5.1.0",
-    "react-scripts": "^1.1.5",
+    "react-scripts": "^3.0.1",
     "react-vis": "^1.11.7",
     "styled-components": "^4.4.0",
-    "svg-pan-zoom": "^3.6.1"
+    "svg-pan-zoom": "^3.6.1",
+    "recompose": "^0.30.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start & json-server --watch store.json --port 3004",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "devDependencies": {
+    "json-server": "^0.15.0"
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

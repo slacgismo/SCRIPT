@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
-import Layout from '../Layouts/Layout'
+import Base from '../../Layouts/Base'
+import Content from '../../Layouts/Content'
 
 class Overview extends Component {
   render() {
     return (
-      <div display='root'min-width="100px">
-      <React.Fragment>
-        <Layout />
-      </React.Fragment>
+      <div >
+        <Base content={<Content text={'OveviewMap'}/>}/>
       </div>
     );
   }
