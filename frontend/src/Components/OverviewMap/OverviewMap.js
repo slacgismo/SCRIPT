@@ -11,8 +11,9 @@ import {
   MapWrapper,
   Tooltip,
   getStyledMapWrapperByCountyColors,
+  addCountyColorByAttr,
 } from './overviewMapStyled';
-import { countyColors } from './sampleCountyColors';
+import { counties } from './sampleCounties';
 
 
 class OverviewMap extends React.PureComponent {
@@ -20,14 +21,19 @@ class OverviewMap extends React.PureComponent {
     super(props);
 
     this.state = {
-      current: null,
+      current: {
+        countyName: null,
+        totalEnergy: null,
+      },
       isTooltipVisible: false,
       tooltipY: 0,
       tooltipX: 0,
     };
 
+    addCountyColorByAttr(counties, 'totalEnergy');
+
     this.StyledMap = getStyledMapWrapperByCountyColors(
-      countyColors,
+      counties,
     );
     this.Viewer = null
   }
@@ -49,6 +55,7 @@ class OverviewMap extends React.PureComponent {
       display: isTooltipVisible ? 'block' : 'none',
       top: tooltipY,
       left: tooltipX,
+      width: '15rem',
     };
 
     return (
@@ -58,13 +65,20 @@ class OverviewMap extends React.PureComponent {
           { ...caMapData }
           layerProps={ layerProps } 
         />
-        <Tooltip style={tooltipStyle}>{ current }</Tooltip>
+        <Tooltip style={tooltipStyle}>
+          <b>County:</b> { current.countyName }
+          <br />
+          <b>Total Energy:</b> { current.totalEnergy }
+        </Tooltip>
       </this.StyledMap>
     )
   }
 
   onMouseOver = e => {
-    this.setState({ current: e.target.attributes.name.value });
+    this.setState({ current: {
+      countyName: e.target.attributes.name.value,
+      totalEnergy: (counties[e.target.attributes.id.value].totalEnergy * 1000).toFixed(1),
+    } });
   }
 
   onMouseMove = e => {
@@ -76,7 +90,10 @@ class OverviewMap extends React.PureComponent {
   }
 
   onMouseOut = () => {
-    this.setState({ current: null, isTooltipVisible: false });
+    this.setState({ current: {
+      countyName: null,
+      totalEnergy: null,
+    }, isTooltipVisible: false });
   }
 }
 
