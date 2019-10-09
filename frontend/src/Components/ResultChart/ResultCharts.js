@@ -5,7 +5,6 @@ function ResultCharts(props) {
   return (
     <>
       <ResultChart />
-      <ResultChart />
     </>
   )
 }
