@@ -57,7 +57,7 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
   Object.keys(countyColors).forEach(county => {
     countyColorsCSS += `
       path[id='${county}'] {
-        fill: ${countyColors[county]};
+        fill: ${countyColors[county]["color"]};
       }
     `
   });
@@ -82,3 +82,73 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
 
   return StyledMap
 }
+
+/**
+ * Add color attribute by an existing attribute(e.g. totalEnergy).
+ *
+ * The result is caused by side effect.
+ *
+ *  {
+ *    "santa clara": {
+ *      "totalEnergy": 12
+ *    },
+ *    ...
+ *  }
+ *
+ *  ||
+ *  \/
+ *
+ *  {
+ *    "santa clara": {
+ *      "totalEnergy": 12,
+ *      "color": "#aaaaaa",
+ *    },
+ *    ...
+ *  }
+ * 
+ */
+export const addCountyColorByAttr = (counties, attrName) => {
+  const countyNames = Object.keys(counties);
+  let attrOfCounties = [];
+  countyNames.forEach(countyName => {
+    attrOfCounties.push(counties[countyName][attrName]);
+  })
+
+  const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
+  countyNames.forEach((countyName, i) => {
+    counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
+  })
+}
+
+const numbers2percentages = (nums) => {
+  const maxNum = Math.max(...nums);
+  const minNum = Math.min(...nums);
+  return nums.map(num => (num - minNum) / (maxNum - minNum));
+}
+
+const percentColors = [
+  { pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
+  { pct: 0.5, color: { r: 0xff, g: 0xff, b: 0 } },
+  { pct: 1.0, color: { r: 0x00, g: 0xff, b: 0 } }
+];
+
+const percentage2color = (pct) => {
+    for (var i = 1; i < percentColors.length - 1; i++) {
+        if (pct < percentColors[i].pct) {
+            break;
+        }
+    }
+    var lower = percentColors[i - 1];
+    var upper = percentColors[i];
+    var range = upper.pct - lower.pct;
+    var rangePct = (pct - lower.pct) / range;
+    var pctLower = 1 - rangePct;
+    var pctUpper = rangePct;
+    var color = {
+        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+    };
+    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+    // or output as hex if preferred
+} 
