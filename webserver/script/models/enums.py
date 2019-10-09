@@ -9,14 +9,14 @@ class EnumWithChoices(Enum):
 class POI(EnumWithChoices):
     """Place of interest"""
     WP = 'Workplace'
-    UK = 'Unknown'
+    UNKNOWN = 'Unknown'
     # [TODO] add more POIs
 
 
 class POISub(EnumWithChoices):
     """Place of interest sub-category"""
     HT = 'High-Tech'
-    UK = 'Unknown'
+    UNKNOWN = 'Unknown'
     # [TODO] add more POI sub-categories
 
 
@@ -25,7 +25,7 @@ class ChargingConnector(EnumWithChoices):
     CHAdeMO = 'CHAdeMO'
     Combo = 'Combo'
     J1772 = 'J1772'
-    UK = 'Unknown'
+    UNKNOWN = 'Unknown'
     # [TODO] add more connector types
 
 
@@ -36,7 +36,7 @@ class VehicleMake(EnumWithChoices):
     Audi = 'Audi'
     BMW = 'BMW'
     Honda = 'Honda'
-    UK = 'Unknown'
+    UNKNOWN = 'Unknown'
     # [TODO] add more vehicle makes
 
 
@@ -44,5 +44,5 @@ class EVType(EnumWithChoices):
     """EV type"""
     PLUGIN = 'PLUGIN'
     HYBRID = 'HYBRID'
-    UK = 'UNKNOWN'
+    UNKNOWN = 'UNKNOWN'
     # [TODO] add more EV types
