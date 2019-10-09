@@ -54,11 +54,11 @@ const currencies = [
 ];
 
 
-export default function Scenario () {
+export default function Scenario (props) {
   
     const runAlgorithm = async () => {
-      const counties = await axios.get('http://127.0.0.1:8000/api/county');
-      console.log(counties)
+      // const counties = await axios.get('http://127.0.0.1:8000/api/county');
+      props.changeStatus("finished");
     }
   
     const classes = useStyles();
