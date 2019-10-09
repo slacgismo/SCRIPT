@@ -1,10 +1,11 @@
 from django.db import models
 from script.models.enums import POI, POISub, ChargingConnector, VehicleMake, EVType
+from script.validators import validate_positive
 
 class County(models.Model):
     """County Info"""
     name = models.CharField(max_length=50, primary_key=True)
-    residents = models.IntegerField()
+    residents = models.IntegerField(validators=[validate_positive])
 
     # [TODO] add other overviews of the county
 
