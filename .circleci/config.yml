@@ -3,7 +3,7 @@ jobs:
   test:
     docker:
       - image: continuumio/miniconda3
-      - image: postgres:11.5
+      - image: postgres:9
     working_directory: /code
     steps:
       - run:
@@ -30,12 +30,15 @@ jobs:
             source ~/.bashrc
             conda env create -f ./webserver/script-environment.yml
             conda activate venv_script
-            python ./webserver/manage.py test --settings=app.settings.dev
+            VARENV=./variables.env
+            source $VARENV
+            export $(cut -d= -f1 $VARENV) &> /dev/null
+            python ./webserver/manage.py test --settings=app.settings.test
 
   deploy:
     docker:
       - image: continuumio/miniconda3
-      - image: postgres:11.5
+      - image: postgres:9
     working_directory: /code
     steps:
       - checkout
