@@ -17,3 +17,8 @@ def validate_month(month):
 def validate_positive(value):
     if value < 0:
         raise ValidationError("Value must be a positive.")
+
+
+def validate_zipcode(zipcode):
+    if len(zipcode) != 5 or zipcode.isdigit():
+        raise ValidationError("Incorrect zip code.")

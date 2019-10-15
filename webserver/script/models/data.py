@@ -1,6 +1,6 @@
 from django.db import models
 from script.models.enums import POI, POISub, ChargingConnector, VehicleMake, EVType
-from script.validators import validate_positive
+from script.validators import validate_positive, validate_zipcode, validate_month, validate_year
 
 class County(models.Model):
     """County Info"""
@@ -15,7 +15,7 @@ class County(models.Model):
 
 class ZipCode(models.Model):
     """Zip Code"""
-    code = models.CharField(max_length=5, primary_key=True)
+    code = models.CharField(max_length=5, validators=[validate_zipcode], primary_key=True)
     county = models.ForeignKey(County, on_delete=models.CASCADE)
 
     class Meta:
@@ -54,10 +54,10 @@ class Vehicle(models.Model):
     """Vehicle"""
     make = models.CharField(max_length=20, choices=VehicleMake.choices(), default=VehicleMake.UNKNOWN)
     model = models.CharField(max_length=30)
-    year = models.IntegerField()
-    battery_capacity = models.FloatField()
+    year = models.IntegerField(validators=[validate_year])
+    battery_capacity = models.FloatField(validators=[validate_positive])
     ev_type = models.CharField(max_length=10, choices=EVType.choices(), default=EVType.UNKNOWN)
-    max_power = models.FloatField()
+    max_power = models.FloatField(validators=[validate_positive])
 
     class Meta:
         db_table = 'script_vehicle'
@@ -80,11 +80,11 @@ class ChargingInterval(models.Model):
     """Charging interval"""
     id = models.CharField(max_length=9, primary_key=True)
     session = models.ForeignKey(ChargingSession, on_delete=models.CASCADE)
-    peak_power = models.FloatField()
-    avg_power = models.FloatField()
-    energy = models.FloatField()
-    start_time = models.DateTimeField()
-    duration = models.IntegerField() # sec
+    peak_power = models.FloatField(validators=[validate_positive])
+    avg_power = models.FloatField(validators=[validate_positive])
+    energy = models.FloatField(validators=[validate_positive])
+    start_time = models.DateTimeField(validators=[validate_positive])
+    duration = models.IntegerField(validators=[validate_positive]) # sec
 
     class Meta:
         db_table = 'script_charging_interval'
