@@ -20,5 +20,5 @@ def validate_positive(value):
 
 
 def validate_zipcode(zipcode):
-    if len(zipcode) != 5 or zipcode.isdigit():
+    if len(zipcode) != 5 or not zipcode.isdigit():
         raise ValidationError("Incorrect zip code.")

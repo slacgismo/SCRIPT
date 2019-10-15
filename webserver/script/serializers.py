@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from script.models.data import County
+from script.models.data import County, ZipCode
 from script.models.statistics import Energy
 from script.models.algorithms import LoadController
 
@@ -10,6 +10,11 @@ class CountySerializer(serializers.ModelSerializer):
         model = County
         fields = '__all__'
 
+
+class ZipCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZipCode
+        fields = '__all__'
 
 class EnergySerializer(serializers.ModelSerializer):
     class Meta:
