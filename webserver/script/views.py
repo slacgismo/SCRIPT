@@ -6,7 +6,8 @@ from rest_framework.decorators import detail_route
 from django.http import HttpResponse, JsonResponse
 from script.models.data import County
 from script.models.statistics import Energy
-from script.serializers import CountySerializer, EnergySerializer
+from script.models.algorithms import LoadController
+from script.serializers import CountySerializer, EnergySerializer, LoadControllerSerializer
 
 
 class CountyViewSet(viewsets.ModelViewSet):
@@ -24,3 +25,12 @@ class EnergyViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = EnergySerializer
     filter_fields = ('county', 'year', 'month') # using django-filter
+
+
+class LoadControllerViewSet(viewsets.ModelViewSet):
+    queryset = LoadController.objects.all()
+    permission_classes = [
+        permissions.AllowAny,
+    ]
+    serializer_class = LoadControllerSerializer
+    filter_fields = ('county',) # using django-filter

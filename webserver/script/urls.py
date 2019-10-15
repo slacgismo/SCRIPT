@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from script.views import CountyViewSet, EnergyViewSet
+from script.views import CountyViewSet, EnergyViewSet, LoadControllerViewSet
 
 # set up a router for RESTful API
 # ref1: https://www.django-rest-framework.org/api-guide/routers/
@@ -14,6 +14,8 @@ from script.views import CountyViewSet, EnergyViewSet
 router = routers.DefaultRouter()
 router.register('county', CountyViewSet, 'county')
 router.register('energy', EnergyViewSet, 'energy')
+
+router.register('algorithm/load_controller', LoadControllerViewSet, 'algorithm')
 
 urlpatterns = [
     path('api/', include(router.urls)),
