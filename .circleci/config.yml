@@ -33,7 +33,8 @@ jobs:
             VARENV=./variables.env
             source $VARENV
             export $(cut -d= -f1 $VARENV) &> /dev/null
-            python ./webserver/manage.py test --settings=app.settings.test
+            cd ./webserver
+            python manage.py test --settings=app.settings.test
 
   deploy:
     docker:
