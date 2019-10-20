@@ -19,6 +19,6 @@ router.register('energy', EnergyViewSet, 'energy')
 router.register('algorithm/load_controller', LoadControllerViewSet, 'algorithm')
 
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 ]
 
