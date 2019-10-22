@@ -16,7 +16,7 @@ router.register('county', CountyViewSet, 'county')
 router.register('zipcode', ZipCodeViewSet, 'zipcode')
 router.register('energy', EnergyViewSet, 'energy')
 
-router.register('algorithm/load_controller', LoadControllerViewSet, 'algorithm')
+router.register('algorithm/load_controller', LoadControllerViewSet, 'algorithm/load_controller')
 
 urlpatterns = [
     path('', include(router.urls)),

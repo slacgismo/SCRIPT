@@ -26,3 +26,29 @@ def create_energy(county_name, year, month, energy):
     }
     response = client.post(url, data, format='json')
     return response
+
+
+def create_load_controller(county_name,
+                            rate_energy_peak,
+                            rate_energy_partpeak,
+                            rate_energy_offpeak,
+                            rate_demand_peak,
+                            rate_demand_partpeak,
+                            rate_demand_overall,
+                            uncontrolled_load,
+                            controlled_load):
+    client = APIClient()
+    url = reverse('algorithm/load_controller-list')
+    data = {
+        'county': county_name,
+        'rate_energy_peak': rate_energy_peak,
+        'rate_energy_partpeak': rate_energy_partpeak,
+        'rate_energy_offpeak': rate_energy_offpeak,
+        'rate_demand_peak': rate_demand_peak,
+        'rate_demand_partpeak': rate_demand_partpeak,
+        'rate_demand_overall': rate_demand_overall,
+        'uncontrolled_load': uncontrolled_load,
+        'controlled_load': controlled_load
+    }
+    response = client.post(url, data, format='json')
+    return response

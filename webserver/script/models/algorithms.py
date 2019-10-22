@@ -35,3 +35,10 @@ class LoadController(models.Model):
 
     class Meta:
         db_table = 'script_algorithm_load_controller'
+        unique_together = (('county',
+                            'rate_energy_peak',
+                            'rate_energy_partpeak',
+                            'rate_energy_offpeak',
+                            'rate_demand_peak',
+                            'rate_demand_partpeak',
+                            'rate_demand_overall'),)    
