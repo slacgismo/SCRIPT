@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-import { rgba } from 'polished';
+import styled from "styled-components";
+import { rgba } from "polished";
 
-const BORDER_STYLE = `0.2rem solid ${rgba('#000', 0.15)}`;
-const STROKE_COLOR = '#fff';
+const BORDER_STYLE = `0.2rem solid ${rgba("#000", 0.15)}`;
+const STROKE_COLOR = "#fff";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -53,16 +53,16 @@ export const Tooltip = styled.div`
 `;
 
 export const getStyledMapWrapperByCountyColors = (countyColors) => {
-  let countyColorsCSS = '';
-  Object.keys(countyColors).forEach(county => {
-    countyColorsCSS += `
+	let countyColorsCSS = "";
+	Object.keys(countyColors).forEach(county => {
+		countyColorsCSS += `
       path[id='${county}'] {
         fill: ${countyColors[county]["color"]};
       }
-    `
-  });
+    `;
+	});
 
-  const StyledMap = styled(MapWrapper)`
+	const StyledMap = styled(MapWrapper)`
     svg {
       margin: 0;
       padding: 0;
@@ -80,8 +80,8 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
     }
   `;
 
-  return StyledMap
-}
+	return StyledMap;
+};
 
 /**
  * Add color attribute by an existing attribute(e.g. totalEnergy).
@@ -108,47 +108,47 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
  * 
  */
 export const addCountyColorByAttr = (counties, attrName) => {
-  const countyNames = Object.keys(counties);
-  let attrOfCounties = [];
-  countyNames.forEach(countyName => {
-    attrOfCounties.push(counties[countyName][attrName]);
-  })
+	const countyNames = Object.keys(counties);
+	let attrOfCounties = [];
+	countyNames.forEach(countyName => {
+		attrOfCounties.push(counties[countyName][attrName]);
+	});
 
-  const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
-  countyNames.forEach((countyName, i) => {
-    counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
-  })
-}
+	const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
+	countyNames.forEach((countyName, i) => {
+		counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
+	});
+};
 
 const numbers2percentages = (nums) => {
-  const maxNum = Math.max(...nums);
-  const minNum = Math.min(...nums);
-  return nums.map(num => (num - minNum) / (maxNum - minNum));
-}
+	const maxNum = Math.max(...nums);
+	const minNum = Math.min(...nums);
+	return nums.map(num => (num - minNum) / (maxNum - minNum));
+};
 
 const percentColors = [
-  { pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
-  { pct: 0.5, color: { r: 0xff, g: 0xff, b: 0 } },
-  { pct: 1.0, color: { r: 0x00, g: 0xff, b: 0 } }
+	{ pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
+	{ pct: 0.5, color: { r: 0xff, g: 0xff, b: 0 } },
+	{ pct: 1.0, color: { r: 0x00, g: 0xff, b: 0 } }
 ];
 
 const percentage2color = (pct) => {
-    for (var i = 1; i < percentColors.length - 1; i++) {
-        if (pct < percentColors[i].pct) {
-            break;
-        }
-    }
-    var lower = percentColors[i - 1];
-    var upper = percentColors[i];
-    var range = upper.pct - lower.pct;
-    var rangePct = (pct - lower.pct) / range;
-    var pctLower = 1 - rangePct;
-    var pctUpper = rangePct;
-    var color = {
-        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
-        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
-        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
-    };
-    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
-    // or output as hex if preferred
-} 
+	for (var i = 1; i < percentColors.length - 1; i++) {
+		if (pct < percentColors[i].pct) {
+			break;
+		}
+	}
+	var lower = percentColors[i - 1];
+	var upper = percentColors[i];
+	var range = upper.pct - lower.pct;
+	var rangePct = (pct - lower.pct) / range;
+	var pctLower = 1 - rangePct;
+	var pctUpper = rangePct;
+	var color = {
+		r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+		g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+		b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+	};
+	return "rgb(" + [color.r, color.g, color.b].join(",") + ")";
+	// or output as hex if preferred
+}; 

@@ -1,12 +1,12 @@
-import React from 'react';
-import ResultChart from './ResultChart'
+import React from "react";
+import ResultChart from "./ResultChart";
 
 function ResultCharts(props) {
-  return (
-    <>
-      <ResultChart />
-    </>
-  )
+	return (
+		<>
+			<ResultChart />
+		</>
+	);
 }
 
 export default ResultCharts;
