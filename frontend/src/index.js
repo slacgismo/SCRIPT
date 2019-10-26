@@ -14,21 +14,21 @@ import About from "./Components/About/About";
 import * as serviceWorker from "./serviceWorker";
 
 render((
-	<Router>
-		<Route exact path="/" component={ Overview } />
-		<Route exact path="/Upload" component={ Upload } />
-		<Route exact path="/Algorithm1" component={ Algorithm1 } />
-		<Route exact path="/Algorithm2" component={ Algorithm2 } />
-		<Route exact path="/Algorithm3" component={ Algorithm3 } />
-		<Route exact path="/Algorithm4" component={ Algorithm4 } />
-		<Route exact path="/Algorithm5" component={ Algorithm5 } />
-		<Route exact path="/About" component={ About } />
+    <Router>
+        <Route exact path="/" component={ Overview } />
+        <Route exact path="/Upload" component={ Upload } />
+        <Route exact path="/Algorithm1" component={ Algorithm1 } />
+        <Route exact path="/Algorithm2" component={ Algorithm2 } />
+        <Route exact path="/Algorithm3" component={ Algorithm3 } />
+        <Route exact path="/Algorithm4" component={ Algorithm4 } />
+        <Route exact path="/Algorithm5" component={ Algorithm5 } />
+        <Route exact path="/About" component={ About } />
   
-		{/* Routes for debugging single components. */}
-		{/* TODO: delete these routes. */}
-		<Route exact path="/overview-map" component={ OverviewMap } />
-		<Route exact path="/result-chart" component={ ResultChart } />
-	</Router>
+        {/* Routes for debugging single components. */}
+        {/* TODO: delete these routes. */}
+        <Route exact path="/overview-map" component={ OverviewMap } />
+        <Route exact path="/result-chart" component={ ResultChart } />
+    </Router>
 ), document.getElementById("root"));
 
 serviceWorker.unregister();
