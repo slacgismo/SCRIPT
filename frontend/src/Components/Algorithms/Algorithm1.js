@@ -33,7 +33,7 @@ class Algorithm1 extends Component {
                             <br/>
                             {
                                 this.state.status === "finished" &&
-                <Content text={"Results"} compo={ <ResultCharts />} />
+                			    <Content text={"Results"} compo={ <ResultCharts />} />
                             }
                         </div>
                     }/>

@@ -18,7 +18,7 @@ export const Output = styled.div`
   flex: 1 1 0;
   border: ${BORDER_STYLE};
   @media (max-width: 600px) {
-    padding-right: 0;  
+    padding-right: 0; 
     padding-bottom: 1rem;
     border-right: none;
     border-bottom: 0.2rem solid ${BORDER_STYLE};
