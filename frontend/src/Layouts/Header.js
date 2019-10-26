@@ -37,7 +37,7 @@ function Header(props) {
                 <AppBar position="sticky" elevation={0} color="primary">
                     <Toolbar>
                         <Typography variant="h6" >
-            Smart Charging Infrastructure Planning Tool
+            			Smart Charging Infrastructure Planning Tool
                         </Typography>
                     </Toolbar>
                 </AppBar>
