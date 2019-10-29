@@ -22,8 +22,8 @@ class POISub(EnumWithChoices):
 
 class ChargingConnector(EnumWithChoices):
     """Charging connector type"""
-    CHAdeMO = 'CHAdeMO'
-    Combo = 'Combo'
+    CHADEMO = 'CHAdeMO'
+    COMBO = 'Combo'
     J1772 = 'J1772'
     UNKNOWN = 'Unknown'
     # [TODO] add more connector types
@@ -31,11 +31,11 @@ class ChargingConnector(EnumWithChoices):
 
 class VehicleMake(EnumWithChoices):
     """Vehicle make"""
-    Nissan = 'Nissan'
-    Chevrolet = 'Chevrolet'
-    Audi = 'Audi'
+    NISSAN = 'Nissan'
+    CHEVROLET = 'Chevrolet'
+    AUDI = 'Audi'
     BMW = 'BMW'
-    Honda = 'Honda'
+    HONDA = 'Honda'
     UNKNOWN = 'Unknown'
     # [TODO] add more vehicle makes
 

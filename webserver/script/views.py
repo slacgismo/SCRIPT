@@ -42,4 +42,10 @@ class LoadControllerViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = LoadControllerSerializer
-    filter_fields = ('county',) # using django-filter
+    filter_fields = ('county',
+                    'rate_energy_peak',
+                    'rate_energy_partpeak',
+                    'rate_energy_offpeak',
+                    'rate_demand_peak',
+                    'rate_demand_partpeak',
+                    'rate_demand_overall') # using django-filter
