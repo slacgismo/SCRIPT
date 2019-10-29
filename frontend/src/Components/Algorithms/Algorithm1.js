@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import Scenario from "./Scenario";
+import Scenario1 from "../Scenario/Scenario1";
 import ResultCharts from "../ResultChart/ResultCharts";
 
 class Algorithm1 extends Component {
@@ -27,7 +27,7 @@ class Algorithm1 extends Component {
                             <Content
                                 text={"Scenario"}
                                 compo={
-                                    <Scenario changeStatus={this.changeStatus.bind(this)} />
+                                    <Scenario1 changeStatus={this.changeStatus.bind(this)} />
                                 }
                             /> 
                             <br/>

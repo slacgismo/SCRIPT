@@ -2,7 +2,6 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -12,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     textField: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
-        width: 200,
+        width: 250,
     },
     dense: {
         marginTop: 19,
@@ -29,42 +28,14 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const counties = [
-    {
-        value: "Santa Clara",
-        label: "1",
-    },
-    {
-        value: "Santa Cruz",
-        label: "2",
-    },
-    {
-        value: "San Francisco",
-        label: "3",
-    },
-    {
-        value: "San Diego",
-        label: "4",
-    },
-];
-
-
-export default function Scenario (props) {
-  
-    const runAlgorithm = async () => {
-        // const counties = await axios.get('http://127.0.0.1:8000/api/county');
-        props.changeStatus("finished");
-    };
-  
+export default function Scenario4 (props) {
     const classes = useStyles();
-  
     return (
         <div>
             <form noValidate autoComplete="off">
                 <TextField
                     id="standart-county"
                     select
-                    label="Select your county"
                     className={classes.textField}
                     SelectProps={{
                         native: true,
@@ -72,17 +43,18 @@ export default function Scenario (props) {
                             className: classes.menu,
                         },
                     }}
+                    helperText="Please select your county"
                     margin="normal"
                 >
-                    {counties.map(option => (
-                        <option key={option.value} value={option.value}>
-                            {option.value}
+                    {props.counties.map(option => (
+                        <option key={option.name} value={option.residents}>
+                            {option.name}
                         </option>
                     ))}
                 </TextField>
                 <p/>
-                <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
-            Run
+                <Button variant="contained" color="primary"  >
+                    Run
                 </Button>
             </form>    
         </div>
