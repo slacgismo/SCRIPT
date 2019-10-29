@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+VARENV=../variables.env
+source $VARENV
+export $(cut -d= -f1 $VARENV) &> /dev/null
+
+python manage.py makemigrations script
+python manage.py migrate
+
+python manage.py runserver --settings=app.settings.deploy
