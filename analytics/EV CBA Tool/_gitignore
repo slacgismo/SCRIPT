@@ -1,0 +1,4 @@
+# pycharm folder
+.idea/*
+.idea/
+*.pyc
