@@ -18,5 +18,8 @@ For example:
 python3 split_and_upload_files.py script.test.raw commercial session session_test.csv
 ```
 
-##Note
+## Dependency
+Python3 and boto3
+
+## Note
 After splitting, file `filename.csv` will be split into several files with name as `0_filename.csv`, `1_filename.csv`, `2_filename.csv`...
