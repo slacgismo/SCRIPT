@@ -204,7 +204,7 @@ def export_results(model_instance):
             SO2_emissions.append(0)
             VOC_emissions.append(0)
 
-    npv_results_dir = model_instance.inputs.RESULTS_DIR + r'\npv_results.csv'
+    npv_results_dir = model_instance.inputs.RESULTS_DIR + '/npv_results.csv'
     with open(npv_results_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
 
@@ -253,7 +253,7 @@ def export_results(model_instance):
         writer.writerow(['Distribution Cost', npv_distribution])
         writer.writerow(['Transmission Cost', npv_transmission])
 
-    annual_results_dir = model_instance.inputs.RESULTS_DIR + r'\annual_results.csv'
+    annual_results_dir = model_instance.inputs.RESULTS_DIR + '/annual_results.csv'
     with open(annual_results_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
 
@@ -332,7 +332,7 @@ def export_results(model_instance):
         writer.writerow(['Capacity Cost']
                         + annual_capacity)
 
-    annual_gas_dir = model_instance.inputs.RESULTS_DIR + r'\Emissions.csv'
+    annual_gas_dir = model_instance.inputs.RESULTS_DIR + '/Emissions.csv'
     with open(annual_gas_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
 
@@ -355,7 +355,7 @@ def export_results(model_instance):
         writer.writerow(['VOC emissions']
                         + VOC_emissions)
 
-    annual_gas_dir = model_instance.inputs.RESULTS_DIR + r'\annual_gas_consumption.csv'
+    annual_gas_dir = model_instance.inputs.RESULTS_DIR + '/annual_gas_consumption.csv'
     with open(annual_gas_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
 
@@ -406,7 +406,7 @@ def export_results(model_instance):
         writer.writerow(['EV Share (%)'] + ev_share)
 
 def export_loadprofiles(model_instance, data, name):
-    loadprofile_dir = model_instance.inputs.RESULTS_DIR + r'\%s_loadprofile.csv' % name
+    loadprofile_dir = model_instance.inputs.RESULTS_DIR + '/%s_loadprofile.csv' % name
 
     with open(loadprofile_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
