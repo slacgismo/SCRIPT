@@ -88,7 +88,7 @@ DATABASES = {
         'USER': 'script_admin',
         'PASSWORD': 'script_passwd',
         'HOST': 'localhost',
-        'PORT': 5433,
+        'PORT': 5432,
     }
 }
 
