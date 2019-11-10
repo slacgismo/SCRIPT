@@ -66,21 +66,6 @@ class Download extends React.Component {
             </div>
         );
     }
-	// render() {
-	// 	return (
-	// 		<div>
-	// 			<Base 
-	// 				content = {
-	// 					<div>
-	// 						<p>Download Script</p>
-	// 						<button onClick={this.downloadScript}>Download</button>
-	// 						<p/>    
-	// 					</div>
-	// 				}
-	// 			/>
-	// 		</div>
-	// 	);
-	// }
 }
 
 export default Download;
