@@ -2,9 +2,10 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+from script.models.enums import DayType
 from script.models.data import County
-from script.models.algorithms import LoadController
-from script.tests.utils import create_county, create_load_controller
+from script.models.algorithms import LoadController, AggregateLoadProfile
+from script.tests.utils import create_county, create_load_controller, create_aggregate_load_profile
 
 import json
 import copy
@@ -124,3 +125,20 @@ class LoadControllerTests(APITestCase):
         obj = json.loads(response.content)[0]
         self.assertEqual(obj['county'], self.county_name)
         self.assertEqual(json.loads(obj['controlled_load']), new_controlled_load)
+
+
+class AggregateLoadProfileTests(APITestCase):
+    year = 2020
+    day_type = DayType.WEEKEND
+    loads = [i * 2 % 24 + 1 for i in range(24)]
+
+    def test_create_aggregate_load_profile(self):
+        """Ensure we can create a new aggregate load profile object."""
+        response = create_aggregate_load_profile(self.year,
+                                                self.day_type,
+                                                json.dumps(self.loads))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(AggregateLoadProfile.objects.count(), 1)
+        obj = AggregateLoadProfile.objects.get()
+        self.assertEqual(obj.year, self.year)
+        self.assertEqual(json.loads(obj.loads), self.loads)

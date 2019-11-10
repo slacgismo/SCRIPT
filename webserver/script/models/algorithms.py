@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from script.models.data import County
-from script.validators import validate_positive
+from script.models.enums import DayType
+from script.validators import validate_positive, validate_year
 
 # Create your models of algorithm results here.
 
@@ -42,3 +43,23 @@ class LoadController(models.Model):
                             'rate_demand_peak',
                             'rate_demand_partpeak',
                             'rate_demand_overall'),)    
+
+
+class AggregateLoadProfile(models.Model):
+    """Algorithm: Cost Benefit Analysis Aggregate Load Profile
+        inputs:
+            TODO
+        outputs:
+            (1) load profile throughout 24 hours of a weekday
+            (2) load profile throughout 24 hours of a weekend
+        visualizations:
+            TODO @Yanqing @Xinyi
+    """
+
+    year = models.IntegerField()
+    day_type = models.CharField(max_length=10, choices=DayType.choices(), default=DayType.WEEKDAY)
+    loads = JSONField()
+
+    class Meta:
+        db_table = 'script_algorithm_cba_aggregate_load_profile'
+        unique_together = (('year', 'day_type'),)

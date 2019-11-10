@@ -52,3 +52,15 @@ def create_load_controller(county_name,
     }
     response = client.post(url, data, format='json')
     return response
+
+
+def create_aggregate_load_profile(year, day_type, loads):
+    client = APIClient()
+    url = reverse('algorithm/cost_benefit_analysis/aggregate_load-list')
+    data = {
+        'year': year,
+        'day_type': day_type.name,
+        'loads': loads
+    }
+    response = client.post(url, data, format='json')
+    return response

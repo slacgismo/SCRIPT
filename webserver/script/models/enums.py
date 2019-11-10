@@ -46,3 +46,9 @@ class EVType(EnumWithChoices):
     HYBRID = 'HYBRID'
     UNKNOWN = 'UNKNOWN'
     # [TODO] add more EV types
+
+
+class DayType(EnumWithChoices):
+    """Day type"""
+    WEEKDAY = 'weekday'
+    WEEKEND = 'weekend'
