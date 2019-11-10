@@ -124,6 +124,7 @@ function Navigator(props) {
                     </ListItemText>
                 </ListItem>
 
+
                 {categories.map(({ id, children }) => (
                     <React.Fragment key={id}>
                         <ListItem className={classes.categoryHeader}>
