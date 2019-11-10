@@ -52,3 +52,4 @@ class DayType(EnumWithChoices):
     """Day type"""
     WEEKDAY = 'weekday'
     WEEKEND = 'weekend'
+    PEAK = 'peak'
