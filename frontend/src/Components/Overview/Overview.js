@@ -10,7 +10,7 @@ class Overview extends Component {
                 <Base
                     content={
                         <Content
-                            text={"OveviewMap"}
+                            text={"Overview Map"}
                             compo={ <OverviewMap /> }
                         />
                     }
