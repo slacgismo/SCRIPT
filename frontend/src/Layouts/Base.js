@@ -169,6 +169,9 @@ function Base(props) {
         setMobileOpen(!mobileOpen);
     };
 
+    const isTextContent = (props.hasOwnProperty('isTextContent') &&
+        props.isTextContent);
+
     return (
         <ThemeProvider theme={theme}>
             <div className={classes.root}>
@@ -188,9 +191,26 @@ function Base(props) {
                 </nav>
                 <div className={classes.app}>
                     <Header onDrawerToggle={handleDrawerToggle} />
-                    <main className={classes.main}>
-                        {props.content}
-                    </main>
+
+                    {
+                        isTextContent ? 
+                        (
+                            <main
+                                className={classes.main}
+                                style={{ padding: "3rem 10%" }}
+                                dangerouslySetInnerHTML={{__html: props.content}}>
+                            </main>
+                        ) :
+                        (
+                          <main
+                              className={classes.main}
+                          >
+                              { props.content }
+                          </main>
+                        )
+                    }
+
+                    
                     <footer className={classes.footer}>
                         <Copyright />
                     </footer>
