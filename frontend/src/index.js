@@ -5,6 +5,7 @@ import Overview from "./Components/Overview/Overview";
 import OverviewMap from "./Components/OverviewMap/OverviewMap";
 import ResultChart from "./Components/ResultChart/ResultChart";
 import Upload from "./Components/Upload/Upload";
+import Download from "./Components/Download/Download";
 import Algorithm1 from "./Components/Algorithms/Algorithm1";
 import Algorithm2 from "./Components/Algorithms/Algorithm2";
 import Algorithm3 from "./Components/Algorithms/Algorithm3";
@@ -16,7 +17,7 @@ import * as serviceWorker from "./serviceWorker";
 render((
     <Router>
         <Route exact path="/" component={ Overview } />
-        <Route exact path="/Upload" component={ Upload } />
+        <Route exact path="/Upload" component={ Download } />
         <Route exact path="/Algorithm1" component={ Algorithm1 } />
         <Route exact path="/Algorithm2" component={ Algorithm2 } />
         <Route exact path="/Algorithm3" component={ Algorithm3 } />
