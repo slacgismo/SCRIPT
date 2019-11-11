@@ -24,13 +24,15 @@ class OverviewMap extends React.PureComponent {
       current: {
         countyName: null,
         totalEnergy: null,
+        totalSession: null,
       },
       isTooltipVisible: false,
       tooltipY: 0,
       tooltipX: 0,
+      overviewParam: 'totalEnergy',
     };
 
-    addCountyColorByAttr(counties, 'totalEnergy');
+    addCountyColorByAttr(counties, this.state.overviewParam);
 
     this.StyledMap = getStyledMapWrapperByCountyColors(
       counties,
@@ -68,7 +70,7 @@ class OverviewMap extends React.PureComponent {
         <Tooltip style={tooltipStyle}>
           <b>County:</b> { current.countyName }
           <br />
-          <b>Total Energy:</b> { current.totalEnergy }
+          <b>Value:</b> { current[this.state.overviewParam] }
         </Tooltip>
       </this.StyledMap>
     )
@@ -77,7 +79,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOver = e => {
     this.setState({ current: {
       countyName: e.target.attributes.name.value,
-      totalEnergy: (counties[e.target.attributes.id.value].totalEnergy * 1000).toFixed(1),
+      [this.state.overviewParam]: (counties[e.target.attributes.id.value][this.state.overviewParam] * 1000).toFixed(1),
     } });
   }
 
@@ -92,7 +94,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOut = () => {
     this.setState({ current: {
       countyName: null,
-      totalEnergy: null,
+      [this.state.overviewParam]: null,
     }, isTooltipVisible: false });
   }
 }
