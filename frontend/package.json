@@ -17,6 +17,7 @@
     "react-router": "^5.1.0",
     "react-router-dom": "^5.1.0",
     "react-scripts": "^3.0.1",
+    "react-swipeable-views": "^0.13.3",
     "react-vis": "^1.11.7",
     "recompose": "^0.30.0",
     "styled-components": "^4.4.0",
