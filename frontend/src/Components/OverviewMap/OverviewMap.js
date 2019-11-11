@@ -2,14 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import VectorMap from '@south-paw/react-vector-maps';
-import caMapData from '@south-paw/react-vector-maps/maps/json/usa-ca.json'
-import svgPanZoom from 'svg-pan-zoom'
+import caMapData from '@south-paw/react-vector-maps/maps/json/usa-ca.json';
+import svgPanZoom from 'svg-pan-zoom';
+import OverviewMapTabs from './OverviewMapTabs';
+import Button from '@material-ui/core/Button';
 
 import {
   Wrapper,
   Output,
   MapWrapper,
   Tooltip,
+  ParamTab,
   getStyledMapWrapperByCountyColors,
   addCountyColorByAttr,
 } from './overviewMapStyled';
@@ -29,19 +32,40 @@ class OverviewMap extends React.PureComponent {
       isTooltipVisible: false,
       tooltipY: 0,
       tooltipX: 0,
-      overviewParam: 'totalEnergy',
+      gotPan: false,
+      styledMap: null,
     };
 
-    addCountyColorByAttr(counties, this.state.overviewParam);
+    // addCountyColorByAttr(counties, this.props.overviewParam);
 
-    this.StyledMap = getStyledMapWrapperByCountyColors(
-      counties,
-    );
+    // this.styledMap = getStyledMapWrapperByCountyColors(
+    //   counties,
+    // )
     this.Viewer = null
+
+    this.updateMap = this.updateMap.bind(this);
+  }
+
+  updateMap(newAttr) {
+    addCountyColorByAttr(counties, newAttr);
+    this.setState({
+      styledMap: getStyledMapWrapperByCountyColors(counties)
+    });
   }
 
   componentDidMount() {
-    const panZoomTiger = svgPanZoom('#usa-ca');
+    this.updateMap("totalEnergy");
+  }
+
+  componentDidUpdate() {
+    if (!this.state.gotPan) {
+      const panZoomTiger = svgPanZoom('#usa-ca');
+      this.setState({
+        gotPan: true,
+      })
+
+      console.log("got pan")
+    }
   }
 
   render () {
@@ -60,26 +84,45 @@ class OverviewMap extends React.PureComponent {
       width: '15rem',
     };
 
-    return (
-      <this.StyledMap>
-        <VectorMap
-          id={"overview-map"}
-          { ...caMapData }
-          layerProps={ layerProps } 
-        />
-        <Tooltip style={tooltipStyle}>
-          <b>County:</b> { current.countyName }
-          <br />
-          <b>Value:</b> { current[this.state.overviewParam] }
-        </Tooltip>
-      </this.StyledMap>
-    )
+    if (this.state.styledMap) {
+      return (
+        <this.state.styledMap>
+          <ParamTab>
+            <Button
+              // className={classes.button}
+              onClick={ () => this.updateMap('totalEnergy') }
+            >
+              Total Energy
+            </Button>
+            <Button
+              // className={classes.button}
+              onClick={ () => this.updateMap('totalSession') }
+            >
+              Total Session
+            </Button>
+          </ParamTab>
+          <VectorMap
+            id={"overview-map"}
+            { ...caMapData }
+            layerProps={ layerProps } 
+          />
+          <Tooltip style={tooltipStyle}>
+            <b>County:</b> { current.countyName }
+            <br />
+            <b>Value:</b> { current[this.props.overviewParam] }
+          </Tooltip>
+        </this.state.styledMap>
+      )
+    } else {
+      return <></>
+    }
+    
   }
 
   onMouseOver = e => {
     this.setState({ current: {
       countyName: e.target.attributes.name.value,
-      [this.state.overviewParam]: (counties[e.target.attributes.id.value][this.state.overviewParam] * 1000).toFixed(1),
+      [this.props.overviewParam]: (counties[e.target.attributes.id.value][this.props.overviewParam] * 1000).toFixed(1),
     } });
   }
 
@@ -94,7 +137,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOut = () => {
     this.setState({ current: {
       countyName: null,
-      [this.state.overviewParam]: null,
+      [this.props.overviewParam]: null,
     }, isTooltipVisible: false });
   }
 }
