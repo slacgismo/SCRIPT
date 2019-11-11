@@ -87,6 +87,11 @@ To connect to the database (you will need to install `postgresql`):
 psql postgresql://script_admin:script_passwd@localhost:5433/scriptdb
 ```
 
+To start the web server using the dockerized postgre:
+```bash
+python manage.py runserver --settings=app.settings.base
+```
+
 ## Running The Project
 
 ### Migrate your models defined in Django
@@ -99,7 +104,7 @@ python manage.py migrate
 ### Start server 
 
 ```bash
-python manage.py runserver --settings=app.settings.base
+./run_server
 ```
 
 Then navigate to localhost:8000 on your browser.
@@ -107,5 +112,5 @@ Then navigate to localhost:8000 on your browser.
 ## Unit Tests for The Project
 
 ```bash
-python manage.py test --settings=app.settings.base
+python manage.py test --settings=app.settings.test
 ```
