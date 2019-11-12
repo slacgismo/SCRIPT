@@ -14,14 +14,14 @@ class Download extends React.Component {
 					let url = window.URL.createObjectURL(blob);
 					let a = document.createElement('a');
 					a.href = url;
-					a.download = 'employees.json'; /* TODO download file name */
+					a.download = 'split_and_upload_files'; /* TODO download file name */
 					a.click();
 				});
 				window.location.href = response.url;
 		});
 	}
 	
-	render() {
+	render() {	
         const instructions = (
 			<div>
 				<h2>Instructions</h2>
@@ -49,19 +49,19 @@ class Download extends React.Component {
 				<br /><br />
             </div>
 		);
-
+		
         return (
             <div>
                 <Base
-                  isTextContent={ true }
-                  content={
-					<div>
-						<h2>Download Script</h2>
-						<button onClick={this.downloadScript}>Download</button>
-						<p/>     
-						{ instructions }
-					</div>
-				}
+                  	isTextContent={ true }
+                  	content={
+						<div>
+							<h2>Download Script</h2>
+							<button onClick={this.downloadScript}>Download</button>
+							<p/>     
+							{ instructions }
+						</div>
+					}
                 />
             </div>
         );
