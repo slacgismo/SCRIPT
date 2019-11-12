@@ -53,15 +53,14 @@ class Download extends React.Component {
         return (
             <div>
                 <Base
-                  isTextContent={ true }
                   content={
-					<div>
-						<h2>Download Script</h2>
-						<button onClick={this.downloadScript}>Download</button>
-						<p/>     
-						{ instructions }
-					</div>
-				}
+          					<div>
+          						<h2>Download Script</h2>
+          						<button onClick={this.downloadScript}>Download</button>
+          						<p/>     
+          						{ instructions }
+          					</div>
+          				}
                 />
             </div>
         );
