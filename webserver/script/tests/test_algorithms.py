@@ -4,8 +4,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from script.models.enums import DayType, POI
 from script.models.data import County
-from script.models.algorithms import LoadController, LoadProfile, GasConsumption
-from script.tests.utils import create_county, create_load_controller, create_load_profile, create_gas_consumption
+from script.models.algorithms import LoadController, LoadProfile, GasConsumption, CostBenefit
+from script.tests.utils import create_county, create_load_controller, create_load_profile, create_gas_consumption, create_cost_benefit
 
 import json
 import copy
@@ -148,9 +148,8 @@ class LoadProfileTests(APITestCase):
         self.assertEqual(json.loads(obj.loads), self.loads)
 
 
-
 class GasConsumptionTests(APITestCase):
-    year = 2020
+    year = 2014
     consumption = {
         'Gasoline_Consumption_gallons': 545619941.6,
         'Gasoline_Consumption_MMBTU': 65734108089476.5,
@@ -178,3 +177,44 @@ class GasConsumptionTests(APITestCase):
         obj = GasConsumption.objects.get()
         self.assertEqual(obj.year, self.year)
         self.assertEqual(json.loads(obj.consumption), self.consumption)
+
+
+class CostBenefitTests(APITestCase):
+    year = 2014
+    cost_benefit = {
+        'Utility_Bills': 1643285.189,
+        'Utility_Bills_res': 1574878.503,
+        'Utility_Bills_work': 27523.12322,
+        'Utility_Bills_pub_L2': 40883.56269,
+        'Utility_Bills_DCFC': 0,
+        'Incremental_upfront_vehicle_cost': 15713196.73,
+        'Charging_infrastructure_cost':	4573543.239,
+        'Charging_infrastructure_cost_res':	2920300,
+        'Charging_infrastructure_cost_work_L2':	632882.3529,
+        'Charging_infrastructure_cost_public_L2': 430360,
+        'Charging_infrastructure_cost_DCFC': 590000.8865,
+        'Avoided_vehicle_gasoline ($)':	4604521.161,
+        'Avoided_vehicle_gasoline (gallons)': 2029634.905,
+        'Vehicle_O&M_Savings': 307236,
+        'Federal_EV_Tax_Credit': 10166700,
+        'Vehicle_sales': 1537,
+        'Transmission_and_Distribution_Cost': 127854.8147,
+        'Distribution_Cost': 87146.31329,
+        'Transmission_Cost': 40708.50144,
+        'Cumulative_personal_light-duty_EV_population':	6878,
+        'Cumulative_personal_light-duty_LDV_population': 1293819,
+        'EV_sales_as_percentage_of_total_personal_light-duty_vehicles':	0.001187956,
+        'Peak_Demand_5-9_PM': 6.913490911,
+        'Energy_Supply_Cost': 687051.7026,
+        'Energy_Cost': 531222.3664,
+        'Capacity_Cost': 155829.3361
+    }
+
+    def test_create_gas_consumption(self):
+        """Ensure we can create a new cost benefit object."""
+        response = create_cost_benefit(self.year, json.dumps(self.cost_benefit))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(CostBenefit.objects.count(), 1)
+        obj = CostBenefit.objects.get()
+        self.assertEqual(obj.year, self.year)
+        self.assertEqual(json.loads(obj.cost_benefit), self.cost_benefit)
