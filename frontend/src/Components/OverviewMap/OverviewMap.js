@@ -74,16 +74,16 @@ class OverviewMap extends React.PureComponent {
   }
 
   componentDidUpdate() {
-    if (!this.state.gotPan) {
+    // if (!this.state.gotPan) {
       const panZoomMap = svgPanZoom('#usa-ca');
-      panZoomMap.fit();
+      // panZoomMap.fit();
 
       // document.getElementById('usa-ca').querySelector('rect').setAttribute('width', 200)
       
-      this.setState({
-        gotPan: true,
-      })
-    }
+      // this.setState({
+        // gotPan: true,
+      // })
+    // }
   }
 
   render () {
@@ -110,8 +110,6 @@ class OverviewMap extends React.PureComponent {
           { this.state.allOverviewParams[param].text }
       </Button>
     ))
-
-    console.log(paramButtons)
 
     if (this.state.styledMap) {
       return (
