@@ -369,4 +369,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+mosek.lic
+script.pem.txt
+
 # End of https://www.gitignore.io/api/macos,django,python,windows,pycharm,sublimetext,visualstudiocode

@@ -46,7 +46,6 @@ class ResultChart extends React.Component {
                     <YAxis
                         title={ this.props.yAxis }
                         position="end"
-                        tickSize="10"
                     />
                 </XYPlot>
             </div>

@@ -52,7 +52,7 @@ class Algorithm1 extends Component {
         ];
 
         this.setState({
-            results: resultsFake,
+            results: results,
         });
 
         console.log(this.state.results)
