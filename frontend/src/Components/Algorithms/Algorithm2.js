@@ -34,7 +34,7 @@ class Algorithm2 extends Component {
                                 }
                             /> 
                             <br/>
-                			<Content text={"Results"}/> 
+                			      <Content text={"Results"}/> 
                         </div>
                     }/>
             </div>

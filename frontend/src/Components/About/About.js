@@ -6,10 +6,18 @@ class About extends Component {
 
     render() {
         const aboutText = `
-            <h2>Fund</h2>
+            <h2>Acknowledgment</h2>
             
-            The development of this app was done funded by the California Energy Commission (CEC) under grant number XXXX. To view other tools and software developed by the Grid Integration Systems and Mobility (GISMo) group within SLAC National Accelerator Laboratory visit https://gismo.slac.stanford.edu/
+            The development of this app was funded by the California Energy Commission under grant number EPC-16-057.
+
+            <br /><br />
+
+            To view other tools and software developed by the Grid Integration Systems and Mobility (GISMo) group within SLAC National Accelerator Laboratory visit https://gismo.slac.stanford.edu/
             
+            <br /><br />
+
+            SLAC National Accelerator Laboratory is operated for the US Department of Energy by Stanford University under Contract DE-AC02-76SF00515.
+
             <h2>Disclaimer</h2>
 
             These data sets and tool ("Tool") are provided by the SLAC National Accelerator Laboratory ("SLAC"), which is operated by Stanford University for the U.S. Department of Energy (the "DOE").

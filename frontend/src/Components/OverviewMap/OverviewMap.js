@@ -12,7 +12,7 @@ import {
   Output,
   MapWrapper,
   Tooltip,
-  ParamTab,
+  ParamTabs,
   getStyledMapWrapperByCountyColors,
   addCountyColorByAttr,
 } from './overviewMapStyled';
@@ -24,6 +24,15 @@ class OverviewMap extends React.PureComponent {
     super(props);
 
     this.state = {
+      allOverviewParams: {
+        totalEnergy: {
+          text: 'Total Energy',
+        },
+        totalSession: {
+          text: 'Total # of Session',
+        },
+      },
+      chosenParam: "totalEnergy",
       current: {
         countyName: null,
         totalEnergy: null,
@@ -46,6 +55,13 @@ class OverviewMap extends React.PureComponent {
     this.updateMap = this.updateMap.bind(this);
   }
 
+  changeOverviewAttr(newAttr) {
+      this.setState({
+          chosenParam: newAttr,
+      })
+      this.updateMap(newAttr)
+  }
+
   updateMap(newAttr) {
     addCountyColorByAttr(counties, newAttr);
     this.setState({
@@ -59,12 +75,14 @@ class OverviewMap extends React.PureComponent {
 
   componentDidUpdate() {
     if (!this.state.gotPan) {
-      const panZoomTiger = svgPanZoom('#usa-ca');
+      const panZoomMap = svgPanZoom('#usa-ca');
+      panZoomMap.fit();
+
+      // document.getElementById('usa-ca').querySelector('rect').setAttribute('width', 200)
+      
       this.setState({
         gotPan: true,
       })
-
-      console.log("got pan")
     }
   }
 
@@ -84,23 +102,24 @@ class OverviewMap extends React.PureComponent {
       width: '15rem',
     };
 
+    const paramButtons = Object.keys(this.state.allOverviewParams).map(param => (
+      <Button
+        className={ this.state.chosenParam == param ? "chosen" : "" }
+        onClick={ () => this.changeOverviewAttr(param) }
+      >
+          { this.state.allOverviewParams[param].text }
+      </Button>
+    ))
+
+    console.log(paramButtons)
+
     if (this.state.styledMap) {
       return (
         <this.state.styledMap>
-          <ParamTab>
-            <Button
-              // className={classes.button}
-              onClick={ () => this.updateMap('totalEnergy') }
-            >
-              Total Energy
-            </Button>
-            <Button
-              // className={classes.button}
-              onClick={ () => this.updateMap('totalSession') }
-            >
-              Total Session
-            </Button>
-          </ParamTab>
+          <ParamTabs>
+            <h2>Overview Map</h2>
+            { paramButtons }
+          </ParamTabs>
           <VectorMap
             id={"overview-map"}
             { ...caMapData }
@@ -109,7 +128,7 @@ class OverviewMap extends React.PureComponent {
           <Tooltip style={tooltipStyle}>
             <b>County:</b> { current.countyName }
             <br />
-            <b>Value:</b> { current[this.props.overviewParam] }
+            <b>{ this.state.allOverviewParams[this.state.chosenParam].text }:</b> { current[this.state.chosenParam] }
           </Tooltip>
         </this.state.styledMap>
       )
@@ -122,7 +141,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOver = e => {
     this.setState({ current: {
       countyName: e.target.attributes.name.value,
-      [this.props.overviewParam]: (counties[e.target.attributes.id.value][this.props.overviewParam] * 1000).toFixed(1),
+      [this.state.chosenParam]: (counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
     } });
   }
 
@@ -137,7 +156,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOut = () => {
     this.setState({ current: {
       countyName: null,
-      [this.props.overviewParam]: null,
+      [this.state.chosenParam]: null,
     }, isTooltipVisible: false });
   }
 }

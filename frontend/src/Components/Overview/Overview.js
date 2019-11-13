@@ -10,12 +10,13 @@ class Overview extends Component {
             <div >
                 <Base
                     content={
-                        <Content
-                            text={"Overview Map"}
-                            compo={
-                                <OverviewMap overviewParam={"totalEnergy"}/>
-                            }
-                        />
+                        <OverviewMap />
+                        // <Content
+                        //     text={"Overview Map"}
+                        //     compo={
+                        //         <OverviewMap overviewParam={"totalEnergy"}/>
+                        //     }
+                        // />
                     }
                 />
             </div>

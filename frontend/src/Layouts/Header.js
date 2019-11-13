@@ -34,10 +34,15 @@ function Header(props) {
     return (
         <React.Fragment>
             <Paper >
-                <AppBar position="sticky" elevation={0} color="primary">
+                <AppBar
+                    position="sticky"
+                    elevation={3}
+                    color="primary"
+                    style={{ padding: "2rem 1rem 0.5rem 1rem" }}
+                >
                     <Toolbar>
-                        <Typography variant="h6" >
-            			Smart Charging Infrastructure Planning Tool
+                        <Typography variant="h5" >
+            			          Smart Charging Infrastructure Planning Tool
                         </Typography>
                     </Toolbar>
                 </AppBar>

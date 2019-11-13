@@ -36,15 +36,6 @@ class EnergyViewSet(viewsets.ModelViewSet):
     filter_fields = ('county', 'year', 'month') # using django-filter
 
 
-<<<<<<< HEAD
-class ForecastViewSet(viewsets.ModelViewSet):
-    queryset = Forecast.objects.all()
-    permission_classes = [
-        permissions.AllowAny,
-    ]
-    serializer_class = ForecastSerializer
-    filter_fields = ('county',) # using django-filter
-=======
 class LoadControllerViewSet(viewsets.ModelViewSet):
     queryset = LoadController.objects.all()
     permission_classes = [
@@ -68,4 +59,3 @@ class AggregateLoadProfileViewSet(viewsets.ModelViewSet):
     serializer_class = AggregateLoadProfileSerializer
     filter_fields = ('year',
                     'day_type') # using django-filter
->>>>>>> ecaf78db8f2baf8acd6f9046dd9cd75e7d80525a
