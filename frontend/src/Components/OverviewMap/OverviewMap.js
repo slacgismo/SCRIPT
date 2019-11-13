@@ -75,7 +75,11 @@ class OverviewMap extends React.PureComponent {
 
   componentDidUpdate() {
     if (!this.state.gotPan) {
-      const panZoomTiger = svgPanZoom('#usa-ca');
+      const panZoomMap = svgPanZoom('#usa-ca');
+      panZoomMap.fit();
+
+      // document.getElementById('usa-ca').querySelector('rect').setAttribute('width', 200)
+      
       this.setState({
         gotPan: true,
       })

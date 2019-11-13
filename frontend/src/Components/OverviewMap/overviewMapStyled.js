@@ -54,7 +54,7 @@ export const Tooltip = styled.div`
 
 export const ParamTabs = styled.div`
   position: absolute;
-  left: 0.5rem;
+  left: 2rem;
   top: 0.5rem;
   h2 {
     position: relative;
@@ -89,7 +89,7 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
       svg {
         background-color: #bdbdbd;
         margin: 0;
-        padding: 0;
+        padding: 2rem;
         width: 100%;
         height: 85vh;
         viewBox: "500px 500px 500px 500px";
