@@ -188,3 +188,26 @@ class NetPresentValue(models.Model):
     class Meta:
         db_table = 'script_algorithm_cba_net_present_value'
         unique_together = (('year',),)
+
+
+class Emission(models.Model):
+    """Algorithm: Cost Benefit Analysis of Emissions including
+            CO2 emissions
+            NOX emissions
+            PM 10 emissions
+            SO2 emissions
+            VOC emissions
+        inputs:
+            TODO
+        outputs:
+            (1) Emissions of the given year
+        visualizations:
+            TODO @Yanqing @Xinyi
+    """
+
+    year = models.IntegerField()
+    emissions = JSONField()
+
+    class Meta:
+        db_table = 'script_algorithm_cba_net_emission'
+        unique_together = (('year',),)
