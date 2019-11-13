@@ -8,15 +8,8 @@ class Algorithm1 extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            status: "pending", // "pending" / "running" / "finished"
             results: [],
         };
-    }
-
-    changeStatus(newStatus) {
-        this.setState({
-            status: newStatus,
-        });
     }
 
     visualizeResults(results) {
@@ -60,7 +53,6 @@ class Algorithm1 extends Component {
 
         this.setState({
             results: resultsFake,
-            status: "finished",
         });
 
         console.log(this.state.results)
@@ -82,7 +74,7 @@ class Algorithm1 extends Component {
                             /> 
                             <br/>
                             {
-                                this.state.status === "finished" &&
+                                this.state.results.length > 0 &&
                 			          <Content
                                     text={"Results"}
                                     compo={
