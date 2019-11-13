@@ -52,12 +52,19 @@ export const Tooltip = styled.div`
   border: 0.2rem solid #ccc;
 `;
 
-export const ParamTab = styled.div`
+export const ParamTabs = styled.div`
   position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-`
+  left: 0.5rem;
+  top: 0.5rem;
+  button {
+    display: block;
+    font-size: 1rem;
+    color: #ededed;
+  }
+  button.chosen {
+    font-weight: bold;
+  }
+`;
 
 export const getStyledMapWrapperByCountyColors = (countyColors) => {
     let countyColorsCSS = "";
@@ -74,6 +81,7 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
       padding: 0;
 
       svg {
+        background-color: #8f8f8f;
         margin: 0;
         padding: 0;
         border: ${BORDER_STYLE};

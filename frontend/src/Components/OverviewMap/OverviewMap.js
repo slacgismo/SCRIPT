@@ -12,7 +12,7 @@ import {
   Output,
   MapWrapper,
   Tooltip,
-  ParamTab,
+  ParamTabs,
   getStyledMapWrapperByCountyColors,
   addCountyColorByAttr,
 } from './overviewMapStyled';
@@ -24,6 +24,15 @@ class OverviewMap extends React.PureComponent {
     super(props);
 
     this.state = {
+      allOverviewParams: {
+        totalEnergy: {
+          text: 'Total Energy',
+        },
+        totalSession: {
+          text: 'Total # of Session',
+        },
+      },
+      chosenParam: "totalEnergy",
       current: {
         countyName: null,
         totalEnergy: null,
@@ -44,6 +53,13 @@ class OverviewMap extends React.PureComponent {
     this.Viewer = null
 
     this.updateMap = this.updateMap.bind(this);
+  }
+
+  changeOverviewAttr(newAttr) {
+      this.setState({
+          chosenParam: newAttr,
+      })
+      this.updateMap(newAttr)
   }
 
   updateMap(newAttr) {
@@ -84,23 +100,23 @@ class OverviewMap extends React.PureComponent {
       width: '15rem',
     };
 
+    const paramButtons = Object.keys(this.state.allOverviewParams).map(param => (
+      <Button
+        className={ this.state.chosenParam == param ? "chosen" : "" }
+        onClick={ () => this.changeOverviewAttr(param) }
+      >
+          { this.state.allOverviewParams[param].text }
+      </Button>
+    ))
+
+    console.log(paramButtons)
+
     if (this.state.styledMap) {
       return (
         <this.state.styledMap>
-          <ParamTab>
-            <Button
-              // className={classes.button}
-              onClick={ () => this.updateMap('totalEnergy') }
-            >
-              Total Energy
-            </Button>
-            <Button
-              // className={classes.button}
-              onClick={ () => this.updateMap('totalSession') }
-            >
-              Total Session
-            </Button>
-          </ParamTab>
+          <ParamTabs>
+            { paramButtons }
+          </ParamTabs>
           <VectorMap
             id={"overview-map"}
             { ...caMapData }
