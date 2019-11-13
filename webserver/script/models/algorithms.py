@@ -92,7 +92,7 @@ class GasConsumption(models.Model):
         inputs:
             TODO
         outputs:
-            (1) gasoline consumption/emissions as well as EV share in the next several decades
+            (1) gasoline consumption/emissions as well as EV share of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
@@ -136,7 +136,7 @@ class CostBenefit(models.Model):
         inputs:
             TODO
         outputs:
-            (1) cost/benefit in the next several decades
+            (1) cost/benefit of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
@@ -146,4 +146,45 @@ class CostBenefit(models.Model):
 
     class Meta:
         db_table = 'script_algorithm_cba_cost_benefit'
+        unique_together = (('year',),)
+
+
+class NetPresentValue(models.Model):
+    """Algorithm: Cost Benefit Analysis of Net Present Value including
+            Utility Bills
+            Utility Bills (volumetric)
+            Utility Bills (demand)
+            Utility Bills (res)
+            Utility Bills (work)
+            Utility Bills (pub L2)
+            Utility Bills (DCFC)
+            Incremental upfront vehicle cost
+            Charging infrastructure cost
+            Charging infrastructure cost (res)
+            Charging infrastructure cost (work L2)
+            Charging infrastructure cost (public L2)
+            Charging infrastructure cost (DCFC)
+            Avoided vehicle gasoline
+            Vehicle O&M Savings
+            Federal EV Tax Credit
+            Energy Supply Cost
+            Energy Cost
+            Generation Capacity Cost
+            Vehicle Sales (NPV)
+            Transmission and Distribution Cost
+            Distribution Cost
+            Transmission Cost
+        inputs:
+            TODO
+        outputs:
+            (1) NPV of the given year
+        visualizations:
+            TODO @Yanqing @Xinyi
+    """
+
+    year = models.IntegerField()
+    npv = JSONField()
+
+    class Meta:
+        db_table = 'script_algorithm_cba_net_present_value'
         unique_together = (('year',),)
