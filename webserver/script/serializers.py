@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
-from script.models.algorithms import LoadController, AggregateLoadProfile
+from script.models.algorithms import LoadController, LoadProfile
 
 import datetime
 
@@ -28,7 +28,7 @@ class LoadControllerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AggregateLoadProfileSerializer(serializers.ModelSerializer):
+class LoadProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AggregateLoadProfile
+        model = LoadProfile
         fields = '__all__'

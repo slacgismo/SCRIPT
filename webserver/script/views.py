@@ -6,8 +6,8 @@ from rest_framework.decorators import detail_route
 from django.http import HttpResponse, JsonResponse
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
-from script.models.algorithms import LoadController, AggregateLoadProfile
-from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer, LoadControllerSerializer, AggregateLoadProfileSerializer
+from script.models.algorithms import LoadController, LoadProfile
+from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer, LoadControllerSerializer, LoadProfileSerializer
 
 
 class CountyViewSet(viewsets.ModelViewSet):
@@ -51,11 +51,12 @@ class LoadControllerViewSet(viewsets.ModelViewSet):
                     'rate_demand_overall') # using django-filter
 
 
-class AggregateLoadProfileViewSet(viewsets.ModelViewSet):
-    queryset = AggregateLoadProfile.objects.all()
+class LoadProfileViewSet(viewsets.ModelViewSet):
+    queryset = LoadProfile.objects.all()
     permission_classes = [
         permissions.AllowAny,
     ]
-    serializer_class = AggregateLoadProfileSerializer
-    filter_fields = ('year',
+    serializer_class = LoadProfileSerializer
+    filter_fields = ('poi',
+                    'year',
                     'day_type') # using django-filter
