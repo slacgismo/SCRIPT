@@ -1,0 +1,1 @@
+{"DB_HOST": "script-postgresql-db.cfnv951vt1nj.us-east-1.rds.amazonaws.com", "CLEANED_DATA_BUCKET_NAME": "script.test.lambda.clean", "POSTGRES_USER": "script_admin", "POSTGRES_PASSWORD": "script_passwd", "POSTGRES_DB": "scriptdb"}
