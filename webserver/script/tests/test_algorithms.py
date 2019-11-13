@@ -2,10 +2,10 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
-from script.models.enums import DayType
+from script.models.enums import DayType, POI
 from script.models.data import County
-from script.models.algorithms import LoadController, AggregateLoadProfile
-from script.tests.utils import create_county, create_load_controller, create_aggregate_load_profile
+from script.models.algorithms import LoadController, LoadProfile
+from script.tests.utils import create_county, create_load_controller, create_load_profile
 
 import json
 import copy
@@ -127,18 +127,22 @@ class LoadControllerTests(APITestCase):
         self.assertEqual(json.loads(obj['controlled_load']), new_controlled_load)
 
 
-class AggregateLoadProfileTests(APITestCase):
+class LoadProfileTests(APITestCase):
+    poi = POI.WORKPLACE
     year = 2020
     day_type = DayType.WEEKEND
     loads = [i * 2 % 24 + 1 for i in range(24)]
 
-    def test_create_aggregate_load_profile(self):
-        """Ensure we can create a new aggregate load profile object."""
-        response = create_aggregate_load_profile(self.year,
-                                                self.day_type,
-                                                json.dumps(self.loads))
+    def test_create_load_profile(self):
+        """Ensure we can create a new load profile object."""
+        response = create_load_profile(self.poi,
+                                        self.year,
+                                        self.day_type,
+                                        json.dumps(self.loads))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(AggregateLoadProfile.objects.count(), 1)
-        obj = AggregateLoadProfile.objects.get()
+        self.assertEqual(LoadProfile.objects.count(), 1)
+        obj = LoadProfile.objects.get()
+        self.assertEqual(obj.poi, self.poi.name)
         self.assertEqual(obj.year, self.year)
+        self.assertEqual(obj.day_type, self.day_type.name)
         self.assertEqual(json.loads(obj.loads), self.loads)

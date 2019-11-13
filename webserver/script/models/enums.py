@@ -8,7 +8,11 @@ class EnumWithChoices(Enum):
 
 class POI(EnumWithChoices):
     """Place of interest"""
-    WP = 'Workplace'
+    ALL = 'All'
+    WORKPLACE = 'Workplace'
+    DCFC = 'DC Fast Charger'
+    RESIDENTIAL = 'Residential'
+    PUBLIC_L2 = 'Public L2'
     UNKNOWN = 'Unknown'
     # [TODO] add more POIs
 
@@ -53,3 +57,4 @@ class DayType(EnumWithChoices):
     WEEKDAY = 'weekday'
     WEEKEND = 'weekend'
     PEAK = 'peak'
+

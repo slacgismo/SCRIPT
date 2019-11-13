@@ -54,10 +54,11 @@ def create_load_controller(county_name,
     return response
 
 
-def create_aggregate_load_profile(year, day_type, loads):
+def create_load_profile(poi, year, day_type, loads):
     client = APIClient()
-    url = reverse('algorithm/cost_benefit_analysis/aggregate_load-list')
+    url = reverse('algorithm/cost_benefit_analysis/load_profile-list')
     data = {
+        'poi': poi.name,
         'year': year,
         'day_type': day_type.name,
         'loads': loads
