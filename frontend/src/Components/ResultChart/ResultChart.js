@@ -17,25 +17,28 @@ class ResultChart extends React.Component {
     }
 
     render() {
-        const data = [
-            {x: 1, y: 8},
-            {x: 2, y: 10},
-            {x: 3, y: 9},
-            {x: 4, y: 13},
-            {x: 5, y: 15},
-            {x: 6, y: 10},
-            {x: 7, y: 12},
-            {x: 8, y: 10},
-            {x: 9, y: 11},
-            {x: 10, y: 12},
-            {x: 11, y: 9},
-            {x: 12, y: 8},
-        ];
+        // Fake data
+        //
+        // const data = [
+        //     {x: 1, y: 8},
+        //     {x: 2, y: 10},
+        //     {x: 3, y: 9},
+        //     {x: 4, y: 13},
+        //     {x: 5, y: 15},
+        //     {x: 6, y: 10},
+        //     {x: 7, y: 12},
+        //     {x: 8, y: 10},
+        //     {x: 9, y: 11},
+        //     {x: 10, y: 12},
+        //     {x: 11, y: 9},
+        //     {x: 12, y: 8},
+        // ];
+
         return (
             <div className="chart-grid">
                 <XYPlot height={300} width={300}>
                     <HorizontalGridLines />
-                    <LineSeries data={data} />
+                    <LineSeries data={ this.props.result } />
                     <XAxis
                         title="Time"
                         position="end"

@@ -50,8 +50,8 @@ const counties = [
 
 export default function Scenario1 (props) {
     const runAlgorithm = async () => {
-        // counties = await axios.get("http://127.0.0.1:8000/api/county");
-        props.changeStatus("finished");
+        const respResults = await axios.get("http://127.0.0.1:8000/api/county");
+        props.visualizeResults(respResults.data);
     };
   
     const classes = useStyles();
@@ -80,7 +80,7 @@ export default function Scenario1 (props) {
                 </TextField>
                 <p/>
                 <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
-                Run
+                    Run
                 </Button>
             </form>    
         </div>
