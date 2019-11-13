@@ -103,7 +103,7 @@ function Navigator(props) {
                             primary: classes.itemPrimary,
                         }}
                     >
-                      Overview
+                    Overview
                     </ListItemText>
                 </ListItem>
 
@@ -153,7 +153,7 @@ function Navigator(props) {
                                         primary: classes.itemPrimary,
                                     }}
                                 >
-                                    {childId}
+                                    {childId == "Algorithm1" ? "Load Controll" : "Cost Benefit Analysis"}
                                 </ListItemText>
                             </ListItem>
                         ))}
