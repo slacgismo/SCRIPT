@@ -92,7 +92,7 @@ class GasConsumption(models.Model):
         inputs:
             TODO
         outputs:
-            (1) gasoline consumption/emissions in the next several decades, as well as EV share
+            (1) gasoline consumption/emissions as well as EV share in the next several decades
         visualizations:
             TODO @Yanqing @Xinyi
     """
@@ -102,4 +102,48 @@ class GasConsumption(models.Model):
 
     class Meta:
         db_table = 'script_algorithm_cba_gas_consumption'
+        unique_together = (('year',),)
+
+
+class CostBenefit(models.Model):
+    """Algorithm: Cost Benefit Analysis of Cost/Benefit including
+            Utility Bills
+            Utility Bills (res)
+            Utility Bills (work)
+            Utility Bills (pub L2)
+            Utility Bills (DCFC)
+            Incremental upfront vehicle cost
+            Charging infrastructure cost
+            Charging infrastructure cost (res)
+            Charging infrastructure cost (work L2)
+            Charging infrastructure cost (public L2)
+            Charging infrastructure cost (DCFC)
+            Avoided vehicle gasoline ($)
+            Avoided vehicle gasoline (gallons)
+            Vehicle O&M Savings
+            Federal EV Tax Credit
+            Vehicle sales
+            Transmission and Distribution Cost
+            Distribution Cost
+            Transmission Cost
+            Cumulative personal light-duty EV population
+            Cumulative personal light-duty LDV population
+            EV sales as % of total personal light-duty vehicles
+            Peak Demand 5-9 PM
+            Energy Supply Cost
+            Energy Cost
+            Capacity Cost
+        inputs:
+            TODO
+        outputs:
+            (1) cost/benefit in the next several decades
+        visualizations:
+            TODO @Yanqing @Xinyi
+    """
+
+    year = models.IntegerField()
+    cost_benefit = JSONField()
+
+    class Meta:
+        db_table = 'script_algorithm_cba_cost_benefit'
         unique_together = (('year',),)

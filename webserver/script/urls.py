@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from script.views import CountyViewSet, ZipCodeViewSet, EnergyViewSet, LoadControllerViewSet, LoadProfileViewSet, GasConsumptionViewSet
+from script.views import CountyViewSet, ZipCodeViewSet, EnergyViewSet, LoadControllerViewSet, LoadProfileViewSet, GasConsumptionViewSet, CostBenefitViewSet
 
 # set up a router for RESTful API
 # ref1: https://www.django-rest-framework.org/api-guide/routers/
@@ -22,6 +22,7 @@ router.register('algorithm/load_controller', LoadControllerViewSet, 'algorithm/l
 # Algorithm-2: cost benefit analysis
 router.register('algorithm/cost_benefit_analysis/load_profile', LoadProfileViewSet, 'algorithm/cost_benefit_analysis/load_profile')
 router.register('algorithm/cost_benefit_analysis/gas_consumption', GasConsumptionViewSet, 'algorithm/cost_benefit_analysis/gas_consumption')
+router.register('algorithm/cost_benefit_analysis/cost_benefit', CostBenefitViewSet, 'algorithm/cost_benefit_analysis/cost_benefit')
 
 urlpatterns = [
     path('', include(router.urls)),

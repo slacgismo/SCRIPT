@@ -76,3 +76,14 @@ def create_gas_consumption(year, consumption):
     }
     response = client.post(url, data, format='json')
     return response
+
+
+def create_cost_benefit(year, cost_benefit):
+    client = APIClient()
+    url = reverse('algorithm/cost_benefit_analysis/cost_benefit-list')
+    data = {
+        'year': year,
+        'cost_benefit': cost_benefit
+    }
+    response = client.post(url, data, format='json')
+    return response
