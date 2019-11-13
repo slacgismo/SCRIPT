@@ -3,7 +3,11 @@ import ResultChart from "./ResultChart";
 
 function ResultCharts(props) {
     const resultCharts = props.results.map((result) => (
-        <ResultChart result={ result.data } />
+        <ResultChart
+            yAxis={ result.yAxis }
+            xAxis={ result.xAxis }
+            data={ result.data }
+        />
     ))
     return (
         <>

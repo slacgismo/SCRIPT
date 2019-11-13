@@ -22,7 +22,8 @@ class Algorithm1 extends Component {
     visualizeResults(results) {
         const resultsFake = [
             {
-                title: 'Title',
+                yAxis: 'Total Energy',
+                xAxis: 'Time',
                 data: [
                   {x: 1, y: 8},
                   {x: 2, y: 10},
@@ -38,7 +39,8 @@ class Algorithm1 extends Component {
                   {x: 12, y: 8},
               ],
             }, {
-                title: 'Title',
+                yAxis: 'Total Session',
+                xAxis: 'time',
                 data: [
                   {x: 1, y: 8},
                   {x: 2, y: 10},

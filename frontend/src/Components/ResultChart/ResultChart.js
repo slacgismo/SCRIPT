@@ -38,13 +38,13 @@ class ResultChart extends React.Component {
             <div className="chart-grid">
                 <XYPlot height={300} width={300}>
                     <HorizontalGridLines />
-                    <LineSeries data={ this.props.result } />
+                    <LineSeries data={ this.props.data } />
                     <XAxis
-                        title="Time"
+                        title={ this.props.xAxis }
                         position="end"
                     />
                     <YAxis
-                        title="Energy"
+                        title={ this.props.yAxis }
                         position="end"
                         tickSize="10"
                     />
