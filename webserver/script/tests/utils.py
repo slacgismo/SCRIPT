@@ -98,3 +98,14 @@ def create_net_present_value(year, npv):
     }
     response = client.post(url, data, format='json')
     return response
+
+
+def create_emission(year, emissions):
+    client = APIClient()
+    url = reverse('algorithm/cost_benefit_analysis/emission-list')
+    data = {
+        'year': year,
+        'emissions': emissions
+    }
+    response = client.post(url, data, format='json')
+    return response

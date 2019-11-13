@@ -4,8 +4,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from script.models.enums import DayType, POI
 from script.models.data import County
-from script.models.algorithms import LoadController, LoadProfile, GasConsumption, CostBenefit, NetPresentValue
-from script.tests.utils import create_county, create_load_controller, create_load_profile, create_gas_consumption, create_cost_benefit, create_net_present_value
+from script.models.algorithms import LoadController, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission
+from script.tests.utils import create_county, create_load_controller, create_load_profile, create_gas_consumption, create_cost_benefit, create_net_present_value, create_emission
 
 import json
 import copy
@@ -249,10 +249,30 @@ class NetPresentValueTests(APITestCase):
     }
 
     def test_create_net_present_value(self):
-        """Ensure we can create a new new present value object."""
+        """Ensure we can create a new net present value object."""
         response = create_net_present_value(self.year, json.dumps(self.net_present_value))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(NetPresentValue.objects.count(), 1)
         obj = NetPresentValue.objects.get()
         self.assertEqual(obj.year, self.year)
         self.assertEqual(json.loads(obj.npv), self.net_present_value)
+
+
+class EmissionTests(APITestCase):
+    year = 2014
+    emissions = {
+        'CO2_emissions': 11809.74895,
+        'NOX_emissions': 8.537033476,
+        'PM_10_emissions': 0.41418928,
+        'SO2_emissions': 2.786595841,
+        'VOC_emissions': 0.13171142
+    }
+
+    def test_create_emission(self):
+        """Ensure we can create a new emission object."""
+        response = create_emission(self.year, json.dumps(self.emissions))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Emission.objects.count(), 1)
+        obj = Emission.objects.get()
+        self.assertEqual(obj.year, self.year)
+        self.assertEqual(json.loads(obj.emissions), self.emissions)
