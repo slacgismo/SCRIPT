@@ -16,16 +16,11 @@ router.register('county', CountyViewSet, 'county')
 router.register('zipcode', ZipCodeViewSet, 'zipcode')
 router.register('energy', EnergyViewSet, 'energy')
 
-<<<<<<< HEAD
-router.register('algorithm/forecast', ForecastViewSet, 'algorithm')
-=======
 # Algorithm-1: load controller
 router.register('algorithm/load_controller', LoadControllerViewSet, 'algorithm/load_controller')
 
 # Algorithm-2: cost benefit analysis
 router.register('algorithm/cost_benefit_analysis/aggregate_load', AggregateLoadProfileViewSet, 'algorithm/cost_benefit_analysis/aggregate_load')
-
->>>>>>> ecaf78db8f2baf8acd6f9046dd9cd75e7d80525a
 
 urlpatterns = [
     path('', include(router.urls)),

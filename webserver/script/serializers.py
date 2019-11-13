@@ -32,10 +32,3 @@ class AggregateLoadProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AggregateLoadProfile
         fields = '__all__'
-
-
-class ForecastSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Forecast
-        fields = '__all__'
