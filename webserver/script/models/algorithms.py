@@ -46,7 +46,7 @@ class LoadController(models.Model):
 
 
 class LoadProfile(models.Model):
-    """Algorithm: Cost Benefit Analysis including
+    """Algorithm: Cost Benefit Analysis of Load Profile including
             Aggregate Load Profile,
             DCFC Load Profile, 
             Residential Load Profile,
@@ -69,3 +69,36 @@ class LoadProfile(models.Model):
     class Meta:
         db_table = 'script_algorithm_cba_load_profile'
         unique_together = (('poi', 'year', 'day_type'),)
+
+
+class GasConsumption(models.Model):
+    """Algorithm: Cost Benefit Analysis of Annual Gas Consumption including
+            Gasoline Consumption (gallons)
+            Gasoline Consumption (MMBTU)
+            Gasoline Emissions (metric tons CO2)
+            PHEV 10 Gasoline Consumption (gallons)
+            PHEV 10 Gasoline Consumption (MMBTU)
+            PHEV 10 Gasoline Emissions (metric tons CO2)
+            PHEV 20 Gasoline Consumption (gallons)
+            PHEV 20 Gasoline Consumption (MMBTU)
+            PHEV 20 Gasoline Emissions (metric tons CO2)
+            PHEV 40 Gasoline Consumption (gallons)
+            PHEV 40 Gasoline Consumption (MMBTU)
+            PHEV 40 Gasoline Emissions (metric tons CO2)
+            BEV 100 Gasoline Consumption (gallons)
+            BEV 100 Gasoline Consumption (MMBTU)
+            BEV 100 Gasoline Emissions (metric tons CO2)
+        inputs:
+            TODO
+        outputs:
+            (1) gasoline consumption/emissions in the next several decades
+        visualizations:
+            TODO @Yanqing @Xinyi
+    """
+
+    year = models.IntegerField()
+    consumption = JSONField()
+
+    class Meta:
+        db_table = 'script_algorithm_cba_gas_consumption'
+        unique_together = (('year',),)

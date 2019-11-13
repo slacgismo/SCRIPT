@@ -65,3 +65,14 @@ def create_load_profile(poi, year, day_type, loads):
     }
     response = client.post(url, data, format='json')
     return response
+
+
+def create_gas_consumption(year, consumption):
+    client = APIClient()
+    url = reverse('algorithm/cost_benefit_analysis/gas_consumption-list')
+    data = {
+        'year': year,
+        'consumption': consumption
+    }
+    response = client.post(url, data, format='json')
+    return response
