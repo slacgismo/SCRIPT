@@ -4,8 +4,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from script.models.enums import DayType, POI
 from script.models.data import County
-from script.models.algorithms import LoadController, LoadProfile, GasConsumption, CostBenefit
-from script.tests.utils import create_county, create_load_controller, create_load_profile, create_gas_consumption, create_cost_benefit
+from script.models.algorithms import LoadController, LoadProfile, GasConsumption, CostBenefit, NetPresentValue
+from script.tests.utils import create_county, create_load_controller, create_load_profile, create_gas_consumption, create_cost_benefit, create_net_present_value
 
 import json
 import copy
@@ -218,3 +218,41 @@ class CostBenefitTests(APITestCase):
         obj = CostBenefit.objects.get()
         self.assertEqual(obj.year, self.year)
         self.assertEqual(json.loads(obj.cost_benefit), self.cost_benefit)
+
+
+class NetPresentValueTests(APITestCase):
+    year = 2014
+    net_present_value = {
+        'Utility_Bills': 250514400.4,
+        'Utility_Bills_volumetric':	250059210.3,
+        'Utility_Bills_demand':	455190.0426,
+        'Utility_Bills_res': 240325818.2,
+        'Utility_Bills_work': 4088140.725,
+        'Utility_Bills_pub_L2':	6100441.406,
+        'Utility_Bills_DCFC': 0,
+        'Incremental_upfront_vehicle_cost':	91394525.43,
+        'Charging_infrastructure_cost': 324375153.1,
+        'Charging_infrastructure_cost_res':	207241475.2,
+        'Charging_infrastructure_cost_work_L2':	44902567.99,
+        'Charging_infrastructure_cost_public_L2': 30533746.23,
+        'Charging_infrastructure_cost_DCFC': 41697363.66,
+        'Avoided_vehicle_gasoline':	802838445.2,
+        'Vehicle_O&M_Savings': 207528684.2,
+        'Federal_EV_Tax_Credit': 121338516.8,
+        'Energy_Supply_Cost': 80844635.85,
+        'Energy_Cost': 80844635.85,
+        'Generation_Capacity_Cost':	23490407.75,
+        'Vehicle_Sales': 132772.6619,
+        'Transmission_and_Distribution_Cost': 15056754.47,
+        'Distribution_Cost': 8905317.194,
+        'Transmission_Cost': 6151437.278
+    }
+
+    def test_create_net_present_value(self):
+        """Ensure we can create a new new present value object."""
+        response = create_net_present_value(self.year, json.dumps(self.net_present_value))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(NetPresentValue.objects.count(), 1)
+        obj = NetPresentValue.objects.get()
+        self.assertEqual(obj.year, self.year)
+        self.assertEqual(json.loads(obj.npv), self.net_present_value)

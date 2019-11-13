@@ -87,3 +87,14 @@ def create_cost_benefit(year, cost_benefit):
     }
     response = client.post(url, data, format='json')
     return response
+
+
+def create_net_present_value(year, npv):
+    client = APIClient()
+    url = reverse('algorithm/cost_benefit_analysis/net_present_value-list')
+    data = {
+        'year': year,
+        'npv': npv
+    }
+    response = client.post(url, data, format='json')
+    return response
