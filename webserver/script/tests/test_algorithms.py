@@ -4,8 +4,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from script.models.enums import DayType, POI
 from script.models.data import County
-from script.models.algorithms import LoadController, LoadProfile
-from script.tests.utils import create_county, create_load_controller, create_load_profile
+from script.models.algorithms import LoadController, LoadProfile, GasConsumption
+from script.tests.utils import create_county, create_load_controller, create_load_profile, create_gas_consumption
 
 import json
 import copy
@@ -146,3 +146,34 @@ class LoadProfileTests(APITestCase):
         self.assertEqual(obj.year, self.year)
         self.assertEqual(obj.day_type, self.day_type.name)
         self.assertEqual(json.loads(obj.loads), self.loads)
+
+
+
+class GasConsumptionTests(APITestCase):
+    year = 2020
+    consumption = {
+        'Gasoline_Consumption_gallons': 545619941.6,
+        'Gasoline_Consumption_MMBTU': 65734108089476.5,
+        'Gasoline_Emissions_CO2': 4637769.504,
+        'PHEV_10_Gasoline_Consumption_gallons': 24929.58517,
+        'PHEV_10_Gasoline_Consumption_MMBTU': 3003416703,
+        'PHEV_10_Gasoline_Emissions_CO2': 211.9014739,
+        'PHEV_20_Gasoline_Consumption_gallons': 69108.54055,
+        'PHEV_20_Gasoline_Consumption_MMBTU': 8325920531,
+        'PHEV_20_Gasoline_Emissions_CO2': 587.4225947,
+        'PHEV_40_Gasoline_Consumption_gallons': 95172.95918,
+        'PHEV_40_Gasoline_Consumption_MMBTU': 11466057430,
+        'PHEV_40_Gasoline_Emissions_CO2': 808.970153,
+        'BEV_100_Gasoline_Consumption_gallons': 67142.92642,
+        'BEV_100_Gasoline_Consumption_MMBTU': 8089111204,
+        'BEV_100_Gasoline_Emissions_CO2': 570.7148746
+    }
+
+    def test_create_gas_consumption(self):
+        """Ensure we can create a new gas consumption object."""
+        response = create_gas_consumption(self.year, json.dumps(self.consumption))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(GasConsumption.objects.count(), 1)
+        obj = GasConsumption.objects.get()
+        self.assertEqual(obj.year, self.year)
+        self.assertEqual(json.loads(obj.consumption), self.consumption)

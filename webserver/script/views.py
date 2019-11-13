@@ -6,8 +6,8 @@ from rest_framework.decorators import detail_route
 from django.http import HttpResponse, JsonResponse
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
-from script.models.algorithms import LoadController, LoadProfile
-from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer, LoadControllerSerializer, LoadProfileSerializer
+from script.models.algorithms import LoadController, LoadProfile, GasConsumption
+from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer, LoadControllerSerializer, LoadProfileSerializer, GasConsumptionSerializer
 
 
 class CountyViewSet(viewsets.ModelViewSet):
@@ -60,3 +60,12 @@ class LoadProfileViewSet(viewsets.ModelViewSet):
     filter_fields = ('poi',
                     'year',
                     'day_type') # using django-filter
+
+
+class GasConsumptionViewSet(viewsets.ModelViewSet):
+    queryset = GasConsumption.objects.all()
+    permission_classes = [
+        permissions.AllowAny,
+    ]
+    serializer_class = GasConsumptionSerializer
+    filter_fields = ('year',) # using django-filter
