@@ -79,8 +79,6 @@ class OverviewMap extends React.PureComponent {
       this.setState({
         gotPan: true,
       })
-
-      console.log("got pan")
     }
   }
 
@@ -115,6 +113,7 @@ class OverviewMap extends React.PureComponent {
       return (
         <this.state.styledMap>
           <ParamTabs>
+            <h2>Overview Map</h2>
             { paramButtons }
           </ParamTabs>
           <VectorMap
@@ -125,7 +124,7 @@ class OverviewMap extends React.PureComponent {
           <Tooltip style={tooltipStyle}>
             <b>County:</b> { current.countyName }
             <br />
-            <b>Value:</b> { current[this.props.overviewParam] }
+            <b>{ this.state.allOverviewParams[this.state.chosenParam].text }:</b> { current[this.state.chosenParam] }
           </Tooltip>
         </this.state.styledMap>
       )
@@ -138,7 +137,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOver = e => {
     this.setState({ current: {
       countyName: e.target.attributes.name.value,
-      [this.props.overviewParam]: (counties[e.target.attributes.id.value][this.props.overviewParam] * 1000).toFixed(1),
+      [this.state.chosenParam]: (counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
     } });
   }
 
@@ -153,7 +152,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOut = () => {
     this.setState({ current: {
       countyName: null,
-      [this.props.overviewParam]: null,
+      [this.state.chosenParam]: null,
     }, isTooltipVisible: false });
   }
 }

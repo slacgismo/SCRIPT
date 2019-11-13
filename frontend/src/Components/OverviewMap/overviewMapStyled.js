@@ -56,10 +56,16 @@ export const ParamTabs = styled.div`
   position: absolute;
   left: 0.5rem;
   top: 0.5rem;
+  h2 {
+    position: relative;
+    left: 0.5rem;
+    color: #575757;
+    font-size: 1.7rem;
+  }
   button {
     display: block;
     font-size: 1rem;
-    color: #ededed;
+    color: #575757;
   }
   button.chosen {
     font-weight: bold;
@@ -81,10 +87,9 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
       padding: 0;
 
       svg {
-        background-color: #8f8f8f;
+        background-color: #bdbdbd;
         margin: 0;
         padding: 0;
-        border: ${BORDER_STYLE};
         width: 100%;
         height: 85vh;
         viewBox: "500px 500px 500px 500px";
@@ -134,13 +139,14 @@ export const addCountyColorByAttr = (counties, attrName) => {
 
     const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
     countyNames.forEach((countyName, i) => {
-        counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
+        // counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
+        counties[countyName].color = rgba(5,97,0,attrPercentageOfCounties[i])
     });
 };
 
 const numbers2percentages = (nums) => {
     const maxNum = Math.max(...nums);
-    const minNum = Math.min(...nums);
+    const minNum = Math.min(...nums) - (Math.max(...nums) - Math.min(...nums)) / 5;
     return nums.map(num => (num - minNum) / (maxNum - minNum));
 };
 
