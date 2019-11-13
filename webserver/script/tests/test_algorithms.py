@@ -166,7 +166,8 @@ class GasConsumptionTests(APITestCase):
         'PHEV_40_Gasoline_Emissions_CO2': 808.970153,
         'BEV_100_Gasoline_Consumption_gallons': 67142.92642,
         'BEV_100_Gasoline_Consumption_MMBTU': 8089111204,
-        'BEV_100_Gasoline_Emissions_CO2': 570.7148746
+        'BEV_100_Gasoline_Emissions_CO2': 570.7148746,
+        'EV_Share': 0.001533283
     }
 
     def test_create_gas_consumption(self):
