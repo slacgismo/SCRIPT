@@ -88,10 +88,11 @@ class GasConsumption(models.Model):
             BEV 100 Gasoline Consumption (gallons)
             BEV 100 Gasoline Consumption (MMBTU)
             BEV 100 Gasoline Emissions (metric tons CO2)
+            EEV Share (%)
         inputs:
             TODO
         outputs:
-            (1) gasoline consumption/emissions in the next several decades
+            (1) gasoline consumption/emissions in the next several decades, as well as EV share
         visualizations:
             TODO @Yanqing @Xinyi
     """
