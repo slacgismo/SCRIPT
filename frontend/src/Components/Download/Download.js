@@ -1,5 +1,7 @@
 import React from 'react';
 import Base from "../../Layouts/Base";
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 
 
 class Download extends React.Component {
@@ -56,7 +58,12 @@ class Download extends React.Component {
                   content={
           					<div>
           						<h2>Download Script</h2>
-          						<button onClick={this.downloadScript}>Download</button>
+                      <Button
+                        variant="outlined"
+                        onClick={ this.downloadScript }
+                      >
+                        Download Script
+                      </Button>
           						<p/>     
           						{ instructions }
           					</div>
