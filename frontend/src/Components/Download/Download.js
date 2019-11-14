@@ -10,17 +10,7 @@ class Download extends React.Component {
 	}
 	
 	downloadScript = () => {
-		fetch('http://localhost:8080/employees/download') /* TODO download from which url */
-			.then(response => {
-				response.blob().then(blob => {
-					let url = window.URL.createObjectURL(blob);
-					let a = document.createElement('a');
-					a.href = url;
-					a.download = 'employees.json'; /* TODO download file name */
-					a.click();
-				});
-				window.location.href = response.url;
-		});
+    window.open("http://localhost:8000/static/split_and_upload_files.py")
 	}
 	
 	render() {
