@@ -31,9 +31,9 @@ class Download extends React.Component {
 
 				<h3>Command</h3>
 				<dt>Enter the below command to upload files to S3 bucket</dt>
-				<dd>python3 split_and_upload_files.py &#123; S3 bucket name &#125; &#123; data type &#125; &#123; file type &#125; &#123; filename &#125; </dd>
+				<dd><code>python3 split_and_upload_files.py &#123; S3 bucket name &#125; &#123; data type &#125; &#123; file type &#125; &#123; filename &#125;</code></dd>
 				<dt>For example:</dt>
-				<dd>python3 split_and_upload_files.py script.test.raw commercial session session_test.csv </dd>
+				<dd><code>python3 split_and_upload_files.py script.test.raw commercial session session_test.csv</code></dd>
 				By running the above command, file session_test.csv will be uploaded to S3 bucket script.test.raw under this path session/commercial
 
 				<h3>Note</h3>
