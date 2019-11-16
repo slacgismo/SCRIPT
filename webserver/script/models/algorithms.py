@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from script.models.data import County
-from script.models.enums import DayType, POI
+from script.models.enums import DayType, POI, AggregationLevel
 from script.validators import validate_positive, validate_year
 
 # Create your models of algorithm results here.
@@ -42,7 +42,65 @@ class LoadController(models.Model):
                             'rate_energy_offpeak',
                             'rate_demand_peak',
                             'rate_demand_partpeak',
-                            'rate_demand_overall'),)    
+                            'rate_demand_overall'),)
+
+
+class LoadForecast(models.Model):
+    """Algorithm: EV Load Forecast
+        inputs:
+            (1) aggregation_level
+            (2) num_evs
+            (3) choice, which should base on which kind of aggregation level selected
+            (4) fast_percent
+            (5) work_percent
+            (6) res_percent
+            (7) l1_percent
+            (8) public_l2_percent
+        outputs：
+            (1) Residential L1 load
+            (2) Residential L2 load
+            (3) Residential MUD load
+            (4) Work load
+            (5) Fast load
+            (6) Public L2 load
+            (7) Total load
+        visualizations:
+            (1) Residential L1 (load - time)
+            (2) Residential L2 (load - time)
+            (3) Residential MUD (load - time)
+            (4) Work (load - time)
+            (5) Fast (load - time)
+            (6) Public L2 (load - time)
+            (7) Total (load - time)
+    """
+
+    aggregation_level = models.CharField(max_length=10, choices=AggregationLevel.choices(), default=AggregationLevel.COUNTY)
+    num_evs = models.IntegerField(validators=[validate_positive])
+    # TODO: how validate choice and aggregation together at model level rather than serializer level?
+    choice = models.CharField(max_length=30)
+    fast_percent = models.FloatField()
+    work_percent = models.FloatField()
+    res_percent = models.FloatField()
+    l1_percent = models.FloatField()
+    public_l2_percent = models.FloatField()
+    residential_l1_load = JSONField()
+    residential_l2_load = JSONField()
+    residential_mud_load = JSONField()
+    work_load = JSONField()
+    fast_load = JSONField()
+    public_l2_load = JSONField()
+    total_load = JSONField()
+
+    class Meta:
+        db_table = 'script_algorithm_ev_load_forecast'
+        unique_together = (('aggregation_level',
+                            'num_evs',
+                            'choice',
+                            'fast_percent',
+                            'work_percent',
+                            'res_percent',
+                            'l1_percent',
+                            'public_l2_percent'),)
 
 
 class LoadProfile(models.Model):

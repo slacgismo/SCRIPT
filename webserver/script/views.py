@@ -6,8 +6,8 @@ from rest_framework.decorators import detail_route
 from django.http import HttpResponse, JsonResponse
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
-from script.models.algorithms import LoadController, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission
-from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer, LoadControllerSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
+from script.models.algorithms import LoadController, LoadForecast, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission
+from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer, LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 
 
 class CountyViewSet(viewsets.ModelViewSet):
@@ -49,6 +49,22 @@ class LoadControllerViewSet(viewsets.ModelViewSet):
                     'rate_demand_peak',
                     'rate_demand_partpeak',
                     'rate_demand_overall') # using django-filter
+
+
+class LoadForecastViewSet(viewsets.ModelViewSet):
+    queryset = LoadForecast.objects.all()
+    permission_classes = [
+        permissions.AllowAny,
+    ]
+    serializer_class = LoadForecastSerializer
+    filter_fields = ('aggregation_level',
+                    'num_evs',
+                    'choice',
+                    'fast_percent',
+                    'work_percent',
+                    'res_percent',
+                    'l1_percent',
+                    'public_l2_percent') # using django-filter
 
 
 class LoadProfileViewSet(viewsets.ModelViewSet):
