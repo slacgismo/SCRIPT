@@ -6,6 +6,13 @@ class EnumWithChoices(Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
+class AggregationLevel(EnumWithChoices):
+    """Aggregation level"""
+    STATE = 'state'
+    COUNTY = 'county'
+    ZIP = 'zip'
+
+
 class POI(EnumWithChoices):
     """Place of interest"""
     ALL = 'All'

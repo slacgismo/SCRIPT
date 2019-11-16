@@ -54,6 +54,44 @@ def create_load_controller(county_name,
     return response
 
 
+def create_load_forecast(aggregation_level,
+                        num_evs,
+                        choice,
+                        fast_percent,
+                        work_percent,
+                        res_percent,
+                        l1_percent,
+                        public_l2_percent,
+                        residential_l1_load,
+                        residential_l2_load,
+                        residential_mud_load,
+                        work_load,
+                        fast_load,
+                        public_l2_load,
+                        total_load):
+    client = APIClient()
+    url = reverse('algorithm/load_forecast-list')
+    data = {
+        'aggregation_level': aggregation_level.name,
+        'num_evs': num_evs,
+        'choice': choice,
+        'fast_percent': fast_percent,
+        'work_percent': work_percent,
+        'res_percent': res_percent,
+        'l1_percent': l1_percent,
+        'public_l2_percent': public_l2_percent,
+        'residential_l1_load': residential_l1_load,
+        'residential_l2_load': residential_l2_load,
+        'residential_mud_load': residential_mud_load,
+        'work_load': work_load,
+        'fast_load': fast_load,
+        'public_l2_load': public_l2_load,
+        'total_load': total_load
+    }
+    response = client.post(url, data, format='json')
+    return response
+
+
 def create_load_profile(poi, year, day_type, loads):
     client = APIClient()
     url = reverse('algorithm/cost_benefit_analysis/load_profile-list')
