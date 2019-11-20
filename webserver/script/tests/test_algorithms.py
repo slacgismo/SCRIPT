@@ -4,8 +4,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from script.models.enums import DayType, POI, AggregationLevel
 from script.models.data import County
-from script.models.algorithms import LoadController, LoadForecast, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission
-from script.tests.utils import create_county, create_load_controller, create_load_forecast, create_load_profile, create_gas_consumption, create_cost_benefit, create_net_present_value, create_emission
+from script.models.algorithms import LoadController, LoadForecast, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission, LoadForecastConfig
+from script.tests.utils import create_county, create_load_controller, create_load_forecast, create_load_profile, create_gas_consumption, create_cost_benefit, create_net_present_value, create_emission, create_load_forecast_config
 
 import json
 import copy
@@ -262,6 +262,37 @@ class LoadForecastTests(APITestCase):
         self.assertEqual(json.loads(obj.total_load), self.total_load)
 
 
+class LoadForecastConfigTests(APITestCase):
+    config_name = 'profile-1'
+    aggregation_level = AggregationLevel.COUNTY
+    num_evs = 1000000
+    choice = 'Santa Clara'
+    fast_percent = 0.1
+    work_percent = 0.2
+    res_percent = 0.7
+    l1_percent = 0.5
+    public_l2_percent = 0.0
+
+    def test_create_load_forecast_config(self):
+        """Ensure we can create a new EV load forecast configuration object."""
+        response = create_load_forecast_config(self.config_name,
+                                                self.aggregation_level,
+                                                self.num_evs,
+                                                self.choice,
+                                                self.fast_percent,
+                                                self.work_percent,
+                                                self.res_percent,
+                                                self.l1_percent,
+                                                self.public_l2_percent)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(LoadForecastConfig.objects.count(), 1)
+        obj = LoadForecastConfig.objects.get()
+        self.assertEqual(obj.config_name, self.config_name)
+        self.assertEqual(obj.aggregation_level, self.aggregation_level.name)
+        self.assertEqual(obj.choice, self.choice)
+        self.assertEqual(obj.fast_percent, self.fast_percent)
+
+
 class LoadProfileTests(APITestCase):
     poi = POI.WORKPLACE
     year = 2020
@@ -270,7 +301,18 @@ class LoadProfileTests(APITestCase):
 
     def test_create_load_profile(self):
         """Ensure we can create a new load profile object."""
-        response = create_load_profile(self.poi,
+        _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
+                                        LoadForecastConfigTests.aggregation_level,
+                                        LoadForecastConfigTests.num_evs,
+                                        LoadForecastConfigTests.choice,
+                                        LoadForecastConfigTests.fast_percent,
+                                        LoadForecastConfigTests.work_percent,
+                                        LoadForecastConfigTests.res_percent,
+                                        LoadForecastConfigTests.l1_percent,
+                                        LoadForecastConfigTests.public_l2_percent)
+        config = LoadForecastConfig.objects.get()
+        response = create_load_profile(config,
+                                        self.poi,
                                         self.year,
                                         self.day_type,
                                         json.dumps(self.loads))
@@ -306,7 +348,19 @@ class GasConsumptionTests(APITestCase):
 
     def test_create_gas_consumption(self):
         """Ensure we can create a new gas consumption object."""
-        response = create_gas_consumption(self.year, json.dumps(self.consumption))
+        _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
+                                        LoadForecastConfigTests.aggregation_level,
+                                        LoadForecastConfigTests.num_evs,
+                                        LoadForecastConfigTests.choice,
+                                        LoadForecastConfigTests.fast_percent,
+                                        LoadForecastConfigTests.work_percent,
+                                        LoadForecastConfigTests.res_percent,
+                                        LoadForecastConfigTests.l1_percent,
+                                        LoadForecastConfigTests.public_l2_percent)
+        config = LoadForecastConfig.objects.get()
+        response = create_gas_consumption(config,
+                                        self.year,
+                                        json.dumps(self.consumption))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(GasConsumption.objects.count(), 1)
         obj = GasConsumption.objects.get()
@@ -347,7 +401,19 @@ class CostBenefitTests(APITestCase):
 
     def test_create_gas_consumption(self):
         """Ensure we can create a new cost benefit object."""
-        response = create_cost_benefit(self.year, json.dumps(self.cost_benefit))
+        _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
+                                        LoadForecastConfigTests.aggregation_level,
+                                        LoadForecastConfigTests.num_evs,
+                                        LoadForecastConfigTests.choice,
+                                        LoadForecastConfigTests.fast_percent,
+                                        LoadForecastConfigTests.work_percent,
+                                        LoadForecastConfigTests.res_percent,
+                                        LoadForecastConfigTests.l1_percent,
+                                        LoadForecastConfigTests.public_l2_percent)
+        config = LoadForecastConfig.objects.get()
+        response = create_cost_benefit(config,
+                                        self.year,
+                                        json.dumps(self.cost_benefit))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(CostBenefit.objects.count(), 1)
         obj = CostBenefit.objects.get()
@@ -385,7 +451,19 @@ class NetPresentValueTests(APITestCase):
 
     def test_create_net_present_value(self):
         """Ensure we can create a new net present value object."""
-        response = create_net_present_value(self.year, json.dumps(self.net_present_value))
+        _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
+                                        LoadForecastConfigTests.aggregation_level,
+                                        LoadForecastConfigTests.num_evs,
+                                        LoadForecastConfigTests.choice,
+                                        LoadForecastConfigTests.fast_percent,
+                                        LoadForecastConfigTests.work_percent,
+                                        LoadForecastConfigTests.res_percent,
+                                        LoadForecastConfigTests.l1_percent,
+                                        LoadForecastConfigTests.public_l2_percent)
+        config = LoadForecastConfig.objects.get()
+        response = create_net_present_value(config,
+                                            self.year,
+                                            json.dumps(self.net_present_value))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(NetPresentValue.objects.count(), 1)
         obj = NetPresentValue.objects.get()
@@ -405,7 +483,19 @@ class EmissionTests(APITestCase):
 
     def test_create_emission(self):
         """Ensure we can create a new emission object."""
-        response = create_emission(self.year, json.dumps(self.emissions))
+        _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
+                                        LoadForecastConfigTests.aggregation_level,
+                                        LoadForecastConfigTests.num_evs,
+                                        LoadForecastConfigTests.choice,
+                                        LoadForecastConfigTests.fast_percent,
+                                        LoadForecastConfigTests.work_percent,
+                                        LoadForecastConfigTests.res_percent,
+                                        LoadForecastConfigTests.l1_percent,
+                                        LoadForecastConfigTests.public_l2_percent)
+        config = LoadForecastConfig.objects.get()
+        response = create_emission(config,
+                                    self.year,
+                                    json.dumps(self.emissions))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Emission.objects.count(), 1)
         obj = Emission.objects.get()
