@@ -6,8 +6,8 @@ from rest_framework.decorators import detail_route
 from django.http import HttpResponse, JsonResponse
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
-from script.models.algorithms import LoadController, LoadForecast, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission
-from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer, LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
+from script.models.algorithms import LoadController, LoadForecast, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission, LoadForecastConfig
+from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer, LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer, LoadForecastConfigSerializer
 
 
 class CountyViewSet(viewsets.ModelViewSet):
@@ -67,13 +67,23 @@ class LoadForecastViewSet(viewsets.ModelViewSet):
                     'public_l2_percent') # using django-filter
 
 
+class LoadForecastConfigViewSet(viewsets.ModelViewSet):
+    queryset = LoadForecastConfig.objects.all()
+    permission_classes = [
+        permissions.AllowAny,
+    ]
+    serializer_class = LoadForecastConfigSerializer
+    filter_fields = ('config_name',) # using django-filter
+
+
 class LoadProfileViewSet(viewsets.ModelViewSet):
     queryset = LoadProfile.objects.all()
     permission_classes = [
         permissions.AllowAny,
     ]
     serializer_class = LoadProfileSerializer
-    filter_fields = ('poi',
+    filter_fields = ('config',
+                    'poi',
                     'year',
                     'day_type') # using django-filter
 
@@ -84,7 +94,8 @@ class GasConsumptionViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = GasConsumptionSerializer
-    filter_fields = ('year',) # using django-filter
+    filter_fields = ('config',
+                    'year',) # using django-filter
 
 
 class CostBenefitViewSet(viewsets.ModelViewSet):
@@ -93,7 +104,8 @@ class CostBenefitViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = CostBenefitSerializer
-    filter_fields = ('year',) # using django-filter
+    filter_fields = ('config',
+                    'year',) # using django-filter
 
 
 class NetPresentValueViewSet(viewsets.ModelViewSet):
@@ -102,7 +114,8 @@ class NetPresentValueViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = NetPresentValueSerializer
-    filter_fields = ('year',) # using django-filter
+    filter_fields = ('config',
+                    'year',) # using django-filter
 
 
 class EmissionViewSet(viewsets.ModelViewSet):
@@ -111,4 +124,5 @@ class EmissionViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = EmissionSerializer
-    filter_fields = ('year',) # using django-filter
+    filter_fields = ('config',
+                    'year',) # using django-filter

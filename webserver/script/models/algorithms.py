@@ -103,6 +103,25 @@ class LoadForecast(models.Model):
                             'public_l2_percent'),)
 
 
+class LoadForecastConfig(models.Model):
+    """Configuration for Algorithm: EV Load Forecast"""
+    config_name = models.CharField(max_length=100, blank=False)
+    aggregation_level = models.CharField(max_length=10, choices=AggregationLevel.choices(), default=AggregationLevel.COUNTY)
+    num_evs = models.IntegerField(validators=[validate_positive])
+    # TODO: how validate choice and aggregation together at model level rather than serializer level?
+    choice = models.CharField(max_length=30)
+    fast_percent = models.FloatField()
+    work_percent = models.FloatField()
+    res_percent = models.FloatField()
+    l1_percent = models.FloatField()
+    public_l2_percent = models.FloatField()
+
+    class Meta:
+        db_table = 'script_config_ev_load_forecast'
+        unique_together = (('config_name',),)
+
+
+
 class LoadProfile(models.Model):
     """Algorithm: Cost Benefit Analysis of Load Profile including
             Aggregate Load Profile,
@@ -111,7 +130,7 @@ class LoadProfile(models.Model):
             Public L2 Load Profile,
             Workplace Load Profile.
         inputs:
-            TODO
+            Configuration name of Load Forecast algorithm
         outputs:
             (1) load profile throughout 24 hours of a weekday
             (2) load profile throughout 24 hours of a weekend
@@ -119,6 +138,7 @@ class LoadProfile(models.Model):
             TODO @Yanqing @Xinyi
     """
 
+    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
     poi = models.CharField(max_length=20, choices=POI.choices(), default=POI.UNKNOWN)
     year = models.IntegerField()
     day_type = models.CharField(max_length=10, choices=DayType.choices(), default=DayType.WEEKDAY)
@@ -126,7 +146,7 @@ class LoadProfile(models.Model):
 
     class Meta:
         db_table = 'script_algorithm_cba_load_profile'
-        unique_together = (('poi', 'year', 'day_type'),)
+        unique_together = (('config', 'poi', 'year', 'day_type'),)
 
 
 class GasConsumption(models.Model):
@@ -148,19 +168,20 @@ class GasConsumption(models.Model):
             BEV 100 Gasoline Emissions (metric tons CO2)
             EEV Share (%)
         inputs:
-            TODO
+            Configuration name of Load Forecast algorithm
         outputs:
             (1) gasoline consumption/emissions as well as EV share of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
+    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
     year = models.IntegerField()
     consumption = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_gas_consumption'
-        unique_together = (('year',),)
+        unique_together = (('config', 'year',),)
 
 
 class CostBenefit(models.Model):
@@ -192,19 +213,20 @@ class CostBenefit(models.Model):
             Energy Cost
             Capacity Cost
         inputs:
-            TODO
+            Configuration name of Load Forecast algorithm
         outputs:
             (1) cost/benefit of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
+    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
     year = models.IntegerField()
     cost_benefit = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_cost_benefit'
-        unique_together = (('year',),)
+        unique_together = (('config', 'year',),)
 
 
 class NetPresentValue(models.Model):
@@ -233,19 +255,20 @@ class NetPresentValue(models.Model):
             Distribution Cost
             Transmission Cost
         inputs:
-            TODO
+            Configuration name of Load Forecast algorithm
         outputs:
             (1) NPV of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
+    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
     year = models.IntegerField()
     npv = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_net_present_value'
-        unique_together = (('year',),)
+        unique_together = (('config', 'year',),)
 
 
 class Emission(models.Model):
@@ -256,16 +279,17 @@ class Emission(models.Model):
             SO2 emissions
             VOC emissions
         inputs:
-            TODO
+            Configuration name of Load Forecast algorithm
         outputs:
             (1) Emissions of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
+    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
     year = models.IntegerField()
     emissions = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_net_emission'
-        unique_together = (('year',),)
+        unique_together = (('config', 'year',),)
