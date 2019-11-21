@@ -2,6 +2,8 @@ import os
 import subprocess
 import json
 import paramiko
+from datetime import datetime
+import pytz
 
 VAR_FILE_PATH = './variables.env'
 TF_DIR = './utils/aws/terraform'
@@ -76,7 +78,7 @@ env_var_dict = read_env_variables(VAR_FILE_PATH)
 # TODO @Yuchao: run your script(now you should have both DB_HOST and EC2_IP)
 def run_algorithm():
     DB_HOST = 'script-postgresql-db.cfnv951vt1nj.us-east-1.rds.amazonaws.com'
-    EC2_IP = 'ec2-52-91-245-38.compute-1.amazonaws.com'
+    EC2_IP = 'ec2-3-85-57-223.compute-1.amazonaws.com'
 
     # save information into a file for reading
     postgres_info = {
@@ -104,7 +106,9 @@ def run_algorithm():
             'sudo chmod 777 SCRIPT/run_algorithm.sh'
         )
 
-        print('chmod succeed...')
+        tz_NY = pytz.timezone('America/New_York') 
+        datetime_NY = datetime.now(tz_NY)
+        print("us-east-1 time:", datetime_NY.strftime("%H:%M:%S"))
 
         stdin, stdout, stderr = client.exec_command(
             './SCRIPT/run_algorithm.sh'
