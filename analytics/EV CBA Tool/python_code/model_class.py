@@ -16,6 +16,7 @@ import time
 import constants
 from collections import Counter
 import numpy as np
+from pprint import pprint
 
 class ModelInstance(object):
 
@@ -35,12 +36,17 @@ class ModelInstance(object):
 
         ### CALCULATE TAX CREDITS ###
 
+        # TODO: tax credit, profit value
+
+        # pv == profit value??
         self.tax_credit_pv = {year: old_div(self.inputs.tax_credit,(1 + constants.inflation) \
            **(year - self.inputs.start_year)) for year in self.model_years}
+        # bev == battery electric vehicle
         self.bev_tax_credit = {year: old_div(self.inputs.BEV_tax_credit, (1 + constants.inflation) \
                                                              ** (year - self.inputs.start_year)) for year in
                               self.model_years}
 
+        # phev == plug-in hybrid electric vehicle
         self.phev_tax_credit = {year: old_div(self.inputs.PHEV_tax_credit, (1 + constants.inflation) \
                                                              ** (year - self.inputs.start_year)) for year in
                               self.model_years}
@@ -59,6 +65,9 @@ class ModelInstance(object):
         # Determine what portion of workplace load falls under each rate
         self.proportions_by_loadprofile_and_rate = self.get_loadprofile_and_rate_proportions()
 
+        # TOU == time of use
+        # TODO: TOU rate, flat rate
+        # pprint(self.proportions_by_loadprofile_and_rate)
 
         # Vehicle processing
         self.vehicles = self.inputs.create_vehicles(self.inputs.vehicles_file)
@@ -72,6 +81,7 @@ class ModelInstance(object):
                                      self.bev_tax_credit, self.phev_tax_credit,
                                      self.inputs.credit_to_replacements)
 
+        # oandm == OandM == operations and maintenance
         self.vehicles.get_oandm_savings(self.model_years, self.inputs.bev_annual_oandm_savings,
                                         self.inputs.phev_annual_oandm_savings)
 
@@ -86,7 +96,7 @@ class ModelInstance(object):
                                                self.vehicles.phev20_vmt, self.vehicles.phev40_vmt,
                                                self.vehicles.bev100_vmt)
 
-        # Partition laod profiles by rate and charger
+        # Partition load profiles by rate and charger
         self.load_profiles_by_rate_and_charger = {}
         for loadprofile_name in self.inputs.loadprofile_names:
             for rate_name in list(self.inputs.loadprofile_to_rate[loadprofile_name].keys()):
@@ -100,9 +110,17 @@ class ModelInstance(object):
                 loadprofile_charger = self.inputs.loadprofile_to_charger[loadprofile_name]
                 self.load_profiles_by_rate_and_charger[(loadprofile_name, rate_name, loadprofile_charger)] = loadprofile
 
+
+
+
+
+
         # Hourly Marginal Cost Processing
+        # these will serve as a part of cost/emission for the whole year(aggregated)
         self.aggregate_load = {}
         hours = list(range(8760))
+
+        # DCFC == DC fast charger == direct current fast charger
         # Inputs for Building Load
         self.public_building_load = self.inputs.process_building_load('public_building_load')
         self.workplace_building_load = self.inputs.process_building_load('workplace_building_load')
@@ -122,7 +140,9 @@ class ModelInstance(object):
                     except:
                         self.aggregate_load[year][hour] = loadprofile.annual_load[year][hour] * 1000
 
+        # mc == marginal cost
         self.energy_mc = self.inputs.process_energy_marginal_costs('energy_mc')
+        # pprint(self.energy_mc)
         self.generation_mc = self.inputs.process_capacity_marginal_costs('generation_mc')
         self.distribution_mc = self.inputs.process_energy_marginal_costs('distribution_mc')
         self.transmission_mc = self.inputs.process_energy_marginal_costs('transmission_mc')
@@ -132,7 +152,14 @@ class ModelInstance(object):
         self.SO2_emissions = self.inputs.process_energy_marginal_costs('SO2_emissions')
         self.VOC_emissions = self.inputs.process_energy_marginal_costs('VOC_emissions')
 
-        # Aggregate load profiles by charger type
+
+
+
+
+
+
+
+        # Aggregate load profiles by charger type and  daytype('avg_weekday', 'avg_weekend', 'peak_shape')
         self.workplace_loadprofile = None
         self.res_loadprofile = None
         self.publicl2_loadprofile = None
@@ -180,8 +207,10 @@ class ModelInstance(object):
                         aggregate_load[year][hour][typename] += dictionary[year][hour]
                         if 16 < hour < 21:
                             self.peak_demand_5to9_pm[year] = max(self.peak_demand_5to9_pm[year], dictionary[year][hour])
-
+            # these results are just simply aggregated
             file_out.export_loadprofiles(self, data, loadprofile.name)
+        
+        # aggregate all charger types
         for typename in typenames:
             for hour in range(24):
                 aggregate_row = [typename, hour] + [aggregate_load[year][hour][typename] for year in self.model_years]
@@ -189,7 +218,16 @@ class ModelInstance(object):
 
         file_out.export_loadprofiles(self, aggregate_data, 'aggregate')
 
+
+
+
+
+
+
         # Create annual energy supply cost dict if Marginal Costs Exist
+        # VOC == volatile organic compounds, NOX == NOx == oxides of nitrogen
+
+        # weighted sum
         annual_energy_supply_cost_dict, distribution_dict, transmission_dict, energy_dict, capacity_dict, CO2_emissions_dict,\
         NOX_emissions_dict, PM10_emissions_dict, SO2_emissions_dict,\
         VOC_emissions_dict = loadprofile_class.generate_annual_stream_from_load(
@@ -204,6 +242,8 @@ class ModelInstance(object):
         self.energy_dict = dict(Counter(self.energy_dict) +
                                       Counter(energy_dict))
 
+        # pprint(self.energy_dict)
+
         self.capacity_dict = dict(Counter(self.capacity_dict) +
                                       Counter(capacity_dict))
 
@@ -212,6 +252,7 @@ class ModelInstance(object):
         self.transmission_dict = dict(Counter(self.transmission_dict) +
                                       Counter(transmission_dict))
 
+        # t_and_d == transmission and distribution
         self.t_and_d_dict = dict(Counter(self.transmission_dict) +
                                       Counter(self.distribution_dict))
         self.CO2_emissions_dict = dict(Counter(self.CO2_emissions_dict) +
@@ -224,6 +265,11 @@ class ModelInstance(object):
                                                    Counter(SO2_emissions_dict))
         self.VOC_emissions_dict = dict(Counter(self.VOC_emissions_dict) +
                                                    Counter(VOC_emissions_dict))
+
+
+
+
+
 
         # Chargers
         self.chargers = self.inputs.create_chargers(self.inputs.charger_name)

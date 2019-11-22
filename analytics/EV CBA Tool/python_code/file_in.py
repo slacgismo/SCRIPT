@@ -16,6 +16,7 @@ import constants
 import datetime
 import sys
 import helpers
+from pprint import pprint
 
 class MODEL_INPUTS(object):
     """
@@ -33,7 +34,7 @@ class MODEL_INPUTS(object):
         self.LOADPROFILE_DIR = str()
         self.TESTFILE_DIR = str()
         self.RESULTS_DIR = str()
-        self.T_AND_D_OUT_DIR = str()
+        self.T_AND_D_OUT_DIR = str()                # never been used
 
 
         ### Inputs read from config file ###
@@ -195,6 +196,8 @@ class MODEL_INPUTS(object):
         :return: MODEL_INPUTS.loadprofile_to_rate and MODEL_INPUTS.loadprofile_names are defined in this function.
         """
 
+        print(allocation_name)
+
         allocation_dir = self.DATA_DIR + '/%s.csv' % allocation_name
         with open(allocation_dir) as allocation_file:
             allocation_data = csv.reader(allocation_file)
@@ -230,6 +233,9 @@ class MODEL_INPUTS(object):
                         old_div(self.loadprofile_to_rate[loadprofile_name][rate_name], total)
 
         self.loadprofile_names = list(self.loadprofile_to_rate.keys())
+
+        # pprint(self.loadprofile_names)
+        # pprint(self.loadprofile_to_rate)
 
 
     def get_charger_assignments(self, filename):
@@ -478,6 +484,9 @@ class MODEL_INPUTS(object):
             for month in range(1,13):
                 for daytype in ['weekdays', 'weekends']:
                     weekday_weekend_count[year][month][daytype] = weekday_weekend_count[year][month][daytype] / 24.
+
+        # pprint(weekday_weekend_count)
+        # pprint(timesteps)
 
         return timesteps, weekday_weekend_count
 
