@@ -55,32 +55,32 @@ export default function Scenario1 (props) {
         let uncontrolledLoad = JSON.parse(respResults.data[0].uncontrolled_load);
         let controlledLoad = JSON.parse(respResults.data[0].controlled_load);
 
-        console.log(uncontrolledLoad)
-        console.log(controlledLoad)
+        console.log(uncontrolledLoad);
+        console.log(controlledLoad);
 
         uncontrolledLoad = uncontrolledLoad.map((data, i) => (
             {
-              x: i,
-              y: parseFloat(data.load),
+                x: i,
+                y: parseFloat(data.load),
             }
-        ))
+        ));
 
         controlledLoad = controlledLoad.map((data, i) => (
             {
-              x: i,
-              y: parseFloat(data.load),
+                x: i,
+                y: parseFloat(data.load),
             }
-        ))
+        ));
 
         props.visualizeResults([{
-          yAxis: 'Uncontrolled Load (kWh)',
-          xAxis: 'Time',
-          data: uncontrolledLoad,
+            yAxis: "Uncontrolled Load (kWh)",
+            xAxis: "Time",
+            data: uncontrolledLoad,
         }, {
-          yAxis: 'Controlled Load (kWh)',
-          xAxis: 'Time',
-          data: controlledLoad,
-        }])
+            yAxis: "Controlled Load (kWh)",
+            xAxis: "Time",
+            data: controlledLoad,
+        }]);
     };
   
     const classes = useStyles();

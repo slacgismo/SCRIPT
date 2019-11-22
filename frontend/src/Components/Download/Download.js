@@ -24,7 +24,7 @@ class Download extends React.Component {
 				<li>boto3 installed. </li>
 				
 				<h3>Parameters</h3>
-				<li>s3 bucket name: name of the S3 bucket you want to uplaod files to </li>
+				<li>s3 bucket name: name of the S3 bucket you want to upload files to </li>
 				<li>data type: enter commercial or residential </li>
 				<li>file type: enter session or interval </li>
 				<li>filename: name of the file you want to upload to S3 bucket </li>
@@ -63,7 +63,6 @@ class Download extends React.Component {
         );
     }
 	// render() {
-	// 	return (
 	// 		<div>
 	// 			<Base 
 	// 				content = {

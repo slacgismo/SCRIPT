@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     textField: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
-        width: 250,
+        width: 200,
     },
     dense: {
         marginTop: 19,
@@ -28,6 +28,25 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(1),
     },
 }));
+
+const counties = [
+    {
+        name: "Santa Clara",
+        residents: "1",
+    },
+    {
+        name: "Santa Cruz",
+        residents: "2",
+    },
+    {
+        name: "San Francisco",
+        residents: "3",
+    },
+    {
+        name: "San Diego",
+        residents: "4",
+    },
+];
 
 export default function Scenario2 (props) {
     const runAlgorithm = async () => {
@@ -48,6 +67,7 @@ export default function Scenario2 (props) {
     };
 
     const classes = useStyles();
+  
     return (
         <div>
             <form noValidate autoComplete="off">
@@ -61,17 +81,17 @@ export default function Scenario2 (props) {
                             className: classes.menu,
                         },
                     }}
-                    helperText="Please select your county"
+                    helperText="Please select your county"  
                     margin="normal"
                 >
-                    {props.counties.map(option => (
+                    {counties.map(option => (
                         <option key={option.name} value={option.residents}>
                             {option.name}
                         </option>
                     ))}
                 </TextField>
                 <p/>
-                <Button variant="contained" color="primary"  >
+                <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
                     Run
                 </Button>
             </form>    
