@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import Scenario1 from "../Scenario/Scenario1";
+import Scenario2 from "../Scenario/Scenario2";
 import ResultCharts from "../ResultChart/ResultCharts";
 
 class Algorithm2 extends Component {
@@ -13,44 +13,6 @@ class Algorithm2 extends Component {
     }
 
     visualizeResults(results) {
-        const resultsFake = [
-            {
-                yAxis: "Total Energy",
-                xAxis: "Time",
-                data: [
-                    {x: 1, y: 8},
-                    {x: 2, y: 10},
-                    {x: 3, y: 9},
-                    {x: 4, y: 13},
-                    {x: 5, y: 15},
-                    {x: 6, y: 10},
-                    {x: 7, y: 12},
-                    {x: 8, y: 10},
-                    {x: 9, y: 11},
-                    {x: 10, y: 12},
-                    {x: 11, y: 9},
-                    {x: 12, y: 8},
-                ],
-            }, {
-                yAxis: "Total Session",
-                xAxis: "time",
-                data: [
-                    {x: 1, y: 8},
-                    {x: 2, y: 10},
-                    {x: 3, y: 9},
-                    {x: 4, y: 13},
-                    {x: 5, y: 15},
-                    {x: 6, y: 10},
-                    {x: 7, y: 0},
-                    {x: 8, y: 10},
-                    {x: 9, y: 11},
-                    {x: 10, y: 12},
-                    {x: 11, y: 9},
-                    {x: 12, y: 8},
-                ],
-            }
-        ];
-
         this.setState({
             results: results,
         });
@@ -67,7 +29,7 @@ class Algorithm2 extends Component {
                             <Content
                                 text={"Scenario"}
                                 compo={
-                                    <Scenario1
+                                    <Scenario2
                                         visualizeResults={ this.visualizeResults.bind(this) }
                                     />
                                 }
@@ -79,7 +41,8 @@ class Algorithm2 extends Component {
                 			              text={"Results"}
                 			              compo={
                 			                  <ResultCharts
-                			                      results={ this.state.results }
+                                                  results={ this.state.results }
+                                                  algId={2}
                 			                  />
                 			              }
                 			          />

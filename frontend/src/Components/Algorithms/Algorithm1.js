@@ -79,7 +79,8 @@ class Algorithm1 extends Component {
                 			              text={"Results"}
                 			              compo={
                 			                  <ResultCharts
-                			                      results={ this.state.results }
+                                                  results={ this.state.results }
+                                                  algId={1}
                 			                  />
                 			              }
                 			          />
