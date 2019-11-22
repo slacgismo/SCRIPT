@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -29,6 +30,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Scenario2 (props) {
+    const runAlgorithm = async () => {
+        const respResults = await axios.get("http://localhost:8000/api/algorithm/load_forecast/");
+
+        console.log(respResults.data)
+        console.log(JSON.parse(respResults))
+
+        // props.visualizeResults([{
+        //   yAxis: 'Uncontrolled Load (kWh)',
+        //   xAxis: 'Time',
+        //   data: uncontrolledLoad,
+        // }, {
+        //   yAxis: 'Controlled Load (kWh)',
+        //   xAxis: 'Time',
+        //   data: controlledLoad,
+        // }])
+    };
+
     const classes = useStyles();
     return (
         <div>
