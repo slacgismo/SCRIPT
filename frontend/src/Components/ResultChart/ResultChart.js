@@ -8,6 +8,7 @@ import {
     YAxis,
     Borders,
     ChartLabel,
+    DiscreteColorLegend
 } from "react-vis";
 import "./ResultChart.css";
 
@@ -36,15 +37,30 @@ class ResultChart extends React.Component {
 
         return (
             <div className="chart-grid">
-                <XYPlot height={300} width={300}>
+                <XYPlot height={300} width={600}>
+                    <DiscreteColorLegend
+                        style={{position: "absolute", left: "50px", top: "10px"}}
+                        orientation="vertical"
+                        items={[
+                            {
+                                title: this.props.lable_uncontrolled,
+                                color: "#12939A"
+                            },
+                            {
+                                title: this.props.lable_controlled,
+                                color: "#FF8000"
+                            }
+                        ]}
+                    />
                     <HorizontalGridLines />
-                    <LineSeries data={ this.props.data } />
+                    <LineSeries data={ this.props.data_uncontrolled }  color="#12939A"/>
+                    <LineSeries data={ this.props.data_controlled } color="#FF8000"/>
                     <XAxis
                         title={ this.props.xAxis }
                         position="end"
                     />
                     <YAxis
-                        title={ this.props.yAxis }
+                        // title={ this.props.yAxis }
                         position="end"
                     />
                 </XYPlot>

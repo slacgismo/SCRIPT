@@ -1,23 +1,61 @@
 import React, {Component} from "react";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import Scenario2 from "../Scenario/Scenario2";
-import axios from "axios";
+import Scenario1 from "../Scenario/Scenario1";
+import ResultCharts from "../ResultChart/ResultCharts";
 
 class Algorithm2 extends Component {
-    state = {
-        counties: []
+    constructor(props) {
+        super(props);
+        this.state = {
+            results: [],
+        };
     }
 
-    componentDidMount() {
-        axios('http://127.0.0.1:8000/api/county/')
-        .then(res => {
-            const counties = res.data
-            console.log(counties)
-            this.setState({ counties })
-            console.log(this.state.counties)
-        })
-        .catch(console.log)
+    visualizeResults(results) {
+        const resultsFake = [
+            {
+                yAxis: "Total Energy",
+                xAxis: "Time",
+                data: [
+                    {x: 1, y: 8},
+                    {x: 2, y: 10},
+                    {x: 3, y: 9},
+                    {x: 4, y: 13},
+                    {x: 5, y: 15},
+                    {x: 6, y: 10},
+                    {x: 7, y: 12},
+                    {x: 8, y: 10},
+                    {x: 9, y: 11},
+                    {x: 10, y: 12},
+                    {x: 11, y: 9},
+                    {x: 12, y: 8},
+                ],
+            }, {
+                yAxis: "Total Session",
+                xAxis: "time",
+                data: [
+                    {x: 1, y: 8},
+                    {x: 2, y: 10},
+                    {x: 3, y: 9},
+                    {x: 4, y: 13},
+                    {x: 5, y: 15},
+                    {x: 6, y: 10},
+                    {x: 7, y: 0},
+                    {x: 8, y: 10},
+                    {x: 9, y: 11},
+                    {x: 10, y: 12},
+                    {x: 11, y: 9},
+                    {x: 12, y: 8},
+                ],
+            }
+        ];
+
+        this.setState({
+            results: results,
+        });
+
+        console.log(this.state.results);
     }
 
     render() {
@@ -29,12 +67,23 @@ class Algorithm2 extends Component {
                             <Content
                                 text={"Scenario"}
                                 compo={
-                                    <Scenario2 counties={this.state.counties}     
+                                    <Scenario1
+                                        visualizeResults={ this.visualizeResults.bind(this) }
                                     />
                                 }
                             /> 
                             <br/>
-                			      <Content text={"Results"}/> 
+                            {
+                                this.state.results.length > 0 &&
+                			          <Content
+                			              text={"Results"}
+                			              compo={
+                			                  <ResultCharts
+                			                      results={ this.state.results }
+                			                  />
+                			              }
+                			          />
+                            }
                         </div>
                     }/>
             </div>
