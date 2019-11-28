@@ -110,5 +110,15 @@ upload_to_postgres_client = UploadToPostgres(
     total[:, 5],
     total[:, 6],
 )
-upload_to_postgres_client.run()
+upload_to_postgres_client.run(
+    'profile-1',
+    aggregation_level,
+    num_evs,
+    county_choice,
+    fast_percent,
+    work_percent,
+    res_percent,
+    l1_percent,
+    publicl2_percent
+)
 print('Upload to Postgres succeeded.')
