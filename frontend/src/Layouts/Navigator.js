@@ -22,11 +22,9 @@ const categories = [
     {
         id: "Algorithms",
         children: [
-            { id: "Algorithm1", icon: <DnsRoundedIcon />},
-            { id: "Algorithm2", icon: <PermMediaOutlinedIcon /> },
-            // { id: "Algorithm3", icon: <PublicIcon /> },
-            // { id: "Algorithm4", icon: <SettingsEthernetIcon /> },
-            // { id: "Algorithm5", icon: <SettingsInputComponentIcon /> },
+            { id: "Load Controll", icon: <DnsRoundedIcon />},
+            { id: "Load Forecast", icon: <PermMediaOutlinedIcon /> },
+            { id: "Cost Benefit Analysis", icon: <PublicIcon /> },
         ],
     },
 ];
@@ -153,7 +151,7 @@ function Navigator(props) {
                                         primary: classes.itemPrimary,
                                     }}
                                 >
-                                    {childId == "Algorithm1" ? "Load Controll" : "Cost Benefit Analysis"}
+                                    {childId}
                                 </ListItemText>
                             </ListItem>
                         ))}

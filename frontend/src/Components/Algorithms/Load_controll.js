@@ -1,15 +1,26 @@
 import React, {Component} from "react";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import Scenario1 from "../Scenario/Scenario1";
+import Scenario1 from "../Scenario/Scenario_load_controll";
 import ResultCharts from "../ResultChart/ResultCharts";
+import axios from "axios";
 
-class Algorithm2 extends Component {
+class Algorithm1 extends Component {
     constructor(props) {
         super(props);
         this.state = {
             results: [],
+            counties: [],
         };
+    }
+
+    componentDidMount() {
+        axios("http://127.0.0.1:8000/api/county/")
+            .then(res => {
+                const counties = res.data;
+                this.setState({ counties });
+            })
+            .catch(console.log);
     }
 
     visualizeResults(results) {
@@ -65,10 +76,11 @@ class Algorithm2 extends Component {
                     content={
                         <div>
                             <Content
-                                text={"Scenario"}
+                                text={"Load Controll"}
                                 compo={
                                     <Scenario1
-                                        visualizeResults={ this.visualizeResults.bind(this) }
+                                        visualizeResults={ this.visualizeResults.bind(this)}
+                                        counties={this.state.counties}
                                     />
                                 }
                             /> 
@@ -91,4 +103,4 @@ class Algorithm2 extends Component {
     }
 }
 
-export default Algorithm2;
+export default Algorithm1;
