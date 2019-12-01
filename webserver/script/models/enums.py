@@ -6,9 +6,20 @@ class EnumWithChoices(Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
+class AggregationLevel(EnumWithChoices):
+    """Aggregation level"""
+    STATE = 'state'
+    COUNTY = 'county'
+    ZIP = 'zip'
+
+
 class POI(EnumWithChoices):
     """Place of interest"""
-    WP = 'Workplace'
+    ALL = 'All'
+    WORKPLACE = 'Workplace'
+    DCFC = 'DC Fast Charger'
+    RESIDENTIAL = 'Residential'
+    PUBLIC_L2 = 'Public L2'
     UNKNOWN = 'Unknown'
     # [TODO] add more POIs
 
@@ -46,3 +57,10 @@ class EVType(EnumWithChoices):
     HYBRID = 'HYBRID'
     UNKNOWN = 'UNKNOWN'
     # [TODO] add more EV types
+
+
+class DayType(EnumWithChoices):
+    """Day type"""
+    WEEKDAY = 'weekday'
+    WEEKEND = 'weekend'
+    PEAK = 'peak'

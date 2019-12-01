@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
-from script.models.algorithms import LoadController
+from script.models.algorithms import LoadController, LoadForecast, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission, LoadForecastConfig
 
 import datetime
 
@@ -25,4 +25,46 @@ class EnergySerializer(serializers.ModelSerializer):
 class LoadControllerSerializer(serializers.ModelSerializer):
     class Meta:
         model = LoadController
+        fields = '__all__'
+
+
+class LoadForecastSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LoadForecast
+        fields = '__all__'
+
+
+class LoadForecastConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LoadForecastConfig
+        fields = '__all__'
+
+
+class LoadProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LoadProfile
+        fields = '__all__'
+
+
+class GasConsumptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GasConsumption
+        fields = '__all__'
+
+
+class CostBenefitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CostBenefit
+        fields = '__all__'
+
+
+class NetPresentValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NetPresentValue
+        fields = '__all__'
+
+
+class EmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Emission
         fields = '__all__'
