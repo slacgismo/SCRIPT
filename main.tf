@@ -55,10 +55,11 @@ resource "aws_security_group" "sg" {
 
 resource "aws_instance" "script_algorithm_ins" {
   ami                         = "ami-04b9e92b5572fa0d1"
-  instance_type               = "t2.micro"
+  instance_type               = "t2.medium"
   vpc_security_group_ids      = ["${aws_security_group.sg.id}"]
   associate_public_ip_address = true
   key_name                    = "script"
+  #iam_instance_profile        = "${aws_iam_instance_profile.ec2_profile.name}"
 
   provisioner "file" {
     source      = "../SCRIPT"
@@ -81,19 +82,21 @@ resource "aws_instance" "script_algorithm_ins" {
       "sudo apt-get install -y python-dev",
       "sudo apt-get install -y libpq-dev python-dev",
       "pip3 install awscli --force-reinstall --upgrade",
-      "aws configure set aws_access_key_id <aws_access_key_id>",
-      "aws configure set aws_secret_access_key <aws_secret_access_key>",
-      "aws configure set default.region us-east-1",
       "mkdir ~/mosek",
       "cp ~/SCRIPT/mosek.lic ~/mosek/mosek.lic",
       "sudo sh -c '/bin/echo 1 > /proc/sys/vm/overcommit_memory'",
+      "aws configure set aws_access_key_id <>",
+      "aws configure set aws_secret_access_key <>",
+      "aws configure set default.region us-east-1",
       "pip3 install pandas",
       "pip3 install boto3",
       "pip3 install cvxpy",
+      "pip3 install s3fs",
       "pip3 install sklearn",
       "pip3 install psycopg2",
       "pip3 install -f https://download.mosek.com/stable/wheel/index.html Mosek",
       "pip3 install paramiko"
+      "pip3 install pip3 install matplotlib"
     ]
     connection {
       type        = "ssh"
