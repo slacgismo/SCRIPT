@@ -1,9 +1,10 @@
 import os
 import subprocess
 import json
-import paramiko
 from argparse import ArgumentParser
-
+from datetime import datetime
+import paramiko
+import pytz
 
 VAR_FILE_PATH = './variables.env'
 TF_DIR = './utils/aws/terraform'
@@ -107,7 +108,9 @@ def run_algorithm():
             'sudo chmod 777 SCRIPT/run_algorithm.sh'
         )
 
-        print('chmod succeed...')
+        tz_NY = pytz.timezone('America/New_York') 
+        datetime_NY = datetime.now(tz_NY)
+        print("us-east-1 time:", datetime_NY.strftime("%H:%M:%S"))
 
         stdin, stdout, stderr = client.exec_command(
             './SCRIPT/run_algorithm.sh'

@@ -4,6 +4,8 @@ import boto3
 import cvxpy as cvx
 import json
 import os
+import pytz
+from datetime import datetime
 from UploadToPostgres import *
 #from SmartChargingFitting import *
 
@@ -194,8 +196,8 @@ class SmartChargingAlgorithm:
             controlled_profiles[:, i] = np.sum(schedule, axis=1)
             list_violations.append(violations)
 
-        np.save(sca_dir + "baseline_profiles_" + county.replace(' ', '_') + "_500.npy", baseline_profiles)
-        np.save(sca_dir + "controlled_profiles_" + county.replace(' ', '_') + "_500.npy", controlled_profiles)
+        #np.save(sca_dir + "baseline_profiles_" + county.replace(' ', '_') + "_500.npy", baseline_profiles)
+        #np.save(sca_dir + "controlled_profiles_" + county.replace(' ', '_') + "_500.npy", controlled_profiles)
         
         return baseline_profiles, controlled_profiles
         #smf = SmartChargingFitting(baseline_profiles, controlled_profiles)
@@ -239,7 +241,10 @@ class SmartChargingAlgorithm:
 if __name__ == "__main__":
     # test
     sca = SmartChargingAlgorithm('script.chargepoint.data')
-    sca.demo_run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
-    #baseline_profiles, controlled_profiles = sca.run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
-    #sca.uploadToPostgres(baseline_profiles, controlled_profiles)
+    #sca.demo_run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
+    baseline_profiles, controlled_profiles = sca.run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
+    sca.uploadToPostgres(baseline_profiles, controlled_profiles)
 
+    tz_NY = pytz.timezone('America/New_York') 
+    datetime_NY = datetime.now(tz_NY)
+    print("us-east-1 time:", datetime_NY.strftime("%H:%M:%S"))
