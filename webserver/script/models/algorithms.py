@@ -16,7 +16,7 @@ class LoadController(models.Model):
             (5) rate_demand_peak
             (6) rate_demand_partpeak
             (7) rate_demand_overall
-        outputs：
+        outputs:
             (1) uncontrolled load
             (2) controlled load (cvx optimized)
         visualizations:
