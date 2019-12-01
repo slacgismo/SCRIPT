@@ -50,8 +50,6 @@ const counties = [
 
 export default function Scenario2 (props) {
     const runAlgorithm2 = async () => {
-        console.log("***************");
-
         // TODO: retrieve real result here...
         //
         // const respResults = await axios.get("http://localhost:8000/api/algorithm/load_forecast/");

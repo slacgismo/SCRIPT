@@ -4,7 +4,7 @@ import Content from "../../Layouts/Content";
 import Scenario1 from "../Scenario/Scenario1";
 import ResultCharts from "../ResultChart/ResultCharts";
 
-class Algorithm1 extends Component {
+class AlgorithmLoadControll extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -92,4 +92,4 @@ class Algorithm1 extends Component {
     }
 }
 
-export default Algorithm1;
+export default AlgorithmLoadControll;
