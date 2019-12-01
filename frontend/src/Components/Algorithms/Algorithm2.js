@@ -37,18 +37,19 @@ class Algorithm2 extends Component {
                             <br/>
                             {
                                 this.state.results.length > 0 &&
-                			          <Content
-                			              text={"Results"}
-                			              compo={
-                			                  <ResultCharts
-                			                      results={ this.state.results }
-                			                      algId={2}
-                			                  />
-                			              }
-                			          />
+                                <Content
+                                    text={"Results"}
+                                    compo={
+                                        <ResultCharts
+                                            results={ this.state.results }
+                                            algId={2}
+                                        />
+                                    }
+                                />
                             }
                         </div>
-                    }/>
+                    }
+                />
             </div>
         );
     }
