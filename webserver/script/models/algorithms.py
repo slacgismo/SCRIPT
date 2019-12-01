@@ -24,7 +24,7 @@ class LoadController(models.Model):
             (2) controlled load (cvx optimized) (load - time)
     """
     
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
+    county = models.CharField(max_length=50, primary_key=True)
     rate_energy_peak = models.FloatField(validators=[validate_positive])
     rate_energy_partpeak = models.FloatField(validators=[validate_positive])
     rate_energy_offpeak = models.FloatField(validators=[validate_positive])

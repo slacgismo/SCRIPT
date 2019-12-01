@@ -1,0 +1,11 @@
+h4 {
+  display: inline-block;
+}
+
+.rv-xy-plot, .chart-grid {
+  display: inline-block;
+}
+
+.rv-xy-plot__axis__title.chart-title text {
+  font-size: 1.2rem;
+}
