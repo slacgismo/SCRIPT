@@ -140,7 +140,7 @@ export const addCountyColorByAttr = (counties, attrName) => {
     const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
     countyNames.forEach((countyName, i) => {
         // counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
-        counties[countyName].color = rgba(5,97,0,attrPercentageOfCounties[i])
+        counties[countyName].color = rgba(5,97,0,attrPercentageOfCounties[i]);
     });
 };
 
