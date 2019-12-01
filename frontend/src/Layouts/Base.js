@@ -169,7 +169,7 @@ function Base(props) {
         setMobileOpen(!mobileOpen);
     };
 
-    const isTextContent = (props.hasOwnProperty('isTextContent') &&
+    const isTextContent = (props.hasOwnProperty("isTextContent") &&
         props.isTextContent);
 
     return (
@@ -194,20 +194,20 @@ function Base(props) {
 
                     {
                         isTextContent ? 
-                        (
-                            <main
-                                className={classes.main}
-                                style={{ padding: "3rem 10%" }}
-                                dangerouslySetInnerHTML={{__html: props.content}}>
-                            </main>
-                        ) :
-                        (
-                          <main
-                              className={classes.main}
-                          >
-                              { props.content }
-                          </main>
-                        )
+                            (
+                                <main
+                                    className={classes.main}
+                                    style={{ padding: "3rem 10%" }}
+                                    dangerouslySetInnerHTML={{__html: props.content}}>
+                                </main>
+                            ) :
+                            (
+                                <main
+                                    className={classes.main}
+                                >
+                                    { props.content }
+                                </main>
+                            )
                     }
 
                     

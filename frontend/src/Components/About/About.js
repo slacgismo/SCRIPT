@@ -42,8 +42,8 @@ class About extends Component {
         return (
             <div>
                 <Paperbase
-                  isTextContent={ true }
-                  content={ aboutText }
+                    isTextContent={ true }
+                    content={ aboutText }
                 />
             </div>
         );

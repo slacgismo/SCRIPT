@@ -17,7 +17,7 @@ function ResultCharts(props) {
 
     let resultCharts;
     if (props.algId === 1) { // Algorithm 1
-        console.log("First algorithm visualized.")
+        console.log("First algorithm visualized.");
         resultCharts = 
             <ResultChart
                 lable_uncontrolled={ props.results[0].yAxis }
@@ -29,8 +29,8 @@ function ResultCharts(props) {
             />
         ;
     } else if (props.algId === 2) {
-        console.log("Second algorithm visualized.")
-        console.log(props.results[2])
+        console.log("Second algorithm visualized.");
+        console.log(props.results[2]);
         resultCharts = 
             <ResultChart
                 label_r1 = { props.results[0].yAxis }

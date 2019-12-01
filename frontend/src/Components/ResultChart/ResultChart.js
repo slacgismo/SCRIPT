@@ -76,7 +76,7 @@ class ResultChart extends React.Component {
                                 position: "absolute",
                                 left: "520px",
                                 top: "15px",
-                                width: '30rem',
+                                width: "30rem",
                             }}
                             orientation="vertical"
                             items={[
@@ -124,8 +124,8 @@ class ResultChart extends React.Component {
                             title={ this.props.xAxis }
                             position="end"
                             tickFormat={function tickFormat(d){
-                                const minute = d * 15
-                                return `${Math.floor(minute / 60).toString().padStart(2, '0')}:${(minute % 60).toString().padStart(2, '0')}`
+                                const minute = d * 15;
+                                return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
                             }}
                         />
                         <YAxis
