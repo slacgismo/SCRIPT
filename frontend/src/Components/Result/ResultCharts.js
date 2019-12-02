@@ -2,41 +2,13 @@ import React from "react";
 import ResultChart from "./ResultChart";
 
 function ResultCharts(props) {
-    // const resultCharts = props.results.map((result) => (
-    //     <ResultChart
-    //         yAxis={ result.yAxis }
-    //         xAxis={ result.xAxis }
-    //         data={ result.data }
-    //     />
-    // ))
-    // return (
-    //     <>
-    //         { resultCharts }
-    //     </>
-    // );
-
-    let resultCharts;
-    if (props.algId === 1) { // Algorithm 1
-        console.log("First algorithm visualized.");
-        resultCharts = 
-            <ResultChart
-                lable_uncontrolled={ props.results[0].yAxis }
-                lable_controlled={ props.results[1].yAxis}
-                xAxis={ props.results[0].xAxis }
-                data_uncontrolled={ props.results[0].data }
-                data_controlled={ props.results[1].data}
-                algId = {props.algId}
-            />
-        ;
-    } else if (props.algId === 2) {
-        resultCharts = props.results.map((result, i) => (
-            <ResultChart
-                key={ i }
-                results={ result }
-                algId = { props.algId }
-            />
-        ));
-    }
+    const resultCharts = props.results.map((result, i) => (
+        <ResultChart
+            key={ i }
+            results={ result }
+            algId = { props.algId }
+        />
+    ));
     
     return (
         <>
