@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Overview from "./Components/Overview/Overview";
 import OverviewMap from "./Components/OverviewMap/OverviewMap";
-import ResultChart from "./Components/ResultChart/ResultChart";
+// import ResultChart from "./Components/ResultChart/ResultChart";
 import Upload from "./Components/Upload/Upload";
 import Download from "./Components/Download/Download";
 import AlgorithmLoadControll from "./Components/Algorithms/AlgorithmLoadControll";
@@ -23,8 +23,8 @@ render((
   
         {/* Routes for debugging single components. */}
         {/* TODO: delete these routes. */}
-        <Route exact path="/overview-map" component={ OverviewMap } />
-        <Route exact path="/result-chart" component={ ResultChart } />
+        {/* <Route exact path="/overview-map" component={ OverviewMap } />
+        <Route exact path="/result-chart" component={ ResultChart } /> */}
     </Router>
 ), document.getElementById("root"));
 

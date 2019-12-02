@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import Scenario1 from "../Scenario/Scenario1";
-import ResultCharts from "../ResultChart/ResultCharts";
+import Scenario2 from "../Result/Result";
+import ResultCharts from "../Result/ResultCharts";
+import { dataLoadControll, dataLoadForecast } from "../Api/AlgorithmData";
 
 class AlgorithmLoadControll extends Component {
     constructor(props) {
@@ -71,8 +72,9 @@ class AlgorithmLoadControll extends Component {
                             <Content
                                 text={"Scenario"}
                                 compo={
-                                    <Scenario1
+                                    <Scenario2
                                         visualizeResults={ this.visualizeResults.bind(this) }
+                                        data={ dataLoadForecast }
                                     />
                                 }
                             /> 

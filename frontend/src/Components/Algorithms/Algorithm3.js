@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import Scenario2 from "../Scenario/Scenario2";
+import Result from "../Result/Result";
 import axios from "axios";
 
 class Algorithm3 extends Component {
@@ -29,7 +29,7 @@ class Algorithm3 extends Component {
                             <Content
                                 text={"Scenario"}
                                 compo={
-                                    <Scenario2 counties={this.state.counties}     
+                                    <Result counties={this.state.counties}     
                                     />
                                 }
                             /> 

@@ -1,8 +1,9 @@
 import React, {Component} from "react";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import Scenario2 from "../Scenario/Scenario2";
-import ResultCharts from "../ResultChart/ResultCharts";
+import Scenario2 from "../Result/Result";
+import ResultCharts from "../Result/ResultCharts";
+import { dataLoadForecast } from "../Api/AlgorithmData";
 
 class Algorithm2 extends Component {
     constructor(props) {
@@ -33,6 +34,7 @@ class Algorithm2 extends Component {
                                 compo={
                                     <Scenario2
                                         visualizeResults={ this.visualizeResults.bind(this) }
+                                        data={ dataLoadForecast }
                                     />
                                 }
                             /> 
