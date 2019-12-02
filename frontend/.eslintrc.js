@@ -34,6 +34,12 @@ module.exports = {
 		"semi": [
 			"error",
 			"always"
-		]
+        ],
+        "eol-last": [
+            "error",
+            "always"
+        ],
+        "react/jsx-uses-react": "error",   
+        "react/jsx-uses-vars": "error",
 	}
 };

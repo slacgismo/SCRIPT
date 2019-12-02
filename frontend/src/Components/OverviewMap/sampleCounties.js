@@ -8,12 +8,12 @@ export const counties = {
         "totalSession": Math.random(),
     },
     "imperial": {
-	    "totalEnergy": Math.random(),
-      "totalSession": Math.random(),
+        "totalEnergy": Math.random(),
+        "totalSession": Math.random(),
     },
     "riverside": {
-	    "totalEnergy": Math.random(),
-      "totalSession": Math.random(),
+        "totalEnergy": Math.random(),
+        "totalSession": Math.random(),
     },
     "san diego": {
         "totalEnergy": Math.random(),

@@ -58,8 +58,8 @@ class OverviewMap extends React.PureComponent {
   changeOverviewAttr(newAttr) {
       this.setState({
           chosenParam: newAttr,
-      })
-      this.updateMap(newAttr)
+      });
+      this.updateMap(newAttr);
   }
 
   updateMap(newAttr) {
