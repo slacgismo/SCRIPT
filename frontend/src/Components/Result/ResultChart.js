@@ -7,10 +7,11 @@ import {
     XAxis,
     YAxis,
     // Borders,
-    // ChartLabel,
+    ChartLabel,
     DiscreteColorLegend
 } from "react-vis";
 import "./ResultChart.css";
+import { relative } from "path";
 
 class ResultChart extends React.Component {
     constructor(props) {
@@ -69,7 +70,7 @@ class ResultChart extends React.Component {
                     }
                         
                     <XAxis
-                        title={ this.props.results[Object.keys(this.props.results)[0]].xAxis } // TODO: should not use the xAxis of a specified attribute 
+                        // title={ this.props.results[Object.keys(this.props.results)[0]].xAxis }
                         position="end"
                         tickFormat={function tickFormat(d){
                             const minute = d * 15;
@@ -77,10 +78,32 @@ class ResultChart extends React.Component {
                         }}
                     />
 
+                    <ChartLabel
+                        text={ this.props.results[Object.keys(this.props.results)[0]].xAxis }  // TODO: should not use the xAxis of a specified attribute 
+                        className="alt-x-label"
+                        includeMargin={false}
+                        xPercent={0.5}
+                        yPercent={1.2}
+                    />
+
+                    <ChartLabel
+                        text={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
+                        className="alt-y-label"
+                        includeMargin={false}
+                        xPercent={0.02}
+                        yPercent={0.1}
+                    />
+
                     <YAxis
-                        title={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
+                        // title={ this.props.results[Object.keys(this.props.results)[0]].unit }
                         position="end"
                         tickLabelAngle={-70}
+                        style={{
+                            title: {
+                                position: "relative",
+                                left: "-3rem",
+                            }
+                        }}
                     />
                 </XYPlot>
             </div>
