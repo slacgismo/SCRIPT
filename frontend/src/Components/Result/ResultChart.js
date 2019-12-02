@@ -6,8 +6,8 @@ import {
     HorizontalGridLines,
     XAxis,
     YAxis,
-    Borders,
-    ChartLabel,
+    // Borders,
+    // ChartLabel,
     DiscreteColorLegend
 } from "react-vis";
 import "./ResultChart.css";
@@ -78,7 +78,7 @@ class ResultChart extends React.Component {
                     />
 
                     <YAxis
-                        // title={ this.props.yAxis }
+                        title={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
                         position="end"
                         tickLabelAngle={-70}
                     />

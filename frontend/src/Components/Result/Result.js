@@ -93,7 +93,7 @@ export default function Scenario2 (props) {
             ));
             data_to_visualize[field] = {
                 yAxis: `${field}`.replace(/_/g, " "),
-                unit: "kWh",
+                unit: "Power (kW)",
                 xAxis: "Time",  // TODO: other options?
                 data: dataFormatted,
             };
