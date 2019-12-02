@@ -84,7 +84,7 @@ class AlgorithmLoadControll extends Component {
                                     compo={
                                         <ResultCharts
                                             results={ this.state.results }
-                                            algId={1}
+                                            algId={2}
                                         />
                                     }
                                 />

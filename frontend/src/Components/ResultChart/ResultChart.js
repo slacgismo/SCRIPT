@@ -103,7 +103,7 @@ class ResultChart extends React.Component {
                         }
                         
                         <XAxis
-                            title={ this.props.results["residential_l1_load"].xAxis } // TODO: should not use the xAxis of a specified attribute 
+                            title={ this.props.results[Object.keys(this.props.results)[0]].xAxis } // TODO: should not use the xAxis of a specified attribute 
                             position="end"
                             tickFormat={function tickFormat(d){
                                 const minute = d * 15;
