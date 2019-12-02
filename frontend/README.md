@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-One way to get started is to install `Node.js`
+It is required that `Node.js` should have been installed.
 
 ## Run
 
