@@ -6,11 +6,12 @@ import {
     HorizontalGridLines,
     XAxis,
     YAxis,
-    Borders,
+    // Borders,
     ChartLabel,
     DiscreteColorLegend
 } from "react-vis";
 import "./ResultChart.css";
+import { relative } from "path";
 
 class ResultChart extends React.Component {
     constructor(props) {
@@ -27,101 +28,86 @@ class ResultChart extends React.Component {
             "#c921db",
             "#911955",
         ];
-
-        if (this.props.algId === 1) {
-            return (
-                <div className="chart-grid">
-                    <XYPlot height={300} width={600}>
-                        <DiscreteColorLegend
-                            style={{position: "absolute", left: "50px", top: "10px"}}
-                            orientation="vertical"
-                            items={[
-                                {
-                                    title: this.props.lable_uncontrolled,
-                                    color: "#12939A"
-                                },
-                                {
-                                    title: this.props.lable_controlled,
-                                    color: "#FF8000"
-                                }
-                            ]}
-                        />
-                        <HorizontalGridLines />
-                        <LineSeries data={ this.props.data_uncontrolled }  color="#12939A"/>
-                        <LineSeries data={ this.props.data_controlled } color="#FF8000"/>
-                        <XAxis
-                            title={ this.props.xAxis }
-                            position="end"
-                        />
-                        <YAxis
-                            // title={ this.props.yAxis }
-                            position="end"
-                        />
-                    </XYPlot>
-                </div>
-            );
-        } else if (this.props.algId === 2) {
-            const { results } = this.props;
-            const newItems = [];
-            const newData = [];
-            Object.keys(results).forEach((attr, i) => {
-                newItems.push({
-                    title: results[attr].yAxis,
-                    color: colors[i],
-                });
-                newData.push({
-                    key: attr,
-                    data: results[attr].data,
-                    color: colors[i],
-                });
+        const { results } = this.props;
+        const newItems = [];
+        const newData = [];
+        Object.keys(results).forEach((attr, i) => {
+            newItems.push({
+                title: results[attr].yAxis,
+                color: colors[i],
             });
+            newData.push({
+                key: attr,
+                data: results[attr].data,
+                color: colors[i],
+            });
+        });
 
-            return (
-                <div className="chart-grid">
-                    <XYPlot height={300} width={500}>
-                        <DiscreteColorLegend
-                            style={{
-                                position: "absolute",
-                                left: "520px",
-                                top: "15px",
-                                width: "30rem",
-                            }}
-                            orientation="vertical"
-                            items={ newItems }
-                        />
+        return (
+            <div className="chart-grid">
+                <XYPlot height={600} width={800}>
+                    <DiscreteColorLegend
+                        style={{
+                            position: "absolute",
+                            left: "850px",
+                            top: "15px",
+                            width: "30rem",
+                        }}
+                        orientation="vertical"
+                        items={ newItems }
+                    />
                         
-                        <HorizontalGridLines />
+                    <HorizontalGridLines />
                         
-                        {
-                            newData.map(newDataPiece => (
-                                <LineSeries
-                                    key={ newDataPiece.key }
-                                    data={ newDataPiece.data }
-                                    color={ newDataPiece.color }
-                                />
-                            ))
-                        }
+                    {
+                        newData.map(newDataPiece => (
+                            <LineSeries
+                                key={ newDataPiece.key }
+                                data={ newDataPiece.data }
+                                color={ newDataPiece.color }
+                            />
+                        ))
+                    }
                         
-                        <XAxis
-                            title={ this.props.results[Object.keys(this.props.results)[0]].xAxis } // TODO: should not use the xAxis of a specified attribute 
-                            position="end"
-                            tickFormat={function tickFormat(d){
-                                const minute = d * 15;
-                                return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
-                            }}
-                        />
+                    <XAxis
+                        // title={ this.props.results[Object.keys(this.props.results)[0]].xAxis }
+                        position="end"
+                        tickFormat={function tickFormat(d){
+                            const minute = d * 15;
+                            return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
+                        }}
+                    />
 
-                        <YAxis
-                            // title={ this.props.yAxis }
-                            position="end"
-                            tickLabelAngle={-70}
-                        />
-                    </XYPlot>
-                </div>
-            );
-        }
+                    <ChartLabel
+                        text={ this.props.results[Object.keys(this.props.results)[0]].xAxis }  // TODO: should not use the xAxis of a specified attribute 
+                        className="alt-x-label"
+                        includeMargin={false}
+                        xPercent={0.5}
+                        yPercent={1.09}
+                        style={{
+                            fontWeight: "bold"
+                        }}
+                    />
 
-        
+                    <ChartLabel
+                        text={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
+                        className="alt-y-label"
+                        includeMargin={false}
+                        xPercent={0.02}
+                        yPercent={0.05}
+                        style={{
+                            fontWeight: "bold"
+                        }}
+                    />
+
+                    <YAxis
+                        // title={ this.props.results[Object.keys(this.props.results)[0]].unit }
+                        position="end"
+                        tickLabelAngle={-70}
+                    />
+                </XYPlot>
+            </div>
+        );
     }
 }
 

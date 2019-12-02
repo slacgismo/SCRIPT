@@ -7,6 +7,7 @@ function AlgorithmPageLoadForecast(props) {
     return (
         <AlgorithmPage
             data={ dataLoadForecast }
+            title={ "Load Forecast" }
         />
     );
 }
