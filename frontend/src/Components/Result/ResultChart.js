@@ -84,6 +84,9 @@ class ResultChart extends React.Component {
                         includeMargin={false}
                         xPercent={0.5}
                         yPercent={1.2}
+                        style={{
+                            fontWeight: "bold"
+                        }}
                     />
 
                     <ChartLabel
@@ -92,18 +95,15 @@ class ResultChart extends React.Component {
                         includeMargin={false}
                         xPercent={0.02}
                         yPercent={0.1}
+                        style={{
+                            fontWeight: "bold"
+                        }}
                     />
 
                     <YAxis
                         // title={ this.props.results[Object.keys(this.props.results)[0]].unit }
                         position="end"
                         tickLabelAngle={-70}
-                        style={{
-                            title: {
-                                position: "relative",
-                                left: "-3rem",
-                            }
-                        }}
                     />
                 </XYPlot>
             </div>
