@@ -26,10 +26,12 @@ class OverviewMap extends React.PureComponent {
     this.state = {
       allOverviewParams: {
         totalEnergy: {
-          text: 'Total Energy',
+            id: 'total-energy',
+            text: 'Total Energy',
         },
         totalSession: {
-          text: 'Total # of Session',
+            id: 'total-session-num',
+            text: 'Total # of Session',
         },
       },
       chosenParam: "totalEnergy",
@@ -93,21 +95,45 @@ class OverviewMap extends React.PureComponent {
       width: '15rem',
     };
 
-    const paramButtons = Object.keys(this.state.allOverviewParams).map(param => (
-      <Button
-        className={ this.state.chosenParam == param ? "chosen" : "" }
-        onClick={ () => this.changeOverviewAttr(param) }
-      >
-          { this.state.allOverviewParams[param].text }
-      </Button>
-    ))
+    const paramSelect = (
+        <form noValidate autoComplete="off">
+            <TextField
+                id="standart-county"
+                select
+                className={classes.textField}
+                SelectProps={{
+                    native: true,
+                    MenuProps: {
+                        className: classes.menu,
+                    },
+                }}
+                helperText="Please select your county"  
+                margin="normal"
+            >
+                {
+                    Object.keys(this.state.allOverviewParams).map(param => (
+                        <option
+                            key={ this.state.allOverviewParams[param].id }
+                            value={ this.state.allOverviewParams[param].id }
+                        >
+                            { this.state.allOverviewParams[param].text }
+                        </option>
+                    ))
+                }
+            </TextField>
+            <p/>
+            <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm2}>
+                Run
+            </Button>
+        </form> 
+    )
 
     if (this.state.styledMap) {
       return (
         <this.state.styledMap>
           <ParamTabs>
             <h2>Overview Map of California</h2>
-            { paramButtons }
+            { paramSelect }
           </ParamTabs>
           <VectorMap
             id={"overview-map"}
