@@ -106,7 +106,7 @@ class OverviewMap extends React.PureComponent {
       return (
         <this.state.styledMap>
           <ParamTabs>
-            <h2>Overview Map</h2>
+            <h2>Overview Map of California</h2>
             { paramButtons }
           </ParamTabs>
           <VectorMap
