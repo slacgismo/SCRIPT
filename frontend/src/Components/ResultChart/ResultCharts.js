@@ -2,19 +2,6 @@ import React from "react";
 import ResultChart from "./ResultChart";
 
 function ResultCharts(props) {
-    // const resultCharts = props.results.map((result) => (
-    //     <ResultChart
-    //         yAxis={ result.yAxis }
-    //         xAxis={ result.xAxis }
-    //         data={ result.data }
-    //     />
-    // ))
-    // return (
-    //     <>
-    //         { resultCharts }
-    //     </>
-    // );
-
     let resultCharts;
     if (props.algId === 1) { // Algorithm 1
         console.log("First algorithm visualized.");

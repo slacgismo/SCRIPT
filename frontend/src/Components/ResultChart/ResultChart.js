@@ -89,6 +89,7 @@ class ResultChart extends React.Component {
                             orientation="vertical"
                             items={ newItems }
                         />
+                        
                         <HorizontalGridLines />
                         
                         {
@@ -100,14 +101,6 @@ class ResultChart extends React.Component {
                                 />
                             ))
                         }
-
-                        {/* <LineSeries data={ this.props.results["residential_l1_load"].data } color="#e62020" />
-                        <LineSeries data={ this.props.results["residential_l2_load"].data } color="#e3b920" /> */}
-                        {/* <LineSeries data={ this.props.data_rm } color="#63b81a"/>
-                        <LineSeries data={ this.props.data_work } color="#25c3db"/>
-                        <LineSeries data={ this.props.data_fast } color="#3b22e0"/>
-                        <LineSeries data={ this.props.data_p2 } color="#c921db"/>
-                        <LineSeries data={ this.props.data_total } color="#911955"/> */}
                         
                         <XAxis
                             title={ this.props.results["residential_l1_load"].xAxis } // TODO: should not use the xAxis of a specified attribute 
@@ -117,6 +110,7 @@ class ResultChart extends React.Component {
                                 return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
                             }}
                         />
+
                         <YAxis
                             // title={ this.props.yAxis }
                             position="end"
