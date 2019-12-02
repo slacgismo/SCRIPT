@@ -7,6 +7,7 @@ function AlgorithmPageLoadControll(props) {
     return (
         <AlgorithmPage
             data={ dataLoadControll }
+            title={ "Load Control" }
         />
     );
 }

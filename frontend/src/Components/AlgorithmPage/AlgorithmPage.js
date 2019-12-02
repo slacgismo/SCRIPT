@@ -70,19 +70,19 @@ class AlgorithmLoadControll extends Component {
                     content={
                         <div>
                             <Content
-                                text={"Inputs"}
+                                text={`${ this.props.title } Inputs`}
                                 compo={
                                     <AlgResult
                                         visualizeResults={ this.visualizeResults.bind(this) }
                                         data={ this.props.data }
                                     />
                                 }
-                            /> 
+                            />
                             <br/>
                             {
                                 this.state.results.length > 0 &&
                                 <Content
-                                    text={"Results"}
+                                    text={`${ this.props.title } Results`}
                                     compo={
                                         <ResultCharts
                                             results={ this.state.results }
