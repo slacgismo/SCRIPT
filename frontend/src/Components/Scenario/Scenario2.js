@@ -77,6 +77,7 @@ export default function Scenario2 (props) {
             }
         ];
 
+        const data_to_visualize_all = [];
         const data_to_visualize = {};
 
         for (const field of [
@@ -103,7 +104,8 @@ export default function Scenario2 (props) {
             };
         }
 
-        props.visualizeResults(data_to_visualize);
+        data_to_visualize_all.push(data_to_visualize);
+        props.visualizeResults(data_to_visualize_all);
     };
 
     const classes = useStyles();

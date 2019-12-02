@@ -8,7 +8,7 @@ class Algorithm2 extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            results: {},
+            results: [],
         };
     }
 
@@ -38,7 +38,7 @@ class Algorithm2 extends Component {
                             /> 
                             <br/>
                             {
-                                Object.keys(this.state.results).length > 0 &&
+                                this.state.results.length > 0 &&
                                 <Content
                                     text={"Results"}
                                     compo={
