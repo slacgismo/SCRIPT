@@ -30,27 +30,10 @@ function ResultCharts(props) {
         ;
     } else if (props.algId === 2) {
         console.log("Second algorithm visualized.");
-        console.log(props.results[2]);
+        console.log(props.results);
         resultCharts = 
             <ResultChart
-                label_r1 = { props.results[0].yAxis }
-                label_r2 = { props.results[1].yAxis }
-                label_rm = { props.results[2].yAxis }
-                label_work={ props.results[3].yAxis }
-                label_fast={ props.results[4].yAxis }
-                label_p2={ props.results[5].yAxis }
-                label_total={ props.results[6].yAxis}
-
-                data_r1 = { props.results[0].data }
-                data_r2 = { props.results[1].data }
-                data_rm = { props.results[2].data }
-                data_work={ props.results[3].data }
-                data_fast={ props.results[4].data }
-                data_p2={ props.results[5].data }
-                data_total={ props.results[6].data}
-
-                xAxis={ props.results[0].xAxis }
-                
+                results={ props.results }
                 algId = { props.algId }
             />
         ;

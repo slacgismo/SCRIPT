@@ -18,22 +18,15 @@ class ResultChart extends React.Component {
     }
 
     render() {
-        // Fake data
-        //
-        // const data = [
-        //     {x: 1, y: 8},
-        //     {x: 2, y: 10},
-        //     {x: 3, y: 9},
-        //     {x: 4, y: 13},
-        //     {x: 5, y: 15},
-        //     {x: 6, y: 10},
-        //     {x: 7, y: 12},
-        //     {x: 8, y: 10},
-        //     {x: 9, y: 11},
-        //     {x: 10, y: 12},
-        //     {x: 11, y: 9},
-        //     {x: 12, y: 8},
-        // ];
+        const colors = [
+            "#e62020",
+            "#e3b920",
+            "#63b81a",
+            "#25c3db",
+            "#3b22e0",
+            "#c921db",
+            "#911955",
+        ];
 
         if (this.props.algId === 1) {
             return (
@@ -68,6 +61,21 @@ class ResultChart extends React.Component {
                 </div>
             );
         } else if (this.props.algId === 2) {
+            const { results } = this.props;
+            const newItems = [];
+            const newData = [];
+            Object.keys(results).forEach((attr, i) => {
+                newItems.push({
+                    title: results[attr].yAxis,
+                    color: colors[i],
+                });
+                newData.push({
+                    key: attr,
+                    data: results[attr].data,
+                    color: colors[i],
+                });
+            });
+
             return (
                 <div className="chart-grid">
                     <XYPlot height={300} width={500}>
@@ -79,49 +87,30 @@ class ResultChart extends React.Component {
                                 width: "30rem",
                             }}
                             orientation="vertical"
-                            items={[
-                                {
-                                    title: this.props.label_r1,
-                                    color: "#e62020"
-                                },
-                                {
-                                    title: this.props.label_r2,
-                                    color: "#e3b920"
-                                },
-                                {
-                                    title: this.props.label_rm,
-                                    color: "#63b81a"
-                                },
-                                {
-                                    title: this.props.label_work,
-                                    color: "#25c3db"
-                                },
-                                {
-                                    title: this.props.label_fast,
-                                    color: "#3b22e0"
-                                },
-                                {
-                                    title: this.props.label_p2,
-                                    color: "#c921db"
-                                },
-                                {
-                                    title: this.props.label_total,
-                                    color: "#911955"
-                                }
-                            ]}
+                            items={ newItems }
                         />
                         <HorizontalGridLines />
                         
-                        <LineSeries data={ this.props.data_r1 }  color="#e62020" strokeWidth="1px"/>
-                        <LineSeries data={ this.props.data_r2 } color="#e3b920"/>
-                        <LineSeries data={ this.props.data_rm } color="#63b81a"/>
+                        {
+                            newData.map(newDataPiece => (
+                                <LineSeries
+                                    key={ newDataPiece.key }
+                                    data={ newDataPiece.data }
+                                    color={ newDataPiece.color }
+                                />
+                            ))
+                        }
+
+                        {/* <LineSeries data={ this.props.results["residential_l1_load"].data } color="#e62020" />
+                        <LineSeries data={ this.props.results["residential_l2_load"].data } color="#e3b920" /> */}
+                        {/* <LineSeries data={ this.props.data_rm } color="#63b81a"/>
                         <LineSeries data={ this.props.data_work } color="#25c3db"/>
                         <LineSeries data={ this.props.data_fast } color="#3b22e0"/>
                         <LineSeries data={ this.props.data_p2 } color="#c921db"/>
-                        <LineSeries data={ this.props.data_total } color="#911955"/>
+                        <LineSeries data={ this.props.data_total } color="#911955"/> */}
                         
                         <XAxis
-                            title={ this.props.xAxis }
+                            title={ this.props.results["residential_l1_load"].xAxis } // TODO: should not use the xAxis of a specified attribute 
                             position="end"
                             tickFormat={function tickFormat(d){
                                 const minute = d * 15;

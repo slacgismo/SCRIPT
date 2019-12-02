@@ -1,4 +1,6 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
+
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
 import Scenario1 from "../Scenario/Scenario1";
@@ -13,6 +15,8 @@ class AlgorithmLoadControll extends Component {
     }
 
     visualizeResults(results) {
+        // Sample(Fake) result
+        //
         // const resultsFake = [
         //     {
         //         yAxis: "Total Energy",

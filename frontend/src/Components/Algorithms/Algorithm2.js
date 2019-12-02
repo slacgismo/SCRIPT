@@ -8,11 +8,13 @@ class Algorithm2 extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            results: [],
+            results: {},
         };
     }
 
     visualizeResults(results) {
+        console.log(results === this.state.results);
+
         this.setState({
             results: results,
         });
@@ -36,13 +38,13 @@ class Algorithm2 extends Component {
                             /> 
                             <br/>
                             {
-                                this.state.results.length > 0 &&
+                                Object.keys(this.state.results).length > 0 &&
                                 <Content
                                     text={"Results"}
                                     compo={
                                         <ResultCharts
                                             results={ this.state.results }
-                                            algId={2}
+                                            algId={ 2 }
                                         />
                                     }
                                 />

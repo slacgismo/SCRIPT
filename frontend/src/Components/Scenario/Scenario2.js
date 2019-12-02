@@ -77,7 +77,8 @@ export default function Scenario2 (props) {
             }
         ];
 
-        const data_to_visualize = [];
+        const data_to_visualize = {};
+
         for (const field of [
             "residential_l1_load",
             "residential_l2_load",
@@ -87,7 +88,6 @@ export default function Scenario2 (props) {
             "public_l2_load",
             "total_load",
         ]) {
-            console.log(result[0][field]);
             const data = JSON.parse(result[0][field]);
             const dataFormatted = data.map((datapoint, i) => (
                 {
@@ -95,12 +95,12 @@ export default function Scenario2 (props) {
                     y: parseFloat(datapoint.load),
                 }   
             ));
-            data_to_visualize.push({
-                yAxis: `${field} (kWh)`.replace(/_/g, " "),
-                xAxis: "Time",
+            data_to_visualize[field] = {
+                yAxis: `${field}`.replace(/_/g, " "),
+                unit: "kWh",
+                xAxis: "Time",  // TODO: other options?
                 data: dataFormatted,
-                field: field,
-            });
+            };
         }
 
         props.visualizeResults(data_to_visualize);
