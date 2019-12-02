@@ -20,11 +20,6 @@ render((
         <Route exact path="/Algorithm2" component={ AlgorithmPageLoadForecast } />
         <Route exact path="/Algorithm3" component={ AlgorithmPageCBA } />
         <Route exact path="/About" component={ About } />
-  
-        {/* Routes for debugging single components. */}
-        {/* TODO: delete these routes. */}
-        {/* <Route exact path="/overview-map" component={ OverviewMap } />
-        <Route exact path="/result-chart" component={ ResultChart } /> */}
     </Router>
 ), document.getElementById("root"));
 
