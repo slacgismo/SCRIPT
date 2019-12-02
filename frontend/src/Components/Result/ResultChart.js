@@ -83,7 +83,7 @@ class ResultChart extends React.Component {
                         className="alt-x-label"
                         includeMargin={false}
                         xPercent={0.5}
-                        yPercent={1.2}
+                        yPercent={1.09}
                         style={{
                             fontWeight: "bold"
                         }}
