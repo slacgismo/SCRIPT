@@ -6,6 +6,13 @@ import caMapData from '@south-paw/react-vector-maps/maps/json/usa-ca.json';
 import svgPanZoom from 'svg-pan-zoom';
 import OverviewMapTabs from './OverviewMapTabs';
 import Button from '@material-ui/core/Button';
+import TextField from "@material-ui/core/TextField";
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import { makeStyles } from "@material-ui/core/styles";
 
 import {
   Wrapper,
@@ -18,6 +25,44 @@ import {
 } from './overviewMapStyled';
 import { counties } from './sampleCounties';
 
+const useStyles = makeStyles(theme => ({
+    formControl: {
+        margin: theme.spacing(1),
+        marginLeft: theme.spacing(1.5),
+        minWidth: 200,
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
+}));
+
+const ParamSelect = (props) => {
+    const classes = useStyles();
+    return (
+        <>
+            <FormControl className={classes.formControl}>
+                <InputLabel id="overview-param-select-label">Overview Parameter</InputLabel>
+                <Select
+                    labelId="overview-param-select-label"
+                    id="overview-param-select"
+                    value={ props.overviewAttr }
+                    onChange={ event => props.changeOverviewAttr(event.target.value) }
+                >
+                {
+                    Object.keys(props.allOverviewParams).map(param => (
+                        <MenuItem
+                            key={ props.allOverviewParams[param].id }
+                            value={ param }
+                        >
+                            { props.allOverviewParams[param].text }
+                        </MenuItem>
+                    ))
+                }
+                </Select>
+            </FormControl>
+        </>
+    ) 
+}
 
 class OverviewMap extends React.PureComponent {
   constructor(props) {
@@ -95,45 +140,18 @@ class OverviewMap extends React.PureComponent {
       width: '15rem',
     };
 
-    const paramSelect = (
-        <form noValidate autoComplete="off">
-            <TextField
-                id="standart-county"
-                select
-                className={classes.textField}
-                SelectProps={{
-                    native: true,
-                    MenuProps: {
-                        className: classes.menu,
-                    },
-                }}
-                helperText="Please select your county"  
-                margin="normal"
-            >
-                {
-                    Object.keys(this.state.allOverviewParams).map(param => (
-                        <option
-                            key={ this.state.allOverviewParams[param].id }
-                            value={ this.state.allOverviewParams[param].id }
-                        >
-                            { this.state.allOverviewParams[param].text }
-                        </option>
-                    ))
-                }
-            </TextField>
-            <p/>
-            <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm2}>
-                Run
-            </Button>
-        </form> 
-    )
-
     if (this.state.styledMap) {
       return (
         <this.state.styledMap>
           <ParamTabs>
             <h2>Overview Map of California</h2>
-            { paramSelect }
+            {
+                <ParamSelect
+                    allOverviewParams={ this.state.allOverviewParams }
+                    changeOverviewAttr={ newAttr => this.changeOverviewAttr(newAttr) }
+                    overviewAttr={ this.state.chosenParam }
+                />
+            }
           </ParamTabs>
           <VectorMap
             id={"overview-map"}
