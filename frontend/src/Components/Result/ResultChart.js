@@ -45,11 +45,11 @@ class ResultChart extends React.Component {
 
         return (
             <div className="chart-grid">
-                <XYPlot height={300} width={500}>
+                <XYPlot height={600} width={800}>
                     <DiscreteColorLegend
                         style={{
                             position: "absolute",
-                            left: "520px",
+                            left: "850px",
                             top: "15px",
                             width: "30rem",
                         }}
