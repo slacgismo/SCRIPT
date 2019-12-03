@@ -9,7 +9,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
-import { dataLoadForecast } from "../Api/AlgorithmData"; // TODO: use CBA result data
+import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -60,7 +60,45 @@ export default function Scenario3 (props) {
     // TODO: backend
     const getResult = () => {
         // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/****");
-        return dataLoadForecast;
+        return preprocessData(dataCBA);
+    };
+
+    const preprocessData = (allData) => {
+        const data = allData.gasConsumption;
+        const fields = Object.keys(data[0].consumption);
+
+        // Init result
+        const result = {};
+        for (const field of fields) {
+            result[field] = [];
+        }
+
+        data.forEach(dataItem => {
+            const allFields = dataItem.consumption;
+            for (const field of fields) {
+                // try {
+                result[field].push({
+                    data: parseFloat(allFields[field]),
+                });
+                // } catch (error) {
+                //     console.log("!!!!!!!!!!!");
+                //     console.log(allFields[field]);
+                // }
+            }
+        });
+
+        // Flatten result
+        const resultFlattened = [];
+        for (const field of fields) {
+            resultFlattened.push({
+                [field]: result[field],
+            });
+        }
+
+        console.log("preprocessed data:");
+        console.log(resultFlattened);
+
+        return resultFlattened;
     };
 
     const runAlgorithm = () => {

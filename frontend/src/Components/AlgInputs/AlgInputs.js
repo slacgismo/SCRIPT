@@ -30,31 +30,35 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AlgInputs (props) {
-    const visualizeResults = (result) => {
+    const visualizeResults = (resultArr) => {
         // const result = props.data;
-        console.log("results");
-        console.log(result);
+        const data_to_visualize_all = [];
 
-        const data_to_visualize = {};
+        for (const result of resultArr) {
+            const data_to_visualize = {};
 
-        for (const field of Object.keys(result[0])) {
-            const data = result[0][field];
-            const dataFormatted = data.map((datapoint, i) => (
-                {
-                    x: i,
-                    y: parseFloat(datapoint.load),
-                }   
-            ));
-            data_to_visualize[field] = {
-                yAxis: `${field}`.replace(/_/g, " "),
-                unit: "Power (kW)",
-                xAxis: "Time",  // TODO: other options?
-                data: dataFormatted,
-            };
+            for (const field of Object.keys(result)) {
+                const data = result[field];
+                const dataFormatted = data.map((datapoint, i) => (
+                    {
+                        x: i,
+                        y: datapoint.load ? parseFloat(datapoint.load) : parseFloat(datapoint.data)
+                    }   
+                ));
+                data_to_visualize[field] = {
+                    yAxis: `${field}`.replace(/_/g, " "),
+                    unit: "Power (kW)",
+                    xAxis: "Time",  // TODO: other options?
+                    data: dataFormatted,
+                };
+            }
+
+            data_to_visualize_all.push(data_to_visualize);
         }
 
-        const data_to_visualize_all = [];
-        data_to_visualize_all.push(data_to_visualize);
+        console.log("In all charts");
+        console.log(data_to_visualize_all);
+        
         props.visualizeResults(data_to_visualize_all);
     };
 

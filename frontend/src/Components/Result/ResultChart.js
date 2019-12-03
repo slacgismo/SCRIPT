@@ -27,8 +27,28 @@ class ResultChart extends React.Component {
             "#3b22e0",
             "#c921db",
             "#911955",
+            
+            "#e62020",
+            "#e3b920",
+            "#63b81a",
+            "#25c3db",
+            "#3b22e0",
+            "#c921db",
+            "#911955",
+
+            "#e62020",
+            "#e3b920",
+            "#63b81a",
+            "#25c3db",
+            "#3b22e0",
+            "#c921db",
+            "#911955",
         ];
         const { results } = this.props;
+
+        console.log("Results in a chart");
+        console.log(results);
+
         const newItems = [];
         const newData = [];
         Object.keys(results).forEach((attr, i) => {
@@ -72,10 +92,10 @@ class ResultChart extends React.Component {
                     <XAxis
                         // title={ this.props.results[Object.keys(this.props.results)[0]].xAxis }
                         position="end"
-                        tickFormat={function tickFormat(d){
-                            const minute = d * 15;
-                            return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
-                        }}
+                        // tickFormat={function tickFormat(d){
+                        //     const minute = d * 15;
+                        //     return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
+                        // }}
                     />
 
                     <ChartLabel
