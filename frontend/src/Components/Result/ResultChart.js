@@ -71,7 +71,7 @@ class ResultChart extends React.Component {
                             position: "absolute",
                             left: "850px",
                             top: "15px",
-                            width: "30rem",
+                            width: "15rem",
                         }}
                         orientation="vertical"
                         items={ newItems }
@@ -127,7 +127,23 @@ class ResultChart extends React.Component {
                     <YAxis
                         // title={ this.props.results[Object.keys(this.props.results)[0]].unit }
                         position="end"
-                        tickLabelAngle={-70}
+                        tickLabelAngle={ -70 }
+                        tickTotal={ 4 }
+                        tickFormat={(d) => {
+                            if (d >= Math.pow(10, 15)) {
+                                return `${d / Math.pow(10, 15)}P`;
+                            } else if (d >= Math.pow(10, 12)) {
+                                return `${d / Math.pow(10, 12)}T`;
+                            } else if (d >= Math.pow(10, 9)) {
+                                return `${d / Math.pow(10, 9)}G`;
+                            } else if (d >= Math.pow(10, 6)) {
+                                return `${d / Math.pow(10, 6)}M`;
+                            } else if (d >= Math.pow(10, 3)) {
+                                return `${d / Math.pow(10, 3)}K`;
+                            } else {
+                                return d;
+                            }
+                        }}
                     />
                 </XYPlot>
             </div>
