@@ -46,19 +46,20 @@ function AlgInputsLoadForecast (props) {
     /* TODO save results(profile) of Load Forecast*/
     const saveResults = () => {
         setOpen(false);
-
         // TODO: backend
         // POST data to save as a profile
     };
 
     // TODO: backend
-    const getResult = async () => {
-        // await
+    const getResult = () => {
+        
+        const dataLoadForecast = axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
+        console.log(dataLoadForecast);
         return dataLoadForecast;
     };
       
     /* TODO visualize results of Load Forecast */
-    const runAlgorithm = async () => {
+    const runAlgorithm = () => {
         setOpen(true);
         // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
         props.visualizeResults(getResult());
