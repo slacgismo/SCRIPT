@@ -11,9 +11,9 @@ import AlgorithmPageLoadControll from "./Components/AlgorithmPage/AlgorithmPageL
 import AlgorithmPageLoadForecast from "./Components/AlgorithmPage/AlgorithmPageLoadForecast";
 import AlgorithmPageCBA from "./Components/AlgorithmPage/AlgorithmPageCBA";
 
-import Load_controll from "./Components/Algorithms/Load_controll";
-import Load_forecast from "./Components/Algorithms/Load_forecast";
-import Cost_benefit_analysis from "./Components/Algorithms/Cost_benefit_analysis";
+// import Load_controll from "./Components/Algorithms/Load_controll";
+// import Load_forecast from "./Components/Algorithms/Load_forecast";
+// import Cost_benefit_analysis from "./Components/Algorithms/Cost_benefit_analysis";
 
 import About from "./Components/About/About";
 import * as serviceWorker from "./serviceWorker";

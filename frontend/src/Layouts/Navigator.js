@@ -22,9 +22,9 @@ const categories = [
     {
         id: "Algorithms",
         children: [
-            { id: "Load Controll", icon: <DnsRoundedIcon />},
-            { id: "Load Forecast", icon: <PermMediaOutlinedIcon /> },
-            { id: "Cost Benefit Analysis", icon: <PublicIcon /> },
+            { id: "Algorithm1", icon: <DnsRoundedIcon />},
+            { id: "Algorithm2", icon: <PermMediaOutlinedIcon /> },
+            { id: "Algorithm3", icon: <PublicIcon /> },
         ],
     },
 ];
