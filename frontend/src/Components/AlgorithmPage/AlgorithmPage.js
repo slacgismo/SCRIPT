@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import AlgResult from "../Result/Result";
+
+import AlgInput from '../AlgorithmInputs/AlgorithmInputs'
 import ResultCharts from "../Result/ResultCharts";
 import { dataLoadControll, dataLoadForecast } from "../Api/AlgorithmData";
 
@@ -69,14 +70,10 @@ class AlgorithmLoadControll extends Component {
                 <Base 
                     content={
                         <div>
-                            <Content
-                                text={`${ this.props.title } Inputs`}
-                                compo={
-                                    <AlgResult
-                                        visualizeResults={ this.visualizeResults.bind(this) }
-                                        data={ this.props.data }
-                                    />
-                                }
+                            <AlgInput
+                                title={ this.props.title }
+                                visualizeResults={ this.visualizeResults.bind(this) }
+                                data={ this.props.data }
                             />
                             <br/>
                             {
