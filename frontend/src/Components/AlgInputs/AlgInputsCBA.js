@@ -65,7 +65,7 @@ export default function Scenario3 (props) {
         return dataLoadForecast;
     };
 
-    const runAlgorithm = async () => {
+    const runAlgorithm = () => {
         props.visualizeResults(getResult());
     };
 
