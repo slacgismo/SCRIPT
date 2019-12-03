@@ -22,6 +22,14 @@ variable "iam_role_name" {
   default = "$IAM_ROLE_NAME"
 }
 
+variable "db_identifier" {
+  default = "$DB_IDENTIFIER"
+}
+
+variable "db_storage" {
+  default = "$DB_STORAGE"
+}
+
 variable "db_instance" {
   default = "$DB_INSTANCE"
 }

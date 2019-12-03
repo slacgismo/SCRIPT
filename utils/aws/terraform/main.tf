@@ -158,13 +158,13 @@ resource "aws_instance" "script_algorithm_ins" {
   key_name                    = "script"
 
   provisioner "file" {
-    source      = "../SCRIPT"
+    source      = "../../"
     destination = "/home/ubuntu"
     connection {
       type        = "ssh"
       user        = "ubuntu"
       host        = "${self.public_dns}"
-      private_key = "${file("script.pem.txt")}"
+      private_key = "${file("script.pem")}"
     }
   }
 
@@ -198,14 +198,14 @@ resource "aws_instance" "script_algorithm_ins" {
       type        = "ssh"
       user        = "ubuntu"
       host        = "${self.public_dns}"
-      private_key = "${file("script.pem.txt")}"
+      private_key = "${file("script.pem")}"
     }
   }
 }
 
 resource "aws_db_instance" "script_postgresql_db" {
-  identifier             = "script-postgresql-db"
-  allocated_storage      = 20
+  identifier             = var.db_identifier
+  allocated_storage      = var.db_storage
   storage_type           = "gp2"
   engine                 = "postgres"
   engine_version         = "11.5"
@@ -242,4 +242,3 @@ output "script_algorithm_ins_ip" {
 output "script_algorithm_ins_dns" {
   value = "${aws_instance.script_algorithm_ins.public_dns}"
 }
-

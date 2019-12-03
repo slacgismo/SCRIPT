@@ -35,6 +35,12 @@ SCRIPT/
 
 configure `variables.env`
 
+## Generate Key Pair
+
+1. generate ssh key pair(pem) with the key name of `script` and download the key
+2. copy it to `./utils/aws/terraform/`
+3. run `chmod 400 script.pem` in `./utils/aws/terraform/`
+
 ### Run the Application
 
 - Run with existing EC2 instance and S3 bucket: `python run.py -i <ec2_ip> -d <db_host>`
