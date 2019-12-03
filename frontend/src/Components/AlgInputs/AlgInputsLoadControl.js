@@ -53,6 +53,8 @@ function AlgInputsLoadControl(props) {
 
     /* TODO change default parameters of Load Controll */
     const changeDefaultParameters = async () => {
+        // TODO: backend * 3
+        // Get default parameter set
     };
 
     // TODO: backend
