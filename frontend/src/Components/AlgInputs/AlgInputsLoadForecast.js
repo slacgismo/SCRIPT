@@ -48,9 +48,11 @@ function AlgInputsLoadForecast (props) {
         setOpen(false);
     };
 
-    const getResult = () => {
+    // TODO: backend
+    const getResult = async () => {
+        // awiat
         return dataLoadForecast;
-    }
+    };
       
     /* TODO visualize results of Load Forecast */
     const runAlgorithm = async () => {
