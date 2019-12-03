@@ -84,6 +84,7 @@ class CountyTests(APITestCase):
             'total_session': self.total_session + 1
         }
         response = self.client.put(url, data, format='json')
+        print(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get(url, format='json')
         data = json.loads(response.content)
