@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import AlgInputsCBA from './AlgInputsCBA'
+import AlgInputsCBA from "./AlgInputsCBA";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 
@@ -38,7 +38,7 @@ export default function AlgInputs (props) {
         const data_to_visualize = {};
 
         for (const field of Object.keys(result[0])) {
-            const data = JSON.parse(result[0][field]);
+            const data = result[0][field];
             const dataFormatted = data.map((datapoint, i) => (
                 {
                     x: i,

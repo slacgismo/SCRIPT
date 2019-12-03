@@ -60,8 +60,6 @@ export default function Scenario3 (props) {
     // TODO: backend
     const getResult = () => {
         // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/****");
-        console.log("******");
-        console.log(dataLoadForecast);
         return dataLoadForecast;
     };
 
