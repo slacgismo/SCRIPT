@@ -7,6 +7,7 @@ from datetime import datetime
 import paramiko
 import pytz
 
+HOME_DIR = './'
 VAR_FILE_PATH = './variables.env'
 TF_DIR = './utils/aws/terraform'
 TF_VAR_TEMPLATE_PATH = os.path.join(TF_DIR, 'variables.tf.template')
@@ -148,25 +149,31 @@ def check_args(tf_dir):
     return db_host, ec2_ip
 
 
-def start_local(frontend_dir, webserver_dir, db_host):
-    # npm install
-    result = subprocess.run(['npm', 'install'], stdout=subprocess.PIPE, cwd=frontend_dir)
-    print(result.stdout.decode('utf-8'))
+def start_local(db_host):
 
-    # run_server (running in the background)
-    print('Webserver starting...')
-    _ = subprocess.Popen(['./run_server', '%s' % db_host], cwd=webserver_dir)
+    # copy variables.env
+    print('copying variables.env ...')
+    _ = subprocess.run(['cp', './variables.env', './webserver/'], stdout=subprocess.PIPE, cwd=HOME_DIR)
 
-    # wait for db migration
-    time.sleep(30)
+    # docker-compose up
+    print('running docker-compose up --build ...')
 
-    # npm start
-    print('Frontend starting...')
-    result = subprocess.run(['npm', 'start'], stdout=subprocess.PIPE, cwd=frontend_dir)
+    env = {
+        **os.environ,
+        "DB_HOST": db_host,
+    }
+    process = subprocess.Popen(['docker-compose', 'up', '--build'], env=env, stdout=subprocess.PIPE)
+    while True:
+        output = process.stdout.readline().decode('utf-8')
+        if process.poll() is not None and output == '':
+            break
+        if output:
+            print (output.strip())
+    retval = process.poll()
 
 
 env_var_dict = read_env_variables(VAR_FILE_PATH)
 generate_tf_variables(env_var_dict, TF_VAR_TEMPLATE_PATH, TF_VAR_FILE_PATH)
 DB_HOST, EC2_IP = check_args(TF_DIR)
-start_local(FRONTEND_DIR, WEBSERVER_DIR, DB_HOST)
+start_local(DB_HOST)
 run_algorithm(DB_HOST, POSTGRES_INFO_PATH, SSL_KEY_PATH)

@@ -4,8 +4,6 @@ services:
   frontend:
     build: ./frontend
     command: npm start
-    volumes:
-      - ./frontend:/code
     ports:
       - "3000:3000"
     depends_on:
