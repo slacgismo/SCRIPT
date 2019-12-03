@@ -51,17 +51,36 @@ function AlgInputsLoadForecast (props) {
         // POST data to save as a profile
     };
 
+    /* TODO change default parameters of Load Controll */
+    const changeDefaultParameters = async () => {
+        // TODO: backend * 3
+        // Get default parameter set
+    };
+    
     // TODO: backend
     const getResult = async () => {
-        const dataLoadForecast = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
+        console.log(res.data);
+        const dataLoadForecast = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadForecastUnit = 
+            {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+            dataLoadForecastUnit.residential_l1_load = res.data[i].residential_l1_load;
+            dataLoadForecastUnit.residential_l2_load = res.data[i].residential_l2_load;
+            dataLoadForecastUnit.residential_mud_load = res.data[i].residential_mud_load;
+            dataLoadForecastUnit.work_load = res.data[i].work_load;
+            dataLoadForecastUnit.fast_load = res.data[i].fast_load;
+            dataLoadForecastUnit.public_l2_load = res.data[i].public_l2_load;
+            dataLoadForecastUnit.total_load = res.data[i].total_load;
+            dataLoadForecast.push(dataLoadForecastUnit);
+        }
+        console.log(dataLoadForecast);
         return dataLoadForecast;
     };
       
-    /* TODO visualize results of Load Forecast */
     const runAlgorithm = async () => {
         setOpen(true);
-        // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
-        props.visualizeResults(getResult());
+        props.visualizeResults(await getResult());
     };
 
     const counties = [
@@ -104,6 +123,67 @@ function AlgInputsLoadForecast (props) {
                     </option>
                 ))}
             </TextField>
+            <br />
+            <Button variant="contained" className={classes.button} onClick={changeDefaultParameters}>
+                    Default parameters
+            </Button>
+            <br/>
+            <TextField
+                disabled
+                id="standard-aggregation_level"
+                label="aggregation_level"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-num_evs"
+                label="num_evs"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-fast_percent"
+                label="fast_percent"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-work_percent"
+                label="work_percent"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-res_percent"
+                label="rate_res_percent"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-l1_percent"
+                label="l1_percent"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-public_l2_percen"
+                label="public_l2_percen"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
             <p/>
             <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
                 Run
