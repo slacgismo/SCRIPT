@@ -4,9 +4,84 @@ import PropTypes from "prop-types";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
 
-import AlgInput from '../AlgorithmInputs/AlgorithmInputs'
+import AlgInputs from '../AlgInputs/AlgInputs'
 import ResultCharts from "../Result/ResultCharts";
 import { dataLoadControll, dataLoadForecast } from "../Api/AlgorithmData";
+import { makeStyles } from "@material-ui/core/styles";
+
+import TextField from "@material-ui/core/TextField";
+
+const useStyles = makeStyles(theme => ({
+    container: {
+        display: "flex",
+        flexWrap: "wrap",
+    },
+    textField: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        width: 200,
+    },
+    dense: {
+        marginTop: 19,
+    },
+    menu: {
+        width: 200,
+    },
+    root: {
+        width: 500,
+        marginLeft: theme.spacing(1)
+    },
+    button: {
+        margin: theme.spacing(1),
+    },
+}));
+
+const counties = [
+    {
+        name: "Santa Clara",
+        residents: "1",
+    },
+    {
+        name: "Santa Cruz",
+        residents: "2",
+    },
+    {
+        name: "San Francisco",
+        residents: "3",
+    },
+    {
+        name: "San Diego",
+        residents: "4",
+    },
+];
+
+function AlgInputsLoadForecast(props) {
+    const classes = useStyles();
+
+    const algInputs = (
+        <TextField
+            id="standart-county"
+            select
+            className={classes.textField}
+            SelectProps={{
+                native: true,
+                MenuProps: {
+                    className: classes.menu,
+                },
+            }}
+            helperText="Please select your county"  
+            margin="normal"
+        >
+            {counties.map(option => (
+                <option key={option.name} value={option.residents}>
+                    {option.name}
+                </option>
+            ))}
+        </TextField>
+    );
+
+    return algInputs;
+}
 
 class AlgorithmLoadControll extends Component {
     constructor(props) {
@@ -70,10 +145,16 @@ class AlgorithmLoadControll extends Component {
                 <Base 
                     content={
                         <div>
-                            <AlgInput
-                                title={ this.props.title }
-                                visualizeResults={ this.visualizeResults.bind(this) }
-                                data={ this.props.data }
+                            <Content
+                                text={`${ this.props.title } Inputs`}
+                                compo={
+                                    <AlgInputs
+                                        title={ this.props.title }
+                                        visualizeResults={ this.visualizeResults.bind(this) }
+                                        data={ this.props.data }
+                                        algInputs={ <AlgInputsLoadForecast /> }
+                                    />
+                                }
                             />
                             <br/>
                             {
