@@ -111,7 +111,7 @@ function AlgInputsLoadForecast (props) {
                 <DialogTitle id="form-dialog-title">Save</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-        To save the results of Load Forecast for Cost Benefit Analysis, please enter your profile name.
+                        To save the results of Load Forecast for Cost Benefit Analysis, please enter your profile name.
                     </DialogContentText>
                     <TextField
                         autoFocus
@@ -123,10 +123,10 @@ function AlgInputsLoadForecast (props) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
-        Cancel
+                        Cancel
                     </Button>
                     <Button onClick={saveResults} color="primary">
-        Save
+                        Save
                     </Button>
                 </DialogActions>
             </Dialog>

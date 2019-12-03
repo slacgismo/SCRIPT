@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import AlgInputsCBA from './AlgInputsCBA'
+import AlgInputsCBA from "./AlgInputsCBA";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 
@@ -30,31 +30,40 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AlgInputs (props) {
-    const visualizeResults = (result) => {
+    const visualizeResults = (resultArr) => {
         // const result = props.data;
-        console.log("results");
-        console.log(result);
+        const data_to_visualize_all = [];
 
-        const data_to_visualize = {};
+        console.log("results arr:");
+        console.log(resultArr);
 
-        for (const field of Object.keys(result[0])) {
-            const data = JSON.parse(result[0][field]);
-            const dataFormatted = data.map((datapoint, i) => (
-                {
-                    x: i,
-                    y: parseFloat(datapoint.load),
-                }   
-            ));
-            data_to_visualize[field] = {
-                yAxis: `${field}`.replace(/_/g, " "),
-                unit: "Power (kW)",
-                xAxis: "Time",  // TODO: other options?
-                data: dataFormatted,
-            };
+        const isTimeSeries = resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
+
+        for (const result of resultArr) {
+            const data_to_visualize = {};
+
+            for (const field of Object.keys(result)) {
+                const data = result[field];
+                const dataFormatted = data.map((datapoint, i) => (
+                    {
+                        x: isTimeSeries ? i : datapoint.year,
+                        y: isTimeSeries ? parseFloat(datapoint.load) : parseFloat(datapoint.data)  // option
+                    }   
+                ));
+                data_to_visualize[field] = {
+                    yAxis: `${field}`.replace(/_/g, " "),
+                    unit: "Power (kW)",
+                    xAxis: isTimeSeries ? "Time" : "Year",  // TODO: other options?
+                    data: dataFormatted,
+                };
+            }
+
+            data_to_visualize_all.push(data_to_visualize);
         }
 
-        const data_to_visualize_all = [];
-        data_to_visualize_all.push(data_to_visualize);
+        console.log("In all charts");
+        console.log(data_to_visualize_all);
+        
         props.visualizeResults(data_to_visualize_all);
     };
 
