@@ -192,7 +192,8 @@ resource "aws_instance" "script_algorithm_ins" {
       "pip3 install psycopg2",
       "pip3 install -f https://download.mosek.com/stable/wheel/index.html Mosek",
       "pip3 install paramiko",
-      "pip3 install matplotlib"
+      "pip3 install matplotlib",
+      "pip3 install scipy==1.2.1"
     ]
     connection {
       type        = "ssh"
