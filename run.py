@@ -8,7 +8,7 @@ import pytz
 
 VAR_FILE_PATH = './variables.env'
 TF_DIR = './utils/aws/terraform'
-TF_VAR_TEMPLATE_PATH = os.path.join(TF_DIR, 'variables_template.tf')
+TF_VAR_TEMPLATE_PATH = os.path.join(TF_DIR, 'variables.tf.template')
 TF_VAR_FILE_PATH = os.path.join(TF_DIR, 'variables.tf')
 POSTGRES_INFO_PATH = './ec2setup/algorithms/SmartCharging/postgres_info.json'
 SSL_KEY_PATH = '' # TODO @hanya @yuchao
@@ -125,10 +125,10 @@ def run_algorithm():
         print(e)
 
 
-def check_args();
+def check_args():
     """check args: specify EC2_IP and DB_HOST both or neither"""
     if args.EC2_IP is None and args.DB_HOST is None:
-        run_terraform()
+        run_terraform(TF_DIR)
     else:
         EC2_IP = args.EC2_IP
         DB_HOST = args.DB_HOST

@@ -29,11 +29,13 @@ SCRIPT/
 
 ### Set Up Python Environment
 
-`pip install paramiko`
+1. `pip install paramiko`
+2. `pip install pytz`
 
 ### Configure AWS
 
-configure `variables.env`
+1. configure `variables.env`
+2. see [more requirements](./utils/aws/terraform/README.md)
 
 ## Generate Key Pair
 

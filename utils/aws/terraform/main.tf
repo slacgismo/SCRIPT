@@ -182,7 +182,7 @@ resource "aws_instance" "script_algorithm_ins" {
       "aws configure set aws_secret_access_key <aws_secret_access_key>",
       "aws configure set default.region us-east-1",
       "mkdir ~/mosek",
-      "cp ~/SCRIPT/mosek.lic ~/mosek/mosek.lic",
+      "cp ~/SCRIPT/utils/mosek/mosek.lic ~/mosek/mosek.lic",
       "sudo sh -c '/bin/echo 1 > /proc/sys/vm/overcommit_memory'",
       "pip3 install pandas",
       "pip3 install boto3",
