@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { dataLoadControll } from "../Api/AlgorithmData";
+import { basicData } from "../Api/BasicData";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -59,12 +60,13 @@ function AlgInputsLoadControl(props) {
 
     // TODO: backend
     const getResult = async () => {
-        // await
+        var county = document.getElementById("standart-county").value;
+        console.log(county);
+        // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/?"+"county="+county );
         return dataLoadControll;
     };
 
     const runAlgorithm = async () => {
-        // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
         props.visualizeResults(getResult());
     };
 
@@ -85,7 +87,7 @@ function AlgInputsLoadControl(props) {
             >
                 {
                     counties.map(option => (
-                        <option key={option.name} value={option.residents}>
+                        <option value={option.name}>
                             {option.name}
                         </option>
                     ))

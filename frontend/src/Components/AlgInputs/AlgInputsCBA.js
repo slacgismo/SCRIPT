@@ -50,7 +50,7 @@ export default function Scenario3 (props) {
         setOpenUpload(false);
     };
 
-    /* TODO show results of Load Forecast*/
+    /* TODO show results of Load Forecast */
     const showResults = () => {
         // TODO: backend
         // Get result of algorithm2 and visualize it

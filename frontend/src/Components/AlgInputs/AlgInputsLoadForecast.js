@@ -59,12 +59,13 @@ function AlgInputsLoadForecast (props) {
     
     // TODO: backend
     const getResult = async () => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
-        console.log(res.data);
+        var county = document.getElementById("standart-county").value;
+        console.log(county);
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/?"+"county="+county);
+        // console.log(res.data);
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {
-            const  dataLoadForecastUnit = 
-            {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
             dataLoadForecastUnit.residential_l1_load = res.data[i].residential_l1_load;
             dataLoadForecastUnit.residential_l2_load = res.data[i].residential_l2_load;
             dataLoadForecastUnit.residential_mud_load = res.data[i].residential_mud_load;
@@ -74,7 +75,7 @@ function AlgInputsLoadForecast (props) {
             dataLoadForecastUnit.total_load = res.data[i].total_load;
             dataLoadForecast.push(dataLoadForecastUnit);
         }
-        console.log(dataLoadForecast);
+        // console.log(dataLoadForecast);
         return dataLoadForecast;
     };
       
@@ -118,7 +119,7 @@ function AlgInputsLoadForecast (props) {
                 margin="normal"
             >
                 {counties.map(option => (
-                    <option key={option.name} value={option.residents}>
+                    <option value={option.name}>
                         {option.name}
                     </option>
                 ))}
