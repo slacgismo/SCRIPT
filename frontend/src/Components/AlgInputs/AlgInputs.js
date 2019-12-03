@@ -34,6 +34,11 @@ export default function AlgInputs (props) {
         // const result = props.data;
         const data_to_visualize_all = [];
 
+        console.log("results arr:");
+        console.log(resultArr);
+
+        const isTimeSeries = resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
+
         for (const result of resultArr) {
             const data_to_visualize = {};
 
@@ -41,14 +46,14 @@ export default function AlgInputs (props) {
                 const data = result[field];
                 const dataFormatted = data.map((datapoint, i) => (
                     {
-                        x: i,
-                        y: datapoint.load ? parseFloat(datapoint.load) : parseFloat(datapoint.data)
+                        x: isTimeSeries ? i : datapoint.year,
+                        y: isTimeSeries ? parseFloat(datapoint.load) : parseFloat(datapoint.data)  // option
                     }   
                 ));
                 data_to_visualize[field] = {
                     yAxis: `${field}`.replace(/_/g, " "),
                     unit: "Power (kW)",
-                    xAxis: "Time",  // TODO: other options?
+                    xAxis: isTimeSeries ? "Time" : "Year",  // TODO: other options?
                     data: dataFormatted,
                 };
             }

@@ -74,10 +74,12 @@ export default function Scenario3 (props) {
         }
 
         data.forEach(dataItem => {
+            const year = dataItem.year;
             const allFields = dataItem.consumption;
             for (const field of fields) {
                 // try {
                 result[field].push({
+                    year: year,
                     data: parseFloat(allFields[field]),
                 });
                 // } catch (error) {

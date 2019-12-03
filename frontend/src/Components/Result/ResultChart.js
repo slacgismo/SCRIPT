@@ -92,10 +92,14 @@ class ResultChart extends React.Component {
                     <XAxis
                         // title={ this.props.results[Object.keys(this.props.results)[0]].xAxis }
                         position="end"
-                        // tickFormat={function tickFormat(d){
-                        //     const minute = d * 15;
-                        //     return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
-                        // }}
+                        tickFormat={(d) => {
+                            if (this.props.results[Object.keys(this.props.results)[0]].xAxis === "Time") { // options (time / year)
+                                const minute = d * 15;
+                                return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
+                            } else {
+                                return d;
+                            }
+                        }}
                     />
 
                     <ChartLabel
