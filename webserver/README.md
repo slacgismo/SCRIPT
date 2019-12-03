@@ -97,7 +97,7 @@ python manage.py runserver --settings=app.settings.base
 ### Migrate your models defined in Django
 
 ```bash
-python manage.py makemigrations script
+python manage.py makemigrations
 python manage.py migrate
 ```
 

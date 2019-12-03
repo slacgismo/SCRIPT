@@ -6,7 +6,7 @@ VARENV=../variables.env
 source $VARENV
 export $(cut -d= -f1 $VARENV) &> /dev/null
 
-python manage.py makemigrations script
-python manage.py migrate
+python manage.py makemigrations
+DB_HOST=$1 python manage.py migrate --settings=app.settings.deploy
 
-python manage.py runserver --settings=app.settings.deploy
+DB_HOST=$1 python manage.py runserver --settings=app.settings.deploy &

@@ -32,6 +32,14 @@ SCRIPT/
 1. `pip install paramiko`
 2. `pip install pytz`
 
+### Set Up conda
+
+see [more requirements](./webserver/README.md)
+
+### Set Up Node.js
+
+see [more requirements](./frontend/README.md)
+
 ### Configure AWS
 
 1. configure `variables.env`
