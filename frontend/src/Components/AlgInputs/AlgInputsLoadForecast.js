@@ -53,7 +53,7 @@ function AlgInputsLoadForecast (props) {
 
     // TODO: backend
     const getResult = async () => {
-        // await
+        const dataLoadForecast = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
         return dataLoadForecast;
     };
       
