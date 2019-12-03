@@ -75,9 +75,9 @@ export default function Scenario1 (props) {
                         </option>
                     ))}
                 </TextField>
-                <p/>
+                <br />
                 <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
-                    Run
+                    Runs
                 </Button>
                 <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Save</DialogTitle>

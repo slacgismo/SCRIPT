@@ -11,78 +11,6 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import TextField from "@material-ui/core/TextField";
 
-const useStyles = makeStyles(theme => ({
-    container: {
-        display: "flex",
-        flexWrap: "wrap",
-    },
-    textField: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        width: 200,
-    },
-    dense: {
-        marginTop: 19,
-    },
-    menu: {
-        width: 200,
-    },
-    root: {
-        width: 500,
-        marginLeft: theme.spacing(1)
-    },
-    button: {
-        margin: theme.spacing(1),
-    },
-}));
-
-const counties = [
-    {
-        name: "Santa Clara",
-        residents: "1",
-    },
-    {
-        name: "Santa Cruz",
-        residents: "2",
-    },
-    {
-        name: "San Francisco",
-        residents: "3",
-    },
-    {
-        name: "San Diego",
-        residents: "4",
-    },
-];
-
-function AlgInputsLoadForecast(props) {
-    const classes = useStyles();
-
-    const algInputs = (
-        <TextField
-            id="standart-county"
-            select
-            className={classes.textField}
-            SelectProps={{
-                native: true,
-                MenuProps: {
-                    className: classes.menu,
-                },
-            }}
-            helperText="Please select your county"  
-            margin="normal"
-        >
-            {counties.map(option => (
-                <option key={option.name} value={option.residents}>
-                    {option.name}
-                </option>
-            ))}
-        </TextField>
-    );
-
-    return algInputs;
-}
-
 class AlgorithmLoadControll extends Component {
     constructor(props) {
         super(props);
@@ -152,7 +80,7 @@ class AlgorithmLoadControll extends Component {
                                         title={ this.props.title }
                                         visualizeResults={ this.visualizeResults.bind(this) }
                                         data={ this.props.data }
-                                        algInputs={ <AlgInputsLoadForecast /> }
+                                        algInputs={ this.props.algInputs }
                                     />
                                 }
                             />

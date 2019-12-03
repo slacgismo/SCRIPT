@@ -1,6 +1,6 @@
 import React from "react";
 import AlgorithmPage from "./AlgorithmPage";
-
+import AlgorithmInputsLoadForecast from '../AlgInputs/AlgInputsLoadForecast'
 import { dataLoadForecast } from "../Api/AlgorithmData";
 
 function AlgorithmPageLoadForecast(props) {
@@ -8,6 +8,7 @@ function AlgorithmPageLoadForecast(props) {
         <AlgorithmPage
             data={ dataLoadForecast }
             title={ "Load Forecast" }
+            algInputs={ <AlgorithmInputsLoadForecast /> }
         />
     );
 }
