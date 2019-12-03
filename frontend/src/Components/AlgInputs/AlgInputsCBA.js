@@ -58,19 +58,22 @@ export default function Scenario3 (props) {
     };
 
     // TODO: backend
-    const getResult = async () => {
+    const getResult = () => {
         // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/****");
+        console.log("******");
+        console.log(dataLoadForecast);
         return dataLoadForecast;
     };
 
-    /* TODO visualize results of Cost Benefit Analysis*/
     const runAlgorithm = async () => {
         props.visualizeResults(getResult());
     };
 
-    /* TODO upload file to ec2 as inputs of algorithm3 */
     const uploadFile = () => {
         setOpenUpload(true);
+
+        // TODO: backend
+        // upload a file to EC2 as the input of algorithm 3 (cba)
     };
 
     const profiles = ["profile1", "profile2"];
