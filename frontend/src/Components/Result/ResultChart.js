@@ -79,7 +79,7 @@ class ResultChart extends React.Component {
                         <DiscreteColorLegend
                             style={{
                                 position: "absolute",
-                                left: this.props.graphWidth,
+                                left: this.props.graphWidth + 40,
                                 top: "15px",
                                 width: "13rem",
                             }}
