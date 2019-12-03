@@ -81,10 +81,11 @@ class CountyTests(APITestCase):
         url = reverse('county-detail', args=[self.county_name])
         data = {
             'name': self.county_name,
-            'total_session': self.total_session + 1
+            'total_session': self.total_session + 1,
+            'total_energy': self.total_energy + 2,
+            'peak_energy': self.peak_energy + 3
         }
         response = self.client.put(url, data, format='json')
-        print(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get(url, format='json')
         data = json.loads(response.content)
