@@ -17,7 +17,7 @@ resource "aws_default_vpc" "default" {
 }
 
 resource "aws_security_group" "sg" {
-  name = "script-postgresql-db-sg"
+  name = "script-postgresql-db-sg-test"
   vpc_id = "${aws_default_vpc.default.id}"
 
   ingress {
@@ -53,6 +53,35 @@ resource "aws_security_group" "sg" {
   }
 }
 
+resource "aws_iam_role" "script_iam_for_ec2" {
+  name = "script_iam_role_for_ec2"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "attach_s3_access_from_ec2" {
+  role       = "${aws_iam_role.script_iam_for_ec2.name}"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+# resource "aws_iam_instance_profile" "ec2_profile" {
+#   name  = "ec2-profile"
+#   role = "${aws_iam_role.script_iam_for_ec2.name}"
+# }
+
 resource "aws_instance" "script_algorithm_ins" {
   ami                         = "ami-04b9e92b5572fa0d1"
   instance_type               = "t2.medium"
@@ -60,6 +89,7 @@ resource "aws_instance" "script_algorithm_ins" {
   associate_public_ip_address = true
   key_name                    = "script"
   #iam_instance_profile        = "${aws_iam_instance_profile.ec2_profile.name}"
+  iam_instance_profile        = "ec2-profile"
 
   provisioner "file" {
     source      = "../SCRIPT"
@@ -85,9 +115,6 @@ resource "aws_instance" "script_algorithm_ins" {
       "mkdir ~/mosek",
       "cp ~/SCRIPT/mosek.lic ~/mosek/mosek.lic",
       "sudo sh -c '/bin/echo 1 > /proc/sys/vm/overcommit_memory'",
-      "aws configure set aws_access_key_id <>",
-      "aws configure set aws_secret_access_key <>",
-      "aws configure set default.region us-east-1",
       "pip3 install pandas",
       "pip3 install boto3",
       "pip3 install cvxpy",
@@ -95,8 +122,8 @@ resource "aws_instance" "script_algorithm_ins" {
       "pip3 install sklearn",
       "pip3 install psycopg2",
       "pip3 install -f https://download.mosek.com/stable/wheel/index.html Mosek",
-      "pip3 install paramiko"
-      "pip3 install pip3 install matplotlib"
+      "pip3 install paramiko",
+      "pip3 install matplotlib"
     ]
     connection {
       type        = "ssh"
@@ -105,38 +132,6 @@ resource "aws_instance" "script_algorithm_ins" {
       private_key = "${file("script.pem.txt")}"
     }
   }
-}
-
-resource "aws_db_instance" "script_postgresql_db" {
-  identifier             = "script-postgresql-db"
-  allocated_storage      = 20
-  storage_type           = "gp2"
-  engine                 = "postgres"
-  engine_version         = "11.5"
-  instance_class         = var.db_instance
-  name                   = var.db_name
-  username               = var.db_username
-  password               = var.db_pwd
-  port                   = var.db_port
-  publicly_accessible    = true
-  vpc_security_group_ids = ["${aws_security_group.sg.id}"]
-  skip_final_snapshot    = true
-}
-
-output "script_postgresql_db_name" {
-  value = "${aws_db_instance.script_postgresql_db.name}"
-}
-
-output "script_postgresql_db_host" {
-  value = "${aws_db_instance.script_postgresql_db.endpoint}"
-}
-
-output "script_postgresql_db_port" {
-  value = "${aws_db_instance.script_postgresql_db.port}"
-}
-
-output "script_postgresql_db_username" {
-  value = "${aws_db_instance.script_postgresql_db.username}"
 }
 
 output "script_algorithm_ins_ip" {
