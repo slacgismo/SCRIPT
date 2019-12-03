@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { dataLoadControll } from "../Api/AlgorithmData";
+import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -58,14 +59,24 @@ function AlgInputsLoadControl(props) {
     };
 
     // TODO: backend
-    const getResult = () => {
-        // await
+    const getResult = async () => {
+        var county = document.getElementById("standart-county").value;
+        console.log(county);
+        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_controller/?county=${ county }`);
+        // console.log(res.data);
+        const dataLoadControll = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadControllUnit = {uncontrolled_load: "", controlled_load: ""};
+            dataLoadControllUnit.uncontrolled_load = JSON.parse(res.data[i].uncontrolled_load);
+            dataLoadControllUnit.controlled_load = JSON.parse(res.data[i].controlled_load);
+            dataLoadControll.push(dataLoadControllUnit);
+        }
+        console.log(dataLoadControll);
         return dataLoadControll;
     };
 
-    const runAlgorithm = () => {
-        // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
-        props.visualizeResults(getResult());
+    const runAlgorithm = async () => {
+        props.visualizeResults(await getResult());
     };
 
     const algInputs = (
