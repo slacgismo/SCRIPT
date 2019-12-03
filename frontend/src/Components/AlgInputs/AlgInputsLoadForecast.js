@@ -8,6 +8,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import axios from "axios";
+import { dataLoadForecast } from "../Api/AlgorithmData";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -46,11 +47,16 @@ function AlgInputsLoadForecast (props) {
     const saveResults = () => {
         setOpen(false);
     };
+
+    const getResult = () => {
+        return dataLoadForecast;
+    }
       
     /* TODO visualize results of Load Forecast */
     const runAlgorithm = async () => {
         setOpen(true);
-        const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
+        // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
+        props.visualizeResults(getResult());
     };
 
     const counties = [

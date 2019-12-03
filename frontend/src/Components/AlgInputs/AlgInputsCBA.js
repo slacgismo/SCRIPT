@@ -9,6 +9,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
+import { dataLoadForecast } from "../Api/AlgorithmData"; // TODO: use CBA result data
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -50,9 +51,14 @@ export default function Scenario3 (props) {
         setOpenResult(true);
     };
 
+    const getResult = () => {
+        return dataLoadForecast;
+    }
+
     /* TODO visualize results of Cost Benefit Analysis*/
     const runAlgorithm = async () => {
         // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/****");
+        props.visualizeResults(getResult())
     };
 
     /* TODO upload file to ec2 as inputs of algorithm3 */

@@ -9,7 +9,7 @@ function AlgorithmPageLoadControll(props) {
         <AlgorithmPage
             // data={ dataLoadControll }
             title={ "CBA" }
-            algInputs={ <AlgInputsCBA /> }
+            algInputs={ AlgInputsCBA }
         />
     );
 }
