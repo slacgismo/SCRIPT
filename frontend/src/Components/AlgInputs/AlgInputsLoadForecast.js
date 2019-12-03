@@ -46,11 +46,16 @@ function AlgInputsLoadForecast (props) {
     /* TODO save results(profile) of Load Forecast*/
     const saveResults = () => {
         setOpen(false);
+
+        // TODO: backend
+        // POST data to save as a profile
     };
 
-    const getResult = () => {
+    // TODO: backend
+    const getResult = async () => {
+        // await
         return dataLoadForecast;
-    }
+    };
       
     /* TODO visualize results of Load Forecast */
     const runAlgorithm = async () => {

@@ -1,3 +1,8 @@
+// TODO: backend
+
+// function (async/await)
+// call the function and return the result
+
 export const counties = {
     "del norte": {
         "totalEnergy": Math.random(),
