@@ -32,7 +32,8 @@ class Algorithm3 extends Component {
                             <Content
                                 text={"Cost Benefit Analysis"}
                                 compo={
-                                    <Scenario3 profiles={this.state.profiles}     
+                                    <Scenario3 profiles={this.state.profiles}  
+                                                                     
                                     />
                                 }
                             /> 
