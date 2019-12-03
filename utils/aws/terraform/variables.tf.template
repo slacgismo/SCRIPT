@@ -2,6 +2,10 @@ variable "region" {
   default = "$AWS_REGION"
 }
 
+variable "aws_sg" {
+  default = "$AWS_SG"
+}
+
 variable "raw_data_bucket_name" {
   default = "$RAW_DATA_BUCKET_NAME"
 }

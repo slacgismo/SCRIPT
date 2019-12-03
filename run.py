@@ -1,6 +1,7 @@
 import os
 import subprocess
 import json
+import time
 from argparse import ArgumentParser
 from datetime import datetime
 import paramiko
@@ -11,7 +12,9 @@ TF_DIR = './utils/aws/terraform'
 TF_VAR_TEMPLATE_PATH = os.path.join(TF_DIR, 'variables.tf.template')
 TF_VAR_FILE_PATH = os.path.join(TF_DIR, 'variables.tf')
 POSTGRES_INFO_PATH = './ec2setup/algorithms/SmartCharging/postgres_info.json'
-SSL_KEY_PATH = '' # TODO @hanya @yuchao
+SSL_KEY_PATH = os.path.join(TF_DIR, 'script.pem')
+WEBSERVER_DIR = './webserver'
+FRONTEND_DIR = './frontend'
 
 EC2_IP = None
 DB_HOST = None
@@ -68,32 +71,35 @@ def run_terraform(tf_dir):
     print(result.stdout.decode('utf-8'))
 
     # terraform apply
-    result = result = subprocess.run(['terraform', 'apply'], stdout=subprocess.PIPE, cwd=tf_dir)
+    print('terraform apply will take quite a long time to complete, so please be patient...')
+    result = result = subprocess.run(['terraform', 'apply', '-auto-approve'], stdout=subprocess.PIPE, cwd=tf_dir)
     output = result.stdout.decode('utf-8')
     print(output)
 
     # get DB_HOST from output
-    DB_HOST = subprocess.run(['terraform', 'output', 'script_postgresql_db_host'], stdout=subprocess.PIPE, cwd=tf_dir)
-    DB_HOST = DB_HOST.stdout.decode('utf-8')
+    db_host = subprocess.run(['terraform', 'output', 'script_postgresql_db_host'], stdout=subprocess.PIPE, cwd=tf_dir)
+    db_host, _ = db_host.stdout.decode('utf-8').strip().split(':')
 
     # get EC2 IP from output
-    EC2_IP = subprocess.run(['terraform', 'output', 'script_algorithm_ins_ip'], stdout=subprocess.PIPE, cwd=tf_dir)
-    EC2_IP = EC2_IP.stdout.decode('utf-8')
+    ec2_ip = subprocess.run(['terraform', 'output', 'script_algorithm_ins_ip'], stdout=subprocess.PIPE, cwd=tf_dir)
+    ec2_ip = ec2_ip.stdout.decode('utf-8').strip()
+
+    return db_host, ec2_ip
 
 
-def run_algorithm():
+def run_algorithm(db_host, postgres_info_path, ssl_key_path):
     # save information into a file for reading
     postgres_info = {
-        'DB_HOST': DB_HOST,
+        'DB_HOST': db_host,
         'CLEANED_DATA_BUCKET_NAME': env_var_dict['CLEANED_DATA_BUCKET_NAME'],
         'POSTGRES_USER': env_var_dict['POSTGRES_USER'],
         'POSTGRES_PASSWORD': env_var_dict['POSTGRES_PASSWORD'],
         'POSTGRES_DB': env_var_dict['POSTGRES_DB']
     }
-    with open(POSTGRES_INFO_PATH, 'w') as outfile:
+    with open(postgres_info_path, 'w') as outfile:
         json.dump(postgres_info, outfile)
     
-    key = paramiko.RSAKey.from_private_key_file(SSL_KEY_PATH)
+    key = paramiko.RSAKey.from_private_key_file(ssl_key_path)
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
@@ -125,23 +131,42 @@ def run_algorithm():
         print(e)
 
 
-def check_args():
+def check_args(tf_dir):
     """check args: specify EC2_IP and DB_HOST both or neither"""
     if args.EC2_IP is None and args.DB_HOST is None:
-        run_terraform(TF_DIR)
+        db_host, ec2_ip = run_terraform(tf_dir)
     else:
-        EC2_IP = args.EC2_IP
-        DB_HOST = args.DB_HOST
-    
-    if args.EC2_IP is None or args.DB_HOST is None:
+        db_host, ec2_ip = args.EC2_IP, args.DB_HOST
+
+    if db_host is None or ec2_ip is None:
         print('Please specify EC2_IP and DB_HOST both or neither.')
         exit(1)
     else:
-        print('Instance IP: %s' % EC2_IP)
-        print('Database Host: %s' % DB_HOST)
+        print('Instance IP: %s' % ec2_ip)
+        print('Database Host: %s' % db_host)
+
+    return db_host, ec2_ip
+
+
+def start_local(frontend_dir, webserver_dir, db_host):
+    # npm install
+    result = subprocess.run(['npm', 'install'], stdout=subprocess.PIPE, cwd=frontend_dir)
+    print(result.stdout.decode('utf-8'))
+
+    # run_server (running in the background)
+    print('Webserver starting...')
+    _ = subprocess.Popen(['./run_server', '%s' % db_host], cwd=webserver_dir)
+
+    # wait for db migration
+    time.sleep(30)
+
+    # npm start
+    print('Frontend starting...')
+    result = subprocess.run(['npm', 'start'], stdout=subprocess.PIPE, cwd=frontend_dir)
 
 
 env_var_dict = read_env_variables(VAR_FILE_PATH)
 generate_tf_variables(env_var_dict, TF_VAR_TEMPLATE_PATH, TF_VAR_FILE_PATH)
-check_args()
-run_algorithm()
+DB_HOST, EC2_IP = check_args(TF_DIR)
+start_local(FRONTEND_DIR, WEBSERVER_DIR, DB_HOST)
+run_algorithm(DB_HOST, POSTGRES_INFO_PATH, SSL_KEY_PATH)

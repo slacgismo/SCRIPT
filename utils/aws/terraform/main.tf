@@ -114,7 +114,7 @@ resource "aws_default_vpc" "default" {
 }
 
 resource "aws_security_group" "sg" {
-  name = "script-postgresql-db-sg"
+  name = var.aws_sg
   vpc_id = "${aws_default_vpc.default.id}"
 
   ingress {
@@ -192,7 +192,7 @@ resource "aws_instance" "script_algorithm_ins" {
       "pip3 install psycopg2",
       "pip3 install -f https://download.mosek.com/stable/wheel/index.html Mosek",
       "pip3 install paramiko",
-      "pip3 install pip3 install matplotlib"
+      "pip3 install matplotlib"
     ]
     connection {
       type        = "ssh"
