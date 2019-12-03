@@ -52,13 +52,13 @@ function AlgInputsLoadForecast (props) {
     };
 
     // TODO: backend
-    const getResult = async () => {
+    const getResult = () => {
         // await
         return dataLoadForecast;
     };
       
     /* TODO visualize results of Load Forecast */
-    const runAlgorithm = async () => {
+    const runAlgorithm = () => {
         setOpen(true);
         // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");
         props.visualizeResults(getResult());
