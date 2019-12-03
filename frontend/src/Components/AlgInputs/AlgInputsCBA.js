@@ -36,6 +36,10 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+// TODO: backend
+// Get all profiles
+
+
 export default function Scenario3 (props) {
     const classes = useStyles();
     const [openResult, setOpenResult] = React.useState(false);
@@ -48,6 +52,8 @@ export default function Scenario3 (props) {
 
     /* TODO show results of Load Forecast*/
     const showResults = () => {
+        // TODO: backend
+        // Get result of algorithm2 and visualize it
         setOpenResult(true);
     };
 
