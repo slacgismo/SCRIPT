@@ -53,11 +53,11 @@ function AlgInputsLoadControl(props) {
 
     /* TODO change default parameters of Load Controll */
     const changeDefaultParameters = async () => {
-    }
+    };
 
     const getResult = () => {
         return dataLoadControll;
-    }
+    };
 
     const runAlgorithm = async () => {
         // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast/");

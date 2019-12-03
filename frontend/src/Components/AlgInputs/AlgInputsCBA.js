@@ -46,19 +46,19 @@ export default function Scenario3 (props) {
         setOpenUpload(false);
     };
 
-    /* TODO show results of Load Forecast*/
+    /* TODO show results of Load Forecast */
     const showResults = () => {
         setOpenResult(true);
     };
 
     const getResult = () => {
+        // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/****");
         return dataLoadForecast;
-    }
+    };
 
     /* TODO visualize results of Cost Benefit Analysis*/
     const runAlgorithm = async () => {
-        // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/****");
-        props.visualizeResults(getResult())
+        props.visualizeResults(getResult());
     };
 
     /* TODO upload file to ec2 as inputs of algorithm3 */
@@ -66,7 +66,7 @@ export default function Scenario3 (props) {
         setOpenUpload(true);
     };
 
-    const profiles = ['profile1', 'profile2'];
+    const profiles = ["profile1", "profile2"];
 
     return (
         <div>
