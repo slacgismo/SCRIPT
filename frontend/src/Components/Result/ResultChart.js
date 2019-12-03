@@ -11,7 +11,6 @@ import {
     DiscreteColorLegend
 } from "react-vis";
 import "./ResultChart.css";
-import { relative } from "path";
 
 class ResultChart extends React.Component {
     constructor(props) {
@@ -65,20 +64,33 @@ class ResultChart extends React.Component {
 
         return (
             <div className="chart-grid">
+                {
+                    /* title of chart */
+                    this.props.legendPosition == "none" &&
+                    <h5 class='chartTitle'>{ Object.keys(results)[0] }</h5>
+                }
+
+                {/* X Axis Label */}
+                <h5 class='chartXLabel'>{ this.props.results[Object.keys(this.props.results)[0]].xAxis }</h5>
+
                 <XYPlot height={ this.props.graphHeight } width={ this.props.graphWidth }>
-                    <DiscreteColorLegend
-                        style={{
-                            position: "absolute",
-                            left: "850px",
-                            top: "15px",
-                            width: "15rem",
-                        }}
-                        orientation="vertical"
-                        items={ newItems }
-                    />
-                        
+                    {
+                        this.props.legendPosition == "right" &&
+                        <DiscreteColorLegend
+                            style={{
+                                position: "absolute",
+                                left: this.props.graphWidth,
+                                top: "15px",
+                                width: "13rem",
+                            }}
+                            orientation="vertical"
+                            items={ newItems }
+                        />
+                    }
+                    
+                            
                     <HorizontalGridLines />
-                        
+                            
                     {
                         newData.map(newDataPiece => (
                             <LineSeries
@@ -88,7 +100,7 @@ class ResultChart extends React.Component {
                             />
                         ))
                     }
-                        
+                            
                     <XAxis
                         // title={ this.props.results[Object.keys(this.props.results)[0]].xAxis }
                         position="end"
@@ -102,7 +114,7 @@ class ResultChart extends React.Component {
                         }}
                     />
 
-                    <ChartLabel
+                    {/* <ChartLabel
                         text={ this.props.results[Object.keys(this.props.results)[0]].xAxis }  // TODO: should not use the xAxis of a specified attribute 
                         className="alt-x-label"
                         includeMargin={false}
@@ -111,18 +123,21 @@ class ResultChart extends React.Component {
                         style={{
                             fontWeight: "bold"
                         }}
-                    />
+                    /> */}
 
-                    <ChartLabel
-                        text={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
-                        className="alt-y-label"
-                        includeMargin={false}
-                        xPercent={0.02}
-                        yPercent={0.05}
-                        style={{
-                            fontWeight: "bold"
-                        }}
-                    />
+                    {
+                        this.props.legendPosition != "none" &&
+                        <ChartLabel
+                            text={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
+                            className="alt-y-label"
+                            includeMargin={false}
+                            xPercent={0.02}
+                            yPercent={0.05}
+                            style={{
+                                fontWeight: "bold"
+                            }}
+                        />
+                    }
 
                     <YAxis
                         // title={ this.props.results[Object.keys(this.props.results)[0]].unit }
