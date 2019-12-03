@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import Base from "../../Layouts/Base";
-import {DropzoneArea} from "material-ui-dropzone";
+import { DropzoneArea } from "material-ui-dropzone";
 
 class Upload extends Component {
   

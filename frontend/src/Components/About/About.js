@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import Paperbase from "../../Layouts/Base";
 
-class About extends Component {
+class About extends React.Component {
 
 
     render() {
@@ -42,8 +42,8 @@ class About extends Component {
         return (
             <div>
                 <Paperbase
-                  isTextContent={ true }
-                  content={ aboutText }
+                    isTextContent={ true }
+                    content={ aboutText }
                 />
             </div>
         );

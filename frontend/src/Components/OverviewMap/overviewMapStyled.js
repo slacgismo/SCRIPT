@@ -86,7 +86,7 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
       position: relative;
       padding: 0;
 
-      svg {
+      svg#usa-ca {
         background-color: #bdbdbd;
         margin: 0;
         padding: 2rem;
@@ -140,7 +140,7 @@ export const addCountyColorByAttr = (counties, attrName) => {
     const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
     countyNames.forEach((countyName, i) => {
         // counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
-        counties[countyName].color = rgba(5,97,0,attrPercentageOfCounties[i])
+        counties[countyName].color = rgba(5,97,0,attrPercentageOfCounties[i]);
     });
 };
 

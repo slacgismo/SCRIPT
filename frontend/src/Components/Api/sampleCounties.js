@@ -1,3 +1,8 @@
+// TODO: backend
+
+// function (async/await)
+// call the function and return the result
+
 export const counties = {
     "del norte": {
         "totalEnergy": Math.random(),
@@ -8,12 +13,12 @@ export const counties = {
         "totalSession": Math.random(),
     },
     "imperial": {
-	    "totalEnergy": Math.random(),
-      "totalSession": Math.random(),
+        "totalEnergy": Math.random(),
+        "totalSession": Math.random(),
     },
     "riverside": {
-	    "totalEnergy": Math.random(),
-      "totalSession": Math.random(),
+        "totalEnergy": Math.random(),
+        "totalSession": Math.random(),
     },
     "san diego": {
         "totalEnergy": Math.random(),
