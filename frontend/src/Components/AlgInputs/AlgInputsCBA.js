@@ -50,7 +50,7 @@ export default function Scenario3 (props) {
         setOpenUpload(false);
     };
 
-    /* TODO show results of Load Forecast*/
+    /* TODO show results of Load Forecast */
     const showResults = () => {
         // TODO: backend
         // Get result of algorithm2 and visualize it
@@ -58,12 +58,23 @@ export default function Scenario3 (props) {
     };
 
     // TODO: backend
-    const getResult = () => {
-        // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/****");
+    const getResult = async () => {
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/gas_consumption");
+        const dataCBA = {gasConsumption: []};
+        const dataCBASub = [];
+        console.log(res.data);
+        
+        for (var i = 0; i < res.data.length; i++) {
+            const dataCBAUnit = res.data[i];
+            dataCBAUnit.consumption = JSON.parse(res.data[i].consumption);  
+            dataCBASub.push(dataCBAUnit);
+        }
+        dataCBA.gasConsumption = dataCBASub;
+        console.log(dataCBA);
         return preprocessData(dataCBA);
     };
 
-    const preprocessData = (allData) => {
+    const preprocessData = async (allData) => {
         const data = allData.gasConsumption;
         const fields = Object.keys(data[0].consumption);
 
@@ -103,8 +114,8 @@ export default function Scenario3 (props) {
         return resultFlattened;
     };
 
-    const runAlgorithm = () => {
-        props.visualizeResults(getResult());
+    const runAlgorithm = async () => {
+        props.visualizeResults(await getResult());
     };
 
     const uploadFile = () => {
@@ -114,7 +125,16 @@ export default function Scenario3 (props) {
         // upload a file to EC2 as the input of algorithm 3 (cba)
     };
 
-    const profiles = ["profile1", "profile2"];
+    const profiles = [
+        {
+            name: "profile1", 
+            id: "1"
+        },
+        {
+            name: "profile2",
+            id: "2"
+        }
+    ];
 
     return (
         <div>
@@ -133,7 +153,7 @@ export default function Scenario3 (props) {
             >
                 {
                     profiles.map(option => (
-                        <option key={option.name} value={option.residents}>
+                        <option value={option.name}>
                             {option.name}
                         </option>
                     ))
