@@ -72,10 +72,14 @@ def run_terraform(tf_dir):
     print(result.stdout.decode('utf-8'))
 
     # terraform apply
-    print('terraform apply will take quite a long time to complete, so please be patient...')
-    result = result = subprocess.run(['terraform', 'apply', '-auto-approve'], stdout=subprocess.PIPE, cwd=tf_dir)
-    output = result.stdout.decode('utf-8')
-    print(output)
+    process = subprocess.Popen(['terraform', 'apply', '-auto-approve'], stdout=subprocess.PIPE, cwd=tf_dir)
+    while True:
+        output = process.stdout.readline().decode('utf-8')
+        if process.poll() is not None and output == '':
+            break
+        if output:
+            print (output.strip())
+    retval = process.poll()
 
     # get DB_HOST from output
     db_host = subprocess.run(['terraform', 'output', 'script_postgresql_db_host'], stdout=subprocess.PIPE, cwd=tf_dir)
