@@ -23,7 +23,7 @@ import {
   getStyledMapWrapperByCountyColors,
   addCountyColorByAttr,
 } from './overviewMapStyled';
-import { counties } from './sampleCounties';
+import { counties } from '../Api/sampleCounties';
 
 const useStyles = makeStyles(theme => ({
     formControl: {
