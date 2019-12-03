@@ -21,11 +21,11 @@ import * as serviceWorker from "./serviceWorker";
 render((
     <Router>
         <Route exact path="/" component={ Overview } />
-        <Route exact path="/Upload" component={ Download } />
-        <Route exact path="/Algorithm1" component={ AlgorithmPageLoadControll } />
-        <Route exact path="/Algorithm2" component={ AlgorithmPageLoadForecast } />
-        <Route exact path="/Algorithm3" component={ AlgorithmPageCBA } />
-        <Route exact path="/About" component={ About } />
+        <Route exact path="/upload" component={ Download } />
+        <Route exact path="/alg-loadcontrol" component={ AlgorithmPageLoadControll } />
+        <Route exact path="/alg-loadforecast" component={ AlgorithmPageLoadForecast } />
+        <Route exact path="/alg-cba" component={ AlgorithmPageCBA } />
+        <Route exact path="/about" component={ About } />
     </Router>
 ), document.getElementById("root"));
 

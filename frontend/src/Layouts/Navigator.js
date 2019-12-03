@@ -22,9 +22,9 @@ const categories = [
     {
         id: "Algorithms",
         children: [
-            { id: "Algorithm1", icon: <DnsRoundedIcon />},
-            { id: "Algorithm2", icon: <PermMediaOutlinedIcon /> },
-            { id: "Algorithm3", icon: <PublicIcon /> },
+            { id: "alg-loadcontrol", name: 'Load Control', icon: <DnsRoundedIcon />},
+            { id: "alg-loadforecast", name: 'Load Forecast', icon: <PermMediaOutlinedIcon /> },
+            { id: "alg-cba", name: 'Cost Benefit Analysis', icon: <PublicIcon /> },
         ],
     },
 ];
@@ -137,7 +137,7 @@ function Navigator(props) {
                                 {id}
                             </ListItemText>
                         </ListItem>
-                        {children.map(({ id: childId, icon, active }) => (
+                        {children.map(({ id: childId, name: childName, icon, active }) => (
                             <ListItem
                                 key={childId}
                                 button
@@ -151,7 +151,7 @@ function Navigator(props) {
                                         primary: classes.itemPrimary,
                                     }}
                                 >
-                                    { childId }
+                                    { childName }
                                 </ListItemText>
                             </ListItem>
                         ))}
