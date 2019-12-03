@@ -50,6 +50,10 @@ const counties = [
 function AlgInputsLoadControl(props) {
     const classes = useStyles();
 
+    /* TODO change default parameters of Load Controll */
+    const changeDefaultParameters = async () => {
+    };
+
     const algInputs = (
         <>
             <TextField
@@ -62,7 +66,7 @@ function AlgInputsLoadControl(props) {
                         className: classes.menu,
                     },
                 }}
-                helperText="Please select your county"  
+                helperText="Please select a county"  
                 margin="normal"
             >
                 {
@@ -74,6 +78,59 @@ function AlgInputsLoadControl(props) {
                 }
             </TextField>
             <br />
+            <Button variant="contained" className={classes.button} onClick={changeDefaultParameters}>
+                    Default parameters
+            </Button>
+            <br/>
+            <TextField
+                disabled
+                id="standard-rate_energy_peak"
+                label="rate_energy_peak"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-rate_energy_partpeak"
+                label="rate_energy_partpeak"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-rate_energy_offpeak"
+                label="rate_energy_offpeak"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-rate_demand_peak"
+                label="rate_demand_peak"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-rate_demand_partpeak"
+                label="rate_demand_partpeak"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <TextField
+                disabled
+                id="standard-rate_demand_overall"
+                label="rate_demand_overall"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+            />
+            <p/>
             <Button variant="contained" color="primary" className={classes.button} onClick={console.log("Run...")}>
                 Run
             </Button>

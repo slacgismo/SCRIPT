@@ -93,7 +93,7 @@ function AlgInputsLoadForecast (props) {
                     </option>
                 ))}
             </TextField>
-            <br />
+            <p/>
             <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
                 Run
             </Button>
