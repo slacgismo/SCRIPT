@@ -78,7 +78,7 @@ env_var_dict = read_env_variables(VAR_FILE_PATH)
 # TODO @Yuchao: run your script(now you should have both DB_HOST and EC2_IP)
 def run_algorithm():
     DB_HOST = 'script-postgresql-db.cfnv951vt1nj.us-east-1.rds.amazonaws.com'
-    EC2_IP = 'ec2-54-221-19-5.compute-1.amazonaws.com'
+    EC2_IP = 'ec2-52-207-240-214.compute-1.amazonaws.com'
 
     # save information into a file for reading
     postgres_info = {
