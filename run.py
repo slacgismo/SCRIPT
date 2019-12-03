@@ -159,8 +159,8 @@ def start_local(db_host):
     print('copying variables.env ...')
     _ = subprocess.run(['cp', './variables.env', './webserver/'], stdout=subprocess.PIPE, cwd=HOME_DIR)
 
-    # docker-compose up
-    print('running docker-compose up --build ...')
+    # docker-compose up (detached)
+    print('running docker-compose up -d --build ...')
 
     env = {
         **os.environ,
