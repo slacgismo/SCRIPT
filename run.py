@@ -179,5 +179,5 @@ def start_local(db_host):
 env_var_dict = read_env_variables(VAR_FILE_PATH)
 generate_tf_variables(env_var_dict, TF_VAR_TEMPLATE_PATH, TF_VAR_FILE_PATH)
 DB_HOST, EC2_IP = check_args(TF_DIR)
-start_local(DB_HOST)
 run_algorithm(DB_HOST, POSTGRES_INFO_PATH, SSL_KEY_PATH)
+start_local(DB_HOST)
