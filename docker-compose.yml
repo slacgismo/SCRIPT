@@ -1,18 +1,21 @@
 version: '3'
 
 services:
-  db:
-    env_file:
-      - 'variables.env'
-    image: postgres
-  web:
+  frontend:
+    build: ./frontend
+    command: npm start
+    volumes:
+      - ./frontend:/code
+    ports:
+      - "3000:3000"
+    depends_on:
+        - webserver
+  webserver:
     env_file:
       - 'variables.env'
     build: ./webserver
-    command: python manage.py runserver --settings=app.settings.test 0.0.0.0:8000
+    command: ./run_server ${DB_HOST}
     volumes:
       - ./webserver:/code
     ports:
       - "8000:8000"
-    depends_on:
-        - db
