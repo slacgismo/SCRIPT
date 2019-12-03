@@ -5,7 +5,9 @@ from script.validators import validate_positive, validate_zipcode, validate_mont
 class County(models.Model):
     """County Info"""
     name = models.CharField(max_length=50, primary_key=True)
-    residents = models.IntegerField(validators=[validate_positive])
+    total_session = models.IntegerField()
+    total_energy = models.FloatField()
+    peak_energy = models.FloatField()
 
     # [TODO] add other overviews of the county
 
