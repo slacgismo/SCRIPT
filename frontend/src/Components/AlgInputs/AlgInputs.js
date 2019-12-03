@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
+
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 
@@ -29,27 +29,8 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const counties = [
-    {
-        name: "Santa Clara",
-        residents: "1",
-    },
-    {
-        name: "Santa Cruz",
-        residents: "2",
-    },
-    {
-        name: "San Francisco",
-        residents: "3",
-    },
-    {
-        name: "San Diego",
-        residents: "4",
-    },
-];
-
 export default function Scenario2 (props) {
-    const runAlgorithm2 = async () => {
+    const runAlgorithm = async () => {
         // TODO: retrieve real result here...
         //
         // const respResults = await axios.get("http://localhost:8000/api/algorithm/load_forecast/");
@@ -76,6 +57,10 @@ export default function Scenario2 (props) {
         //         total_load: "[{\"time\": \"0:00\", \"load\": \"15217.6\"}, {\"time\": \"1:15\", \"load\": \"13504.0\"}, {\"time\": \"2:30\", \"load\": \"12426.8\"}, {\"time\": \"3:45\", \"load\": \"11221.0\"}, {\"time\": \"0:00\", \"load\": \"10535.2\"}, {\"time\": \"1:15\", \"load\": \"9506.4\"}, {\"time\": \"2:30\", \"load\": \"8980.4\"}, {\"time\": \"3:45\", \"load\": \"8527.4\"}, {\"time\": \"0:00\", \"load\": \"8200.0\"}, {\"time\": \"1:15\", \"load\": \"7979.2\"}, {\"time\": \"2:30\", \"load\": \"7577.2\"}, {\"time\": \"3:45\", \"load\": \"7655.2\"}, {\"time\": \"0:00\", \"load\": \"6912.0\"}, {\"time\": \"1:15\", \"load\": \"6604.6\"}, {\"time\": \"2:30\", \"load\": \"6259.6\"}, {\"time\": \"3:45\", \"load\": \"5927.8\"}, {\"time\": \"0:00\", \"load\": \"5590.6\"}, {\"time\": \"1:15\", \"load\": \"5431.4\"}, {\"time\": \"2:30\", \"load\": \"5145.6\"}, {\"time\": \"3:45\", \"load\": \"5339.4\"}, {\"time\": \"0:00\", \"load\": \"4891.4\"}, {\"time\": \"1:15\", \"load\": \"5515.6\"}, {\"time\": \"2:30\", \"load\": \"4914.8\"}, {\"time\": \"3:45\", \"load\": \"5904.6\"}, {\"time\": \"0:00\", \"load\": \"5976.4\"}, {\"time\": \"1:15\", \"load\": \"6869.4\"}, {\"time\": \"2:30\", \"load\": \"7721.8\"}, {\"time\": \"3:45\", \"load\": \"8393.6\"}, {\"time\": \"0:00\", \"load\": \"9974.4\"}, {\"time\": \"1:15\", \"load\": \"11921.4\"}, {\"time\": \"2:30\", \"load\": \"13824.4\"}, {\"time\": \"3:45\", \"load\": \"16967.4\"}, {\"time\": \"0:00\", \"load\": \"18573.6\"}, {\"time\": \"1:15\", \"load\": \"21377.4\"}, {\"time\": \"2:30\", \"load\": \"22817.0\"}, {\"time\": \"3:45\", \"load\": \"26790.2\"}, {\"time\": \"0:00\", \"load\": \"29938.6\"}, {\"time\": \"1:15\", \"load\": \"29018.4\"}, {\"time\": \"2:30\", \"load\": \"28826.4\"}, {\"time\": \"3:45\", \"load\": \"30144.8\"}, {\"time\": \"0:00\", \"load\": \"29226.4\"}, {\"time\": \"1:15\", \"load\": \"26767.4\"}, {\"time\": \"2:30\", \"load\": \"25971.6\"}, {\"time\": \"3:45\", \"load\": \"25280.6\"}, {\"time\": \"0:00\", \"load\": \"23975.4\"}, {\"time\": \"1:15\", \"load\": \"20592.4\"}, {\"time\": \"2:30\", \"load\": \"19386.0\"}, {\"time\": \"3:45\", \"load\": \"19411.2\"}, {\"time\": \"0:00\", \"load\": \"18018.2\"}, {\"time\": \"1:15\", \"load\": \"18781.0\"}, {\"time\": \"2:30\", \"load\": \"17108.0\"}, {\"time\": \"3:45\", \"load\": \"19177.2\"}, {\"time\": \"0:00\", \"load\": \"16883.4\"}, {\"time\": \"1:15\", \"load\": \"17414.4\"}, {\"time\": \"2:30\", \"load\": \"16311.2\"}, {\"time\": \"3:45\", \"load\": \"16166.4\"}, {\"time\": \"0:00\", \"load\": \"15422.8\"}, {\"time\": \"1:15\", \"load\": \"17407.6\"}, {\"time\": \"2:30\", \"load\": \"16049.4\"}, {\"time\": \"3:45\", \"load\": \"16099.6\"}, {\"time\": \"0:00\", \"load\": \"15778.6\"}, {\"time\": \"1:15\", \"load\": \"17496.2\"}, {\"time\": \"2:30\", \"load\": \"17555.2\"}, {\"time\": \"3:45\", \"load\": \"17262.8\"}, {\"time\": \"0:00\", \"load\": \"17935.0\"}, {\"time\": \"1:15\", \"load\": \"18009.2\"}, {\"time\": \"2:30\", \"load\": \"19236.0\"}, {\"time\": \"3:45\", \"load\": \"20417.6\"}, {\"time\": \"0:00\", \"load\": \"21577.4\"}, {\"time\": \"1:15\", \"load\": \"24138.4\"}, {\"time\": \"2:30\", \"load\": \"25587.0\"}, {\"time\": \"3:45\", \"load\": \"25796.0\"}, {\"time\": \"0:00\", \"load\": \"27556.0\"}, {\"time\": \"1:15\", \"load\": \"28676.8\"}, {\"time\": \"2:30\", \"load\": \"30143.4\"}, {\"time\": \"3:45\", \"load\": \"31501.8\"}, {\"time\": \"0:00\", \"load\": \"31430.2\"}, {\"time\": \"1:15\", \"load\": \"31528.6\"}, {\"time\": \"2:30\", \"load\": \"31058.4\"}, {\"time\": \"3:45\", \"load\": \"30476.4\"}, {\"time\": \"0:00\", \"load\": \"29885.6\"}, {\"time\": \"1:15\", \"load\": \"29418.2\"}, {\"time\": \"2:30\", \"load\": \"29232.4\"}, {\"time\": \"3:45\", \"load\": \"28845.8\"}, {\"time\": \"0:00\", \"load\": \"28238.6\"}, {\"time\": \"1:15\", \"load\": \"28685.8\"}, {\"time\": \"2:30\", \"load\": \"28273.6\"}, {\"time\": \"3:45\", \"load\": \"29053.6\"}, {\"time\": \"0:00\", \"load\": \"28349.2\"}, {\"time\": \"1:15\", \"load\": \"27479.2\"}, {\"time\": \"2:30\", \"load\": \"26089.4\"}, {\"time\": \"3:45\", \"load\": \"24557.8\"}, {\"time\": \"0:00\", \"load\": \"21997.4\"}, {\"time\": \"1:15\", \"load\": \"20563.0\"}, {\"time\": \"2:30\", \"load\": \"19238.8\"}, {\"time\": \"3:45\", \"load\": \"16571.4\"}]"
         //     }
         // ];
+
+        // Sample of fetching result from upper-level component
+        //
+        // const result = props.getResult();
 
         const result = props.data;
         console.log("results");
@@ -109,29 +94,7 @@ export default function Scenario2 (props) {
     return (
         <div>
             <form noValidate autoComplete="off">
-                <TextField
-                    id="standart-county"
-                    select
-                    className={classes.textField}
-                    SelectProps={{
-                        native: true,
-                        MenuProps: {
-                            className: classes.menu,
-                        },
-                    }}
-                    helperText="Please select your county"  
-                    margin="normal"
-                >
-                    {counties.map(option => (
-                        <option key={option.name} value={option.residents}>
-                            {option.name}
-                        </option>
-                    ))}
-                </TextField>
-                <p/>
-                <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm2}>
-                    Run
-                </Button>
+                { props.algInputs } 
             </form>    
         </div>
     );

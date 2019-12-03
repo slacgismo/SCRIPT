@@ -86,7 +86,7 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
       position: relative;
       padding: 0;
 
-      svg {
+      svg#usa-ca {
         background-color: #bdbdbd;
         margin: 0;
         padding: 2rem;

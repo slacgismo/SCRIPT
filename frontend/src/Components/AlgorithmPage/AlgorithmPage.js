@@ -3,9 +3,13 @@ import PropTypes from "prop-types";
 
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-import AlgResult from "../Result/Result";
+
+import AlgInputs from '../AlgInputs/AlgInputs'
 import ResultCharts from "../Result/ResultCharts";
 import { dataLoadControll, dataLoadForecast } from "../Api/AlgorithmData";
+import { makeStyles } from "@material-ui/core/styles";
+
+import TextField from "@material-ui/core/TextField";
 
 class AlgorithmLoadControll extends Component {
     constructor(props) {
@@ -72,9 +76,11 @@ class AlgorithmLoadControll extends Component {
                             <Content
                                 text={`${ this.props.title } Inputs`}
                                 compo={
-                                    <AlgResult
+                                    <AlgInputs
+                                        title={ this.props.title }
                                         visualizeResults={ this.visualizeResults.bind(this) }
                                         data={ this.props.data }
+                                        algInputs={ this.props.algInputs }
                                     />
                                 }
                             />
