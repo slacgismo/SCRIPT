@@ -7,6 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
@@ -34,17 +35,19 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function AlgInputsCBA (props) {
+export default function Scenario3 (props) {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+    const [openResult, setOpenResult] = React.useState(false);
+    const [openUpload, setOpenUpload] = React.useState(false);
 
     const handleClose = () => {
-        setOpen(false);
+        setOpenResult(false);
+        setOpenUpload(false);
     };
 
     /* TODO show results of Load Forecast*/
     const showResults = () => {
-        setOpen(true);
+        setOpenResult(true);
     };
 
     /* TODO visualize results of Cost Benefit Analysis*/
@@ -52,10 +55,15 @@ function AlgInputsCBA (props) {
         // const respResults = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/****");
     };
 
+    /* TODO upload file to ec2 as inputs of algorithm3 */
+    const uploadFile = () => {
+        setOpenUpload(true);
+    };
+
     const profiles = ['profile1', 'profile2'];
 
     return (
-        <>
+        <div>
             <TextField
                 id="standard-profile"
                 select
@@ -80,14 +88,18 @@ function AlgInputsCBA (props) {
             <Button variant="contained" className={classes.button} onClick={showResults}>
                 Review
             </Button>
-            <br />
+            <Button variant="contained" className={classes.button} onClick={uploadFile}>
+                Upload
+            </Button>
+            <p/>
             <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
                 Run
             </Button>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            
+            <Dialog open={openResult} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle onClose={handleClose} id="form-dialog-title">Results of Load Forecast</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
+                    <DialogContentText> 
                     /* TODO */
                     </DialogContentText>
                 </DialogContent>
@@ -97,8 +109,30 @@ function AlgInputsCBA (props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </>
+
+            <Dialog open={openUpload} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Upload</DialogTitle>
+                <DialogContent>
+                    <DropzoneArea 
+                        acceptedFiles={["text/plain"]}
+                        dropzoneText = "Drag and drop a file here or click"
+                        showPreviews = {true}
+                        showPreviewsInDropzone = {false}
+                        filesLimit = "1"
+                        maxFileSize={5000000}
+                        showFileNamesInPreview = "true"
+                        // onChange={uploadFile} 
+                    /> 
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={uploadFile} color="primary" >
+                        Upload
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
     );
 }
-
-export default AlgInputsCBA;
