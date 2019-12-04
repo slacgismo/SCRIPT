@@ -2,10 +2,11 @@ import React, {Component} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import { withStyles } from "@material-ui/core/styles";
 import { dataLoadControll } from "../Api/AlgorithmData";
 import axios from "axios";
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
     container: {
         display: "flex",
         flexWrap: "wrap",
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     button: {
         margin: theme.spacing(1),
     },
-}));
+});
 
 const counties = [
     {
@@ -49,17 +50,16 @@ const counties = [
     },
 ];
 
-function AlgInputsLoadControl(props) {
-    const classes = useStyles();
+class AlgInputsLoadControl extends Component {
 
     /* TODO change default parameters of Load Controll */
-    const changeDefaultParameters = () => {
+    changeDefaultParameters = () => {
         // TODO: backend * 3
         // Get default parameter set
     };
 
     // TODO: backend
-    const getResult = async () => {
+    getResult = async () => {
         var county = document.getElementById("standart-county").value;
         console.log(county);
         const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_controller/?county=${ county }`);
@@ -75,12 +75,15 @@ function AlgInputsLoadControl(props) {
         return dataLoadControll;
     };
 
-    const runAlgorithm = async () => {
-        props.visualizeResults(await getResult());
+    runAlgorithm = async () => {
+        this.props.visualizeResults(await this.getResult());
     };
 
-    const algInputs = (
-        <>
+
+    render() {
+        const { classes } = this.props;
+        return (
+            <>
             <TextField
                 id="standart-county"
                 select
@@ -103,7 +106,7 @@ function AlgInputsLoadControl(props) {
                 }
             </TextField>
             <br />
-            <Button variant="contained" className={classes.button} onClick={changeDefaultParameters}>
+            <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
                     Default parameters
             </Button>
             <br/>
@@ -160,14 +163,14 @@ function AlgInputsLoadControl(props) {
                 variant="contained"
                 color="primary"
                 className={classes.button}
-                onClick={ () => runAlgorithm() }
+                onClick={ () => this.runAlgorithm() }
             >
                 Run
             </Button>
         </>
-    );
-
-    return algInputs;
+        );
+    }
+    
 }
 
-export default AlgInputsLoadControl;
+export default withStyles(styles, { withTheme: true})(AlgInputsLoadControl);

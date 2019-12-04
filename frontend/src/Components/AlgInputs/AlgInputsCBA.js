@@ -1,5 +1,4 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React, {Component} from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -10,10 +9,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
 import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
-// import { profileNames } from "../Api/BasicData";
-import ProfileData from "../Api/ProfileData";
+import { withStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
     container: {
         display: "flex",
         flexWrap: "wrap",
@@ -36,27 +34,47 @@ const useStyles = makeStyles(theme => ({
     button: {
         margin: theme.spacing(1),
     },
-}));
+});
 
-export default function Scenario3 (props) {
-    const classes = useStyles();
-    const [openResult, setOpenResult] = React.useState(false);
-    const [openUpload, setOpenUpload] = React.useState(false);
+class Scenario3 extends Component {
+    state = {
+        openResult: false,
+        openUpload: false,
+        profileNames: [],
+    }
 
-    const handleClose = () => {
-        setOpenResult(false);
-        setOpenUpload(false);
+    componentDidMount() {
+        axios("http://127.0.0.1:8000/api/config/load_forecast/")
+            .then(res => {
+                const profiles = res.data;
+                const profileNames = [];
+                for (var i = 0; i < res.data.length; i++) {
+                    const profileNamesUnit = {id: "", name: ""};
+                    profileNamesUnit.id = profiles[i]["id"];
+                    profileNamesUnit.name = profiles[i]["config_name"]
+                    profileNames.push(profileNamesUnit);
+                }
+                console.log(profileNames);
+                this.setState({ profileNames });
+                console.log(this.state.profileNames);                
+            })
+            .catch(console.log);
+    }
+
+    handleClose = () => {
+        this.setState({ openResult: false })
+        this.setState({ openUpload: false })
     };
 
     /* TODO show results of Load Forecast */
-    const showResults = () => {
+    showResults = () => {
         // TODO: backend
         // Get result of algorithm2 and visualize it
-        setOpenResult(true);
+        this.setState({ openResult: true })
     };
 
     // TODO: backend
-    const getResult = async () => {
+    getResult = async () => {
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/gas_consumption");
         const dataCBA = {gasConsumption: []};
         const dataCBASub = [];
@@ -69,10 +87,10 @@ export default function Scenario3 (props) {
         }
         dataCBA.gasConsumption = dataCBASub;
         console.log(dataCBA);
-        return preprocessData(dataCBA);
+        return this.preprocessData(dataCBA);
     };
 
-    const preprocessData = async (allData) => {
+    preprocessData = async (allData) => {
         const data = allData.gasConsumption;
         const fields = Object.keys(data[0].consumption);
 
@@ -112,13 +130,12 @@ export default function Scenario3 (props) {
         return resultFlattened;
     };
 
-    const runAlgorithm = async () => {
-        props.visualizeResults(await getResult());
+    runAlgorithm = async () => {
+        this.props.visualizeResults(await this.getResult());
     };
 
-    const uploadFile = () => {
-        setOpenUpload(true);
-
+    uploadFile = () => {
+        this.setState({ openUpload: true})
         // TODO: backend
         // upload a file to EC2 as the input of algorithm 3 (cba)
     };
@@ -133,58 +150,82 @@ export default function Scenario3 (props) {
     //         id: "2"
     //     }
     // ];
+    render() {
+        const { classes } = this.props;
+        return (
+            <div>
+                <TextField
+                id="standard-profile"
+                select
+                className={classes.textField}
+                SelectProps={{
+                    native: true,
+                    MenuProps: {
+                        className: classes.menu,
+                    },
+                }}
+                helperText="Please select a profile"
+                margin="normal"
+            >
+            {
+                this.state.profileNames.map(option => (
+                    <option key={option.id} value={option.name}>
+                        {option.name}
+                    </option>
+                ))
+            }
+            </TextField>
+                <Button variant="contained" className={classes.button} onClick={this.showResults}>
+                    Review
+                </Button>
+                <Button variant="contained" className={classes.button} onClick={this.uploadFile}>
+                    Upload
+                </Button>
+                <p/>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
+                    Run
+                </Button>
+                
+                <Dialog open={this.state.openResult} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle onClose={this.handleClose} id="form-dialog-title">Results of Load Forecast</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText> 
+                        /* TODO */
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                            Cancel
+                        </Button>
+                    </DialogActions>
+                </Dialog>
 
-    return (
-        <div>
-            <ProfileData> </ProfileData>
-            <Button variant="contained" className={classes.button} onClick={showResults}>
-                Review
-            </Button>
-            <Button variant="contained" className={classes.button} onClick={uploadFile}>
-                Upload
-            </Button>
-            <p/>
-            <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
-                Run
-            </Button>
-            
-            <Dialog open={openResult} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle onClose={handleClose} id="form-dialog-title">Results of Load Forecast</DialogTitle>
-                <DialogContent>
-                    <DialogContentText> 
-                    /* TODO */
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            <Dialog open={openUpload} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Upload</DialogTitle>
-                <DialogContent>
-                    <DropzoneArea 
-                        acceptedFiles={["text/plain"]}
-                        dropzoneText = "Drag and drop a file here or click"
-                        showPreviews = {true}
-                        showPreviewsInDropzone = {false}
-                        filesLimit = "1"
-                        maxFileSize={5000000}
-                        showFileNamesInPreview = "true"
-                        // onChange={uploadFile} 
-                    /> 
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={uploadFile} color="primary" >
-                        Upload
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-    );
+                <Dialog open={this.state.openUpload} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Upload</DialogTitle>
+                    <DialogContent>
+                        <DropzoneArea 
+                            acceptedFiles={["text/plain"]}
+                            dropzoneText = "Drag and drop a file here or click"
+                            showPreviews = {true}
+                            showPreviewsInDropzone = {false}
+                            filesLimit = "1"
+                            maxFileSize={5000000}
+                            showFileNamesInPreview = "true"
+                            // onChange={uploadFile} 
+                        /> 
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.uploadFile} color="primary" >
+                            Upload
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        );
+    }
 }
+
+export default withStyles(styles, { withTheme: true})(Scenario3);

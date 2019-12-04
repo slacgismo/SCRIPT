@@ -1,5 +1,4 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React, {Component} from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -7,10 +6,11 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { dataLoadForecast } from "../Api/AlgorithmData";
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
     container: {
         display: "flex",
         flexWrap: "wrap",
@@ -33,25 +33,26 @@ const useStyles = makeStyles(theme => ({
     button: {
         margin: theme.spacing(1),
     },
-}));
+});
 
-function AlgInputsLoadForecast (props) {
-    const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+class AlgInputsLoadForecast extends Component {
+    state = {
+        open: false,
+    }
 
-    const handleClose = () => {
-        setOpen(false);
+    handleClose = () => {
+        this.setState({ open: false})
     };
 
     /* TODO save results(profile) of Load Forecast*/
-    const saveResults = () => {
-        setOpen(false);
+    saveResults = () => {
+        this.setState({ open: false})
         // TODO: backend
         // POST data to save as a profile
     };
 
     // TODO: backend
-    const getResult = async () => {
+    getResult = async () => {
         var county = document.getElementById("standart-county").value;
         console.log(county);
         const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ county }`);
@@ -73,12 +74,12 @@ function AlgInputsLoadForecast (props) {
         return dataLoadForecast;
     };
       
-    const runAlgorithm = async () => {
-        setOpen(true);
-        props.visualizeResults(await getResult());
+    runAlgorithm = async () => {
+        this.setState({ open: true })
+        this.props.visualizeResults(await this.getResult());
     };
 
-    const counties = [
+    counties = [
         {
             name: "Santa Clara",
             residents: "1",
@@ -97,56 +98,58 @@ function AlgInputsLoadForecast (props) {
         },
     ];
   
-    return (
-        <>
-            <TextField
-                id="standart-county"
-                select
-                className={classes.textField}
-                SelectProps={{
-                    native: true,
-                    MenuProps: {
-                        className: classes.menu,
-                    },
-                }}
-                helperText="Please select a county"  
-                margin="normal"
-            >
-                {counties.map(option => (
-                    <option key={option.name} value={option.residents}>
-                        {option.name}
-                    </option>
-                ))}
-            </TextField>
-            <p/>
-            <Button variant="contained" color="primary" className={classes.button} onClick={runAlgorithm}>
-                Run
-            </Button>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Save</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        To save the results of Load Forecast for Cost Benefit Analysis, please enter your profile name.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="profile_name"
-                        label="Profile Name"
-                        fullWidth
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={saveResults} color="primary">
-                        Save
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </>
-    );
+    render() {
+        const { classes } = this.props;
+        return (
+            <>
+                <TextField
+                    id="standart-county"
+                    select
+                    className={classes.textField}
+                    SelectProps={{
+                        native: true,
+                        MenuProps: {
+                            className: classes.menu,
+                        },
+                    }}
+                    helperText="Please select a county"  
+                    margin="normal"
+                >
+                    {this.counties.map(option => (
+                        <option key={option.name} value={option.residents}>
+                            {option.name}
+                        </option>
+                    ))}
+                </TextField>
+                <p/>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
+                    Run
+                </Button>
+                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Save</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            To save the results of Load Forecast for Cost Benefit Analysis, please enter your profile name.
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="profile_name"
+                            label="Profile Name"
+                            fullWidth
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.saveResults} color="primary">
+                            Save
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
+        );
+    }
 }
-
-export default AlgInputsLoadForecast;
+export default withStyles(styles, { withTheme: true})(AlgInputsLoadForecast);
