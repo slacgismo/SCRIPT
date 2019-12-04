@@ -13,6 +13,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from "@material-ui/core/styles";
+import { rgba } from "polished";
 
 import {
   Wrapper,
@@ -160,6 +161,9 @@ class OverviewMap extends React.PureComponent {
                 startValue="start"
                 midValue="mid"
                 endValue="end"
+                unit="kWh"
+                startColor={ rgba(5, 97, 0, 0.167) }
+                endColor={ rgba(5, 97, 0, 1) }
             />
           </LegendWrapper>
           <VectorMap
