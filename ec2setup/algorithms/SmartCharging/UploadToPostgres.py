@@ -19,6 +19,7 @@ class UploadToPostgres():
         
         self.db_host = postgres_info['DB_HOST']
         self.table_name = "script_algorithm_load_controller"
+        self.county_table_name = "script_county"
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
@@ -47,14 +48,14 @@ class UploadToPostgres():
 
         cur = conn.cursor()
 
-
+        # get county_id for current county
+        cur.execute("SELECT id FROM " + self.county_table_name + " WHERE name IS " + self.county)
+        print(cur.fetchone())
+        county_id = cur.fetchone()[0]
+        
         # create table on Postgres
-        cur.execute("CREATE TABLE IF NOT EXISTS County_Summary" + " (id serial PRIMARY KEY, county_name varchar, total_energy varchar, total_number_of_session varchar," + \
-            " rate_energy_peak varchar);")
-
-        # create table on Postgres
-        cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, county varchar, rate_energy_peak varchar, rate_energy_partpeak varchar," + \
-            " rate_energy_offpeak varchar, rate_demand_peak varchar, rate_demand_partpeak varchar, rate_demand_overall varchar, uncontrolled_load varchar, controlled_load varchar);")
+        cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, county_id integer, rate_energy_peak numeric, rate_energy_partpeak numeric," + \
+            " rate_energy_offpeak numeric, rate_demand_peak numeric, rate_demand_partpeak numeric, rate_demand_overall numeric, uncontrolled_load varchar, controlled_load varchar);")
 
         # upload data into Postgres
         baseline_profiles_list = []
@@ -87,20 +88,14 @@ class UploadToPostgres():
                 }
             )
 
-        cur.execute("INSERT INTO County_Summary" + \
-            " (county_name, total_energy, total_number_of_session, rate_energy_peak)" + \
-            " VALUES (%s, %s, %s, %s)",
-            (
-                self.county, str(self.total_energy), str(self.total_number_of_session), str(self.rate_energy_peak)
-            )
-        )
+
 
         cur.execute("INSERT INTO " + self.table_name + \
-            " (county, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
+            " (county_id, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
             " rate_demand_peak, rate_demand_partpeak, rate_demand_overall, uncontrolled_load, controlled_load)" + \
             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
-                self.county, str(self.rate_energy_peak), str(self.rate_energy_partpeak), str(self.rate_energy_offpeak),
+                str(county_id), str(self.rate_energy_peak), str(self.rate_energy_partpeak), str(self.rate_energy_offpeak),
                 str(self.rate_demand_peak), str(self.rate_demand_partpeak), str(self.rate_demand_overall), 
                 json.dumps(baseline_profiles_list), json.dumps(controlled_profiles_list)
             )
