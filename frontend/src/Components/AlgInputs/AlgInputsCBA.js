@@ -10,6 +10,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
 import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
+// import { profileNames } from "../Api/BasicData";
+import ProfileData from "../Api/ProfileData";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -35,10 +37,6 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(1),
     },
 }));
-
-// TODO: backend
-// Get all profiles
-
 
 export default function Scenario3 (props) {
     const classes = useStyles();
@@ -125,40 +123,20 @@ export default function Scenario3 (props) {
         // upload a file to EC2 as the input of algorithm 3 (cba)
     };
 
-    const profiles = [
-        {
-            name: "profile1", 
-            id: "1"
-        },
-        {
-            name: "profile2",
-            id: "2"
-        }
-    ];
+    // const profiles = [
+    //     {
+    //         name: "profile1", 
+    //         id: "1"
+    //     },
+    //     {
+    //         name: "profile2",
+    //         id: "2"
+    //     }
+    // ];
 
     return (
         <div>
-            <TextField
-                id="standard-profile"
-                select
-                className={classes.textField}
-                SelectProps={{
-                    native: true,
-                    MenuProps: {
-                        className: classes.menu,
-                    },
-                }}
-                helperText="Please select a profile"
-                margin="normal"
-            >
-                {
-                    profiles.map(option => (
-                        <option value={option.name}>
-                            {option.name}
-                        </option>
-                    ))
-                }
-            </TextField>
+            <ProfileData> </ProfileData>
             <Button variant="contained" className={classes.button} onClick={showResults}>
                 Review
             </Button>
