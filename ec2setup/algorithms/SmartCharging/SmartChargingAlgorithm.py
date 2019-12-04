@@ -25,10 +25,6 @@ class SmartChargingAlgorithm:
         self.rate_demand_partpeak = ''
         self.rate_demand_overall = ''
 
-        # load data from S3
-        self.load_county_data_from_local()
-
-
     def load_county_data_from_S3(self):
         """
             load data from S3 and save to local
@@ -37,6 +33,8 @@ class SmartChargingAlgorithm:
         self.zip_county_lookup['Zip Code'] = self.zip_county_lookup['Zip Code'].astype(int)
         self.county_list = np.unique(self.zip_county_lookup['County'].values)
         print('County options: ', self.county_list)
+
+        return self.county_list
 
     def load_county_data_from_local(self):
         """
@@ -47,6 +45,8 @@ class SmartChargingAlgorithm:
 
         self.county_list = np.unique(self.zip_county_lookup['County'].values)
         print('County options: ', self.county_list)
+
+        return self.county_list
 
     def new_df_and_sessions(self, county, num_sessions):
         """
@@ -217,33 +217,16 @@ class SmartChargingAlgorithm:
         upload_to_postgres_client.run(baseline_profiles, controlled_profiles)
         print('Upload to Postgres succeeded.')
 
-    def demo_run(
-            self,
-            county,
-            rate_energy_peak,
-            rate_energy_partpeak,
-            rate_energy_offpeak,
-            rate_demand_peak,
-            rate_demand_partpeak,
-            rate_demand_overall
-        ):
-        self.county = county
-        self.rate_energy_peak = rate_energy_peak
-        self.rate_energy_partpeak = rate_energy_partpeak
-        self.rate_energy_offpeak = rate_energy_offpeak
-        self.rate_demand_peak = rate_demand_peak
-        self.rate_demand_partpeak = rate_demand_partpeak
-        self.rate_demand_overall = rate_demand_overall
-        baseline_profiles = np.load("baseline_profiles_Santa_Clara_500.npy")
-        controlled_profiles = np.load("controlled_profiles_Santa_Clara_500.npy")  
-        self.uploadToPostgres(baseline_profiles, controlled_profiles)
 
 if __name__ == "__main__":
-    # test
+    # run default for each county
     sca = SmartChargingAlgorithm('script.chargepoint.data')
-    #sca.demo_run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
-    baseline_profiles, controlled_profiles = sca.run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
-    sca.uploadToPostgres(baseline_profiles, controlled_profiles)
+     # load data from S3
+    county_list = sca.load_county_data_from_local()
+    for county in county_list:
+        baseline_profiles, controlled_profiles = sca.run(county, 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
+        sca.uploadToPostgres(baseline_profiles, controlled_profiles)
+
 
     tz_NY = pytz.timezone('America/New_York') 
     datetime_NY = datetime.now(tz_NY)

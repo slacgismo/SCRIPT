@@ -36,7 +36,7 @@ class UploadToPostgres():
 
     def run(self, baseline_profiles, controlled_profiles):
         # update self.total_number_of_session
-        self.total_number_of_session = len(baseline_profiles)
+        self.total_number_of_session = len(baseline_profiles // 4)
 
         conn = psycopg2.connect(
             host=self.db_host,
@@ -66,7 +66,7 @@ class UploadToPostgres():
 
         lines = len(baseline_profiles / 4)
         for line in range(lines):
-            hour_str = str((start_hour + line % 4)% 24)
+            hour_str = str((start_hour + line % 4) % 24)
             minute = 15 * (line % 4)
             if minute is 0:
                 minute_str = '00'
@@ -88,6 +88,13 @@ class UploadToPostgres():
                 }
             )
 
+        cur.execute("INSERT INTO script_county" + \
+            " (name, total_session, total_energy, peak_energy)" + \
+            " VALUES (%s, %s, %s, %s)",
+            (
+                self.county, str(self.total_number_of_session), str(self.total_energy), str(self.rate_energy_peak)
+            )
+        )
 
 
         cur.execute("INSERT INTO " + self.table_name + \

@@ -1,5 +1,5 @@
-cd ~/SCRIPT/ec2setup/utils
-python3 DataInfoSetup.py
+# cd ~/SCRIPT/ec2setup/utils
+# python3 DataInfoSetup.py
 cd ~/SCRIPT/ec2setup/algorithms/SmartCharging
 python3 SmartChargingAlgorithm.py
 cd ~/SCRIPT/ec2setup/algorithms/LoadForecasting
