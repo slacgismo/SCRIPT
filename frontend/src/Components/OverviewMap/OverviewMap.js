@@ -169,7 +169,7 @@ class OverviewMap extends React.PureComponent {
                 startValue={ this.state.minValue }
                 midValue={ (this.state.maxValue + this.state.minValue) / 2 }
                 endValue={ this.state.maxValue }
-                unit="kWh"
+                unit={ this.state.allOverviewParams[this.state.chosenParam].unit }
                 startColor={ rgba(5, 97, 0, 0.167) }
                 endColor={ rgba(5, 97, 0, 1) }
               />
