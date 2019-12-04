@@ -18,8 +18,7 @@ function OverviewMapLegend(props) {
             endColor={
                 rgba(5, 97, 0, 1)
             }
-            height={200}
-            width={300}
+            width={150}
         />
     );
 }

@@ -20,6 +20,7 @@ import {
   MapWrapper,
   Tooltip,
   ParamTabs,
+  LegendWrapper,
   getStyledMapWrapperByCountyColors,
   addCountyColorByAttr,
 } from './overviewMapStyled';
@@ -153,12 +154,14 @@ class OverviewMap extends React.PureComponent {
                     overviewAttr={ this.state.chosenParam }
                 />
             }
+          </ParamTabs>
+          <LegendWrapper>
             <OverviewMapLegend
                 startValue="start"
                 midValue="mid"
                 endValue="end"
             />
-          </ParamTabs>
+          </LegendWrapper>
           <VectorMap
             id={"overview-map"}
             { ...caMapData }

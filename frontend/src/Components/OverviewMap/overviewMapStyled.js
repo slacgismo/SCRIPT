@@ -72,6 +72,13 @@ export const ParamTabs = styled.div`
   }
 `;
 
+export const LegendWrapper = styled.div`
+  position: absolute;
+  right: 2rem;
+  top: 0.5rem;
+  padding: 1.5rem;
+`;
+
 export const getStyledMapWrapperByCountyColors = (countyColors) => {
     let countyColorsCSS = "";
     Object.keys(countyColors).forEach(county => {
