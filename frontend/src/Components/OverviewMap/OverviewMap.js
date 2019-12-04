@@ -40,6 +40,19 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+const allOverviewParams = {
+    totalEnergy: {
+        id: 'total-energy',
+        text: 'Total Energy',
+        unit: 'kWh',
+    },
+    totalSession: {
+        id: 'total-session-num',
+        text: 'Total # of Session',
+        unit: 'cnts',
+    },
+};
+
 const ParamSelect = (props) => {
     const classes = useStyles();
     return (
@@ -73,18 +86,6 @@ class OverviewMap extends React.PureComponent {
     super(props);
 
     this.state = {
-      allOverviewParams: {
-        totalEnergy: {
-            id: 'total-energy',
-            text: 'Total Energy',
-            unit: 'kWh',
-        },
-        totalSession: {
-            id: 'total-session-num',
-            text: 'Total # of Session',
-            unit: 'cnts',
-        },
-      },
       chosenParam: "totalEnergy",
       minValue: null,
       maxValue: null,
@@ -158,7 +159,7 @@ class OverviewMap extends React.PureComponent {
             <h2>Overview Map of California</h2>
             {
                 <ParamSelect
-                    allOverviewParams={ this.state.allOverviewParams }
+                    allOverviewParams={ allOverviewParams }
                     changeOverviewAttr={ newAttr => this.changeOverviewAttr(newAttr) }
                     overviewAttr={ this.state.chosenParam }
                 />
@@ -169,7 +170,7 @@ class OverviewMap extends React.PureComponent {
                 startValue={ this.state.minValue }
                 midValue={ (this.state.maxValue + this.state.minValue) / 2 }
                 endValue={ this.state.maxValue }
-                unit={ this.state.allOverviewParams[this.state.chosenParam].unit }
+                unit={ allOverviewParams[this.state.chosenParam].unit }
                 startColor={ rgba(5, 97, 0, 0.167) }
                 endColor={ rgba(5, 97, 0, 1) }
               />
@@ -182,7 +183,7 @@ class OverviewMap extends React.PureComponent {
           <Tooltip style={tooltipStyle}>
             <b>County:</b> { current.countyName }
             <br />
-            <b>{ this.state.allOverviewParams[this.state.chosenParam].text }:</b> { current[this.state.chosenParam] }
+            <b>{ allOverviewParams[this.state.chosenParam].text }:</b> { current[this.state.chosenParam] }
           </Tooltip>
           
         </this.state.styledMap>
