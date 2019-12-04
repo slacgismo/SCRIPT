@@ -138,17 +138,32 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
  * 
  */
 export const addCountyColorByAttr = (counties, attrName) => {
+    let attrOfCounties = getValuesOfAttr(counties, attrName);
+
+    const countyNames = Object.keys(counties);
+    const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
+
+    countyNames.forEach((countyName, i) => {
+        // counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
+        counties[countyName].color = rgba(5,97,0,attrPercentageOfCounties[i]);
+    });
+};
+
+export const getExtremeValuesOfAttr = (counties, attrName) => {
+    let attrOfCounties = getValuesOfAttr(counties, attrName);
+    return {
+        maxValue: Math.max(...attrOfCounties),
+        minValue: Math.min(...attrOfCounties),
+    };
+};
+
+const getValuesOfAttr = (counties, attrName) => {
     const countyNames = Object.keys(counties);
     let attrOfCounties = [];
     countyNames.forEach(countyName => {
         attrOfCounties.push(counties[countyName][attrName]);
     });
-
-    const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
-    countyNames.forEach((countyName, i) => {
-        // counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
-        counties[countyName].color = rgba(5,97,0,attrPercentageOfCounties[i]);
-    });
+    return attrOfCounties;
 };
 
 const numbers2percentages = (nums) => {

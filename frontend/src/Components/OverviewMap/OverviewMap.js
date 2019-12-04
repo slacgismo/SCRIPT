@@ -24,6 +24,7 @@ import {
   LegendWrapper,
   getStyledMapWrapperByCountyColors,
   addCountyColorByAttr,
+  getExtremeValuesOfAttr,
 } from './overviewMapStyled';
 import { counties } from '../Api/sampleCounties';
 import OverviewMapLegend from './OverviewMapLegend';
@@ -76,13 +77,17 @@ class OverviewMap extends React.PureComponent {
         totalEnergy: {
             id: 'total-energy',
             text: 'Total Energy',
+            unit: 'kWh',
         },
         totalSession: {
             id: 'total-session-num',
             text: 'Total # of Session',
+            unit: 'cnts',
         },
       },
       chosenParam: "totalEnergy",
+      minValue: null,
+      maxValue: null,
       current: {
         countyName: null,
         totalEnergy: null,
@@ -113,10 +118,13 @@ class OverviewMap extends React.PureComponent {
   }
 
   updateMap(newAttr) {
-    addCountyColorByAttr(counties, newAttr);
-    this.setState({
-      styledMap: getStyledMapWrapperByCountyColors(counties)
-    });
+      const extremeValues = getExtremeValuesOfAttr(counties, newAttr);
+      addCountyColorByAttr(counties, newAttr);
+      this.setState({
+          minValue: parseFloat(extremeValues.minValue.toPrecision(2)),
+          maxValue: parseFloat(extremeValues.maxValue.toPrecision(2)),
+          styledMap: getStyledMapWrapperByCountyColors(counties),
+      });
   }
 
   componentDidMount() {
@@ -157,14 +165,14 @@ class OverviewMap extends React.PureComponent {
             }
           </ParamTabs>
           <LegendWrapper>
-            <OverviewMapLegend
-                startValue="start"
-                midValue="mid"
-                endValue="end"
+              <OverviewMapLegend
+                startValue={ this.state.minValue }
+                midValue={ (this.state.maxValue + this.state.minValue) / 2 }
+                endValue={ this.state.maxValue }
                 unit="kWh"
                 startColor={ rgba(5, 97, 0, 0.167) }
                 endColor={ rgba(5, 97, 0, 1) }
-            />
+              />
           </LegendWrapper>
           <VectorMap
             id={"overview-map"}

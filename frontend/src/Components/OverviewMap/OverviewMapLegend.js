@@ -17,7 +17,7 @@ function OverviewMapLegend(props) {
             endColor={
                 props.endColor
             }
-            width={250}
+            width={ 250 }
         />
     );
 }
