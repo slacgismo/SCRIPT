@@ -3,6 +3,8 @@ import { rgba } from "polished";
 
 const BORDER_STYLE = `0.2rem solid ${rgba("#000", 0.15)}`;
 const STROKE_COLOR = "#fff";
+const BASIC_COLOR = [5, 97, 0];
+const COLOR_PERCENTAGE_ESP = 0.2;
 
 export const Wrapper = styled.div`
   display: flex;
@@ -72,6 +74,13 @@ export const ParamTabs = styled.div`
   }
 `;
 
+export const LegendWrapper = styled.div`
+  position: absolute;
+  right: 2rem;
+  top: 0.5rem;
+  padding: 1.5rem;
+`;
+
 export const getStyledMapWrapperByCountyColors = (countyColors) => {
     let countyColorsCSS = "";
     Object.keys(countyColors).forEach(county => {
@@ -131,22 +140,45 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
  * 
  */
 export const addCountyColorByAttr = (counties, attrName) => {
+    let attrOfCounties = getValuesOfAttr(counties, attrName);
+
+    const countyNames = Object.keys(counties);
+    const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
+
+    countyNames.forEach((countyName, i) => {
+        // counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
+        counties[countyName].color = rgba(...BASIC_COLOR, attrPercentageOfCounties[i]);
+    });
+};
+
+export const getExtremeValuesOfAttr = (counties, attrName) => {
+    let attrOfCounties = getValuesOfAttr(counties, attrName);
+    return {
+        maxValue: Math.max(...attrOfCounties),
+        minValue: Math.min(...attrOfCounties),
+    };
+};
+
+export const getBasicColor = () => {
+    return BASIC_COLOR;
+};
+
+export const getColorPercentageEsp = () => {
+    return COLOR_PERCENTAGE_ESP;
+};
+
+const getValuesOfAttr = (counties, attrName) => {
     const countyNames = Object.keys(counties);
     let attrOfCounties = [];
     countyNames.forEach(countyName => {
         attrOfCounties.push(counties[countyName][attrName]);
     });
-
-    const attrPercentageOfCounties = numbers2percentages(attrOfCounties);
-    countyNames.forEach((countyName, i) => {
-        // counties[countyName].color = percentage2color(attrPercentageOfCounties[i]);
-        counties[countyName].color = rgba(5,97,0,attrPercentageOfCounties[i]);
-    });
+    return attrOfCounties;
 };
 
 const numbers2percentages = (nums) => {
     const maxNum = Math.max(...nums);
-    const minNum = Math.min(...nums) - (Math.max(...nums) - Math.min(...nums)) / 5;
+    const minNum = Math.min(...nums) - (Math.max(...nums) - Math.min(...nums)) * COLOR_PERCENTAGE_ESP;
     return nums.map(num => (num - minNum) / (maxNum - minNum));
 };
 
