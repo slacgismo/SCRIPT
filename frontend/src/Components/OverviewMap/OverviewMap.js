@@ -25,6 +25,8 @@ import {
   getStyledMapWrapperByCountyColors,
   addCountyColorByAttr,
   getExtremeValuesOfAttr,
+  getBasicColor,
+  getColorPercentageEsp,
 } from './overviewMapStyled';
 import { counties } from '../Api/sampleCounties';
 import OverviewMapLegend from './OverviewMapLegend';
@@ -171,8 +173,8 @@ class OverviewMap extends React.PureComponent {
                 midValue={ (this.state.maxValue + this.state.minValue) / 2 }
                 endValue={ this.state.maxValue }
                 unit={ allOverviewParams[this.state.chosenParam].unit }
-                startColor={ rgba(5, 97, 0, 0.167) }
-                endColor={ rgba(5, 97, 0, 1) }
+                startColor={ rgba(...getBasicColor(), getColorPercentageEsp() / (1 + getColorPercentageEsp())) }
+                endColor={ rgba(...getBasicColor(), 1) }
               />
           </LegendWrapper>
           <VectorMap
