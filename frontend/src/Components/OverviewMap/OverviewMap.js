@@ -24,6 +24,7 @@ import {
   addCountyColorByAttr,
 } from './overviewMapStyled';
 import { counties } from '../Api/sampleCounties';
+import OverviewMapLegend from './OverviewMapLegend';
 
 const useStyles = makeStyles(theme => ({
     formControl: {
@@ -152,6 +153,11 @@ class OverviewMap extends React.PureComponent {
                     overviewAttr={ this.state.chosenParam }
                 />
             }
+            <OverviewMapLegend
+                startValue="start"
+                midValue="mid"
+                endValue="end"
+            />
           </ParamTabs>
           <VectorMap
             id={"overview-map"}
@@ -163,6 +169,7 @@ class OverviewMap extends React.PureComponent {
             <br />
             <b>{ this.state.allOverviewParams[this.state.chosenParam].text }:</b> { current[this.state.chosenParam] }
           </Tooltip>
+          
         </this.state.styledMap>
       )
     } else {

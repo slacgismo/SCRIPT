@@ -3,6 +3,7 @@ import { render } from "react-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Overview from "./Components/Overview/Overview";
 import OverviewMap from "./Components/OverviewMap/OverviewMap";
+import OverviewMapLegend from "./Components/OverviewMap/OverviewMapLegend";
 // import ResultChart from "./Components/ResultChart/ResultChart";
 import Upload from "./Components/Upload/Upload";
 import Download from "./Components/Download/Download";
@@ -26,6 +27,9 @@ render((
         <Route exact path="/alg-loadforecast" component={ AlgorithmPageLoadForecast } />
         <Route exact path="/alg-cba" component={ AlgorithmPageCBA } />
         <Route exact path="/about" component={ About } />
+        
+        {/* TODO: delete. Only for debug-purpose */}
+        <Route exact path="/legend" component={ OverviewMapLegend } />
     </Router>
 ), document.getElementById("root"));
 
