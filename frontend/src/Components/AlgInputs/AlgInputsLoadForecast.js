@@ -69,6 +69,7 @@ function AlgInputsLoadForecast (props) {
             dataLoadForecast.push(dataLoadForecastUnit);
         }
         console.log(dataLoadForecast);
+
         return dataLoadForecast;
     };
       

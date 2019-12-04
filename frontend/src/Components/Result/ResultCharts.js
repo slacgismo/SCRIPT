@@ -17,8 +17,8 @@ function ResultCharts(props) {
             key={ i }
             results={ result }
             algId={ props.algId }
-            graphWidth={ graphWidth }
-            graphHeight={ graphWidth * 0.75 }
+            graphWidth={ 400 }
+            graphHeight={ 300 }
             legendPosition={ legendPosition }
         />
     ));
