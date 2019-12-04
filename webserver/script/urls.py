@@ -33,6 +33,7 @@ router.register('algorithm/cost_benefit_analysis/emission', EmissionViewSet, 'al
 # Configuration for Algorithm-2:
 router.register('config/load_forecast', LoadForecastConfigViewSet, 'config/load_forecast')
 
+
 urlpatterns = [
     path('', include(router.urls)),
 ]

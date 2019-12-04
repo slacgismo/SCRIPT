@@ -6,6 +6,14 @@ import caMapData from '@south-paw/react-vector-maps/maps/json/usa-ca.json';
 import svgPanZoom from 'svg-pan-zoom';
 import OverviewMapTabs from './OverviewMapTabs';
 import Button from '@material-ui/core/Button';
+import TextField from "@material-ui/core/TextField";
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import { makeStyles } from "@material-ui/core/styles";
+import { rgba } from "polished";
 
 import {
   Wrapper,
@@ -13,26 +21,76 @@ import {
   MapWrapper,
   Tooltip,
   ParamTabs,
+  LegendWrapper,
   getStyledMapWrapperByCountyColors,
   addCountyColorByAttr,
+  getExtremeValuesOfAttr,
+  getBasicColor,
+  getColorPercentageEsp,
 } from './overviewMapStyled';
-import { counties } from './sampleCounties';
+import { counties } from '../Api/sampleCounties';
+import OverviewMapLegend from './OverviewMapLegend';
 
+const useStyles = makeStyles(theme => ({
+    formControl: {
+        margin: theme.spacing(1),
+        marginLeft: theme.spacing(1.5),
+        minWidth: 200,
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
+}));
+
+const allOverviewParams = {
+    totalEnergy: {
+        id: 'total-energy',
+        text: 'Total Energy',
+        unit: 'kWh',
+    },
+    totalSession: {
+        id: 'total-session-num',
+        text: 'Total # of Session',
+        unit: 'cnts',
+    },
+};
+
+const ParamSelect = (props) => {
+    const classes = useStyles();
+    return (
+        <>
+            <FormControl className={classes.formControl}>
+                <InputLabel id="overview-param-select-label">Overview Parameter</InputLabel>
+                <Select
+                    labelId="overview-param-select-label"
+                    id="overview-param-select"
+                    value={ props.overviewAttr }
+                    onChange={ event => props.changeOverviewAttr(event.target.value) }
+                >
+                {
+                    Object.keys(props.allOverviewParams).map(param => (
+                        <MenuItem
+                            key={ props.allOverviewParams[param].id }
+                            value={ param }
+                        >
+                            { props.allOverviewParams[param].text }
+                        </MenuItem>
+                    ))
+                }
+                </Select>
+            </FormControl>
+        </>
+    ) 
+}
 
 class OverviewMap extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      allOverviewParams: {
-        totalEnergy: {
-          text: 'Total Energy',
-        },
-        totalSession: {
-          text: 'Total # of Session',
-        },
-      },
       chosenParam: "totalEnergy",
+      minValue: null,
+      maxValue: null,
       current: {
         countyName: null,
         totalEnergy: null,
@@ -58,15 +116,18 @@ class OverviewMap extends React.PureComponent {
   changeOverviewAttr(newAttr) {
       this.setState({
           chosenParam: newAttr,
-      })
-      this.updateMap(newAttr)
+      });
+      this.updateMap(newAttr);
   }
 
   updateMap(newAttr) {
-    addCountyColorByAttr(counties, newAttr);
-    this.setState({
-      styledMap: getStyledMapWrapperByCountyColors(counties)
-    });
+      const extremeValues = getExtremeValuesOfAttr(counties, newAttr);
+      addCountyColorByAttr(counties, newAttr);
+      this.setState({
+          minValue: parseFloat(extremeValues.minValue.toPrecision(2)),
+          maxValue: parseFloat(extremeValues.maxValue.toPrecision(2)),
+          styledMap: getStyledMapWrapperByCountyColors(counties),
+      });
   }
 
   componentDidMount() {
@@ -93,22 +154,29 @@ class OverviewMap extends React.PureComponent {
       width: '15rem',
     };
 
-    const paramButtons = Object.keys(this.state.allOverviewParams).map(param => (
-      <Button
-        className={ this.state.chosenParam == param ? "chosen" : "" }
-        onClick={ () => this.changeOverviewAttr(param) }
-      >
-          { this.state.allOverviewParams[param].text }
-      </Button>
-    ))
-
     if (this.state.styledMap) {
       return (
         <this.state.styledMap>
           <ParamTabs>
-            <h2>Overview Map</h2>
-            { paramButtons }
+            <h2>Overview Map of California</h2>
+            {
+                <ParamSelect
+                    allOverviewParams={ allOverviewParams }
+                    changeOverviewAttr={ newAttr => this.changeOverviewAttr(newAttr) }
+                    overviewAttr={ this.state.chosenParam }
+                />
+            }
           </ParamTabs>
+          <LegendWrapper>
+              <OverviewMapLegend
+                startValue={ this.state.minValue }
+                midValue={ (this.state.maxValue + this.state.minValue) / 2 }
+                endValue={ this.state.maxValue }
+                unit={ allOverviewParams[this.state.chosenParam].unit }
+                startColor={ rgba(...getBasicColor(), getColorPercentageEsp() / (1 + getColorPercentageEsp())) }
+                endColor={ rgba(...getBasicColor(), 1) }
+              />
+          </LegendWrapper>
           <VectorMap
             id={"overview-map"}
             { ...caMapData }
@@ -117,8 +185,9 @@ class OverviewMap extends React.PureComponent {
           <Tooltip style={tooltipStyle}>
             <b>County:</b> { current.countyName }
             <br />
-            <b>{ this.state.allOverviewParams[this.state.chosenParam].text }:</b> { current[this.state.chosenParam] }
+            <b>{ allOverviewParams[this.state.chosenParam].text }:</b> { current[this.state.chosenParam] }
           </Tooltip>
+          
         </this.state.styledMap>
       )
     } else {

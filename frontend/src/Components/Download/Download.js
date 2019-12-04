@@ -10,7 +10,7 @@ class Download extends React.Component {
 	}
 	
 	downloadScript = () => {
-    window.open("http://localhost:8000/static/split_and_upload_files.py")
+        window.open("http://localhost:8000/static/split_and_upload_files.py")
 	}
 	
 	render() {
