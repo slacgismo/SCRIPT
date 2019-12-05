@@ -153,11 +153,13 @@ class AlgInputsLoadForecast extends Component {
                     helperText="Please select a county"  
                     margin="normal"
                 >
-                    {this.state.counties.map(option => (
-                        <option key={option.name} value={option.name}>
-                            {option.name}
-                        </option>
-                    ))}
+                    {
+                        this.state.counties.map(option => (
+                            <option key={option.name} value={option.name}>
+                                {option.name}
+                            </option>
+                        ))
+                    }
                 </TextField>
                 {/* <br/>
                 <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
