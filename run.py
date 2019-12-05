@@ -141,6 +141,8 @@ def run_algorithm(db_host, ssl_key_path):
     with open(POSTGRES_INFO_AlGORITHM3_PATH, 'w') as outfile:
         json.dump(postgres_info, outfile)
     
+    upload_code()
+    
     key = paramiko.RSAKey.from_private_key_file(ssl_key_path)
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -228,6 +230,5 @@ def start_local(db_host):
 env_var_dict = read_env_variables(VAR_FILE_PATH)
 generate_tf_variables(env_var_dict, TF_VAR_TEMPLATE_PATH, TF_VAR_FILE_PATH)
 DB_HOST, EC2_IP = check_args(TF_DIR)
-upload_code()
 start_local(DB_HOST)
 run_algorithm(DB_HOST, SSL_KEY_PATH)
