@@ -10,6 +10,7 @@ import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
 import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
 import { withStyles } from "@material-ui/core/styles";
+import AlgInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
 
 const styles = theme => ({
     container: {
@@ -36,16 +37,23 @@ const styles = theme => ({
     },
 });
 
-class Scenario3 extends Component {
-    state = {
-        openResult: false,
-        openUpload: false,
-        profileNames: [],
+class AlgInputsCBA extends Component {
+    constructor(props) {
+        super(props);
+        this.state = 
+        {
+            openResult: false,
+            openUpload: false,
+            profileNames: [],
+            profileData: [],
+            profileName: "",
+        };
     }
-
+    
     componentDidMount() {
         axios("http://127.0.0.1:8000/api/config/load_forecast/")
             .then(res => {
+                this.setState({ profileData: res.data })
                 const profiles = res.data;
                 const profileNames = [];
                 for (var i = 0; i < res.data.length; i++) {
@@ -56,21 +64,30 @@ class Scenario3 extends Component {
                 }
                 console.log(profileNames);
                 this.setState({ profileNames });
-                console.log(this.state.profileNames);                
+                console.log(this.state.profileNames);
+                this.setState({ profileName: document.getElementById("standard-profile").value});
+                // console.log(this.state.profileName);
             })
             .catch(console.log);
     }
 
-    handleClose = () => {
+    handleClose() {
         this.setState({ openResult: false })
         this.setState({ openUpload: false })
     };
 
     /* TODO show results of Load Forecast */
-    showResults = () => {
+    showResults = async (profileName) => {
         // TODO: backend
         // Get result of algorithm2 and visualize it
         this.setState({ openResult: true })
+        // console.log(this.state.profileName);
+        // for (var i = 0; i < this.state.profileData.length; i++) {
+        //     if (this.state.profileData[i].config_name == this.state.profileName) {
+        //         AlgInputsLoadForecast.runAlgorithm(this.state.profileData[i].choice);
+                
+        //     }
+        // }
     };
 
     // TODO: backend
@@ -132,6 +149,8 @@ class Scenario3 extends Component {
 
     runAlgorithm = async () => {
         this.props.visualizeResults(await this.getResult());
+        // const option = document.getElementById("standard-category").value;
+        // console.log(option);
     };
 
     uploadFile = () => {
@@ -228,4 +247,4 @@ class Scenario3 extends Component {
     }
 }
 
-export default withStyles(styles, { withTheme: true})(Scenario3);
+export default withStyles(styles, { withTheme: true})(AlgInputsCBA);

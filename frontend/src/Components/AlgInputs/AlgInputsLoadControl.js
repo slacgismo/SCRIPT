@@ -4,6 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import { dataLoadControll } from "../Api/AlgorithmData";
+import { countyData } from "../Api/CountyData";
 import axios from "axios";
 
 const styles = theme => ({
@@ -31,35 +32,41 @@ const styles = theme => ({
     },
 });
 
-const counties = [
-    {
-        name: "Santa Clara",
-        residents: "1",
-    },
-    {
-        name: "Santa Cruz",
-        residents: "2",
-    },
-    {
-        name: "San Francisco",
-        residents: "3",
-    },
-    {
-        name: "San Diego",
-        residents: "4",
-    },
-];
+// const counties = [
+//     {
+//         name: "Santa Clara",
+//         residents: "1",
+//     },
+//     {
+//         name: "Santa Cruz",
+//         residents: "2",
+//     },
+//     {
+//         name: "San Francisco",
+//         residents: "3",
+//     },
+//     {
+//         name: "San Diego",
+//         residents: "4",
+//     },
+// ];
 
 class AlgInputsLoadControl extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            counties: countyData,
+        };
+    }
 
     /* TODO change default parameters of Load Controll */
-    changeDefaultParameters = () => {
+    changeDefaultParameters() {
         // TODO: backend * 3
         // Get default parameter set
-    };
+    }
 
     // TODO: backend
-    getResult = async () => {
+    async getResult() {
         var county = document.getElementById("standart-county").value;
         console.log(county);
         const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_controller/?county=${ county }`);
@@ -73,101 +80,102 @@ class AlgInputsLoadControl extends Component {
         }
         console.log(dataLoadControll);
         return dataLoadControll;
-    };
+    }
 
-    runAlgorithm = async () => {
+    async runAlgorithm() {
         this.props.visualizeResults(await this.getResult());
-    };
+    }
 
 
     render() {
         const { classes } = this.props;
-        return (
+        console.log(this.state.counties);
+        return this.state.counties ? <></> : (
             <>
-            <TextField
-                id="standart-county"
-                select
-                className={classes.textField}
-                SelectProps={{
-                    native: true,
-                    MenuProps: {
-                        className: classes.menu,
-                    },
-                }}
-                helperText="Please select a county"  
-                margin="normal"
-            >
-                {
-                    counties.map(option => (
-                        <option key={option.name} value={option.residents}>
-                            {option.name}
-                        </option>
-                    ))
-                }
-            </TextField>
-            <br />
-            <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
+                <TextField
+                    id="standart-county"
+                    select
+                    className={classes.textField}
+                    SelectProps={{
+                        native: true,
+                        MenuProps: {
+                            className: classes.menu,
+                        },
+                    }}
+                    helperText="Please select a county"  
+                    margin="normal"
+                >
+                    {
+                        this.state.counties.map(option => (
+                            <option key={option.name} value={option.residents}>
+                                {option.name}
+                            </option>
+                        ))
+                    }
+                </TextField>
+                <br />
+                <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
                     Default parameters
-            </Button>
-            <br/>
-            <TextField
-                disabled
-                id="standard-rate_energy_peak"
-                label="rate_energy_peak"
-                defaultValue="defaulValue"
-                className={classes.textField}
-                margin="normal"
-            />
-            <TextField
-                disabled
-                id="standard-rate_energy_partpeak"
-                label="rate_energy_partpeak"
-                defaultValue="defaulValue"
-                className={classes.textField}
-                margin="normal"
-            />
-            <TextField
-                disabled
-                id="standard-rate_energy_offpeak"
-                label="rate_energy_offpeak"
-                defaultValue="defaulValue"
-                className={classes.textField}
-                margin="normal"
-            />
-            <TextField
-                disabled
-                id="standard-rate_demand_peak"
-                label="rate_demand_peak"
-                defaultValue="defaulValue"
-                className={classes.textField}
-                margin="normal"
-            />
-            <TextField
-                disabled
-                id="standard-rate_demand_partpeak"
-                label="rate_demand_partpeak"
-                defaultValue="defaulValue"
-                className={classes.textField}
-                margin="normal"
-            />
-            <TextField
-                disabled
-                id="standard-rate_demand_overall"
-                label="rate_demand_overall"
-                defaultValue="defaulValue"
-                className={classes.textField}
-                margin="normal"
-            />
-            <br />
-            <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                onClick={ () => this.runAlgorithm() }
-            >
+                </Button>
+                <br/>
+                <TextField
+                    disabled
+                    id="standard-rate_energy_peak"
+                    label="rate_energy_peak"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-rate_energy_partpeak"
+                    label="rate_energy_partpeak"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-rate_energy_offpeak"
+                    label="rate_energy_offpeak"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-rate_demand_peak"
+                    label="rate_demand_peak"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-rate_demand_partpeak"
+                    label="rate_demand_partpeak"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-rate_demand_overall"
+                    label="rate_demand_overall"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <br />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    onClick={ () => this.runAlgorithm() }
+                >
                 Run
-            </Button>
-        </>
+                </Button>
+            </>
         );
     }
     

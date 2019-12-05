@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
 
-import AlgInputs from '../AlgInputs/AlgInputs'
+import AlgInputs from "../AlgInputs/AlgInputs";
 import ResultCharts from "../Result/ResultCharts";
 import { dataLoadControll, dataLoadForecast } from "../Api/AlgorithmData";
 import { makeStyles } from "@material-ui/core/styles";
@@ -44,10 +44,14 @@ class AlgorithmPage extends Component {
                             />
                             <br/>
                             {
+                                
                                 this.state.results.length > 0 &&
                                 <Content
                                     text={`${ this.props.title } Results`}
+                                    // 
+                                    textField = {this.props.compo}
                                     compo={
+                                        
                                         <ResultCharts
                                             results={ this.state.results }
                                             algId={2}

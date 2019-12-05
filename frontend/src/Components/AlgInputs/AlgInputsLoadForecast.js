@@ -35,9 +35,13 @@ const styles = theme => ({
     },
 });
 
+
+
 class AlgInputsLoadForecast extends Component {
+    
     state = {
         open: false,
+        county: "",
     }
 
     handleClose = () => {
@@ -52,8 +56,8 @@ class AlgInputsLoadForecast extends Component {
     };
 
     // TODO: backend
-    getResult = async () => {
-        var county = document.getElementById("standart-county").value;
+    getResult = async (county) => {
+        this.setState({ county: document.getElementById("standard-county").value });
         console.log(county);
         const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ county }`);
         // console.log(res.data);
@@ -74,9 +78,9 @@ class AlgInputsLoadForecast extends Component {
         return dataLoadForecast;
     };
       
-    runAlgorithm = async () => {
+    runAlgorithm = async (county) => {
         this.setState({ open: true })
-        this.props.visualizeResults(await this.getResult());
+        this.props.visualizeResults(await this.getResult(county));
     };
 
     counties = [
@@ -103,7 +107,7 @@ class AlgInputsLoadForecast extends Component {
         return (
             <>
                 <TextField
-                    id="standart-county"
+                    id="standard-county"
                     select
                     className={classes.textField}
                     SelectProps={{
@@ -121,6 +125,67 @@ class AlgInputsLoadForecast extends Component {
                         </option>
                     ))}
                 </TextField>
+                <br/>
+                <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
+                Default parameters
+                </Button>
+                <br/>
+                <TextField
+                disabled
+                id="standard-aggregation_level"
+                label="aggregation_level"
+                defaultValue="defaulValue"
+                className={classes.textField}
+                margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-num_evs"
+                    label="num_evs"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-fast_percent"
+                    label="fast_percent"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-work_percent"
+                    label="work_percent"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-res_percent"
+                    label="rate_res_percent"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-l1_percent"
+                    label="l1_percent"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
+                <TextField
+                    disabled
+                    id="standard-public_l2_percen"
+                    label="public_l2_percen"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
+                />
                 <p/>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
                     Run
