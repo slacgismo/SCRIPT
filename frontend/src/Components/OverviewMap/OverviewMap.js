@@ -30,6 +30,7 @@ import {
 } from "./overviewMapStyled";
 import { counties } from "../Api/sampleCounties";
 import OverviewMapLegend from "./OverviewMapLegend";
+import { countyRes } from "../Api/CountyData";
 
 const useStyles = makeStyles(theme => ({
     formControl: {
@@ -107,6 +108,7 @@ class OverviewMap extends React.PureComponent {
             tooltipX: 0,
             gotPan: false,
             styledMap: null,
+            counties: null,
         };
 
         // addCountyColorByAttr(counties, this.props.overviewParam);
@@ -127,17 +129,32 @@ class OverviewMap extends React.PureComponent {
     }
 
     updateMap(newAttr) {
-        const extremeValues = getExtremeValuesOfAttr(counties, newAttr);
-        addCountyColorByAttr(counties, newAttr);
+        const extremeValues = getExtremeValuesOfAttr(this.state.counties, newAttr);
+        addCountyColorByAttr(this.state.counties, newAttr);
         this.setState({
             minValue: parseFloat(extremeValues.minValue.toPrecision(2)),
             maxValue: parseFloat(extremeValues.maxValue.toPrecision(2)),
-            styledMap: getStyledMapWrapperByCountyColors(counties),
+            styledMap: getStyledMapWrapperByCountyColors(this.state.counties),
         });
     }
 
     componentDidMount() {
-        this.updateMap("total_energy");
+        countyRes.then(res => {
+            const countyData = res.data;
+            const realCounties = {};
+            countyData.forEach(data => {
+                realCounties[data.name] = {
+                    total_energy: data.total_energy,
+                    total_session: data.total_session,
+                    peak_energy: data.peak_energy,
+                };
+            });
+            this.setState({
+                counties: realCounties,
+            });
+
+            this.updateMap("total_energy");
+        });
     }
 
     componentDidUpdate() {
@@ -145,6 +162,10 @@ class OverviewMap extends React.PureComponent {
     }
 
     render () {
+        // if (!this.state.counties) {
+        //     return <></>;
+        // }
+
         const { current, isTooltipVisible, tooltipX, tooltipY } = this.state;
     
         const layerProps = {
@@ -207,7 +228,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOver = e => {
       this.setState({ current: {
           countyName: e.target.attributes.name.value,
-          [this.state.chosenParam]: (counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
+          [this.state.chosenParam]: (this.state.counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
       } });
   }
 

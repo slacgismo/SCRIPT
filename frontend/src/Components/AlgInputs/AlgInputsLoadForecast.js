@@ -9,6 +9,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { loadForecastPromise, fieldsLoadForecast } from "../Api/AlgorithmData";
+import { countyRes } from "../Api/CountyData";
+import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
 
 const styles = theme => ({
     container: {
@@ -38,12 +40,36 @@ const styles = theme => ({
 
 
 class AlgInputsLoadForecast extends Component {
-    state = {
-        open: false,
-        county: "",
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false,
+            counties: [],
+
+            // Alg params
+            aggregation_level: "",
+            num_evs: null,
+            county_choice: "",
+            fast_percent: 0.1,
+            work_percent: 0.2,
+            res_percent: 0.7,
+            l1_percent: 0.5,
+            publicl2_percent: 0.0,
+
+            res_daily_use: 1.0,
+            work_daily_use: 1.0,
+            fast_daily_use: 0.5,
+            rent_percent: 0.4,
+        };
     }
 
     componentDidMount() {
+        countyRes.then(res => {
+            this.setState({
+                counties: res.data,
+            });
+        });
+
         loadForecastPromise.then(res => {
             const result = [];
             res.data.forEach(data => {
@@ -57,6 +83,8 @@ class AlgInputsLoadForecast extends Component {
                 result: result,
             });
         });
+
+        this.useDefaultParameters();
     }
 
     handleClose = () => {
@@ -91,30 +119,22 @@ class AlgInputsLoadForecast extends Component {
 
         return dataLoadForecast;
     };
+
+    useDefaultParameters = () => {
+        // TODO: backend * 3
+        // Get default parameter set
+
+        Object.keys(loadForecastDefaultParams).forEach(param => {
+            this.setState({
+                [param]: loadForecastDefaultParams[param],
+            });
+        });
+    }
       
     runAlgorithm = async (county) => {
         this.setState({ open: true });
         this.props.visualizeResults(await this.getResult(county));
     };
-
-    counties = [
-        {
-            name: "Santa Clara",
-            residents: "1",
-        },
-        {
-            name: "Santa Cruz",
-            residents: "2",
-        },
-        {
-            name: "San Francisco",
-            residents: "3",
-        },
-        {
-            name: "San Diego",
-            residents: "4",
-        },
-    ];
   
     render() {
         const { classes } = this.props;
@@ -133,70 +153,65 @@ class AlgInputsLoadForecast extends Component {
                     helperText="Please select a county"  
                     margin="normal"
                 >
-                    {this.counties.map(option => (
-                        <option key={option.name} value={option.name}>
-                            {option.name}
-                        </option>
-                    ))}
+                    {
+                        this.state.counties.map(option => (
+                            <option key={option.name} value={option.name}>
+                                {option.name}
+                            </option>
+                        ))
+                    }
                 </TextField>
-                <br/>
+                {/* <br/>
                 <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
                     Set parameters as default
-                </Button>
+                </Button> */}
                 <br/>
                 <TextField
-                    disabled
                     id="standard-aggregation_level"
                     label="aggregation_level"
-                    defaultValue="defaulValue"
+                    value={ this.state.aggregation_level }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-num_evs"
                     label="num_evs"
-                    defaultValue="defaulValue"
+                    value={ this.state.num_evs }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-fast_percent"
                     label="fast_percent"
-                    defaultValue="defaulValue"
+                    value={ this.state.fast_percent }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-work_percent"
                     label="work_percent"
-                    defaultValue="defaulValue"
+                    value={ this.state.work_percent }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-res_percent"
                     label="rate_res_percent"
-                    defaultValue="defaulValue"
+                    value={ this.state.res_percent }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-l1_percent"
                     label="l1_percent"
-                    defaultValue="defaulValue"
+                    value={ this.state.l1_percent }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
-                    id="standard-public_l2_percen"
-                    label="public_l2_percen"
-                    defaultValue="defaulValue"
+                    id="standard-public_l2_percent"
+                    label="public_l2_percent"
+                    value={ this.state.publicl2_percent }
                     className={classes.textField}
                     margin="normal"
                 />
