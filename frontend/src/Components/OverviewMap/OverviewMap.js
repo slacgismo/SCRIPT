@@ -53,6 +53,11 @@ const allOverviewParams = {
         text: "Total # of Session",
         unit: "cnts",
     },
+    peak_energy: {
+        id: "peak-energy",
+        text: "Peak Energy",
+        unit: "kWh",
+    }
 };
 
 const ParamSelect = (props) => {
@@ -95,6 +100,7 @@ class OverviewMap extends React.PureComponent {
                 countyName: null,
                 total_energy: null,
                 total_session: null,
+                peak_energy: null,
             },
             isTooltipVisible: false,
             tooltipY: 0,
