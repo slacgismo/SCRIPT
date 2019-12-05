@@ -262,7 +262,7 @@ class MODEL_INPUTS(object):
         self.LOADPROFILE_DIR = self.MODEL_DIR + '/EV Loads' + '/load profiles'
         self.TESTFILE_DIR = self.CASE_DIR + '/test_files'
         # test by Hao
-        self.RESULTS_DIR = self.CASE_DIR + '/results_hao'
+        self.RESULTS_DIR = self.CASE_DIR + '/results'
 
         # Create directories if they don't already exist
         for directory in constants.directory_list:

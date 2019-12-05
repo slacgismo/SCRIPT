@@ -11,6 +11,20 @@ import pytz
 from datetime import datetime
 from UploadToPostgres import *
 
+
+def load_county_data_from_local():
+    """
+        Read from local
+    """
+    zip_county_lookup = pd.read_csv('zip_county_lookup.json')
+    zip_county_lookup['Zip Code'] = zip_county_lookup['Zip Code'].astype(int)
+
+    county_list = np.unique(zip_county_lookup['County'].values)
+
+    return county_list
+
+county_list = load_county_data_from_local()
+
 ##################
 # Make these inputs
 aggregation_level = 'county'  # Can also be 'state' or 'zip'
@@ -57,48 +71,48 @@ total[:, 6] = np.sum(total, axis=1)
 total_df = pd.DataFrame(data=total, columns=['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total'])
 
 # Plot Outcome
-def stacked_figure(xrange, part1, part2, part3, part4, part5, part6, full, legend_labels=['Res L1','Res L2','WP','Fast','Public','Fleet', 'Total'], num_parts=6, savestr=None, title=None):
+# def stacked_figure(xrange, part1, part2, part3, part4, part5, part6, full, legend_labels=['Res L1','Res L2','WP','Fast','Public','Fleet', 'Total'], num_parts=6, savestr=None, title=None):
     
-    plt.figure(figsize=(8,5))
-    if num_parts > 0:
-        plt.plot(xrange, part1, 'C0')
-        plt.fill_between(xrange, 0, part1, color='C0', alpha=0.5)
-    if num_parts > 1:
-        plt.plot(xrange, part1+part2, 'C1')
-        plt.fill_between(xrange, part1, part1+part2, color='C1', alpha=0.5)
-    if num_parts > 2:
-        plt.plot(xrange, part1+part2+part3, 'C2')
-        plt.fill_between(xrange, part1+part2, part1+part2+part3, color='C2', alpha=0.5)
-    if num_parts > 3:
-        plt.plot(xrange, part1+part2+part3+part4, 'C3')
-        plt.fill_between(xrange, part1+part2+part3, part1+part2+part3+part4, color='C3', alpha=0.5)
-    if num_parts > 4:
-        plt.plot(xrange, part1+part2+part3+part4+part5, 'C4')
-        plt.fill_between(xrange, part1+part2+part3+part4, part1+part2+part3+part4+part5, color='C4', alpha=0.5)
-    if num_parts > 5:
-        plt.plot(xrange, part1+part2+part3+part4+part5+part6, 'C5')
-        plt.fill_between(xrange, part1+part2+part3+part4+part5, part1+part2+part3+part4+part5+part6, color='C5', alpha=0.5)
-    plt.plot(xrange, full, 'k')
+#     plt.figure(figsize=(8,5))
+#     if num_parts > 0:
+#         plt.plot(xrange, part1, 'C0')
+#         plt.fill_between(xrange, 0, part1, color='C0', alpha=0.5)
+#     if num_parts > 1:
+#         plt.plot(xrange, part1+part2, 'C1')
+#         plt.fill_between(xrange, part1, part1+part2, color='C1', alpha=0.5)
+#     if num_parts > 2:
+#         plt.plot(xrange, part1+part2+part3, 'C2')
+#         plt.fill_between(xrange, part1+part2, part1+part2+part3, color='C2', alpha=0.5)
+#     if num_parts > 3:
+#         plt.plot(xrange, part1+part2+part3+part4, 'C3')
+#         plt.fill_between(xrange, part1+part2+part3, part1+part2+part3+part4, color='C3', alpha=0.5)
+#     if num_parts > 4:
+#         plt.plot(xrange, part1+part2+part3+part4+part5, 'C4')
+#         plt.fill_between(xrange, part1+part2+part3+part4, part1+part2+part3+part4+part5, color='C4', alpha=0.5)
+#     if num_parts > 5:
+#         plt.plot(xrange, part1+part2+part3+part4+part5+part6, 'C5')
+#         plt.fill_between(xrange, part1+part2+part3+part4+part5, part1+part2+part3+part4+part5+part6, color='C5', alpha=0.5)
+#     plt.plot(xrange, full, 'k')
         
-    plt.xlabel('Hour of day')
-    plt.ylabel('kW')
-    plt.xlim([0, 23.75])
-    plt.ylim([0, 1.1*np.max(total[:, 6])])
-    plt.title(title)
-    plt.legend(labels=legend_labels)
-    plt.tight_layout()
+#     plt.xlabel('Hour of day')
+#     plt.ylabel('kW')
+#     plt.xlim([0, 23.75])
+#     plt.ylim([0, 1.1*np.max(total[:, 6])])
+#     plt.title(title)
+#     plt.legend(labels=legend_labels)
+#     plt.tight_layout()
     
-    if savestr is not None:
-        plt.savefig(savestr, bbox_inches='tight')
+#     if savestr is not None:
+#         plt.savefig(savestr, bbox_inches='tight')
     
-    plt.show()
+#     plt.show()
     
-    return plt
+#     return plt
 
-titlestr = 'Example Run'
-plot_save_str = None#'../sample_plot.png'
-labs = ['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total']
-plt = stacked_figure(0.25*np.arange(0, 96), total[:, 0], total[:, 1], total[:, 2], total[:, 3], total[:, 4], total[:, 5], total[:, 6], legend_labels=labs, savestr=plot_save_str, title=titlestr)
+# titlestr = 'Example Run'
+# plot_save_str = None#'../sample_plot.png'
+# labs = ['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total']
+# plt = stacked_figure(0.25*np.arange(0, 96), total[:, 0], total[:, 1], total[:, 2], total[:, 3], total[:, 4], total[:, 5], total[:, 6], legend_labels=labs, savestr=plot_save_str, title=titlestr)
 
 # upload result to postgres 
 upload_to_postgres_client = UploadToPostgres(

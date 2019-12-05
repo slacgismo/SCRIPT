@@ -47,15 +47,10 @@ class UploadToPostgres():
         )
 
         cur = conn.cursor()
-
-        # get county_id for current county
-        cur.execute("SELECT id FROM " + self.county_table_name + " WHERE name IS " + self.county)
-        print(cur.fetchone())
-        county_id = cur.fetchone()[0]
         
         # create table on Postgres
-        cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, county_id integer, rate_energy_peak numeric, rate_energy_partpeak numeric," + \
-            " rate_energy_offpeak numeric, rate_demand_peak numeric, rate_demand_partpeak numeric, rate_demand_overall numeric, uncontrolled_load varchar, controlled_load varchar);")
+        # cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, county_id integer, rate_energy_peak numeric, rate_energy_partpeak numeric," + \
+        #     " rate_energy_offpeak numeric, rate_demand_peak numeric, rate_demand_partpeak numeric, rate_demand_overall numeric, uncontrolled_load varchar, controlled_load varchar);")
 
         # upload data into Postgres
         baseline_profiles_list = []
@@ -96,13 +91,14 @@ class UploadToPostgres():
             )
         )
 
+        # get county_id for current county
 
         cur.execute("INSERT INTO " + self.table_name + \
             " (county_id, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
             " rate_demand_peak, rate_demand_partpeak, rate_demand_overall, uncontrolled_load, controlled_load)" + \
             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
-                str(county_id), str(self.rate_energy_peak), str(self.rate_energy_partpeak), str(self.rate_energy_offpeak),
+                self.county, str(self.rate_energy_peak), str(self.rate_energy_partpeak), str(self.rate_energy_offpeak),
                 str(self.rate_demand_peak), str(self.rate_demand_partpeak), str(self.rate_demand_overall), 
                 json.dumps(baseline_profiles_list), json.dumps(controlled_profiles_list)
             )

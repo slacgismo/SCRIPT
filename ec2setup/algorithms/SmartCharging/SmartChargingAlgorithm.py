@@ -75,7 +75,7 @@ class SmartChargingAlgorithm:
             df = df[df['Max Power']<=10].reset_index(drop=True) # Not fast charging
             len_df = len(df)
             ct += 1
-        
+        zipcode_file.replace('sessions', 'intervals')
         df_intervals = pd.read_csv('s3://' + self.s3_bucket_name + '/' + zipcode_file[:37] + '_intervals.csv')
         
         chosen_sessions = np.random.choice(df.index, num_sessions)
@@ -224,8 +224,9 @@ if __name__ == "__main__":
      # load data from S3
     county_list = sca.load_county_data_from_local()
     for county in county_list:
-        baseline_profiles, controlled_profiles = sca.run(county, 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
-        sca.uploadToPostgres(baseline_profiles, controlled_profiles)
+        if county == 'Santa Clara':
+            baseline_profiles, controlled_profiles = sca.run(county, 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
+            sca.uploadToPostgres(baseline_profiles, controlled_profiles)
 
 
     tz_NY = pytz.timezone('America/New_York') 
