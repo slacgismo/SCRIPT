@@ -9,6 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { loadForecastPromise, fieldsLoadForecast } from "../Api/AlgorithmData";
+import { countyRes } from "../Api/CountyData";
 import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
 
 const styles = theme => ({
@@ -43,7 +44,7 @@ class AlgInputsLoadForecast extends Component {
         super(props);
         this.state = {
             open: false,
-            county: "",
+            counties: [],
 
             // Alg params
             aggregation_level: "",
@@ -63,6 +64,12 @@ class AlgInputsLoadForecast extends Component {
     }
 
     componentDidMount() {
+        countyRes.then(res => {
+            this.setState({
+                counties: res.data,
+            });
+        });
+
         loadForecastPromise.then(res => {
             const result = [];
             res.data.forEach(data => {
@@ -128,25 +135,6 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ open: true });
         this.props.visualizeResults(await this.getResult(county));
     };
-
-    counties = [
-        {
-            name: "Santa Clara",
-            residents: "1",
-        },
-        {
-            name: "Santa Cruz",
-            residents: "2",
-        },
-        {
-            name: "San Francisco",
-            residents: "3",
-        },
-        {
-            name: "San Diego",
-            residents: "4",
-        },
-    ];
   
     render() {
         const { classes } = this.props;
@@ -165,8 +153,8 @@ class AlgInputsLoadForecast extends Component {
                     helperText="Please select a county"  
                     margin="normal"
                 >
-                    {this.counties.map(option => (
-                        <option key={option.name} value={option.residents}>
+                    {this.state.counties.map(option => (
+                        <option key={option.name} value={option.name}>
                             {option.name}
                         </option>
                     ))}
