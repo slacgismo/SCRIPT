@@ -1,6 +1,6 @@
 import React from "react";
 import AlgorithmPage from "./AlgorithmPage";
-import AlgorithmInputsLoadControl from '../AlgInputs/AlgInputsLoadControl'
+import AlgorithmInputsLoadControl from "../AlgInputs/AlgInputsLoadControl";
 
 function AlgorithmPageLoadControll(props) {
     return (
