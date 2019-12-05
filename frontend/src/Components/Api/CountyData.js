@@ -19,7 +19,6 @@ async function fetchCounty() {
     countyData = res.data;
     console.log("*******************");
     console.log(countyData);
-    return countyData;
 }
 
 fetchCounty();
