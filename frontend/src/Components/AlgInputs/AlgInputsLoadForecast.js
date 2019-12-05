@@ -139,10 +139,10 @@ class AlgInputsLoadForecast extends Component {
                         </option>
                     ))}
                 </TextField>
-                <br/>
+                {/* <br/>
                 <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
                     Set parameters as default
-                </Button>
+                </Button> */}
                 <br/>
                 <TextField
                     disabled
