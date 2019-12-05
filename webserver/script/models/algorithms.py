@@ -147,6 +147,19 @@ class CostBenefitAnalysisConfig(models.Model):
         db_table = 'script_config_cost_benefit_analysis'
 
 
+class LoadProfileConfig(models.Model):
+    """Configuration for Algorithm: Load Profile"""
+
+    config_name = models.CharField(max_length=100, blank=False, primary_key=True)
+    cba_config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
+    poi = models.CharField(max_length=20, choices=POI.choices(), default=POI.UNKNOWN)
+    year = models.IntegerField()
+    day_type = models.CharField(max_length=20, choices=DayType.choices(), default=DayType.WEEKDAY)
+
+    class Meta:
+        db_table = 'script_config_cba_load_profile'
+
+
 class LoadProfile(models.Model):
     """Algorithm: Cost Benefit Analysis of Load Profile including
             Aggregate Load Profile,
@@ -155,7 +168,7 @@ class LoadProfile(models.Model):
             Public L2 Load Profile,
             Workplace Load Profile.
         inputs:
-            Configuration name of CostBenefitAnalysisConfig
+            Configuration name of LoadProfileConfig
         outputs:
             (1) load profile throughout 24 hours of a weekday
             (2) load profile throughout 24 hours of a weekend
@@ -163,15 +176,23 @@ class LoadProfile(models.Model):
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
-    poi = models.CharField(max_length=20, choices=POI.choices(), default=POI.UNKNOWN)
-    year = models.IntegerField()
-    day_type = models.CharField(max_length=10, choices=DayType.choices(), default=DayType.WEEKDAY)
+    config = models.ForeignKey(LoadProfileConfig, on_delete=models.CASCADE)
     loads = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_load_profile'
-        unique_together = (('config', 'poi', 'year', 'day_type'),)
+        unique_together = (('config',),)
+
+
+class GasConsumptionConfig(models.Model):
+    """Configuration for Algorithm: Gas Consumption"""
+
+    config_name = models.CharField(max_length=100, blank=False, primary_key=True)
+    cba_config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
+    year = models.IntegerField()
+
+    class Meta:
+        db_table = 'script_config_cba_gas_consumption'
 
 
 class GasConsumption(models.Model):
@@ -193,20 +214,30 @@ class GasConsumption(models.Model):
             BEV 100 Gasoline Emissions (metric tons CO2)
             EEV Share (%)
         inputs:
-            Configuration name of CostBenefitAnalysisConfig
+            Configuration name of GasConsumptionConfig
         outputs:
             (1) gasoline consumption/emissions as well as EV share of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
-    year = models.IntegerField()
+    config = models.ForeignKey(GasConsumptionConfig, on_delete=models.CASCADE)
     consumption = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_gas_consumption'
-        unique_together = (('config', 'year',),)
+        unique_together = (('config',),)
+
+
+class CostBenefitConfig(models.Model):
+    """Configuration for Algorithm: Cost Benefit"""
+
+    config_name = models.CharField(max_length=100, blank=False, primary_key=True)
+    cba_config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
+    year = models.IntegerField()
+
+    class Meta:
+        db_table = 'script_config_cba_cost_benefit'
 
 
 class CostBenefit(models.Model):
@@ -238,20 +269,30 @@ class CostBenefit(models.Model):
             Energy Cost
             Capacity Cost
         inputs:
-            Configuration name of CostBenefitAnalysisConfig
+            Configuration name of CostBenefitConfig
         outputs:
             (1) cost/benefit of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
-    year = models.IntegerField()
+    config = models.ForeignKey(CostBenefitConfig, on_delete=models.CASCADE)
     cost_benefit = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_cost_benefit'
-        unique_together = (('config', 'year',),)
+        unique_together = (('config',),)
+
+
+class NetPresentValueConfig(models.Model):
+    """Configuration for Algorithm: Net Present Value"""
+
+    config_name = models.CharField(max_length=100, blank=False, primary_key=True)
+    cba_config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
+    year = models.IntegerField()
+
+    class Meta:
+        db_table = 'script_config_cba_net_present_value'
 
 
 class NetPresentValue(models.Model):
@@ -280,20 +321,30 @@ class NetPresentValue(models.Model):
             Distribution Cost
             Transmission Cost
         inputs:
-            Configuration name of CostBenefitAnalysisConfig
+            Configuration name of NetPresentValueConfig
         outputs:
             (1) NPV of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
-    year = models.IntegerField()
+    config = models.ForeignKey(NetPresentValueConfig, on_delete=models.CASCADE)
     npv = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_net_present_value'
-        unique_together = (('config', 'year',),)
+        unique_together = (('config',),)
+
+
+class EmissionConfig(models.Model):
+    """Configuration for Algorithm: Emission"""
+
+    config_name = models.CharField(max_length=100, blank=False, primary_key=True)
+    cba_config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
+    year = models.IntegerField()
+
+    class Meta:
+        db_table = 'script_config_cba_emission'
 
 
 class Emission(models.Model):
@@ -304,17 +355,16 @@ class Emission(models.Model):
             SO2 emissions
             VOC emissions
         inputs:
-            Configuration name of CostBenefitAnalysisConfig
+            Configuration name of EmissionConfig
         outputs:
             (1) Emissions of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
-    year = models.IntegerField()
+    config = models.ForeignKey(EmissionConfig, on_delete=models.CASCADE)
     emissions = JSONField()
 
     class Meta:
-        db_table = 'script_algorithm_cba_net_emission'
-        unique_together = (('config', 'year',),)
+        db_table = 'script_algorithm_cba_emission'
+        unique_together = (('config',),)
