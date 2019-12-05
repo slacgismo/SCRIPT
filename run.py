@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 from datetime import datetime
 import paramiko
 import pytz
+import time
 
 HOME_DIR = './'
 VAR_FILE_PATH = './variables.env'
@@ -15,7 +16,7 @@ TF_VAR_FILE_PATH = os.path.join(TF_DIR, 'variables.tf')
 POSTGRES_INFO_SETUP_PATH = './ec2setup/utils/postgres_info.json'
 POSTGRES_INFO_AlGORITHM1_PATH = './ec2setup/algorithms/SmartCharging/postgres_info.json'
 POSTGRES_INFO_AlGORITHM2_PATH = './ec2setup/algorithms/LoadForecasting/postgres_info.json'
-POSTGRES_INFO_AlGORITHM3_PATH = './ec2setup/algorithms/CostBenefitAnalysis/envs/postgres_info.json'
+POSTGRES_INFO_AlGORITHM3_PATH = './ec2setup/algorithms/CostBenefitAnalysis/cases/basecase/results/postgres_info.json'
 SSL_KEY_PATH = os.path.join(TF_DIR, 'script.pem')
 WEBSERVER_DIR = './webserver'
 FRONTEND_DIR = './frontend'
@@ -95,6 +96,30 @@ def run_terraform(tf_dir):
     return db_host, ec2_ip
 
 
+def upload_code():
+    # compress source code for ec2 instance
+    result = subprocess.run(['tar', 'czf', 'SCRIPT.tar.gz', 'ec2setup/', 's3watch/', 'utils/', 'run_algorithm.sh', 'variables.env'], stdout=subprocess.PIPE, cwd=HOME_DIR)
+    print(result.stdout.decode('utf-8'))
+    print("Compressed code!")
+
+    # scp the compressed code to ec2
+    key = paramiko.RSAKey.from_private_key_file(SSL_KEY_PATH)
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    client.connect(hostname=EC2_IP, username="ubuntu", pkey=key)
+
+    destination = '/home/ubuntu/SCRIPT.tar.gz'
+    sftp = client.open_sftp()
+    sftp.put('SCRIPT.tar.gz', destination)
+    sftp.close()
+    
+    # destination = 'ubuntu@' + EC2_IP + ':/home/ubuntu/SCRIPT.tar.gz'
+    # result = subprocess.run(['scp', '-i', SSL_KEY_PATH, 'SCRIPT.tar.gz', destination], stdout=subprocess.PIPE, cwd=HOME_DIR)
+    # print(result.stdout.decode('utf-8'))
+    # print("Uploaded code!")
+
+
 def run_algorithm(db_host, ssl_key_path):
     # save information into a file for reading
     postgres_info = {
@@ -128,7 +153,13 @@ def run_algorithm(db_host, ssl_key_path):
         print('Connect succeed...')
         # Execute a command(cmd) after connecting/ssh to an instance
         stdin, stdout, stderr = client.exec_command(
-            'sudo chmod 777 SCRIPT/run_algorithm.sh'
+            'mkdir /home/ubuntu/SCRIPT && cd /home/ubuntu/SCRIPT && mv /home/ubuntu/SCRIPT.tar.gz ./ && tar xzf SCRIPT.tar.gz'
+        )
+
+        time.sleep(20)
+
+        stdin, stdout, stderr = client.exec_command(
+            'sudo chmod 777 /home/ubuntu/SCRIPT/run_algorithm.sh'
         )
 
         tz_NY = pytz.timezone('America/New_York') 
@@ -136,7 +167,7 @@ def run_algorithm(db_host, ssl_key_path):
         print("us-east-1 time:", datetime_NY.strftime("%H:%M:%S"))
 
         stdin, stdout, stderr = client.exec_command(
-            './SCRIPT/run_algorithm.sh'
+            '/home/ubuntu/SCRIPT/run_algorithm.sh'
         )
         print(stdout.read())
         print('error message:')
@@ -191,5 +222,6 @@ def start_local(db_host):
 env_var_dict = read_env_variables(VAR_FILE_PATH)
 generate_tf_variables(env_var_dict, TF_VAR_TEMPLATE_PATH, TF_VAR_FILE_PATH)
 DB_HOST, EC2_IP = check_args(TF_DIR)
+upload_code()
 start_local(DB_HOST)
 run_algorithm(DB_HOST, SSL_KEY_PATH)

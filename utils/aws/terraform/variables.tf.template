@@ -26,6 +26,14 @@ variable "iam_role_name" {
   default = "$IAM_ROLE_NAME"
 }
 
+variable "iam_for_ec2" {
+  default = "$IAM_ROLE_EC2"
+}
+
+variable "ec2_profile" {
+  default = "$EC2_PROFILE"
+}
+
 variable "db_identifier" {
   default = "$DB_IDENTIFIER"
 }
