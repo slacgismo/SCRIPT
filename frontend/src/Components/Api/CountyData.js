@@ -11,15 +11,10 @@ import axios from "axios";
 // })
 // .catch(console.log)
 
-export let countyData = [];
+export let countyRes = [];
 
-async function fetchCounty() {
-    const res = await axios.get("http://127.0.0.1:8000/api/county");
-    
-    countyData = res.data;
-    console.log("*******************");
-    console.log(countyData);
-    return countyData;
+function fetchCounty() {
+    countyRes = axios.get("http://127.0.0.1:8000/api/county");
 }
 
 fetchCounty();

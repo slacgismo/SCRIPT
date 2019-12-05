@@ -4,7 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import { dataLoadControll } from "../Api/AlgorithmData";
-import { countyData } from "../Api/CountyData";
+import { countyRes } from "../Api/CountyData";
 import axios from "axios";
 
 const styles = theme => ({
@@ -51,12 +51,24 @@ const styles = theme => ({
 //     },
 // ];
 
+
+
 class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            counties: countyData,
+            counties: [],
         };
+    }
+
+    componentDidMount() {
+        countyRes.then(res => {
+            console.log("888888");
+            console.log(res.data);
+            this.setState({
+                counties: res.data,
+            });   
+        });
     }
 
     /* TODO change default parameters of Load Controll */
@@ -89,8 +101,7 @@ class AlgInputsLoadControl extends Component {
 
     render() {
         const { classes } = this.props;
-        console.log(this.state.counties);
-        return this.state.counties ? <></> : (
+        return !this.state.counties ? <></> : (
             <>
                 <TextField
                     id="standart-county"
