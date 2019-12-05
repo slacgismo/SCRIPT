@@ -40,8 +40,7 @@ const styles = theme => ({
 class AlgInputsCBA extends Component {
     constructor(props) {
         super(props);
-        this.state = 
-        {
+        this.state = {
             openResult: false,
             openUpload: false,
             profileNames: [],
@@ -53,13 +52,13 @@ class AlgInputsCBA extends Component {
     componentDidMount() {
         axios("http://127.0.0.1:8000/api/config/load_forecast/")
             .then(res => {
-                this.setState({ profileData: res.data })
+                this.setState({ profileData: res.data });
                 const profiles = res.data;
                 const profileNames = [];
                 for (var i = 0; i < res.data.length; i++) {
                     const profileNamesUnit = {id: "", name: ""};
                     profileNamesUnit.id = profiles[i]["id"];
-                    profileNamesUnit.name = profiles[i]["config_name"]
+                    profileNamesUnit.name = profiles[i]["config_name"];
                     profileNames.push(profileNamesUnit);
                 }
                 console.log(profileNames);
@@ -71,16 +70,17 @@ class AlgInputsCBA extends Component {
             .catch(console.log);
     }
 
-    handleClose() {
-        this.setState({ openResult: false })
-        this.setState({ openUpload: false })
-    };
+    handleClose = () => {
+        console.log(this);
+        this.setState({ openResult: false });
+        this.setState({ openUpload: false });
+    }
 
     /* TODO show results of Load Forecast */
     showResults = async (profileName) => {
         // TODO: backend
         // Get result of algorithm2 and visualize it
-        this.setState({ openResult: true })
+        this.setState({ openResult: true });
         // console.log(this.state.profileName);
         // for (var i = 0; i < this.state.profileData.length; i++) {
         //     if (this.state.profileData[i].config_name == this.state.profileName) {
@@ -154,7 +154,7 @@ class AlgInputsCBA extends Component {
     };
 
     uploadFile = () => {
-        this.setState({ openUpload: true})
+        this.setState({ openUpload: true});
         // TODO: backend
         // upload a file to EC2 as the input of algorithm 3 (cba)
     };
@@ -174,26 +174,26 @@ class AlgInputsCBA extends Component {
         return (
             <div>
                 <TextField
-                id="standard-profile"
-                select
-                className={classes.textField}
-                SelectProps={{
-                    native: true,
-                    MenuProps: {
-                        className: classes.menu,
-                    },
-                }}
-                helperText="Please select a profile"
-                margin="normal"
-            >
-            {
-                this.state.profileNames.map(option => (
-                    <option key={option.id} value={option.name}>
-                        {option.name}
-                    </option>
-                ))
-            }
-            </TextField>
+                    id="standard-profile"
+                    select
+                    className={classes.textField}
+                    SelectProps={{
+                        native: true,
+                        MenuProps: {
+                            className: classes.menu,
+                        },
+                    }}
+                    helperText="Please select a profile"
+                    margin="normal"
+                >
+                    {
+                        this.state.profileNames.map(option => (
+                            <option key={option.id} value={option.name}>
+                                {option.name}
+                            </option>
+                        ))
+                    }
+                </TextField>
                 <Button variant="contained" className={classes.button} onClick={this.showResults}>
                     Review
                 </Button>
