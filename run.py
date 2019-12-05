@@ -16,7 +16,7 @@ TF_VAR_FILE_PATH = os.path.join(TF_DIR, 'variables.tf')
 POSTGRES_INFO_SETUP_PATH = './ec2setup/utils/postgres_info.json'
 POSTGRES_INFO_AlGORITHM1_PATH = './ec2setup/algorithms/SmartCharging/postgres_info.json'
 POSTGRES_INFO_AlGORITHM2_PATH = './ec2setup/algorithms/LoadForecasting/postgres_info.json'
-POSTGRES_INFO_AlGORITHM3_PATH = './ec2setup/algorithms/CostBenefitAnalysis/cases/basecase/results/postgres_info.json'
+POSTGRES_INFO_AlGORITHM3_PATH = './ec2setup/algorithms/CostBenefitAnalysis/python_code/postgres_info.json'
 SSL_KEY_PATH = os.path.join(TF_DIR, 'script.pem')
 WEBSERVER_DIR = './webserver'
 FRONTEND_DIR = './frontend'
@@ -157,6 +157,12 @@ def run_algorithm(db_host, ssl_key_path):
         )
 
         time.sleep(20)
+
+        stdin, stdout, stderr = client.exec_command(
+            'cp ~/SCRIPT/utils/mosek/mosek.lic ~/mosek/mosek.lic'
+        )
+
+        time.sleep(3)
 
         stdin, stdout, stderr = client.exec_command(
             'sudo chmod 777 /home/ubuntu/SCRIPT/run_algorithm.sh'

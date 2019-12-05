@@ -198,7 +198,6 @@ resource "aws_instance" "script_algorithm_ins" {
       "pip3 install awscli --force-reinstall --upgrade",
       "aws configure set default.region us-east-1",
       "mkdir ~/mosek",
-      "cp ~/SCRIPT/utils/mosek/mosek.lic ~/mosek/mosek.lic",
       "sudo sh -c '/bin/echo 1 > /proc/sys/vm/overcommit_memory'",
       "pip3 install pandas",
       "pip3 install boto3",
