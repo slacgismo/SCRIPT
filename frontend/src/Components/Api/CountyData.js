@@ -1,4 +1,5 @@
 import axios from "axios";
+import { serverUrl } from './server'
 
 // Fetch basic data
 //
@@ -14,7 +15,7 @@ import axios from "axios";
 export let countyRes = [];
 
 function fetchCounty() {
-    countyRes = axios.get("http://127.0.0.1:8000/api/county");
+    countyRes = axios.get(`${serverUrl}/county`);
 }
 
 fetchCounty();
