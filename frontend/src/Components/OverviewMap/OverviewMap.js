@@ -43,12 +43,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const allOverviewParams = {
-    totalEnergy: {
+    total_energy: {
         id: "total-energy",
         text: "Total Energy",
         unit: "kWh",
     },
-    totalSession: {
+    total_session: {
         id: "total-session-num",
         text: "Total # of Session",
         unit: "cnts",
@@ -88,13 +88,13 @@ class OverviewMap extends React.PureComponent {
         super(props);
 
         this.state = {
-            chosenParam: "totalEnergy",
+            chosenParam: "total_energy",
             minValue: null,
             maxValue: null,
             current: {
                 countyName: null,
-                totalEnergy: null,
-                totalSession: null,
+                total_energy: null,
+                total_session: null,
             },
             isTooltipVisible: false,
             tooltipY: 0,
@@ -131,7 +131,7 @@ class OverviewMap extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.updateMap("totalEnergy");
+        this.updateMap("total_energy");
     }
 
     componentDidUpdate() {
