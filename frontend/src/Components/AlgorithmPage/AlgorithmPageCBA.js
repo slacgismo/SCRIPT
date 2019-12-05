@@ -27,28 +27,6 @@ function AlgorithmPageLoadControll(props) {
     };
       
     const classes = useStyles();
-    const resultOptions = [
-        // {
-        //     name: "load_profile", 
-        //     id: "1"
-        // },
-        {
-            name: "gas_consumption",
-            id: "2"
-        },
-        {
-            name: "cost_benefit",
-            id: "3"
-        },
-        {
-            name: "net_present_value",
-            id: "4"
-        },
-        {
-            name: "emission",
-            id: "5"
-        },
-    ];
 
     return (
         <AlgorithmPage
@@ -64,13 +42,13 @@ function AlgorithmPageLoadControll(props) {
                         <MenuItem value="gas_consumption">
                         Gas consumption
                         </MenuItem>
-                        <MenuItem value={"load_profile"}>Load profile</MenuItem>
+                        {/* <MenuItem value={"load_profile"}>Load profile</MenuItem>
                         <MenuItem value={"cost_benefit"}>Cost_benefit</MenuItem>
                         <MenuItem value={"net_present_value"}>Net_present_value</MenuItem>
-                        <MenuItem value={"emission"}>Emission</MenuItem>
+                        <MenuItem value={"emission"}>Emission</MenuItem> */}
 
                     </Select>
-                    <FormHelperText>Placeholder</FormHelperText>
+                    <FormHelperText>Choose a category</FormHelperText>
                 </FormControl>
             }
             // data={ dataLoadControll }

@@ -10,6 +10,7 @@ import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
 import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
 import { withStyles } from "@material-ui/core/styles";
+import ResultCharts from "../Result/ResultCharts";
 import AlgInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
 
 const styles = theme => ({
@@ -46,6 +47,8 @@ class AlgInputsCBA extends Component {
             profileNames: [],
             profileData: [],
             profileName: "",
+            county: "",
+            resultsLoadForecast: [],
         };
     }
     
@@ -65,7 +68,8 @@ class AlgInputsCBA extends Component {
                 this.setState({ profileNames });
                 console.log(this.state.profileNames);
                 this.setState({ profileName: document.getElementById("standard-profile").value});
-                // console.log(this.state.profileName);
+                console.log(this.state.profileName);
+                
             })
             .catch(console.log);
     }
@@ -77,10 +81,19 @@ class AlgInputsCBA extends Component {
     }
 
     /* TODO show results of Load Forecast */
-    showResults = async (profileName) => {
+    showResults = async () => {
         // TODO: backend
         // Get result of algorithm2 and visualize it
         this.setState({ openResult: true });
+        const results = await this.getResultLoadForecast(); 
+        console.log(results);
+        this.setState({ resultsLoadForecast: results});
+        for (var i = 0; i < this.state.profileData.length; i++) {
+            if (this.state.profileData[i].config_name == this.state.profileName) {
+                this.setState({ county: this.state.profileData[i].choice });
+            }
+        }
+        console.log(this.state.resultsLoadForecast);
         // console.log(this.state.profileName);
         // for (var i = 0; i < this.state.profileData.length; i++) {
         //     if (this.state.profileData[i].config_name == this.state.profileName) {
@@ -89,6 +102,26 @@ class AlgInputsCBA extends Component {
         //     }
         // }
     };
+
+    getResultLoadForecast = async () => {
+        console.log(this.state.county);
+        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ this.state.county }`);
+        console.log(res.data);
+        const dataLoadForecast = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
+            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
+            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
+            dataLoadForecastUnit.work_load = (res.data[i].work_load);
+            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
+            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
+            dataLoadForecastUnit.total_load = (res.data[i].total_load);
+            dataLoadForecast.push(dataLoadForecastUnit);
+        }
+
+        return dataLoadForecast;
+    }
 
     // TODO: backend
     getResult = async () => {
@@ -210,6 +243,10 @@ class AlgInputsCBA extends Component {
                     <DialogContent>
                         <DialogContentText> 
                         /* TODO */
+                            <ResultCharts
+                                results={ this.state.resultsLoadForecast }
+                                algId={2}
+                            />
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
