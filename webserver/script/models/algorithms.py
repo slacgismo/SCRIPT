@@ -6,6 +6,31 @@ from script.validators import validate_positive, validate_year
 
 # Create your models of algorithm results here.
 
+
+class LoadControllerConfig(models.Model):
+    """Algorithm: Load Controller inputs:
+        (0) config_name
+        (1) county
+        (2) rate_energy_peak
+        (3) rate_energy_partpeak
+        (4) rate_energy_offpeak
+        (5) rate_demand_peak
+        (6) rate_demand_partpeak
+        (7) rate_demand_overall
+    """
+
+    config_name = models.CharField(max_length=100, blank=False, primary_key=True)
+    county = models.ForeignKey(County, on_delete=models.CASCADE)
+    rate_energy_peak = models.FloatField(validators=[validate_positive])
+    rate_energy_partpeak = models.FloatField(validators=[validate_positive])
+    rate_energy_offpeak = models.FloatField(validators=[validate_positive])
+    rate_demand_peak = models.FloatField(validators=[validate_positive])
+    rate_demand_partpeak = models.FloatField(validators=[validate_positive])
+    rate_demand_overall = models.FloatField(validators=[validate_positive])
+
+    class Meta:
+        db_table = 'script_config_load_controller'
+
 class LoadController(models.Model):
     """Algorithm: Load Controller
         inputs:
@@ -23,26 +48,42 @@ class LoadController(models.Model):
             (1) uncontrolled load (load - time)
             (2) controlled load (cvx optimized) (load - time)
     """
-    
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
-    rate_energy_peak = models.FloatField(validators=[validate_positive])
-    rate_energy_partpeak = models.FloatField(validators=[validate_positive])
-    rate_energy_offpeak = models.FloatField(validators=[validate_positive])
-    rate_demand_peak = models.FloatField(validators=[validate_positive])
-    rate_demand_partpeak = models.FloatField(validators=[validate_positive])
-    rate_demand_overall = models.FloatField(validators=[validate_positive])
+
+    config = models.ForeignKey(LoadControllerConfig, on_delete=models.CASCADE)
     uncontrolled_load = JSONField()
     controlled_load = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_load_controller'
-        unique_together = (('county',
-                            'rate_energy_peak',
-                            'rate_energy_partpeak',
-                            'rate_energy_offpeak',
-                            'rate_demand_peak',
-                            'rate_demand_partpeak',
-                            'rate_demand_overall'),)
+        unique_together = (('config',),)
+
+
+class LoadForecastConfig(models.Model):
+    """Algorithm: EV Load Forecast inputs:
+        (0) config_name
+        (1) aggregation_level
+        (2) num_evs
+        (3) choice, which should base on which kind of aggregation level selected
+        (4) fast_percent
+        (5) work_percent
+        (6) res_percent
+        (7) l1_percent
+        (8) public_l2_percent
+    """
+
+    config_name = models.CharField(max_length=100, blank=False, primary_key=True)
+    aggregation_level = models.CharField(max_length=10, choices=AggregationLevel.choices(), default=AggregationLevel.COUNTY)
+    num_evs = models.IntegerField(validators=[validate_positive])
+    # TODO: how validate choice and aggregation together at model level rather than serializer level?
+    choice = models.CharField(max_length=30)
+    fast_percent = models.FloatField()
+    work_percent = models.FloatField()
+    res_percent = models.FloatField()
+    l1_percent = models.FloatField()
+    public_l2_percent = models.FloatField()
+
+    class Meta:
+        db_table = 'script_config_ev_load_forecast'
 
 
 class LoadForecast(models.Model):
@@ -74,15 +115,7 @@ class LoadForecast(models.Model):
             (7) Total (load - time)
     """
 
-    aggregation_level = models.CharField(max_length=10, choices=AggregationLevel.choices(), default=AggregationLevel.COUNTY)
-    num_evs = models.IntegerField(validators=[validate_positive])
-    # TODO: how validate choice and aggregation together at model level rather than serializer level?
-    choice = models.CharField(max_length=30)
-    fast_percent = models.FloatField()
-    work_percent = models.FloatField()
-    res_percent = models.FloatField()
-    l1_percent = models.FloatField()
-    public_l2_percent = models.FloatField()
+    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
     residential_l1_load = JSONField()
     residential_l2_load = JSONField()
     residential_mud_load = JSONField()
@@ -93,19 +126,13 @@ class LoadForecast(models.Model):
 
     class Meta:
         db_table = 'script_algorithm_ev_load_forecast'
-        unique_together = (('aggregation_level',
-                            'num_evs',
-                            'choice',
-                            'fast_percent',
-                            'work_percent',
-                            'res_percent',
-                            'l1_percent',
-                            'public_l2_percent'),)
+        unique_together = (('config',),)
 
 
-class LoadForecastConfig(models.Model):
-    """Configuration for Algorithm: EV Load Forecast"""
-    config_name = models.CharField(max_length=100, blank=False)
+class CostBenefitAnalysisConfig(models.Model):
+    """Configuration for Algorithm: Cost Benefit Analysis"""
+
+    config_name = models.CharField(max_length=100, blank=False, primary_key=True)
     aggregation_level = models.CharField(max_length=10, choices=AggregationLevel.choices(), default=AggregationLevel.COUNTY)
     num_evs = models.IntegerField(validators=[validate_positive])
     # TODO: how validate choice and aggregation together at model level rather than serializer level?
@@ -117,9 +144,7 @@ class LoadForecastConfig(models.Model):
     public_l2_percent = models.FloatField()
 
     class Meta:
-        db_table = 'script_config_ev_load_forecast'
-        unique_together = (('config_name',),)
-
+        db_table = 'script_config_cost_benefit_analysis'
 
 
 class LoadProfile(models.Model):
@@ -130,7 +155,7 @@ class LoadProfile(models.Model):
             Public L2 Load Profile,
             Workplace Load Profile.
         inputs:
-            Configuration name of Load Forecast algorithm
+            Configuration name of CostBenefitAnalysisConfig
         outputs:
             (1) load profile throughout 24 hours of a weekday
             (2) load profile throughout 24 hours of a weekend
@@ -138,7 +163,7 @@ class LoadProfile(models.Model):
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
     poi = models.CharField(max_length=20, choices=POI.choices(), default=POI.UNKNOWN)
     year = models.IntegerField()
     day_type = models.CharField(max_length=10, choices=DayType.choices(), default=DayType.WEEKDAY)
@@ -168,14 +193,14 @@ class GasConsumption(models.Model):
             BEV 100 Gasoline Emissions (metric tons CO2)
             EEV Share (%)
         inputs:
-            Configuration name of Load Forecast algorithm
+            Configuration name of CostBenefitAnalysisConfig
         outputs:
             (1) gasoline consumption/emissions as well as EV share of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
     year = models.IntegerField()
     consumption = JSONField()
 
@@ -213,14 +238,14 @@ class CostBenefit(models.Model):
             Energy Cost
             Capacity Cost
         inputs:
-            Configuration name of Load Forecast algorithm
+            Configuration name of CostBenefitAnalysisConfig
         outputs:
             (1) cost/benefit of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
     year = models.IntegerField()
     cost_benefit = JSONField()
 
@@ -255,14 +280,14 @@ class NetPresentValue(models.Model):
             Distribution Cost
             Transmission Cost
         inputs:
-            Configuration name of Load Forecast algorithm
+            Configuration name of CostBenefitAnalysisConfig
         outputs:
             (1) NPV of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
     year = models.IntegerField()
     npv = JSONField()
 
@@ -279,14 +304,14 @@ class Emission(models.Model):
             SO2 emissions
             VOC emissions
         inputs:
-            Configuration name of Load Forecast algorithm
+            Configuration name of CostBenefitAnalysisConfig
         outputs:
             (1) Emissions of the given year
         visualizations:
             TODO @Yanqing @Xinyi
     """
 
-    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(CostBenefitAnalysisConfig, on_delete=models.CASCADE)
     year = models.IntegerField()
     emissions = JSONField()
 
