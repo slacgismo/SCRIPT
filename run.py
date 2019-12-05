@@ -12,7 +12,10 @@ VAR_FILE_PATH = './variables.env'
 TF_DIR = './utils/aws/terraform'
 TF_VAR_TEMPLATE_PATH = os.path.join(TF_DIR, 'variables.tf.template')
 TF_VAR_FILE_PATH = os.path.join(TF_DIR, 'variables.tf')
-POSTGRES_INFO_PATH = './ec2setup/algorithms/SmartCharging/postgres_info.json'
+POSTGRES_INFO_SETUP_PATH = './ec2setup/utils/postgres_info.json'
+POSTGRES_INFO_AlGORITHM1_PATH = './ec2setup/algorithms/SmartCharging/postgres_info.json'
+POSTGRES_INFO_AlGORITHM2_PATH = './ec2setup/algorithms/LoadForecasting/postgres_info.json'
+POSTGRES_INFO_AlGORITHM3_PATH = './ec2setup/algorithms/CostBenefitAnalysis/envs/postgres_info.json'
 SSL_KEY_PATH = os.path.join(TF_DIR, 'script.pem')
 WEBSERVER_DIR = './webserver'
 FRONTEND_DIR = './frontend'
@@ -92,7 +95,7 @@ def run_terraform(tf_dir):
     return db_host, ec2_ip
 
 
-def run_algorithm(db_host, postgres_info_path, ssl_key_path):
+def run_algorithm(db_host, ssl_key_path):
     # save information into a file for reading
     postgres_info = {
         'DB_HOST': db_host,
@@ -101,7 +104,16 @@ def run_algorithm(db_host, postgres_info_path, ssl_key_path):
         'POSTGRES_PASSWORD': env_var_dict['POSTGRES_PASSWORD'],
         'POSTGRES_DB': env_var_dict['POSTGRES_DB']
     }
-    with open(postgres_info_path, 'w') as outfile:
+    with open(POSTGRES_INFO_SETUP_PATH, 'w') as outfile:
+        json.dump(postgres_info, outfile)
+    
+    with open(POSTGRES_INFO_AlGORITHM1_PATH, 'w') as outfile:
+        json.dump(postgres_info, outfile)
+
+    with open(POSTGRES_INFO_AlGORITHM2_PATH, 'w') as outfile:
+        json.dump(postgres_info, outfile)
+
+    with open(POSTGRES_INFO_AlGORITHM3_PATH, 'w') as outfile:
         json.dump(postgres_info, outfile)
     
     key = paramiko.RSAKey.from_private_key_file(ssl_key_path)
@@ -180,4 +192,4 @@ env_var_dict = read_env_variables(VAR_FILE_PATH)
 generate_tf_variables(env_var_dict, TF_VAR_TEMPLATE_PATH, TF_VAR_FILE_PATH)
 DB_HOST, EC2_IP = check_args(TF_DIR)
 start_local(DB_HOST)
-run_algorithm(DB_HOST, POSTGRES_INFO_PATH, SSL_KEY_PATH)
+run_algorithm(DB_HOST, SSL_KEY_PATH)

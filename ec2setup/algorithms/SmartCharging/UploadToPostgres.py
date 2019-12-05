@@ -19,6 +19,7 @@ class UploadToPostgres():
         
         self.db_host = postgres_info['DB_HOST']
         self.table_name = "script_algorithm_load_controller"
+        self.county_table_name = "script_county"
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
@@ -35,7 +36,7 @@ class UploadToPostgres():
 
     def run(self, baseline_profiles, controlled_profiles):
         # update self.total_number_of_session
-        self.total_number_of_session = len(baseline_profiles)
+        self.total_number_of_session = len(baseline_profiles // 4)
 
         conn = psycopg2.connect(
             host=self.db_host,
@@ -46,15 +47,10 @@ class UploadToPostgres():
         )
 
         cur = conn.cursor()
-
-
+        
         # create table on Postgres
-        cur.execute("CREATE TABLE IF NOT EXISTS County_Summary" + " (id serial PRIMARY KEY, county_name varchar, total_energy varchar, total_number_of_session varchar," + \
-            " rate_energy_peak varchar);")
-
-        # create table on Postgres
-        cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, county varchar, rate_energy_peak varchar, rate_energy_partpeak varchar," + \
-            " rate_energy_offpeak varchar, rate_demand_peak varchar, rate_demand_partpeak varchar, rate_demand_overall varchar, uncontrolled_load varchar, controlled_load varchar);")
+        # cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, county_id integer, rate_energy_peak numeric, rate_energy_partpeak numeric," + \
+        #     " rate_energy_offpeak numeric, rate_demand_peak numeric, rate_demand_partpeak numeric, rate_demand_overall numeric, uncontrolled_load varchar, controlled_load varchar);")
 
         # upload data into Postgres
         baseline_profiles_list = []
@@ -65,7 +61,7 @@ class UploadToPostgres():
 
         lines = len(baseline_profiles / 4)
         for line in range(lines):
-            hour_str = str((start_hour + line % 4)% 24)
+            hour_str = str((start_hour + line % 4) % 24)
             minute = 15 * (line % 4)
             if minute is 0:
                 minute_str = '00'
@@ -87,16 +83,18 @@ class UploadToPostgres():
                 }
             )
 
-        cur.execute("INSERT INTO County_Summary" + \
-            " (county_name, total_energy, total_number_of_session, rate_energy_peak)" + \
+        cur.execute("INSERT INTO script_county" + \
+            " (name, total_session, total_energy, peak_energy)" + \
             " VALUES (%s, %s, %s, %s)",
             (
-                self.county, str(self.total_energy), str(self.total_number_of_session), str(self.rate_energy_peak)
+                self.county, str(self.total_number_of_session), str(self.total_energy), str(self.rate_energy_peak)
             )
         )
 
+        # get county_id for current county
+
         cur.execute("INSERT INTO " + self.table_name + \
-            " (county, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
+            " (county_id, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
             " rate_demand_peak, rate_demand_partpeak, rate_demand_overall, uncontrolled_load, controlled_load)" + \
             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (

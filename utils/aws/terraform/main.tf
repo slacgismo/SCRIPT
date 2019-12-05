@@ -151,7 +151,7 @@ resource "aws_security_group" "sg" {
 }
 
 resource "aws_iam_role" "script_iam_for_ec2" {
-  name = "script_iam_role_for_ec2"
+  name = "script_iam_role_for_ec2_test"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -174,7 +174,7 @@ resource "aws_iam_role_policy_attachment" "attach_s3_access_from_ec2" {
 }
 
 resource "aws_iam_instance_profile" "ec2_profile" {
-  name  = "ec2-profile"
+  name  = "ec2-profile-test"
   role = "${aws_iam_role.script_iam_for_ec2.name}"
 }
 
