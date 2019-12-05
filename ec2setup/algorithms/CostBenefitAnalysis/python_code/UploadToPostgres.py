@@ -8,8 +8,9 @@ class UploadToPostgres():
     def __init__(
         self
     ): 
-        self.result_dir = '~/SCRIPT/ec2setup/algorithms/CostBenefitAnalysis/cases/basecase/results/'
-        with open('~/SCRIPT/ec2setup/algorithms/CostBenefitAnalysis/envs/postgres_info.json') as json_file:
+        self.result_dir = '/home/ubuntu/SCRIPT/ec2setup/algorithms/CostBenefitAnalysis/cases/basecase/results/'
+
+        with open('postgres_info.json') as json_file:
             postgres_info = json.load(json_file)
         
         # loadprofile related
@@ -223,7 +224,7 @@ class UploadToPostgres():
 
     def run_load_profile(self):
         # create table on Postgres
-        self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_load_profile_table_name + " (id serial PRIMARY KEY, config_id INTEGER, poi varchar, year INTEGER, day_type varchar, loads varchar);")
+        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_load_profile_table_name + " (id serial PRIMARY KEY, config_id INTEGER, poi varchar, year INTEGER, day_type varchar, loads varchar);")
 
         tmp_load = {}
 
@@ -239,7 +240,6 @@ class UploadToPostgres():
                             tmp_load[poi][cur_year][day_type].append(
                                 self.load_profile_result_dict[poi][day_type][hour][i]
                             )
-        
                         self.cur.execute("INSERT INTO " + self.cba_load_profile_table_name + " (config_id, poi, year, day_type, loads) VALUES (%s, %s, %s, %s, %s)",
                             (
                                 '1', str(poi), int(cur_year), str(day_type), json.dumps(tmp_load[poi][cur_year][day_type])
@@ -253,15 +253,13 @@ class UploadToPostgres():
 
     def run_cost_benefit(self):
         # create table on Postgres
-        self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_cost_benefit_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, cost_benefit varchar);")
+        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_cost_benefit_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, cost_benefit varchar);")
 
         for i in range(self.cost_benefit_year_len):
             tmp_res = {}
 
             for key in self.cost_benefit_result_dict.keys():
                 if key != 'Year':
-                    print("******** len each row" + str(len(self.cost_benefit_result_dict[key])))
-                    print("********** key name: " + key)
                     tmp_res[key] = self.cost_benefit_result_dict[key][i]
 
             self.cur.execute("INSERT INTO " + self.cba_cost_benefit_table_name + " (config_id, year, cost_benefit) VALUES (%s, %s, %s)",
@@ -278,7 +276,7 @@ class UploadToPostgres():
     def run_gas_consumption(self):
 
         # create table on Postgres
-        self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.gas_consumption_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, consumption varchar);")
+        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.gas_consumption_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, consumption varchar);")
 
         for i in range(self.gas_consumption_year_len):
             tmp_res = {}
@@ -301,7 +299,7 @@ class UploadToPostgres():
     def run_npv(self):
 
         # create table on Postgres
-        self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_net_present_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, npv varchar);")
+        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_net_present_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, npv varchar);")
 
         self.cur.execute("INSERT INTO " + self.cba_net_present_table_name + " (config_id, year, npv) VALUES (%s, %s, %s)",
             (
@@ -314,8 +312,8 @@ class UploadToPostgres():
         self.conn.commit()
     
     def run_emission(self):
-         # create table on Postgres
-        self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_net_emission_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, emissions varchar);")
+        # create table on Postgres
+        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_net_emission_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, emissions varchar);")
 
         for i in range(self.emission_year_len):
             tmp_res = {}

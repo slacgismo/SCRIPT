@@ -141,7 +141,7 @@ class LoadProfile(models.Model):
     config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
     poi = models.CharField(max_length=20, choices=POI.choices(), default=POI.UNKNOWN)
     year = models.IntegerField()
-    day_type = models.CharField(max_length=10, choices=DayType.choices(), default=DayType.WEEKDAY)
+    day_type = models.CharField(max_length=20, choices=DayType.choices(), default=DayType.WEEKDAY)
     loads = JSONField()
 
     class Meta:
