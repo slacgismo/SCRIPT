@@ -70,7 +70,6 @@ class AlgInputsLoadControl extends Component {
         });
 
         loadControlPromise.then(res => {
-            console.log(res);
             this.setState({
                 result: [{
                     controlled_load: res.data[0].controlled_load,
@@ -87,26 +86,24 @@ class AlgInputsLoadControl extends Component {
     }
 
     // // TODO: backend
-    // async getResult() {
-    //     var county = document.getElementById("standart-county").value;
-    //     console.log(county);
-    //     const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_controller/?county=${ county }`);
-    //     // console.log(res.data);
-    //     const dataLoadControll = [];
-    //     for (var i = 0; i < res.data.length; i++) {
-    //         const  dataLoadControllUnit = {uncontrolled_load: "", controlled_load: ""};
-    //         dataLoadControllUnit.uncontrolled_load = JSON.parse(res.data[i].uncontrolled_load);
-    //         dataLoadControllUnit.controlled_load = JSON.parse(res.data[i].controlled_load);
-    //         dataLoadControll.push(dataLoadControllUnit);
-    //     }
-    //     console.log(dataLoadControll);
-    //     return dataLoadControll;
-    // }
+    async getResult() {
+        var county = document.getElementById("standart-county").value;
+        console.log(county);
+        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_controller/?county=${ county }`);
+        // console.log(res.data);
+        const dataLoadControll = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadControllUnit = {uncontrolled_load: "", controlled_load: ""};
+            dataLoadControllUnit.uncontrolled_load = (res.data[i].uncontrolled_load);
+            dataLoadControllUnit.controlled_load = (res.data[i].controlled_load);
+            dataLoadControll.push(dataLoadControllUnit);
+        }
+        console.log(dataLoadControll);
+        return dataLoadControll;
+    }
 
-    runAlgorithm() {
-        console.log("Got result");
-        console.log(this.state.result);
-        this.props.visualizeResults(this.state.result);
+    runAlgorithm = async () => {
+        this.props.visualizeResults(await this.getResult());
     }
 
 

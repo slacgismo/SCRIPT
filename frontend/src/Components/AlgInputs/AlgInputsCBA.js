@@ -99,7 +99,7 @@ class AlgInputsCBA extends Component {
         
         for (var i = 0; i < res.data.length; i++) {
             const dataCBAUnit = res.data[i];
-            dataCBAUnit.consumption = JSON.parse(res.data[i].consumption);  
+            dataCBAUnit.consumption = (res.data[i].consumption);  
             dataCBASub.push(dataCBAUnit);
         }
         dataCBA.gasConsumption = dataCBASub;
