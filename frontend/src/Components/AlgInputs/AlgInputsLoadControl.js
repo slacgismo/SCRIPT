@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import { countyRes } from "../Api/CountyData";
 import { loadControlPromise } from "../Api/AlgorithmData";
+import { loadControlDefaultParams } from "../Api/algorithmDefaultParams";
 import axios from "axios";
 
 const styles = theme => ({
@@ -59,6 +60,15 @@ class AlgInputsLoadControl extends Component {
         this.state = {
             counties: [],
             result: null,
+
+            // Alg params
+            county: "",
+            rate_energy_peak: null,
+            rate_energy_partpeak: null,
+            rate_energy_offpeak: null,
+            rate_demand_peak: null,
+            rate_demand_partpeak: null,
+            rate_demand_overall: null,
         };
     }
 
@@ -77,12 +87,30 @@ class AlgInputsLoadControl extends Component {
                 }]
             });
         });
+
+        this.useDefaultParameters();
     }
 
     /* TODO change default parameters of Load Controll */
-    changeDefaultParameters() {
+    useDefaultParameters = () => {
         // TODO: backend * 3
         // Get default parameter set
+
+        Object.keys(loadControlDefaultParams).forEach(param => {
+            this.setState({
+                [param]: loadControlDefaultParams[param],
+            });
+        });
+
+        // this.setState({
+        //     county: loadControlDefaultParams.county,
+        //     rate_energy_peak: loadControlDefaultParams.rate_energy_peak,
+        //     rate_energy_partpeak: loadControlDefaultParams.rate_energy_partpeak,
+        //     rate_energy_offpeak: loadControlDefaultParams.rate_energy_offpeak,
+        //     rate_demand_peak: loadControlDefaultParams.rate_demand_peak,
+        //     rate_demand_partpeak: loadControlDefaultParams.rate_demand_partpeak,
+        //     rate_demand_overall: loadControlDefaultParams.rate_demand_overall,
+        // });
     }
 
     // // TODO: backend
@@ -123,65 +151,60 @@ class AlgInputsLoadControl extends Component {
                     }}
                     helperText="Please select a county"  
                     margin="normal"
+                    value={ this.state.county }
                 >
                     {
                         this.state.counties.map(option => (
-                            <option key={option.name} value={option.residents}>
+                            <option key={option.name} value={option.name}>
                                 {option.name}
                             </option>
                         ))
                     }
                 </TextField>
-                <br />
-                <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
+                {/* <br />
+                <Button variant="contained" className={classes.button} onClick={this.useDefaultParameters}>
                     Set parameters as default
-                </Button>
+                </Button> */}
                 <br/>
                 <TextField
-                    disabled
                     id="standard-rate_energy_peak"
                     label="rate_energy_peak"
-                    defaultValue="defaulValue"
+                    value={ this.state.rate_energy_peak }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-rate_energy_partpeak"
                     label="rate_energy_partpeak"
-                    defaultValue="defaulValue"
+                    value={ this.state.rate_energy_partpeak }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-rate_energy_offpeak"
                     label="rate_energy_offpeak"
-                    defaultValue="defaulValue"
+                    value={ this.state.rate_energy_offpeak }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-rate_demand_peak"
                     label="rate_demand_peak"
-                    defaultValue="defaulValue"
+                    value={ this.state.rate_demand_peak }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-rate_demand_partpeak"
                     label="rate_demand_partpeak"
-                    defaultValue="defaulValue"
+                    value={ this.state.rate_demand_partpeak }
                     className={classes.textField}
                     margin="normal"
                 />
                 <TextField
-                    disabled
                     id="standard-rate_demand_overall"
                     label="rate_demand_overall"
-                    defaultValue="defaulValue"
+                    value={ this.state.rate_demand_overall }
                     className={classes.textField}
                     margin="normal"
                 />
