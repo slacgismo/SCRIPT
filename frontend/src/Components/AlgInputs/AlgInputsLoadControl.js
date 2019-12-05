@@ -3,8 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
-import { dataLoadControll } from "../Api/AlgorithmData";
 import { countyRes } from "../Api/CountyData";
+import { loadControlPromise } from "../Api/AlgorithmData";
 import axios from "axios";
 
 const styles = theme => ({
@@ -58,16 +58,24 @@ class AlgInputsLoadControl extends Component {
         super(props);
         this.state = {
             counties: [],
+            result: null,
         };
     }
 
     componentDidMount() {
         countyRes.then(res => {
-            console.log("888888");
-            console.log(res.data);
             this.setState({
                 counties: res.data,
-            });   
+            });
+        });
+
+        loadControlPromise.then(res => {
+            this.setState({
+                result: [{
+                    controlled_load: res.data[0].controlled_load,
+                    uncontrolled_load: res.data[0].uncontrolled_load,
+                }]
+            });
         });
     }
 
@@ -77,7 +85,7 @@ class AlgInputsLoadControl extends Component {
         // Get default parameter set
     }
 
-    // TODO: backend
+    // // TODO: backend
     async getResult() {
         var county = document.getElementById("standart-county").value;
         console.log(county);
@@ -86,15 +94,15 @@ class AlgInputsLoadControl extends Component {
         const dataLoadControll = [];
         for (var i = 0; i < res.data.length; i++) {
             const  dataLoadControllUnit = {uncontrolled_load: "", controlled_load: ""};
-            dataLoadControllUnit.uncontrolled_load = JSON.parse(res.data[i].uncontrolled_load);
-            dataLoadControllUnit.controlled_load = JSON.parse(res.data[i].controlled_load);
+            dataLoadControllUnit.uncontrolled_load = (res.data[i].uncontrolled_load);
+            dataLoadControllUnit.controlled_load = (res.data[i].controlled_load);
             dataLoadControll.push(dataLoadControllUnit);
         }
         console.log(dataLoadControll);
         return dataLoadControll;
     }
 
-    async runAlgorithm() {
+    runAlgorithm = async () => {
         this.props.visualizeResults(await this.getResult());
     }
 
@@ -126,7 +134,7 @@ class AlgInputsLoadControl extends Component {
                 </TextField>
                 <br />
                 <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
-                    Default parameters
+                    Set parameters as default
                 </Button>
                 <br/>
                 <TextField

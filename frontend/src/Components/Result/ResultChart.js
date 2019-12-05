@@ -71,7 +71,7 @@ class ResultChart extends React.Component {
                 }
 
                 {/* X Axis Label */}
-                <h5 class='chartXLabel'>{ this.props.results[Object.keys(this.props.results)[0]].xAxis }</h5>
+                <h5 className='chartXLabel'>{ this.props.results[Object.keys(this.props.results)[0]].xAxis }</h5>
 
                 <XYPlot height={ this.props.graphHeight } width={ this.props.graphWidth }>
                     {

@@ -1,12 +1,6 @@
 import axios from "axios";
-import { serverUrl } from './server'
+import { serverUrl } from "./server";
 
 let countyRes = [];
-
-function fetchCounty() {
-    countyRes = axios.get(`${serverUrl}/county`);
-}
-
-fetchCounty();
-
+countyRes = axios.get(`${serverUrl}/county`);
 export { countyRes };

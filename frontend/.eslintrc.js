@@ -7,7 +7,8 @@ module.exports = {
 	"globals": {
 		"Atomics": "readonly",
 		"SharedArrayBuffer": "readonly"
-	},
+    },
+    "parser": "babel-eslint",
 	"parserOptions": {
 		"ecmaFeatures": {
 			"jsx": true

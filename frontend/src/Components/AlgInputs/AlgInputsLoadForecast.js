@@ -8,7 +8,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
-import { dataLoadForecast } from "../Api/AlgorithmData";
+import { loadForecastPromise, fieldsLoadForecast } from "../Api/AlgorithmData";
 
 const styles = theme => ({
     container: {
@@ -38,25 +38,41 @@ const styles = theme => ({
 
 
 class AlgInputsLoadForecast extends Component {
-    
     state = {
         open: false,
         county: "",
     }
 
+    componentDidMount() {
+        loadForecastPromise.then(res => {
+            const result = [];
+            res.data.forEach(data => {
+                const filteredData = {};
+                fieldsLoadForecast.forEach(field => {
+                    filteredData[field] = data[field];
+                });
+                result.push(filteredData);
+            });
+            this.setState({
+                result: result,
+            });
+        });
+    }
+
     handleClose = () => {
-        this.setState({ open: false})
+        this.setState({ open: false});
     };
 
     /* TODO save results(profile) of Load Forecast*/
     saveResults = () => {
-        this.setState({ open: false})
+        this.setState({ open: false});
         // TODO: backend
         // POST data to save as a profile
     };
 
     // TODO: backend
     getResult = async (county) => {
+<<<<<<< HEAD
         // this.setState({ county: document.getElementById("standard-county").value });
         // console.log(county);
         // const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ county }`);
@@ -74,12 +90,30 @@ class AlgInputsLoadForecast extends Component {
         //     dataLoadForecast.push(dataLoadForecastUnit);
         // }
         // console.log(dataLoadForecast);
+=======
+        this.setState({ county: document.getElementById("standard-county").value });
+        console.log(county);
+        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ county }`);
+        console.log(res.data);
+        const dataLoadForecast = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
+            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
+            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
+            dataLoadForecastUnit.work_load = (res.data[i].work_load);
+            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
+            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
+            dataLoadForecastUnit.total_load = (res.data[i].total_load);
+            dataLoadForecast.push(dataLoadForecastUnit);
+        }
+>>>>>>> 189967392737bb63b4ceb3ed1f387ba1efbf1dea
 
         return dataLoadForecast;
     };
       
     runAlgorithm = async (county) => {
-        this.setState({ open: true })
+        this.setState({ open: true });
         this.props.visualizeResults(await this.getResult(county));
     };
 
@@ -127,16 +161,16 @@ class AlgInputsLoadForecast extends Component {
                 </TextField>
                 <br/>
                 <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
-                Default parameters
+                    Set parameters as default
                 </Button>
                 <br/>
                 <TextField
-                disabled
-                id="standard-aggregation_level"
-                label="aggregation_level"
-                defaultValue="defaulValue"
-                className={classes.textField}
-                margin="normal"
+                    disabled
+                    id="standard-aggregation_level"
+                    label="aggregation_level"
+                    defaultValue="defaulValue"
+                    className={classes.textField}
+                    margin="normal"
                 />
                 <TextField
                     disabled
