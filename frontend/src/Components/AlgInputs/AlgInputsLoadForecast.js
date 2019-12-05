@@ -57,23 +57,23 @@ class AlgInputsLoadForecast extends Component {
 
     // TODO: backend
     getResult = async (county) => {
-        this.setState({ county: document.getElementById("standard-county").value });
-        console.log(county);
-        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ county }`);
-        // console.log(res.data);
-        const dataLoadForecast = [];
-        for (var i = 0; i < res.data.length; i++) {
-            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-            dataLoadForecastUnit.residential_l1_load = JSON.parse(res.data[i].residential_l1_load);
-            dataLoadForecastUnit.residential_l2_load = JSON.parse(res.data[i].residential_l2_load);
-            dataLoadForecastUnit.residential_mud_load = JSON.parse(res.data[i].residential_mud_load);
-            dataLoadForecastUnit.work_load = JSON.parse(res.data[i].work_load);
-            dataLoadForecastUnit.fast_load = JSON.parse(res.data[i].fast_load);
-            dataLoadForecastUnit.public_l2_load = JSON.parse(res.data[i].public_l2_load);
-            dataLoadForecastUnit.total_load = JSON.parse(res.data[i].total_load);
-            dataLoadForecast.push(dataLoadForecastUnit);
-        }
-        console.log(dataLoadForecast);
+        // this.setState({ county: document.getElementById("standard-county").value });
+        // console.log(county);
+        // const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ county }`);
+        // // console.log(res.data);
+        // const dataLoadForecast = [];
+        // for (var i = 0; i < res.data.length; i++) {
+        //     const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+        //     dataLoadForecastUnit.residential_l1_load = JSON.parse(res.data[i].residential_l1_load);
+        //     dataLoadForecastUnit.residential_l2_load = JSON.parse(res.data[i].residential_l2_load);
+        //     dataLoadForecastUnit.residential_mud_load = JSON.parse(res.data[i].residential_mud_load);
+        //     dataLoadForecastUnit.work_load = JSON.parse(res.data[i].work_load);
+        //     dataLoadForecastUnit.fast_load = JSON.parse(res.data[i].fast_load);
+        //     dataLoadForecastUnit.public_l2_load = JSON.parse(res.data[i].public_l2_load);
+        //     dataLoadForecastUnit.total_load = JSON.parse(res.data[i].total_load);
+        //     dataLoadForecast.push(dataLoadForecastUnit);
+        // }
+        // console.log(dataLoadForecast);
 
         return dataLoadForecast;
     };
@@ -120,7 +120,7 @@ class AlgInputsLoadForecast extends Component {
                     margin="normal"
                 >
                     {this.counties.map(option => (
-                        <option key={option.name} value={option.residents}>
+                        <option key={option.name} value={option.name}>
                             {option.name}
                         </option>
                     ))}
