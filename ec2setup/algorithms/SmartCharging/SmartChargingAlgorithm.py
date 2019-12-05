@@ -154,6 +154,23 @@ class SmartChargingAlgorithm:
         
         return schedule.value, power, len(where_violation)
 
+    def load_parameter(
+        self,
+        county,
+        rate_energy_peak,
+        rate_energy_partpeak,
+        rate_energy_offpeak,
+        rate_demand_peak,
+        rate_demand_partpeak,
+        rate_demand_overall
+    ):
+        self.county = county
+        self.rate_energy_peak = rate_energy_peak
+        self.rate_energy_partpeak = rate_energy_partpeak
+        self.rate_energy_offpeak = rate_energy_offpeak
+        self.rate_demand_peak = rate_demand_peak
+        self.rate_demand_partpeak = rate_demand_partpeak
+        self.rate_demand_overall = rate_demand_overall
 
     def run(self,
             county,
@@ -223,10 +240,35 @@ if __name__ == "__main__":
     sca = SmartChargingAlgorithm('script.chargepoint.data')
      # load data from S3
     county_list = sca.load_county_data_from_local()
+
+    baseline_profiles_1, controlled_profiles_1 = sca.run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
+    baseline_profiles_2, controlled_profiles_2 = sca.run('Alameda', 0.16997, 0.11236, 0.08082, 20.23, 4.85, 18.10)
+    baseline_profiles_3, controlled_profiles_3 = sca.run('San Francisco', 0.16997, 0.13236, 0.08082, 22.23, 6.85, 20.10)
+    baseline_profiles_4, controlled_profiles_4 = sca.run('Los Angeles', 0.17997, 0.12236, 0.09082, 22.23, 6.85, 20.10)
+    baseline_profiles_5, controlled_profiles_5 = sca.run('Napa', 0.15997, 0.11236, 0.09082, 21.23, 6.85, 20.10)
+    
+    turn = 0
     for county in county_list:
-        if county == 'Santa Clara':
-            baseline_profiles, controlled_profiles = sca.run(county, 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
-            sca.uploadToPostgres(baseline_profiles, controlled_profiles)
+        turn += 1
+        if turn % 5 == 0:
+            sca.load_parameter(county, 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
+            sca.uploadToPostgres(baseline_profiles_1, controlled_profiles_1)
+
+        elif turn % 5 == 1:
+            sca.load_parameter(county, 0.16997, 0.11236, 0.08082, 20.23, 4.85, 18.10)
+            sca.uploadToPostgres(baseline_profiles_2, controlled_profiles_2)
+
+        elif turn % 5 == 2:
+            sca.load_parameter(county, 0.16997, 0.13236, 0.08082, 22.23, 6.85, 20.10)
+            sca.uploadToPostgres(baseline_profiles_3, controlled_profiles_3)
+
+        elif turn % 5 == 3:
+            sca.load_parameter(county, 0.17997, 0.12236, 0.09082, 22.23, 6.85, 20.10)
+            sca.uploadToPostgres(baseline_profiles_4, controlled_profiles_4)
+
+        else:
+            sca.load_parameter(county, 0.15997, 0.11236, 0.09082, 21.23, 6.85, 20.10)
+            sca.uploadToPostgres(baseline_profiles_5, controlled_profiles_5)
 
 
     tz_NY = pytz.timezone('America/New_York') 

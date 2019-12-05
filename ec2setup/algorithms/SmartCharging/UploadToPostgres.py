@@ -23,7 +23,7 @@ class UploadToPostgres():
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
-        self.county = county
+        self.county = county.lower()
         self.rate_energy_peak = rate_energy_peak
         self.rate_energy_partpeak = rate_energy_partpeak
         self.rate_energy_offpeak = rate_energy_offpeak
