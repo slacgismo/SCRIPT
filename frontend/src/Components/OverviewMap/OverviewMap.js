@@ -216,7 +216,7 @@ class OverviewMap extends React.PureComponent {
                     <Tooltip style={tooltipStyle}>
                         <b>County:</b> { current.countyName }
                         <br />
-                        <b>{ allOverviewParams[this.state.chosenParam].text }:</b> { current[this.state.chosenParam] }
+                        <b>{ allOverviewParams[this.state.chosenParam].text }:</b> { parseFloat(current[this.state.chosenParam] / 1000) } { allOverviewParams[this.state.chosenParam].unit }
                     </Tooltip>
           
                 </this.state.styledMap>

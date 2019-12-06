@@ -88,7 +88,7 @@ class AlgInputsCBA extends Component {
         // TODO: backend
         // Get result of algorithm2 and visualize it
         this.setState({ openResult: true });
-        this.setState({ shouldRender: true });
+        this.setState({ shouldRender: true  });
         
         // results = await this.getResultLoadForecast(); 
         // console.log(results);
