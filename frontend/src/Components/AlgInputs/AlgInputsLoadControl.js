@@ -138,6 +138,7 @@ class AlgInputsLoadControl extends Component {
     render() {
         const { classes } = this.props;
         return !this.state.counties ? <></> : (
+        // return (
             <>
                 <TextField
                     id="standart-county"
@@ -151,7 +152,7 @@ class AlgInputsLoadControl extends Component {
                     }}
                     helperText="Please select a county"  
                     margin="normal"
-                    value={ this.state.county }
+                    // value={ this.state.county }
                 >
                     {
                         this.state.counties.map(option => (

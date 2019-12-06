@@ -38,6 +38,8 @@ const styles = theme => ({
     },
 });
 
+let results = [];
+
 class AlgInputsCBA extends Component {
     constructor(props) {
         super(props);
@@ -49,6 +51,7 @@ class AlgInputsCBA extends Component {
             profileName: "",
             county: "",
             resultsLoadForecast: [],
+            shouldRender: false,
         };
     }
     
@@ -85,42 +88,62 @@ class AlgInputsCBA extends Component {
         // TODO: backend
         // Get result of algorithm2 and visualize it
         this.setState({ openResult: true });
-        const results = await this.getResultLoadForecast(); 
-        console.log(results);
-        this.setState({ resultsLoadForecast: results});
-        for (var i = 0; i < this.state.profileData.length; i++) {
-            if (this.state.profileData[i].config_name == this.state.profileName) {
-                this.setState({ county: this.state.profileData[i].choice });
-            }
-        }
-        console.log(this.state.resultsLoadForecast);
-        // console.log(this.state.profileName);
+        this.setState({ shouldRender: true });
+        
+        // results = await this.getResultLoadForecast(); 
+        // console.log(results);
+        // // this.setState({ resultsLoadForecast: results});
         // for (var i = 0; i < this.state.profileData.length; i++) {
         //     if (this.state.profileData[i].config_name == this.state.profileName) {
-        //         AlgInputsLoadForecast.runAlgorithm(this.state.profileData[i].choice);
-                
+        //         this.setState({ county: this.state.profileData[i].choice });
         //     }
         // }
+        // console.log(this.state.resultsLoadForecast);
+        // // console.log(this.state.profileName);
+        // // for (var i = 0; i < this.state.profileData.length; i++) {
+        // //     if (this.state.profileData[i].config_name == this.state.profileName) {
+        // //         AlgInputsLoadForecast.runAlgorithm(this.state.profileData[i].choice);
+                
+        // //     }
+        // // }
     };
 
-    getResultLoadForecast = async () => {
-        console.log(this.state.county);
-        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ this.state.county }`);
-        console.log(res.data);
+    getResultLoadForecast = () => {
+        this.setState({ openResult: true });
+        this.setState({ shouldRender: true });
+        
+        // console.log(this.state.county);
+        // const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ this.state.county }`);
         const dataLoadForecast = [];
-        for (var i = 0; i < res.data.length; i++) {
-            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
-            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
-            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
-            dataLoadForecastUnit.work_load = (res.data[i].work_load);
-            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
-            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
-            dataLoadForecastUnit.total_load = (res.data[i].total_load);
-            dataLoadForecast.push(dataLoadForecastUnit);
-        }
+        axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast").then(res => {
+            console.log(res.data);
+            
+            for (var i = 0; i < res.data.length; i++) {
+                const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+                dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
+                dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
+                dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
+                dataLoadForecastUnit.work_load = (res.data[i].work_load);
+                dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
+                dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
+                dataLoadForecastUnit.total_load = (res.data[i].total_load);
+                dataLoadForecast.push(dataLoadForecastUnit);
+            }
+    
+            for (var j = 0; j < this.state.profileData.length; j++) {
+                if (this.state.profileData[j].config_name == this.state.profileName) {
+                    this.setState({ county: this.state.profileData[j].choice });
+                }
+            }
+    
+            this.setState({ resultsLoadForecast: dataLoadForecast});
+            
+            console.log(dataLoadForecast);
+
+        });
 
         return dataLoadForecast;
+        // return dataLoadForecast;
     }
 
     // TODO: backend
@@ -182,8 +205,6 @@ class AlgInputsCBA extends Component {
 
     runAlgorithm = async () => {
         this.props.visualizeResults(await this.getResult());
-        // const option = document.getElementById("standard-category").value;
-        // console.log(option);
     };
 
     uploadFile = () => {
@@ -192,18 +213,9 @@ class AlgInputsCBA extends Component {
         // upload a file to EC2 as the input of algorithm 3 (cba)
     };
 
-    // const profiles = [
-    //     {
-    //         name: "profile1", 
-    //         id: "1"
-    //     },
-    //     {
-    //         name: "profile2",
-    //         id: "2"
-    //     }
-    // ];
     render() {
         const { classes } = this.props;
+        // this.setState({ resultsLoadForecast: this.getResultLoadForecast});
         return (
             <div>
                 <TextField
@@ -230,31 +242,35 @@ class AlgInputsCBA extends Component {
                 <Button variant="contained" className={classes.button} onClick={this.showResults}>
                     Review
                 </Button>
-                <Button variant="contained" className={classes.button} onClick={this.uploadFile}>
+                {/* <Button variant="contained" className={classes.button} onClick={this.uploadFile}>
                     Upload
-                </Button>
+                </Button> */}
                 <p/>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
                     Run
                 </Button>
+
+                { !this.state.shouldRender ? <></> : (
                 
-                <Dialog open={this.state.openResult} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle onClose={this.handleClose} id="form-dialog-title">Results of Load Forecast</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText> 
+                    <Dialog open={this.state.openResult} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                        <DialogTitle onClose={this.handleClose} id="form-dialog-title">Results of Load Forecast</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText> 
                         /* TODO */
-                            <ResultCharts
-                                results={ this.state.resultsLoadForecast }
-                                algId={2}
-                            />
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
+                                <ResultCharts
+                                    results= { this.state.resultsLoadForecast }
+                                    algId={2}
+                                />
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.handleClose} color="primary">
                             Cancel
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                )
+                }
 
                 <Dialog open={this.state.openUpload} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Upload</DialogTitle>
