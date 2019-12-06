@@ -177,6 +177,10 @@ const getValuesOfAttr = (counties, attrName) => {
 };
 
 const numbers2percentages = (nums) => {
+    if (Math.max(...nums) === Math.min(...nums)) {
+        return nums.map(num => 0.5);
+    }
+
     const maxNum = Math.max(...nums);
     const minNum = Math.min(...nums) - (Math.max(...nums) - Math.min(...nums)) * COLOR_PERCENTAGE_ESP;
     return nums.map(num => (num - minNum) / (maxNum - minNum));
