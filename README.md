@@ -32,14 +32,10 @@ SCRIPT/
 1. `pip install paramiko`
 2. `pip install pytz`
 
-### Set Up Node.js
-
-see [more requirements](./frontend/README.md)
-
 ### Configure AWS
 
 1. configure `variables.env`
-2. see [more requirements](./utils/aws/terraform/README.md)
+2. see [more requirements](./utils/aws/terraform/README.md) to install `docker` and `docker-compose`
 
 ## Generate Key Pair
 

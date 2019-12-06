@@ -150,11 +150,40 @@ resource "aws_security_group" "sg" {
   }
 }
 
+resource "aws_iam_role" "script_iam_for_ec2" {
+  name = "script_iam_role_for_ec2"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "attach_s3_access_from_ec2" {
+  role       = "${aws_iam_role.script_iam_for_ec2.name}"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name  = "ec2-profile"
+  role = "${aws_iam_role.script_iam_for_ec2.name}"
+}
+
 resource "aws_instance" "script_algorithm_ins" {
   ami                         = "ami-04b9e92b5572fa0d1"
   instance_type               = "t2.medium"
   vpc_security_group_ids      = ["${aws_security_group.sg.id}"]
   associate_public_ip_address = true
+  iam_instance_profile        = "${aws_iam_instance_profile.ec2_profile.name}"
   key_name                    = "script"
 
   provisioner "file" {
@@ -178,8 +207,6 @@ resource "aws_instance" "script_algorithm_ins" {
       "sudo apt-get install -y python-dev",
       "sudo apt-get install -y libpq-dev python-dev",
       "pip3 install awscli --force-reinstall --upgrade",
-      "aws configure set aws_access_key_id <aws_access_key_id>",
-      "aws configure set aws_secret_access_key <aws_secret_access_key>",
       "aws configure set default.region us-east-1",
       "mkdir ~/mosek",
       "cp ~/SCRIPT/utils/mosek/mosek.lic ~/mosek/mosek.lic",

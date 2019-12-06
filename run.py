@@ -159,14 +159,14 @@ def start_local(db_host):
     print('copying variables.env ...')
     _ = subprocess.run(['cp', './variables.env', './webserver/'], stdout=subprocess.PIPE, cwd=HOME_DIR)
 
-    # docker-compose up
-    print('running docker-compose up --build ...')
+    # docker-compose up (detached)
+    print('running docker-compose up -d --build ...')
 
     env = {
         **os.environ,
         "DB_HOST": db_host,
     }
-    process = subprocess.Popen(['docker-compose', 'up', '--build'], env=env, stdout=subprocess.PIPE)
+    process = subprocess.Popen(['docker-compose', 'up', '-d', '--build'], env=env, stdout=subprocess.PIPE)
     while True:
         output = process.stdout.readline().decode('utf-8')
         if process.poll() is not None and output == '':
@@ -179,5 +179,5 @@ def start_local(db_host):
 env_var_dict = read_env_variables(VAR_FILE_PATH)
 generate_tf_variables(env_var_dict, TF_VAR_TEMPLATE_PATH, TF_VAR_FILE_PATH)
 DB_HOST, EC2_IP = check_args(TF_DIR)
-run_algorithm(DB_HOST, POSTGRES_INFO_PATH, SSL_KEY_PATH)
 start_local(DB_HOST)
+run_algorithm(DB_HOST, POSTGRES_INFO_PATH, SSL_KEY_PATH)

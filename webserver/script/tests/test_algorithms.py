@@ -13,7 +13,9 @@ import copy
 class LoadControllerTests(APITestCase):
 
     county_name = 'Santa Cruz'
-    residents = 9812
+    total_session = 100
+    total_energy = 10000.0
+    peak_energy = 12312.0
     rate_energy_peak = 0.16997
     rate_energy_partpeak = 0.12236
     rate_energy_offpeak = 0.09082
@@ -51,7 +53,10 @@ class LoadControllerTests(APITestCase):
 
     def test_create_load_controller(self):
         """Ensure we can create a new load controller object."""
-        _ = create_county(self.county_name, self.residents)
+        _ = create_county(self.county_name,
+                            self.total_session,
+                            self.total_energy,
+                            self.peak_energy)
         response = create_load_controller(self.county_name,
                                             self.rate_energy_peak,
                                             self.rate_energy_partpeak,
@@ -70,7 +75,10 @@ class LoadControllerTests(APITestCase):
 
     def test_create_conflict(self):
         """Ensure we cannot create two load controllers with the unique set."""
-        _ = create_county(self.county_name, self.residents)
+        _ = create_county(self.county_name,
+                            self.total_session,
+                            self.total_energy,
+                            self.peak_energy)
         _ = create_load_controller(self.county_name,
                                     self.rate_energy_peak,
                                     self.rate_energy_partpeak,
@@ -93,7 +101,10 @@ class LoadControllerTests(APITestCase):
 
     def test_filter_county(self):
         """Ensure we can filter load controllers by fields: county, rates."""
-        _ = create_county(self.county_name, self.residents)
+        _ = create_county(self.county_name,
+                            self.total_session,
+                            self.total_energy,
+                            self.peak_energy)
         _ = create_load_controller(self.county_name,
                                     self.rate_energy_peak,
                                     self.rate_energy_partpeak,
