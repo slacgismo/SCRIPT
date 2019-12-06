@@ -139,24 +139,23 @@ class OverviewMap extends React.PureComponent {
         });
     }
 
-    componentDidMount = () => {
-        countyRes.then(res => {
-            const countyData = res.data;
-            countyData.forEach(data => {
-                counties[data.name] = {
-                    total_energy: data.total_energy,
-                    total_session: data.total_session,
-                    peak_energy: data.peak_energy,
-                };
-            });
+    componentDidMount = async () => {
+        const countyDataResp = await countyRes;
 
-            console.log(counties);
-            this.updateMap("total_energy");
-            
-            svgPanZoom("#usa-ca");
-
-
+        // Format county data
+        const countyData = countyDataResp.data;
+        countyData.forEach(data => {
+            counties[data.name] = {
+                total_energy: data.total_energy,
+                total_session: data.total_session,
+                peak_energy: data.peak_energy,
+            };
         });
+
+        console.log(counties);
+        this.updateMap(this.state.chosenParam);
+        
+        svgPanZoom("#usa-ca");
     }
 
     componentDidUpdate() {
