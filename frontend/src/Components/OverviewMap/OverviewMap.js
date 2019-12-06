@@ -28,7 +28,7 @@ import {
     getBasicColor,
     getColorPercentageEsp,
 } from "./overviewMapStyled";
-import { counties } from "../Api/sampleCounties";
+// import { counties } from "../Api/sampleCounties";
 import OverviewMapLegend from "./OverviewMapLegend";
 import { countyRes } from "../Api/CountyData";
 
@@ -89,6 +89,8 @@ const ParamSelect = (props) => {
     ); 
 };
 
+const counties = {};
+
 class OverviewMap extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -108,7 +110,6 @@ class OverviewMap extends React.PureComponent {
             tooltipX: 0,
             gotPan: false,
             styledMap: null,
-            counties: null,
         };
 
         // addCountyColorByAttr(counties, this.props.overviewParam);
@@ -129,40 +130,41 @@ class OverviewMap extends React.PureComponent {
     }
 
     updateMap(newAttr) {
-        const extremeValues = getExtremeValuesOfAttr(this.state.counties, newAttr);
-        addCountyColorByAttr(this.state.counties, newAttr);
+        const extremeValues = getExtremeValuesOfAttr(counties, newAttr);
+        addCountyColorByAttr(counties, newAttr);
         this.setState({
             minValue: parseFloat(extremeValues.minValue.toPrecision(2)),
             maxValue: parseFloat(extremeValues.maxValue.toPrecision(2)),
-            styledMap: getStyledMapWrapperByCountyColors(this.state.counties),
+            styledMap: getStyledMapWrapperByCountyColors(counties),
         });
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
         countyRes.then(res => {
             const countyData = res.data;
-            const realCounties = {};
             countyData.forEach(data => {
-                realCounties[data.name] = {
+                counties[data.name] = {
                     total_energy: data.total_energy,
                     total_session: data.total_session,
                     peak_energy: data.peak_energy,
                 };
             });
-            this.setState({
-                counties: realCounties,
-            });
 
+            console.log(counties);
             this.updateMap("total_energy");
+            
+            svgPanZoom("#usa-ca");
+
+
         });
     }
 
     componentDidUpdate() {
-        const panZoomMap = svgPanZoom("#usa-ca");
+        // const panZoomMap = svgPanZoom("#usa-ca");
     }
 
     render () {
-        // if (!this.state.counties) {
+        // if (!counties) {
         //     return <></>;
         // }
 
@@ -228,7 +230,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOver = e => {
       this.setState({ current: {
           countyName: e.target.attributes.name.value,
-          [this.state.chosenParam]: (this.state.counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
+          [this.state.chosenParam]: (counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
       } });
   }
 

@@ -62,13 +62,13 @@ class AlgInputsLoadControl extends Component {
             result: null,
 
             // Alg params
-            county: "",
-            rate_energy_peak: null,
-            rate_energy_partpeak: null,
-            rate_energy_offpeak: null,
-            rate_demand_peak: null,
-            rate_demand_partpeak: null,
-            rate_demand_overall: null,
+            county: loadControlDefaultParams.county,
+            rate_energy_peak: loadControlDefaultParams.rate_energy_peak,
+            rate_energy_partpeak: loadControlDefaultParams.rate_demand_partpeak,
+            rate_energy_offpeak: loadControlDefaultParams.rate_energy_offpeak,
+            rate_demand_peak: loadControlDefaultParams.rate_demand_peak,
+            rate_demand_partpeak: loadControlDefaultParams.rate_demand_partpeak,
+            rate_demand_overall: loadControlDefaultParams.rate_demand_overall,
         };
     }
 
@@ -88,7 +88,7 @@ class AlgInputsLoadControl extends Component {
             });
         });
 
-        this.useDefaultParameters();
+        // this.useDefaultParameters();
     }
 
     /* TODO change default parameters of Load Controll */
