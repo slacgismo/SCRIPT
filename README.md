@@ -35,7 +35,7 @@ SCRIPT/
 1. install `aws cli` and `terraform`
 2. configure `./variables.env` and please make sure the resource names will not conflict with existing resources
 
-## Generate Key Pair
+### Generate Key Pair
 
 1. generate ssh key pair(pem) with the key name of `script` and download the key
 2. copy it to `./utils/aws/terraform/`
