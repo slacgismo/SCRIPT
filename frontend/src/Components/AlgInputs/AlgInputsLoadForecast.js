@@ -47,14 +47,14 @@ class AlgInputsLoadForecast extends Component {
             counties: [],
 
             // Alg params
-            aggregation_level: "",
-            num_evs: null,
-            county_choice: "",
-            fast_percent: 0.1,
-            work_percent: 0.2,
-            res_percent: 0.7,
-            l1_percent: 0.5,
-            publicl2_percent: 0.0,
+            aggregation_level: loadForecastDefaultParams.aggregation_level,
+            num_evs: loadForecastDefaultParams.num_evs,
+            county_choice: loadForecastDefaultParams.county_choice,
+            fast_percent: loadForecastDefaultParams.fast_percent,
+            work_percent: loadForecastDefaultParams.work_percent,
+            res_percent: loadForecastDefaultParams.res_percent,
+            l1_percent: loadForecastDefaultParams.l1_percent,
+            publicl2_percent: loadForecastDefaultParams.publicl2_percent,
 
             res_daily_use: 1.0,
             work_daily_use: 1.0,
@@ -84,7 +84,7 @@ class AlgInputsLoadForecast extends Component {
             });
         });
 
-        this.useDefaultParameters();
+        // this.useDefaultParameters();
     }
 
     handleClose = () => {
@@ -152,6 +152,7 @@ class AlgInputsLoadForecast extends Component {
                     }}
                     helperText="Please select a county"  
                     margin="normal"
+                    value={ this.state.county_choice }
                 >
                     {
                         this.state.counties.map(option => (
