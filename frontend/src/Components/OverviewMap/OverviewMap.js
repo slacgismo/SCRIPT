@@ -89,14 +89,12 @@ const ParamSelect = (props) => {
     ); 
 };
 
-const counties = {};
-
 class OverviewMap extends React.PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            chosenParam: "total_energy",
+            chosenParam: Object.keys(allOverviewParams)[0], // Use first key as the default param
             minValue: null,
             maxValue: null,
             current: {
@@ -130,12 +128,12 @@ class OverviewMap extends React.PureComponent {
     }
 
     updateMap(newAttr) {
-        const extremeValues = getExtremeValuesOfAttr(counties, newAttr);
-        addCountyColorByAttr(counties, newAttr);
+        const extremeValues = getExtremeValuesOfAttr(this.state.counties, newAttr);
+        addCountyColorByAttr(this.state.counties, newAttr);
         this.setState({
             minValue: parseFloat(extremeValues.minValue.toPrecision(2)),
             maxValue: parseFloat(extremeValues.maxValue.toPrecision(2)),
-            styledMap: getStyledMapWrapperByCountyColors(counties),
+            styledMap: getStyledMapWrapperByCountyColors(this.state.counties),
         });
     }
 
@@ -143,6 +141,7 @@ class OverviewMap extends React.PureComponent {
         const countyDataResp = await countyRes;
 
         // Format county data
+        const counties = {};
         const countyData = countyDataResp.data;
         countyData.forEach(data => {
             counties[data.name] = {
@@ -152,7 +151,10 @@ class OverviewMap extends React.PureComponent {
             };
         });
 
-        console.log(counties);
+        this.setState({
+            counties: counties,
+        });
+
         this.updateMap(this.state.chosenParam);
         
         svgPanZoom("#usa-ca");
@@ -229,7 +231,7 @@ class OverviewMap extends React.PureComponent {
   onMouseOver = e => {
       this.setState({ current: {
           countyName: e.target.attributes.name.value,
-          [this.state.chosenParam]: (counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
+          [this.state.chosenParam]: (this.state.counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
       } });
   }
 
