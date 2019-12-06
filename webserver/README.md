@@ -61,6 +61,12 @@ You can configure your own PostgreSQL and Django settings. However, we recommend
 docker run -d --name my_postgres -v <path_to_save_postgres_data>:/var/lib/postgresql/data -p 5433:5432 -e POSTGRES_USER=script_admin -e POSTGRES_PASSWORD=script_passwd -e POSTGRES_DB=scriptdb postgres:9
 ```
 
+Or start an existing container:
+
+```bash
+docker container start my_postgres
+```
+
 Now, you can connect to PostgreSQL via port 5433.
 
 To stop it:
@@ -91,7 +97,7 @@ python manage.py runserver --settings=app.settings.base
 ### Migrate your models defined in Django
 
 ```bash
-python manage.py makemigrations script
+python manage.py makemigrations
 python manage.py migrate
 ```
 

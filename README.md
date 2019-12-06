@@ -1,4 +1,6 @@
-# Structure
+# SCRIPT - Smart ChaRging Infrastructure Planning Tool
+
+## Structure
 
 ```text
 SCRIPT/
@@ -22,3 +24,31 @@ SCRIPT/
     main.tf                     ---- Terraform config
     variable.env                ---- Environment variables
 ```
+
+## How To Run
+
+### Set Up Python Environment
+
+1. `pip install paramiko`
+2. `pip install pytz`
+
+### Set Up Node.js
+
+see [more requirements](./frontend/README.md)
+
+### Configure AWS
+
+1. configure `variables.env`
+2. see [more requirements](./utils/aws/terraform/README.md)
+
+## Generate Key Pair
+
+1. generate ssh key pair(pem) with the key name of `script` and download the key
+2. copy it to `./utils/aws/terraform/`
+3. run `chmod 400 script.pem` in `./utils/aws/terraform/`
+
+### Run the Application
+
+- Run with existing EC2 instance and S3 bucket: `python run.py -i <ec2_ip> -d <db_host>`
+- Launch new resources and run: `python run.py`
+- For more help: `python run.py --help`
