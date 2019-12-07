@@ -138,10 +138,14 @@ def run_algorithm(db_host, postgres_info_path, ssl_key_path):
 
 def check_args(tf_dir):
     """check args: specify EC2_IP and DB_HOST both or neither"""
+    launch_ec2 = None
     if args.EC2_IP is None and args.DB_HOST is None:
         db_host, ec2_ip = run_terraform(tf_dir)
+        launch_ec2 = False
     else:
+        print('Using existing AWS resources.')
         db_host, ec2_ip = args.EC2_IP, args.DB_HOST
+        launch_ec2 = True
 
     if db_host is None or ec2_ip is None:
         print('Please specify EC2_IP and DB_HOST both or neither.')
@@ -150,7 +154,7 @@ def check_args(tf_dir):
         print('Instance IP: %s' % ec2_ip)
         print('Database Host: %s' % db_host)
 
-    return db_host, ec2_ip
+    return launch_ec2, db_host, ec2_ip
 
 
 def start_local(db_host):
@@ -178,6 +182,7 @@ def start_local(db_host):
 
 env_var_dict = read_env_variables(VAR_FILE_PATH)
 generate_tf_variables(env_var_dict, TF_VAR_TEMPLATE_PATH, TF_VAR_FILE_PATH)
-DB_HOST, EC2_IP = check_args(TF_DIR)
+launch_ec2, DB_HOST, EC2_IP = check_args(TF_DIR)
 start_local(DB_HOST)
-run_algorithm(DB_HOST, POSTGRES_INFO_PATH, SSL_KEY_PATH)
+if not launch_ec2:
+    run_algorithm(DB_HOST, POSTGRES_INFO_PATH, SSL_KEY_PATH)
