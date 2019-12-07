@@ -1,6 +1,9 @@
 from django.urls import path, include
 from rest_framework import routers
-from script.views import CountyViewSet, ZipCodeViewSet, EnergyViewSet, LoadForecastViewSet, LoadControllerViewSet, LoadProfileViewSet, GasConsumptionViewSet, CostBenefitViewSet, NetPresentValueViewSet, EmissionViewSet, LoadForecastConfigViewSet
+from script.views import CountyViewSet, ZipCodeViewSet, EnergyViewSet
+from script.views import LoadControllerConfigViewSet, LoadForecastConfigViewSet, LoadProfileConfigViewSet, GasConsumptionConfigViewSet, NetPresentValueConfigViewSet, EmissionConfigViewSet, CostBenefitConfigViewSet
+from script.views import LoadForecastViewSet, LoadControllerViewSet, LoadProfileViewSet, GasConsumptionViewSet, CostBenefitViewSet, NetPresentValueViewSet, EmissionViewSet
+
 
 # set up a router for RESTful API
 # ref1: https://www.django-rest-framework.org/api-guide/routers/
@@ -16,6 +19,17 @@ router.register('county', CountyViewSet, 'county')
 router.register('zipcode', ZipCodeViewSet, 'zipcode')
 router.register('energy', EnergyViewSet, 'energy')
 
+
+# Configuration for algorithms:
+router.register('config/load_controller', LoadControllerConfigViewSet, 'config/load_controller')
+router.register('config/load_forecast', LoadForecastConfigViewSet, 'config/load_forecast')
+router.register('config/load_profile', LoadProfileConfigViewSet, 'config/load_profile')
+router.register('config/gas_consumption', GasConsumptionConfigViewSet, 'config/gas_consumption')
+router.register('config/net_present_value', NetPresentValueConfigViewSet, 'config/net_present_value')
+router.register('config/emission', EmissionConfigViewSet, 'config/emission')
+router.register('config/cost_benefit', CostBenefitConfigViewSet, 'config/cost_benefit')
+
+
 # Algorithm-1: load controller
 router.register('algorithm/load_controller', LoadControllerViewSet, 'algorithm/load_controller')
 
@@ -28,10 +42,6 @@ router.register('algorithm/cost_benefit_analysis/gas_consumption', GasConsumptio
 router.register('algorithm/cost_benefit_analysis/cost_benefit', CostBenefitViewSet, 'algorithm/cost_benefit_analysis/cost_benefit')
 router.register('algorithm/cost_benefit_analysis/net_present_value', NetPresentValueViewSet, 'algorithm/cost_benefit_analysis/net_present_value')
 router.register('algorithm/cost_benefit_analysis/emission', EmissionViewSet, 'algorithm/cost_benefit_analysis/emission')
-
-
-# Configuration for Algorithm-2:
-router.register('config/load_forecast', LoadForecastConfigViewSet, 'config/load_forecast')
 
 
 urlpatterns = [
