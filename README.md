@@ -4,39 +4,52 @@
 
 ```text
 SCRIPT/
-    webserver/                  ---- Django web server
+    webserver/                  ---- Django REST Framework web server
         Dockerfile
         manage.py
-        app/
+        app/                    ---- settings
         script/                 ---- script web app
-    s3watch/                    ---- Watch the algorithm results, trigger endpoint to update db
+    frontend/                   ---- React
         Dockerfile
+        src/                    ---- source code
+    s3watch/                    ---- Watch the algorithm results, trigger endpoint to update db
     ec2setup/                   ---- code running on EC2
-        algorithms/
-        controller/
     utils/                      ---- Utils which can be copied by all images during image build
-        aws/                    ---- used by the web server backend and s3watch
-            s3/
-            ec2/
+        aws/
+            terraform/          ---- terraform configuration
         upload/                 ---- shell/python script to split raw data and upload
-        lambda/                 ---- used by Terraform
+        mosek/                  ---- mosek license
     docker-compose.yml          ---- Docker compose config
-    main.tf                     ---- Terraform config
-    variable.env                ---- Environment variables
+    variable.env                ---- Configuration for environment variables
+    run.py                      ---- One-key script to start the whole project
 ```
 
 ## How To Run
 
+### Install Docker
+
+1. install `docker` and `docker-compose`
+
+### Install Terraform and Configure AWS
+
+1. install `aws cli` and `terraform`
+2. configure `./variables.env` and please make sure the resource names will not conflict with existing resources
+
+### Generate Key Pair
+
+1. generate ssh key pair(pem) with the key name of `script` and download the key
+2. copy it to `./utils/aws/terraform/`
+3. enter `./utils/aws/terraform/` and run `chmod 400 script.pem`
+
 ### Set Up Python Environment
 
-`pip install paramiko`
-
-### Configure AWS
-
-configure `variables.env`
+1. `pip install paramiko`
+2. `pip install pytz`
 
 ### Run the Application
 
-- Run with existing EC2 instance and S3 bucket: `python run.py -i <ec2_ip> -d <db_host>`
+- Run with existing AWS resources which are properly configured
+  - Configure `./variables.env` with existing resources
+  - EC2 instance and S3 bucket: `python run.py -i <ec2_ip> -d <db_host>`
 - Launch new resources and run: `python run.py`
 - For more help: `python run.py --help`

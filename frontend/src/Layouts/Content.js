@@ -42,6 +42,8 @@ function Content(props) {
                 </Toolbar>
             </AppBar>
             <div className={classes.contentWrapper}>
+                {props.textField}
+                <div />
                 {props.compo}
             </div>
         </Paper>

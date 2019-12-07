@@ -4,12 +4,14 @@ from rest_framework.test import APITestCase, APIClient
 from script.models.data import County
 from script.models.statistics import Energy
 
-def create_county(county_name, residents):
+def create_county(county_name, total_session, total_energy, peak_energy):
     client = APIClient()
     url = reverse('county-list')
     data = {
         'name': county_name,
-        'residents': residents
+        'total_session': total_session,
+        'total_energy': total_energy,
+        'peak_energy': peak_energy
     }
     response = client.post(url, data, format='json')
     return response

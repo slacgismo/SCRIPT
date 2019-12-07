@@ -3,32 +3,33 @@ import { render } from "react-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Overview from "./Components/Overview/Overview";
 import OverviewMap from "./Components/OverviewMap/OverviewMap";
-import ResultChart from "./Components/ResultChart/ResultChart";
+import OverviewMapLegend from "./Components/OverviewMap/OverviewMapLegend";
+// import ResultChart from "./Components/ResultChart/ResultChart";
 import Upload from "./Components/Upload/Upload";
 import Download from "./Components/Download/Download";
-import Algorithm1 from "./Components/Algorithms/Algorithm1";
-import Algorithm2 from "./Components/Algorithms/Algorithm2";
-import Algorithm3 from "./Components/Algorithms/Algorithm3";
-import Algorithm4 from "./Components/Algorithms/Algorithm4";
-import Algorithm5 from "./Components/Algorithms/Algorithm5";
+
+import AlgorithmPageLoadControll from "./Components/AlgorithmPage/AlgorithmPageLoadControll";
+import AlgorithmPageLoadForecast from "./Components/AlgorithmPage/AlgorithmPageLoadForecast";
+import AlgorithmPageCBA from "./Components/AlgorithmPage/AlgorithmPageCBA";
+
+// import Load_controll from "./Components/Algorithms/Load_controll";
+// import Load_forecast from "./Components/Algorithms/Load_forecast";
+// import Cost_benefit_analysis from "./Components/Algorithms/Cost_benefit_analysis";
+
 import About from "./Components/About/About";
 import * as serviceWorker from "./serviceWorker";
 
 render((
     <Router>
         <Route exact path="/" component={ Overview } />
-        <Route exact path="/Upload" component={ Download } />
-        <Route exact path="/Algorithm1" component={ Algorithm1 } />
-        <Route exact path="/Algorithm2" component={ Algorithm2 } />
-        <Route exact path="/Algorithm3" component={ Algorithm3 } />
-        <Route exact path="/Algorithm4" component={ Algorithm4 } />
-        <Route exact path="/Algorithm5" component={ Algorithm5 } />
-        <Route exact path="/About" component={ About } />
-  
-        {/* Routes for debugging single components. */}
-        {/* TODO: delete these routes. */}
-        <Route exact path="/overview-map" component={ OverviewMap } />
-        <Route exact path="/result-chart" component={ ResultChart } />
+        <Route exact path="/upload" component={ Download } />
+        <Route exact path="/alg-loadcontrol" component={ AlgorithmPageLoadControll } />
+        <Route exact path="/alg-loadforecast" component={ AlgorithmPageLoadForecast } />
+        <Route exact path="/alg-cba" component={ AlgorithmPageCBA } />
+        <Route exact path="/about" component={ About } />
+        
+        {/* TODO: delete. Only for debug-purpose */}
+        <Route exact path="/legend" component={ OverviewMapLegend } />
     </Router>
 ), document.getElementById("root"));
 

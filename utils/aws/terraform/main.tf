@@ -114,7 +114,7 @@ resource "aws_default_vpc" "default" {
 }
 
 resource "aws_security_group" "sg" {
-  name = "script-postgresql-db-sg"
+  name = var.aws_sg
   vpc_id = "${aws_default_vpc.default.id}"
 
   ingress {
@@ -150,21 +150,50 @@ resource "aws_security_group" "sg" {
   }
 }
 
+resource "aws_iam_role" "script_iam_for_ec2" {
+  name = "script_iam_role_for_ec2"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "attach_s3_access_from_ec2" {
+  role       = "${aws_iam_role.script_iam_for_ec2.name}"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name  = "ec2-profile"
+  role = "${aws_iam_role.script_iam_for_ec2.name}"
+}
+
 resource "aws_instance" "script_algorithm_ins" {
   ami                         = "ami-04b9e92b5572fa0d1"
   instance_type               = "t2.medium"
   vpc_security_group_ids      = ["${aws_security_group.sg.id}"]
   associate_public_ip_address = true
+  iam_instance_profile        = "${aws_iam_instance_profile.ec2_profile.name}"
   key_name                    = "script"
 
   provisioner "file" {
-    source      = "../SCRIPT"
+    source      = "../../"
     destination = "/home/ubuntu"
     connection {
       type        = "ssh"
       user        = "ubuntu"
       host        = "${self.public_dns}"
-      private_key = "${file("script.pem.txt")}"
+      private_key = "${file("script.pem")}"
     }
   }
 
@@ -178,11 +207,9 @@ resource "aws_instance" "script_algorithm_ins" {
       "sudo apt-get install -y python-dev",
       "sudo apt-get install -y libpq-dev python-dev",
       "pip3 install awscli --force-reinstall --upgrade",
-      "aws configure set aws_access_key_id <aws_access_key_id>",
-      "aws configure set aws_secret_access_key <aws_secret_access_key>",
       "aws configure set default.region us-east-1",
       "mkdir ~/mosek",
-      "cp ~/SCRIPT/mosek.lic ~/mosek/mosek.lic",
+      "cp ~/SCRIPT/utils/mosek/mosek.lic ~/mosek/mosek.lic",
       "sudo sh -c '/bin/echo 1 > /proc/sys/vm/overcommit_memory'",
       "pip3 install pandas",
       "pip3 install boto3",
@@ -192,20 +219,21 @@ resource "aws_instance" "script_algorithm_ins" {
       "pip3 install psycopg2",
       "pip3 install -f https://download.mosek.com/stable/wheel/index.html Mosek",
       "pip3 install paramiko",
-      "pip3 install pip3 install matplotlib"
+      "pip3 install matplotlib",
+      "pip3 install scipy==1.2.1"
     ]
     connection {
       type        = "ssh"
       user        = "ubuntu"
       host        = "${self.public_dns}"
-      private_key = "${file("script.pem.txt")}"
+      private_key = "${file("script.pem")}"
     }
   }
 }
 
 resource "aws_db_instance" "script_postgresql_db" {
-  identifier             = "script-postgresql-db"
-  allocated_storage      = 20
+  identifier             = var.db_identifier
+  allocated_storage      = var.db_storage
   storage_type           = "gp2"
   engine                 = "postgres"
   engine_version         = "11.5"
@@ -242,4 +270,3 @@ output "script_algorithm_ins_ip" {
 output "script_algorithm_ins_dns" {
   value = "${aws_instance.script_algorithm_ins.public_dns}"
 }
-

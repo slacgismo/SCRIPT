@@ -11,14 +11,19 @@ import json
 class EnergyTests(APITestCase):
 
     county_name = 'Santa Cruz'
-    residents = 9812
+    total_session = 100
+    total_energy = 10000.0
+    peak_energy = 12312.0
     year = 2019
     month = 10
     energy = 1234.5
 
     def test_create_energy(self):
         """Ensure we can create a new energy object."""
-        _ = create_county(self.county_name, self.residents)
+        _ = create_county(self.county_name,
+                            self.total_session,
+                            self.total_energy,
+                            self.peak_energy)
         response = create_energy(self.county_name, self.year, self.month, self.energy)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Energy.objects.count(), 1)
@@ -29,7 +34,10 @@ class EnergyTests(APITestCase):
 
     def test_filter_county(self):
         """Ensure we can filter energies by fields: county, year, month."""
-        _ = create_county(self.county_name, self.residents)
+        _ = create_county(self.county_name,
+                            self.total_session,
+                            self.total_energy,
+                            self.peak_energy)
         response = create_energy(self.county_name, self.year, self.month, self.energy)
         response = create_energy(self.county_name, self.year, 11, self.energy)
         url = reverse('energy-list')

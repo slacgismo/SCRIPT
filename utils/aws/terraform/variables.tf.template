@@ -2,6 +2,10 @@ variable "region" {
   default = "$AWS_REGION"
 }
 
+variable "aws_sg" {
+  default = "$AWS_SG"
+}
+
 variable "raw_data_bucket_name" {
   default = "$RAW_DATA_BUCKET_NAME"
 }
@@ -20,6 +24,14 @@ variable "clean_session_lambda_name" {
 
 variable "iam_role_name" {
   default = "$IAM_ROLE_NAME"
+}
+
+variable "db_identifier" {
+  default = "$DB_IDENTIFIER"
+}
+
+variable "db_storage" {
+  default = "$DB_STORAGE"
 }
 
 variable "db_instance" {
