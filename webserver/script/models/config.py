@@ -1,6 +1,8 @@
 from django.db import models
 from script.models.data import County
 from script.models.enums import DayType, POI, AggregationLevel
+from script.validators import validate_positive, validate_year
+
 # Create your models of config of algorithm results here.
 
 class LoadControllerConfig(models.Model):

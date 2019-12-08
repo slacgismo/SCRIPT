@@ -124,7 +124,7 @@ class LoadControllerTests(APITestCase):
                                             json.dumps(self.controlled_load))
         county2 = County.objects.get(pk='Palo Alto')
         config2 = LoadControllerConfig.objects.filter(county=county2)[0]
-        new_controlled_load = copy.copy(self.controlled_load)
+        new_controlled_load = copy.deepcopy(self.controlled_load)
         new_controlled_load[0]['load'] = '110'
         response = create_load_controller(config2,
                                             json.dumps(self.uncontrolled_load),
@@ -136,7 +136,8 @@ class LoadControllerTests(APITestCase):
         }
         response = self.client.get(url, data)
         obj = json.loads(response.content)[0]
-        self.assertEqual(obj['county'], CountyTests.county_name)
+        config = LoadControllerConfig.objects.get(id=obj['config'])
+        self.assertEqual(config.county.name, CountyTests.county_name)
         self.assertEqual(json.loads(obj['controlled_load']), self.controlled_load)
 
 
@@ -293,10 +294,11 @@ class LoadProfileTests(APITestCase):
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
         lf_config = LoadForecastConfig.objects.get()
-        config = create_load_profile_config(lf_config,
-                                            LoadProfileConfigTests.poi,
-                                            LoadProfileConfigTests.year,
-                                            LoadProfileConfigTests.day_type)
+        _ = create_load_profile_config(lf_config,
+                                        LoadProfileConfigTests.poi,
+                                        LoadProfileConfigTests.year,
+                                        LoadProfileConfigTests.day_type)
+        config = LoadProfileConfig.objects.get()
         response = create_load_profile(config, json.dumps(self.loads))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(LoadProfile.objects.count(), 1)
@@ -343,7 +345,8 @@ class GasConsumptionTests(APITestCase):
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
         lf_config = LoadForecastConfig.objects.get()
-        config = create_gas_consumption_config(lf_config, GasConsumptionConfigTests.year)
+        _ = create_gas_consumption_config(lf_config, GasConsumptionConfigTests.year)
+        config = GasConsumptionConfig.objects.get()
         response = create_gas_consumption(config, json.dumps(self.consumption))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(GasConsumption.objects.count(), 1)
@@ -399,7 +402,7 @@ class CostBenefitTests(APITestCase):
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
         lf_config = LoadForecastConfig.objects.get()
-        config = create_cost_benefit_config(lf_config, CostBenefitConfigTests.year)
+        _ = create_cost_benefit_config(lf_config, CostBenefitConfigTests.year)
         config = CostBenefitConfig.objects.get()
         response = create_cost_benefit(config, json.dumps(self.cost_benefit))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -453,7 +456,8 @@ class NetPresentValueTests(APITestCase):
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
         lf_config = LoadForecastConfig.objects.get()
-        config = create_net_present_value_config(lf_config, NetPresentValueConfigTests.year)
+        _ = create_net_present_value_config(lf_config, NetPresentValueConfigTests.year)
+        config = NetPresentValueConfig.objects.get()
         response = create_net_present_value(config, json.dumps(self.net_present_value))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(NetPresentValue.objects.count(), 1)
@@ -488,7 +492,8 @@ class EmissionTests(APITestCase):
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
         lf_config = LoadForecastConfig.objects.get()
-        config = create_emission_config(lf_config, EmissionConfigTests.year)
+        _ = create_emission_config(lf_config, EmissionConfigTests.year)
+        config = EmissionConfig.objects.get()
         response = create_emission(config, json.dumps(self.emissions))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Emission.objects.count(), 1)

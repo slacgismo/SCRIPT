@@ -86,8 +86,9 @@ def create_load_profile_config(lf_config,
                                 day_type):
     client = APIClient()
     url = reverse('config/load_profile-list')
+    lf_config_name = lf_config if type(lf_config) == str else lf_config.config_name
     data = {
-        'lf_config': lf_config.config_name,
+        'lf_config': lf_config_name,
         'poi': poi.name,
         'year': year,
         'day_type': day_type.name
@@ -99,8 +100,9 @@ def create_load_profile_config(lf_config,
 def create_gas_consumption_config(lf_config, year):
     client = APIClient()
     url = reverse('config/gas_consumption-list')
+    lf_config_name = lf_config if type(lf_config) == str else lf_config.config_name
     data = {
-        'lf_config': lf_config.config_name,
+        'lf_config': lf_config_name,
         'year': year
     }
     response = client.post(url, data, format='json')
@@ -110,8 +112,9 @@ def create_gas_consumption_config(lf_config, year):
 def create_cost_benefit_config(lf_config, year):
     client = APIClient()
     url = reverse('config/cost_benefit-list')
+    lf_config_name = lf_config if type(lf_config) == str else lf_config.config_name
     data = {
-        'lf_config': lf_config.config_name,
+        'lf_config': lf_config_name,
         'year': year
     }
     response = client.post(url, data, format='json')
@@ -121,8 +124,9 @@ def create_cost_benefit_config(lf_config, year):
 def create_net_present_value_config(lf_config, year):
     client = APIClient()
     url = reverse('config/net_present_value-list')
+    lf_config_name = lf_config if type(lf_config) == str else lf_config.config_name
     data = {
-        'lf_config': lf_config.config_name,
+        'lf_config': lf_config_name,
         'year': year
     }
     response = client.post(url, data, format='json')
@@ -132,8 +136,9 @@ def create_net_present_value_config(lf_config, year):
 def create_emission_config(lf_config, year):
     client = APIClient()
     url = reverse('config/emission-list')
+    lf_config_name = lf_config if type(lf_config) == str else lf_config.config_name
     data = {
-        'lf_config': lf_config.config_name,
+        'lf_config': lf_config_name,
         'year': year
     }
     response = client.post(url, data, format='json')
@@ -167,7 +172,7 @@ def create_load_forecast(config,
     client = APIClient()
     url = reverse('algorithm/load_forecast-list')
     data = {
-        'config_name': config.name,
+        'config': config.config_name,
         'residential_l1_load': residential_l1_load,
         'residential_l2_load': residential_l2_load,
         'residential_mud_load': residential_mud_load,

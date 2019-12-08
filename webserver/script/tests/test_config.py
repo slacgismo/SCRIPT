@@ -102,7 +102,7 @@ class LoadProfileConfigTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(LoadProfileConfig.objects.count(), 1)
         obj = LoadProfileConfig.objects.get()
-        self.assertEqual(obj.lf_config, LoadForecastConfigTests.config_name)
+        self.assertEqual(obj.lf_config.config_name, LoadForecastConfigTests.config_name)
         self.assertEqual(obj.poi, self.poi.name)
 
 
@@ -129,7 +129,7 @@ class GasConsumptionConfigTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(GasConsumptionConfig.objects.count(), 1)
         obj = GasConsumptionConfig.objects.get()
-        self.assertEqual(obj.lf_config, LoadForecastConfigTests.config_name)
+        self.assertEqual(obj.lf_config.config_name, LoadForecastConfigTests.config_name)
         self.assertEqual(obj.year, self.year)
 
 
@@ -156,7 +156,7 @@ class CostBenefitConfigTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(CostBenefitConfig.objects.count(), 1)
         obj = CostBenefitConfig.objects.get()
-        self.assertEqual(obj.lf_config, LoadForecastConfigTests.config_name)
+        self.assertEqual(obj.lf_config.config_name, LoadForecastConfigTests.config_name)
         self.assertEqual(obj.year, self.year)
 
 
@@ -183,7 +183,7 @@ class CostBenefitConfigTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(CostBenefitConfig.objects.count(), 1)
         obj = CostBenefitConfig.objects.get()
-        self.assertEqual(obj.lf_config, LoadForecastConfigTests.config_name)
+        self.assertEqual(obj.lf_config.config_name, LoadForecastConfigTests.config_name)
         self.assertEqual(obj.year, self.year)
 
 
@@ -206,11 +206,11 @@ class NetPresentValueConfigTests(APITestCase):
                                         LoadForecastConfigTests.res_percent,
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
-        response = create_cost_benefit_config(LoadForecastConfigTests.config_name, self.year)
+        response = create_net_present_value_config(LoadForecastConfigTests.config_name, self.year)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(NetPresentValueConfig.objects.count(), 1)
         obj = NetPresentValueConfig.objects.get()
-        self.assertEqual(obj.lf_config, LoadForecastConfigTests.config_name)
+        self.assertEqual(obj.lf_config.config_name, LoadForecastConfigTests.config_name)
         self.assertEqual(obj.year, self.year)
 
 
@@ -233,9 +233,9 @@ class EmissionConfigTests(APITestCase):
                                         LoadForecastConfigTests.res_percent,
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
-        response = create_cost_benefit_config(LoadForecastConfigTests.config_name, self.year)
+        response = create_emission_config(LoadForecastConfigTests.config_name, self.year)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(EmissionConfig.objects.count(), 1)
         obj = EmissionConfig.objects.get()
-        self.assertEqual(obj.lf_config, LoadForecastConfigTests.config_name)
+        self.assertEqual(obj.lf_config.config_name, LoadForecastConfigTests.config_name)
         self.assertEqual(obj.year, self.year)
