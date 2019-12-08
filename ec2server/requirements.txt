@@ -1,3 +1,2 @@
 django==2.2.4
 celery==4.3.0
-celery-progres=0.0.8
