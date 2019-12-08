@@ -17,3 +17,11 @@ celery -A watcher worker --app=watcher -l info
 ```bash
 python manage.py runserver
 ```
+
+## Debug
+
+### Check Task Progress
+
+```bash
+python check_celery.py <task_id>
+```
