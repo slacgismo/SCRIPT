@@ -4,24 +4,19 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from script.models.enums import DayType, POI, AggregationLevel
 from script.models.data import County
+from script.models.config import LoadControllerConfig, LoadForecastConfig, LoadProfileConfig, GasConsumptionConfig, NetPresentValueConfig, CostBenefitConfig, EmissionConfig
 from script.models.algorithms import LoadController, LoadForecast, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission, LoadForecastConfig
-from script.tests.utils import create_county, create_load_controller, create_load_forecast, create_load_profile, create_gas_consumption, create_cost_benefit, create_net_present_value, create_emission, create_load_forecast_config
+from script.tests.utils import create_load_controller_config, create_load_forecast_config, create_load_profile_config, create_cost_benefit_config, create_emission_config, create_gas_consumption_config, create_net_present_value_config
+from script.tests.utils import create_county, create_load_controller, create_load_forecast, create_load_profile, create_gas_consumption, create_cost_benefit, create_net_present_value, create_emission
+
+from script.tests.test_data import CountyTests
+from script.tests.test_config import LoadControllerConfigTests, LoadForecastConfigTests, LoadProfileConfigTests, GasConsumptionConfigTests, NetPresentValueConfigTests, CostBenefitConfigTests, EmissionConfigTests
 
 import json
 import copy
 
 class LoadControllerTests(APITestCase):
 
-    county_name = 'Santa Cruz'
-    total_session = 100
-    total_energy = 10000.0
-    peak_energy = 12312.0
-    rate_energy_peak = 0.16997
-    rate_energy_partpeak = 0.12236
-    rate_energy_offpeak = 0.09082
-    rate_demand_peak = 21.23
-    rate_demand_partpeak = 5.85
-    rate_demand_overall = 19.10
     uncontrolled_load = [
         {
             'time': '05:30',
@@ -53,100 +48,101 @@ class LoadControllerTests(APITestCase):
 
     def test_create_load_controller(self):
         """Ensure we can create a new load controller object."""
-        _ = create_county(self.county_name,
-                            self.total_session,
-                            self.total_energy,
-                            self.peak_energy)
-        response = create_load_controller(self.county_name,
-                                            self.rate_energy_peak,
-                                            self.rate_energy_partpeak,
-                                            self.rate_energy_offpeak,
-                                            self.rate_demand_peak,
-                                            self.rate_demand_partpeak,
-                                            self.rate_demand_overall,
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
+        _ = create_load_controller_config(CountyTests.county_name,
+                                            LoadControllerConfigTests.rate_energy_peak,
+                                            LoadControllerConfigTests.rate_energy_partpeak,
+                                            LoadControllerConfigTests.rate_energy_offpeak,
+                                            LoadControllerConfigTests.rate_demand_peak,
+                                            LoadControllerConfigTests.rate_demand_partpeak,
+                                            LoadControllerConfigTests.rate_demand_overall)
+        config = LoadControllerConfig.objects.get()
+        response = create_load_controller(config,
                                             json.dumps(self.uncontrolled_load),
                                             json.dumps(self.controlled_load))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(LoadController.objects.count(), 1)
         obj = LoadController.objects.get()
-        self.assertEqual(obj.county.name, self.county_name)
+        self.assertEqual(obj.config.county.name, CountyTests.county_name)
         self.assertEqual(json.loads(obj.uncontrolled_load), self.uncontrolled_load)
         self.assertEqual(json.loads(obj.controlled_load), self.controlled_load)
 
     def test_create_conflict(self):
-        """Ensure we cannot create two load controllers with the unique set."""
-        _ = create_county(self.county_name,
-                            self.total_session,
-                            self.total_energy,
-                            self.peak_energy)
-        _ = create_load_controller(self.county_name,
-                                    self.rate_energy_peak,
-                                    self.rate_energy_partpeak,
-                                    self.rate_energy_offpeak,
-                                    self.rate_demand_peak,
-                                    self.rate_demand_partpeak,
-                                    self.rate_demand_overall,
-                                    json.dumps(self.uncontrolled_load),
-                                    json.dumps(self.controlled_load))
-        response = create_load_controller(self.county_name,
-                                            self.rate_energy_peak,
-                                            self.rate_energy_partpeak,
-                                            self.rate_energy_offpeak,
-                                            self.rate_demand_peak,
-                                            self.rate_demand_partpeak,
-                                            self.rate_demand_overall,
+        """Ensure we cannot create two load controllers with the same config."""
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
+        _ = create_load_controller_config(CountyTests.county_name,
+                                            LoadControllerConfigTests.rate_energy_peak,
+                                            LoadControllerConfigTests.rate_energy_partpeak,
+                                            LoadControllerConfigTests.rate_energy_offpeak,
+                                            LoadControllerConfigTests.rate_demand_peak,
+                                            LoadControllerConfigTests.rate_demand_partpeak,
+                                            LoadControllerConfigTests.rate_demand_overall)
+        config = LoadControllerConfig.objects.get()
+        response = create_load_controller(config,
+                                            json.dumps(self.uncontrolled_load),
+                                            json.dumps(self.controlled_load))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = create_load_controller(config,
                                             json.dumps(self.uncontrolled_load),
                                             json.dumps(self.controlled_load))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_filter_county(self):
-        """Ensure we can filter load controllers by fields: county, rates."""
-        _ = create_county(self.county_name,
-                            self.total_session,
-                            self.total_energy,
-                            self.peak_energy)
-        _ = create_load_controller(self.county_name,
-                                    self.rate_energy_peak,
-                                    self.rate_energy_partpeak,
-                                    self.rate_energy_offpeak,
-                                    self.rate_demand_peak,
-                                    self.rate_demand_partpeak,
-                                    self.rate_demand_overall,
-                                    json.dumps(self.uncontrolled_load),
-                                    json.dumps(self.controlled_load))
-        new_controlled_load = copy.copy(self.controlled_load)
+    def test_filter_config(self):
+        """Ensure we can filter load controllers by fields: config."""
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
+        _ = create_county('Palo Alto',
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
+        _ = create_load_controller_config(CountyTests.county_name,
+                                            LoadControllerConfigTests.rate_energy_peak,
+                                            LoadControllerConfigTests.rate_energy_partpeak,
+                                            LoadControllerConfigTests.rate_energy_offpeak,
+                                            LoadControllerConfigTests.rate_demand_peak,
+                                            LoadControllerConfigTests.rate_demand_partpeak,
+                                            LoadControllerConfigTests.rate_demand_overall)
+        _ = create_load_controller_config('Palo Alto',
+                                            LoadControllerConfigTests.rate_energy_peak,
+                                            LoadControllerConfigTests.rate_energy_partpeak,
+                                            LoadControllerConfigTests.rate_energy_offpeak,
+                                            LoadControllerConfigTests.rate_demand_peak,
+                                            LoadControllerConfigTests.rate_demand_partpeak,
+                                            LoadControllerConfigTests.rate_demand_overall)
+        county1 = County.objects.get(pk=CountyTests.county_name)
+        config1 = LoadControllerConfig.objects.filter(county=county1)[0]
+        response = create_load_controller(config1,
+                                            json.dumps(self.uncontrolled_load),
+                                            json.dumps(self.controlled_load))
+        county2 = County.objects.get(pk='Palo Alto')
+        config2 = LoadControllerConfig.objects.filter(county=county2)[0]
+        new_controlled_load = copy.deepcopy(self.controlled_load)
         new_controlled_load[0]['load'] = '110'
-        response = create_load_controller(self.county_name,
-                                            self.rate_energy_peak + 1,
-                                            self.rate_energy_partpeak + 2,
-                                            self.rate_energy_offpeak + 3,
-                                            self.rate_demand_peak + 4,
-                                            self.rate_demand_partpeak + 5,
-                                            self.rate_demand_overall + 6,
+        response = create_load_controller(config2,
                                             json.dumps(self.uncontrolled_load),
                                             json.dumps(new_controlled_load))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         url = reverse('algorithm/load_controller-list')
         data = {
-            'county': self.county_name,
-            'rate_energy_peak': self.rate_energy_peak + 1,
-            'rate_energy_partpeak': self.rate_energy_partpeak + 2
+            'config': config1.id
         }
         response = self.client.get(url, data)
         obj = json.loads(response.content)[0]
-        self.assertEqual(obj['county'], self.county_name)
-        self.assertEqual(json.loads(obj['controlled_load']), new_controlled_load)
+        config = LoadControllerConfig.objects.get(id=obj['config'])
+        self.assertEqual(config.county.name, CountyTests.county_name)
+        self.assertEqual(json.loads(obj['controlled_load']), self.controlled_load)
 
 
 class LoadForecastTests(APITestCase):
-    aggregation_level = AggregationLevel.COUNTY
-    num_evs = 1000000
-    choice = 'Santa Clara'
-    fast_percent = 0.1
-    work_percent = 0.2
-    res_percent = 0.7
-    l1_percent = 0.5
-    public_l2_percent = 0.0
+
     residential_l1_load = [
         {
             'time': '05:30',
@@ -248,70 +244,10 @@ class LoadForecastTests(APITestCase):
 
     def test_create_load_forecast(self):
         """Ensure we can create a new EV load forecast object."""
-        response = create_load_forecast(self.aggregation_level,
-                                        self.num_evs,
-                                        self.choice,
-                                        self.fast_percent,
-                                        self.work_percent,
-                                        self.res_percent,
-                                        self.l1_percent,
-                                        self.public_l2_percent,
-                                        json.dumps(self.residential_l1_load),
-                                        json.dumps(self.residential_l2_load),
-                                        json.dumps(self.residential_mud_load),
-                                        json.dumps(self.work_load),
-                                        json.dumps(self.fast_load),
-                                        json.dumps(self.public_l2_load),
-                                        json.dumps(self.total_load))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(LoadForecast.objects.count(), 1)
-        obj = LoadForecast.objects.get()
-        self.assertEqual(obj.aggregation_level, self.aggregation_level.name)
-        self.assertEqual(obj.choice, self.choice)
-        self.assertEqual(obj.fast_percent, self.fast_percent)
-        self.assertEqual(json.loads(obj.residential_l1_load), self.residential_l1_load)
-        self.assertEqual(json.loads(obj.total_load), self.total_load)
-
-
-class LoadForecastConfigTests(APITestCase):
-    config_name = 'profile-1'
-    aggregation_level = AggregationLevel.COUNTY
-    num_evs = 1000000
-    choice = 'Santa Clara'
-    fast_percent = 0.1
-    work_percent = 0.2
-    res_percent = 0.7
-    l1_percent = 0.5
-    public_l2_percent = 0.0
-
-    def test_create_load_forecast_config(self):
-        """Ensure we can create a new EV load forecast configuration object."""
-        response = create_load_forecast_config(self.config_name,
-                                                self.aggregation_level,
-                                                self.num_evs,
-                                                self.choice,
-                                                self.fast_percent,
-                                                self.work_percent,
-                                                self.res_percent,
-                                                self.l1_percent,
-                                                self.public_l2_percent)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(LoadForecastConfig.objects.count(), 1)
-        obj = LoadForecastConfig.objects.get()
-        self.assertEqual(obj.config_name, self.config_name)
-        self.assertEqual(obj.aggregation_level, self.aggregation_level.name)
-        self.assertEqual(obj.choice, self.choice)
-        self.assertEqual(obj.fast_percent, self.fast_percent)
-
-
-class LoadProfileTests(APITestCase):
-    poi = POI.WORKPLACE
-    year = 2020
-    day_type = DayType.WEEKEND
-    loads = [i * 2 % 24 + 1 for i in range(24)]
-
-    def test_create_load_profile(self):
-        """Ensure we can create a new load profile object."""
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
         _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
                                         LoadForecastConfigTests.aggregation_level,
                                         LoadForecastConfigTests.num_evs,
@@ -322,22 +258,58 @@ class LoadProfileTests(APITestCase):
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
         config = LoadForecastConfig.objects.get()
-        response = create_load_profile(config,
-                                        self.poi,
-                                        self.year,
-                                        self.day_type,
-                                        json.dumps(self.loads))
+        response = create_load_forecast(config,
+                                        json.dumps(self.residential_l1_load),
+                                        json.dumps(self.residential_l2_load),
+                                        json.dumps(self.residential_mud_load),
+                                        json.dumps(self.work_load),
+                                        json.dumps(self.fast_load),
+                                        json.dumps(self.public_l2_load),
+                                        json.dumps(self.total_load))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(LoadForecast.objects.count(), 1)
+        obj = LoadForecast.objects.get()
+        self.assertEqual(obj.config.config_name, LoadForecastConfigTests.config_name)
+        self.assertEqual(obj.config.aggregation_level, LoadForecastConfigTests.aggregation_level.name)
+        self.assertEqual(json.loads(obj.residential_l1_load), self.residential_l1_load)
+        self.assertEqual(json.loads(obj.total_load), self.total_load)
+
+
+class LoadProfileTests(APITestCase):
+    loads = [i * 2 % 24 + 1 for i in range(24)]
+
+    def test_create_load_profile(self):
+        """Ensure we can create a new load profile object."""
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
+        _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
+                                        LoadForecastConfigTests.aggregation_level,
+                                        LoadForecastConfigTests.num_evs,
+                                        LoadForecastConfigTests.choice,
+                                        LoadForecastConfigTests.fast_percent,
+                                        LoadForecastConfigTests.work_percent,
+                                        LoadForecastConfigTests.res_percent,
+                                        LoadForecastConfigTests.l1_percent,
+                                        LoadForecastConfigTests.public_l2_percent)
+        lf_config = LoadForecastConfig.objects.get()
+        _ = create_load_profile_config(lf_config,
+                                        LoadProfileConfigTests.poi,
+                                        LoadProfileConfigTests.year,
+                                        LoadProfileConfigTests.day_type)
+        config = LoadProfileConfig.objects.get()
+        response = create_load_profile(config, json.dumps(self.loads))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(LoadProfile.objects.count(), 1)
         obj = LoadProfile.objects.get()
-        self.assertEqual(obj.poi, self.poi.name)
-        self.assertEqual(obj.year, self.year)
-        self.assertEqual(obj.day_type, self.day_type.name)
+        self.assertEqual(obj.config.lf_config.config_name, LoadForecastConfigTests.config_name)
+        self.assertEqual(obj.config.poi, LoadProfileConfigTests.poi.name)
         self.assertEqual(json.loads(obj.loads), self.loads)
 
 
 class GasConsumptionTests(APITestCase):
-    year = 2014
+
     consumption = {
         'Gasoline_Consumption_gallons': 545619941.6,
         'Gasoline_Consumption_MMBTU': 65734108089476.5,
@@ -359,6 +331,10 @@ class GasConsumptionTests(APITestCase):
 
     def test_create_gas_consumption(self):
         """Ensure we can create a new gas consumption object."""
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
         _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
                                         LoadForecastConfigTests.aggregation_level,
                                         LoadForecastConfigTests.num_evs,
@@ -368,19 +344,19 @@ class GasConsumptionTests(APITestCase):
                                         LoadForecastConfigTests.res_percent,
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
-        config = LoadForecastConfig.objects.get()
-        response = create_gas_consumption(config,
-                                        self.year,
-                                        json.dumps(self.consumption))
+        lf_config = LoadForecastConfig.objects.get()
+        _ = create_gas_consumption_config(lf_config, GasConsumptionConfigTests.year)
+        config = GasConsumptionConfig.objects.get()
+        response = create_gas_consumption(config, json.dumps(self.consumption))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(GasConsumption.objects.count(), 1)
         obj = GasConsumption.objects.get()
-        self.assertEqual(obj.year, self.year)
+        self.assertEqual(obj.config.year, GasConsumptionConfigTests.year)
         self.assertEqual(json.loads(obj.consumption), self.consumption)
 
 
 class CostBenefitTests(APITestCase):
-    year = 2014
+
     cost_benefit = {
         'Utility_Bills': 1643285.189,
         'Utility_Bills_res': 1574878.503,
@@ -410,8 +386,12 @@ class CostBenefitTests(APITestCase):
         'Capacity_Cost': 155829.3361
     }
 
-    def test_create_gas_consumption(self):
+    def test_create_cost_benefit(self):
         """Ensure we can create a new cost benefit object."""
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
         _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
                                         LoadForecastConfigTests.aggregation_level,
                                         LoadForecastConfigTests.num_evs,
@@ -421,19 +401,19 @@ class CostBenefitTests(APITestCase):
                                         LoadForecastConfigTests.res_percent,
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
-        config = LoadForecastConfig.objects.get()
-        response = create_cost_benefit(config,
-                                        self.year,
-                                        json.dumps(self.cost_benefit))
+        lf_config = LoadForecastConfig.objects.get()
+        _ = create_cost_benefit_config(lf_config, CostBenefitConfigTests.year)
+        config = CostBenefitConfig.objects.get()
+        response = create_cost_benefit(config, json.dumps(self.cost_benefit))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(CostBenefit.objects.count(), 1)
         obj = CostBenefit.objects.get()
-        self.assertEqual(obj.year, self.year)
+        self.assertEqual(obj.config.year, CostBenefitConfigTests.year)
         self.assertEqual(json.loads(obj.cost_benefit), self.cost_benefit)
 
 
 class NetPresentValueTests(APITestCase):
-    year = 2014
+
     net_present_value = {
         'Utility_Bills': 250514400.4,
         'Utility_Bills_volumetric':	250059210.3,
@@ -462,6 +442,10 @@ class NetPresentValueTests(APITestCase):
 
     def test_create_net_present_value(self):
         """Ensure we can create a new net present value object."""
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
         _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
                                         LoadForecastConfigTests.aggregation_level,
                                         LoadForecastConfigTests.num_evs,
@@ -471,19 +455,19 @@ class NetPresentValueTests(APITestCase):
                                         LoadForecastConfigTests.res_percent,
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
-        config = LoadForecastConfig.objects.get()
-        response = create_net_present_value(config,
-                                            self.year,
-                                            json.dumps(self.net_present_value))
+        lf_config = LoadForecastConfig.objects.get()
+        _ = create_net_present_value_config(lf_config, NetPresentValueConfigTests.year)
+        config = NetPresentValueConfig.objects.get()
+        response = create_net_present_value(config, json.dumps(self.net_present_value))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(NetPresentValue.objects.count(), 1)
         obj = NetPresentValue.objects.get()
-        self.assertEqual(obj.year, self.year)
+        self.assertEqual(obj.config.year, NetPresentValueConfigTests.year)
         self.assertEqual(json.loads(obj.npv), self.net_present_value)
 
 
 class EmissionTests(APITestCase):
-    year = 2014
+
     emissions = {
         'CO2_emissions': 11809.74895,
         'NOX_emissions': 8.537033476,
@@ -494,6 +478,10 @@ class EmissionTests(APITestCase):
 
     def test_create_emission(self):
         """Ensure we can create a new emission object."""
+        _ = create_county(CountyTests.county_name,
+                            CountyTests.total_session,
+                            CountyTests.total_energy,
+                            CountyTests.peak_energy)
         _ = create_load_forecast_config(LoadForecastConfigTests.config_name,
                                         LoadForecastConfigTests.aggregation_level,
                                         LoadForecastConfigTests.num_evs,
@@ -503,12 +491,12 @@ class EmissionTests(APITestCase):
                                         LoadForecastConfigTests.res_percent,
                                         LoadForecastConfigTests.l1_percent,
                                         LoadForecastConfigTests.public_l2_percent)
-        config = LoadForecastConfig.objects.get()
-        response = create_emission(config,
-                                    self.year,
-                                    json.dumps(self.emissions))
+        lf_config = LoadForecastConfig.objects.get()
+        _ = create_emission_config(lf_config, EmissionConfigTests.year)
+        config = EmissionConfig.objects.get()
+        response = create_emission(config, json.dumps(self.emissions))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Emission.objects.count(), 1)
         obj = Emission.objects.get()
-        self.assertEqual(obj.year, self.year)
+        self.assertEqual(obj.config.year, EmissionConfigTests.year)
         self.assertEqual(json.loads(obj.emissions), self.emissions)
