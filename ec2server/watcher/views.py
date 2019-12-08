@@ -6,5 +6,5 @@ from watcher.tasks import my_task
 # Create your views here.
 
 def progress_view(request):
-    result = my_task.delay(10)
+    result = my_task.delay(100)
     return JsonResponse({'task_id': result.id})
