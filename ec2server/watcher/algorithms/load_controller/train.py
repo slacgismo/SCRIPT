@@ -4,6 +4,8 @@ import load_control_algorithm
 
 import argparse
 
+CHARGE_RATE = 6.6 # TODO: hardcoded?
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--county', type=str, nargs='+', help='Please replace space with dash(-)')
 parser.add_argument('--rate_energy_peak', type=float)

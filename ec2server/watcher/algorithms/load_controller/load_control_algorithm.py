@@ -5,6 +5,7 @@ import cvxpy as cvx
 import json
 import os
 import pytz
+import pickle
 from datetime import datetime
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -52,43 +53,178 @@ class LoadControlAlgorithm:
         pass
 
     @staticmethod
-    def new_df_and_sessions(self, county, num_sessions):
+    def new_sessions_intervals(self, county, num_sessions):
         """generate new session data and related interval data"""
         zip_options = get_county_zipcodes_from_local(county)
         file_options = []
-
         for zipcode in zip_options:
             file_name = os.path.join(SESSIONS_DIR, '{}.csv'.format(zipcode))
             if os.path.exists(file_name):
                 file_options.append(file_name)
-
         print('Have ', len(file_options), ' zips in this county cached')
-
         ct = 0
-        len_df = 0
-        while ((len_df == 0) & (ct < len(file_options))):
+        len_session = 0
+        while ((len_session == 0) & (ct < len(file_options))):
             zipcode_file = np.random.choice(file_options)
-            df = pd.read_csv(zipcode_file)
-            df = df[df['POI Category'] == 'Workplace'].reset_index(drop=True)
-            df = df[df['Max Power'] <= 10].reset_index(drop=True) # Not fast charging
-            len_df = len(df)
+            df_sessions = pd.read_csv(zipcode_file)
+            df_sessions = df_sessions[df_sessions['POI Category'] == 'Workplace'].reset_index(drop=True)
+            df_sessions = df_sessions[df_sessions['Max Power'] <= 10].reset_index(drop=True) # Not fast charging
+            len_session = len(df_sessions)
             ct += 1
-
         df_intervals = pd.read_csv(os.path.join(INTERVALS_DIR, '{}.csv'.format(zipcode)))
-        chosen_sessions = np.random.choice(df.index, num_sessions)
-
-        return df, df_intervals, chosen_sessions
+        chosen_session_indexes = np.random.choice(df_sessions.index, num_sessions)
+        return df_sessions, df_intervals, chosen_session_indexes
 
     @staticmethod
-    def uncontrolled_load(df_sessions, df_intervals):
+    def uncontrolled_load(num_sessions, chosen_session_indexes, df_sessions, df_intervals, charge_rate):
         """Calculate uncontrolled load"""
-        pass
+        power = np.zeros((96, num_sessions))
+        arrival_inds = np.zeros((num_sessions, ))
+        departure_inds = np.zeros((num_sessions, ))
+        for session_num in range(num_sessions):
+            session = df_sessions.loc[chosen_session_indexes[session_num], 'Session ID']
+            interval_data = df_intervals[df_intervals['Session ID']==session]
+            for i in interval_data.index:
+                hour = int(interval_data.loc[i, 'Interval Start Time (Local)'][11:13])
+                minute = int(interval_data.loc[i, 'Interval Start Time (Local)'][14:16])
+                timestep_96 = hour * 4 + int(minute / 15)
+                power[timestep_96, session_num] = float(interval_data.loc[i, 'Average Power'])
+            if power[0, session_num] == 0:
+                if len(np.where(power[:, session_num] > 0)[0]) > 0:
+                    arrival_inds[session_num] = np.where(power[:, session_num] > 0)[0][0]
+                    if np.where(power[:, session_num] > 0)[0][-1] + 1 < 96:
+                        departure_inds[session_num] = np.where(power[:, session_num] > 0)[0][-1] + 1
+                    else: 
+                        departure_inds[session_num] = 0
+            else:
+                if len(np.where(power[:, session_num] == 0)[0]) > 0:
+                    arrival_inds[session_num] = np.max(np.where(power[:, session_num] == 0)[0]) + 1
+                    if arrival_inds[session_num] == 96:
+                        arrival_inds[session_num] = 0
+                    departure_inds[session_num] = np.min(np.where(power[:, session_num] == 0)[0])
+        energies = 0.25 * np.sum(power, axis=0)
+        return power, arrival_inds, departure_inds, energies
 
-    def controlled_load(self):
-        pass
+    def controlled_load(self,
+                        num_sessions,
+                        charge_rate,
+                        arrival_inds,
+                        departure_inds,
+                        power,
+                        energies,
+                        energy_prices, 
+                        rate_demand_peak,
+                        rate_demand_partpeak,
+                        rate_demand_overall,
+                        peak_inds,
+                        partpeak_inds):
+        """Predict controlled load"""
+        schedule = cvx.Variable((96, num_sessions))
+        obj = cvx.matmul(cvx.sum(schedule, axis=1),  energy_prices.reshape((np.shape(energy_prices)[0], 1)))
+        obj += rate_demand_overall*cvx.max(cvx.sum(schedule, axis=1))
+        obj += rate_demand_overall*cvx.max(cvx.sum(schedule, axis=1))
+        obj += rate_demand_peak*cvx.max(cvx.sum(schedule[peak_inds, :], axis=1))
+        obj += rate_demand_partpeak*cvx.max(cvx.sum(schedule[partpeak_inds, :], axis=1))
 
-    def generate_models(self):
-        pass
+        constraints = [schedule >= 0]
+        for i in range(num_sessions):
+            constraints += [schedule[:, i] <= np.maximum(np.max(power[:, i]), charge_rate)]
+            if departure_inds[i] >= arrival_inds[i]:
+                if arrival_inds[i] > 0:
+                    constraints += [schedule[np.arange(0, int(arrival_inds[i])), i] <= 0]
+                if departure_inds[i] < 96:
+                    constraints += [schedule[np.arange(int(departure_inds[i]), 96), i] <= 0]
+            else:
+                constraints += [schedule[np.arange(int(departure_inds[i]), int(arrival_inds[i])), i] <= 0]
+
+        energies = 0.25 * np.sum(power, axis=0)
+        max_energies = np.zeros((num_sessions, ))
+        for i in range(num_sessions):
+            if departure_inds[i] >= arrival_inds[i]:
+                max_energies[i] = 0.25 * charge_rate * (departure_inds[i] - arrival_inds[i])
+            else:
+                max_energies[i] = 0.25 * charge_rate * ((departure_inds[i]) + (96 - arrival_inds[i]))
+        where_violation = np.where((max_energies-energies) < 0)[0]
+
+        energies[where_violation] = max_energies[where_violation]
+        constraints += [0.25*cvx.sum(schedule, axis=0) == energies]
+        prob = cvx.Problem(cvx.Minimize(obj), constraints)
+        result = prob.solve(solver=cvx.MOSEK)
+        return schedule.value, power, len(where_violation)
+
+    def generate_profiles(self, num_run, num_sessions, charge_rate):
+        """Generate profiles as training data"""
+        peak_inds = np.arange(int(12 * 4), int(18 * 4))
+        partpeak_inds = np.concatenate((np.arange(int(8.5 * 4), int(12 * 4)), np.arange(int(18 * 4), int(21.5 * 4))))
+        energy_prices = np.concatenate((np.repeat(rate_energy_offpeak, int(8.5 * 4)),
+                                        np.repeat(rate_energy_partpeak, int(3.5*4)),
+                                        np.repeat(rate_energy_peak, int(6 * 4)),
+                                        np.repeat(rate_energy_partpeak, int(3.5 * 4)), 
+                                        np.repeat(rate_energy_offpeak, int(2.5 * 4))))
+
+        self.baseline_profiles = np.zeros((96, num_runs))
+        self.controlled_profiles = np.zeros((96, num_runs))
+        saved_indices = np.zeros((num_sessions, num_runs))
+        list_violations = []
+        for i in range(num_runs):
+            print('On run: ', i)
+            df_sessions, df_intervals, chosen_session_indexes = self.new_df_and_sessions(county, num_sessions) #this first! 
+            saved_indices[:, i] = chosen_session_indexes
+            power, arrival_inds, departure_inds, energies = self.uncontrolled_load(num_sessions, chosen_session_indexes, df_sessions, df_intervals, charge_rate)
+            schedule, power, violations = self.controlled_load(num_sessions,
+                                                                charge_rate,
+                                                                arrival_inds,
+                                                                departure_inds,
+                                                                power,
+                                                                energies,
+                                                                energy_prices, 
+                                                                rate_demand_peak,
+                                                                rate_demand_partpeak,
+                                                                rate_demand_overall,
+                                                                peak_inds,
+                                                                partpeak_inds)
+            self.baseline_profiles[:, i] = np.sum(power, axis=1)
+            self.controlled_profiles[:, i] = np.sum(schedule, axis=1)
+            list_violations.append(violations)
+
+    def generate_model(self, dir_name):
+        """Generate Linear Regression model"""
+        # Split data into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(np.transpose(self.baseline_profiles),
+                                                            np.transpose(self.controlled_profiles),
+                                                            test_size=0.2,
+                                                            random_state=42)
+
+        # Define and fit classifier
+        clf = LinearRegression()
+        clf.fit(X_train, y_train)
+
+        # Score on test set
+        clf.score(X_test, y_test)
+        
+        # Pretty good R^2 value with the linear regression model
+        y_predicted = clf.predict(X_test)
+        print('Prediction: \n', y_predicted)
+
+        # persist config
+        dir_path = os.path.join(MODELS_DIR, dir_name)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        config = {
+            'county' = self.county,
+            'rate_energy_peak' = self.rate_energy_peak,
+            'rate_energy_partpeak' = self.rate_energy_partpeak,
+            'rate_energy_offpeak' = self.rate_energy_offpeak,
+            'rate_demand_peak' = self.rate_demand_peak,
+            'rate_demand_partpeak' = self.rate_demand_partpeak,
+            'rate_demand_overall' = self.rate_demand_overall
+        }
+        with open(os.path.join(dir_path, 'model.conf'), 'w') as conf_file:
+            json.dump(config, conf_file)
+
+        # persist model
+        with open(os.path.join(dir_path, 'model.clf'), 'ab') as clf_file:
+            pickle.dump(clf, clf_file)
 
     @staticmethod
     def cache_data(s3_session_path, s3_interval_path):
