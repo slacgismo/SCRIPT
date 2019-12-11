@@ -57,7 +57,7 @@ class LoadControlAlgorithm:
     def controlled_load(self):
         pass
 
-    def generate_models(self)
+    def generate_models(self):
         pass
 
     @staticmethod
