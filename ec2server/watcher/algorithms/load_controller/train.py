@@ -7,15 +7,15 @@ import argparse
 CHARGE_RATE = 6.6 # TODO: hardcoded?
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--county', type=str, nargs='+', help='Please replace space with dash(-)')
-parser.add_argument('--rate_energy_peak', type=float)
-parser.add_argument('--rate_energy_partpeak', type=float)
-parser.add_argument('--rate_energy_offpeak', type=float)
-parser.add_argument('--rate_demand_peak', type=float)
-parser.add_argument('--rate_demand_partpeak', type=float)
-parser.add_argument('--rate_demand_overall', type=float)
-parser.add_argument('--s3_session_path', type=str, help='An s3 .csv file or a prefix')
-parser.add_argument('--s3_interval_path', type=str, help='An s3 .csv file or a prefix')
+parser.add_argument('--county', type=str, nargs='+', help='Please replace space with dash(-)', default='Santa Clara')
+parser.add_argument('--rate_energy_peak', type=float, default=0.16997)
+parser.add_argument('--rate_energy_partpeak', type=float, default=0.12236)
+parser.add_argument('--rate_energy_offpeak', type=float, default=0.09082)
+parser.add_argument('--rate_demand_peak', type=float, default=21.23)
+parser.add_argument('--rate_demand_partpeak', type=float, default=5.85)
+parser.add_argument('--rate_demand_overall', type=float, default=19.10)
+parser.add_argument('--s3_session_path', type=str, help='An s3 .csv file or a prefix', default='s3://script.chargepoint.data/clean/sessions_paired.csv')
+parser.add_argument('--s3_interval_path', type=str, help='An s3 .csv file or a prefix', default='s3://script.chargepoint.data/clean/intervals_paired.csv')
 args = parser.parse_args()
 
 county_list = [county.replace('-', ' ') for county in args.county]
