@@ -211,13 +211,13 @@ class LoadControlAlgorithm:
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
         config = {
-            'county' = self.county,
-            'rate_energy_peak' = self.rate_energy_peak,
-            'rate_energy_partpeak' = self.rate_energy_partpeak,
-            'rate_energy_offpeak' = self.rate_energy_offpeak,
-            'rate_demand_peak' = self.rate_demand_peak,
-            'rate_demand_partpeak' = self.rate_demand_partpeak,
-            'rate_demand_overall' = self.rate_demand_overall
+            'county': self.county,
+            'rate_energy_peak': self.rate_energy_peak,
+            'rate_energy_partpeak': self.rate_energy_partpeak,
+            'rate_energy_offpeak': self.rate_energy_offpeak,
+            'rate_demand_peak': self.rate_demand_peak,
+            'rate_demand_partpeak': self.rate_demand_partpeak,
+            'rate_demand_overall': self.rate_demand_overall
         }
         with open(os.path.join(dir_path, 'model.conf'), 'w') as conf_file:
             json.dump(config, conf_file)
