@@ -7,7 +7,7 @@ import argparse
 CHARGE_RATE = 6.6 # TODO: hardcoded?
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--county', type=str, nargs='+', help='Please replace space with dash(-)', default='Santa Clara')
+parser.add_argument('--county', type=str, nargs='+', help='Please replace space with dash(-)', default=['Santa-Clara',])
 parser.add_argument('--rate_energy_peak', type=float, default=0.16997)
 parser.add_argument('--rate_energy_partpeak', type=float, default=0.12236)
 parser.add_argument('--rate_energy_offpeak', type=float, default=0.09082)
