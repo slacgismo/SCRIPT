@@ -29,7 +29,7 @@ s3_session_path = args.s3_session_path
 s3_interval_path = args.s3_interval_path
 
 # cache data(run when data collection changes)
-# load_control_algorithm.LoadControlAlgorithm.cache_data(s3_session_path, s3_interval_path)
+load_control_algorithm.LoadControlAlgorithm.cache_data(s3_session_path, s3_interval_path)
 
 # train and generate models
 for county in county_list:
