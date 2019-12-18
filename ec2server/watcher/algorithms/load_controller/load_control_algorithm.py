@@ -37,8 +37,7 @@ class LoadControlAlgorithm:
         self.rate_demand_peak = rate_demand_peak
         self.rate_demand_partpeak = rate_demand_partpeak
         self.rate_demand_overall = rate_demand_overall
-        self.zipcodes = get_county_zipcodes_from_local()
-        self.data = get_county_data_from_local()
+        self.zipcodes = LoadControlAlgorithm.get_county_zipcodes_from_local(self.county)
 
     @staticmethod
     def get_zipcodes_from_local():
@@ -54,24 +53,22 @@ class LoadControlAlgorithm:
         zip_options = zip_county_lookup[zip_county_lookup['County'] == county]['Zip Code'].values
         return zip_options
 
-    def get_county_data_from_local(self):
-        """Read all data of all zipcodes of a certain county from local files"""
-        pass
-
     @staticmethod
-    def new_intervals_and_sessions(cls, county, num_sessions):
+    def new_intervals_and_sessions(county, num_sessions):
         """generate new session data and related interval data"""
-        zip_options = cls.get_county_zipcodes_from_local(county)
+        zip_options = LoadControlAlgorithm.get_county_zipcodes_from_local(county)
         file_options = []
         for zipcode in zip_options:
             file_name = os.path.join(SESSIONS_DIR, '{}.csv'.format(zipcode))
             if os.path.exists(file_name):
-                file_options.append(file_name)
+                file_options.append((zipcode, file_name))
         print('Have ', len(file_options), ' zips in this county cached')
         ct = 0
         len_session = 0
+        zipcode = None
         while ((len_session == 0) & (ct < len(file_options))):
-            zipcode_file = np.random.choice(file_options)
+            idx = np.random.choice(len(file_options))
+            zipcode, zipcode_file = file_options[idx]
             df_sessions = pd.read_csv(zipcode_file)
             df_sessions = df_sessions[df_sessions['POI Category'] == 'Workplace'].reset_index(drop=True)
             df_sessions = df_sessions[df_sessions['Max Power'] <= 10].reset_index(drop=True) # Not fast charging
@@ -158,17 +155,17 @@ class LoadControlAlgorithm:
         result = prob.solve(solver=cvx.MOSEK)
         return schedule.value, power, len(where_violation)
 
-    def generate_profiles(self, num_run, num_sessions, charge_rate):
+    def generate_profiles(self, num_runs, num_sessions, charge_rate):
         """Generate profiles as training data"""
         print('Generating Profile...')
 
         peak_inds = np.arange(int(12 * 4), int(18 * 4))
         partpeak_inds = np.concatenate((np.arange(int(8.5 * 4), int(12 * 4)), np.arange(int(18 * 4), int(21.5 * 4))))
-        energy_prices = np.concatenate((np.repeat(rate_energy_offpeak, int(8.5 * 4)),
-                                        np.repeat(rate_energy_partpeak, int(3.5*4)),
-                                        np.repeat(rate_energy_peak, int(6 * 4)),
-                                        np.repeat(rate_energy_partpeak, int(3.5 * 4)), 
-                                        np.repeat(rate_energy_offpeak, int(2.5 * 4))))
+        energy_prices = np.concatenate((np.repeat(self.rate_energy_offpeak, int(8.5 * 4)),
+                                        np.repeat(self.rate_energy_partpeak, int(3.5*4)),
+                                        np.repeat(self.rate_energy_peak, int(6 * 4)),
+                                        np.repeat(self.rate_energy_partpeak, int(3.5 * 4)), 
+                                        np.repeat(self.rate_energy_offpeak, int(2.5 * 4))))
 
         self.baseline_profiles = np.zeros((96, num_runs))
         self.controlled_profiles = np.zeros((96, num_runs))
@@ -176,7 +173,7 @@ class LoadControlAlgorithm:
         list_violations = []
         for i in range(num_runs):
             print('On run: ', i)
-            df_sessions, df_intervals, chosen_session_indexes = LoadControlAlgorithm.new_intervals_and_sessions(county, num_sessions) #this first! 
+            df_sessions, df_intervals, chosen_session_indexes = LoadControlAlgorithm.new_intervals_and_sessions(self.county, num_sessions) #this first! 
             saved_indices[:, i] = chosen_session_indexes
             power, arrival_inds, departure_inds, energies = self.uncontrolled_load(num_sessions, chosen_session_indexes, df_sessions, df_intervals, charge_rate)
             schedule, power, violations = self.controlled_load(num_sessions,
@@ -186,9 +183,9 @@ class LoadControlAlgorithm:
                                                                 power,
                                                                 energies,
                                                                 energy_prices, 
-                                                                rate_demand_peak,
-                                                                rate_demand_partpeak,
-                                                                rate_demand_overall,
+                                                                self.rate_demand_peak,
+                                                                self.rate_demand_partpeak,
+                                                                self.rate_demand_overall,
                                                                 peak_inds,
                                                                 partpeak_inds)
             self.baseline_profiles[:, i] = np.sum(power, axis=1)
