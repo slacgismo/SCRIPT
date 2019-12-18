@@ -13,3 +13,5 @@ def my_task(total):
         time.sleep(1)
         current_task.update_state(state='PROGRESS', meta={'current': i, 'total': total})
     return '{} success!'.format(total)
+
+# TODO: add tasks of algorithms
