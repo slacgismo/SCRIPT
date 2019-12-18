@@ -28,7 +28,17 @@ rate_demand_overall = args.rate_demand_overall
 s3_session_path = args.s3_session_path
 s3_interval_path = args.s3_interval_path
 
-# cache data
-load_control_algorithm.LoadControlAlgorithm.cache_data(s3_session_path, s3_interval_path)
+# cache data(run when data collection changes)
+# load_control_algorithm.LoadControlAlgorithm.cache_data(s3_session_path, s3_interval_path)
 
-# TODO: train and generate models
+# train and generate models
+for county in county_list:
+    lca = load_control_algorithm.LoadControlAlgorithm(county,
+                                                        rate_energy_peak,
+                                                        rate_energy_partpeak,
+                                                        rate_energy_offpeak,
+                                                        rate_demand_peak,
+                                                        rate_demand_partpeak,
+                                                        rate_demand_overall)
+    lca.generate_profiles(50, 200, CHARGE_RATE)
+    lca.generate_model('test_model_{}'.format(county.replace(' ', '_')))

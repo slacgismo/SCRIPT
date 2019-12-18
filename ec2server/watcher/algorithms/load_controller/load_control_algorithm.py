@@ -7,6 +7,12 @@ import os
 import pytz
 import pickle
 from datetime import datetime
+import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 DATA_DIR = os.path.join(HOME_DIR, 'data')
@@ -53,9 +59,9 @@ class LoadControlAlgorithm:
         pass
 
     @staticmethod
-    def new_sessions_intervals(self, county, num_sessions):
+    def new_intervals_and_sessions(cls, county, num_sessions):
         """generate new session data and related interval data"""
-        zip_options = get_county_zipcodes_from_local(county)
+        zip_options = cls.get_county_zipcodes_from_local(county)
         file_options = []
         for zipcode in zip_options:
             file_name = os.path.join(SESSIONS_DIR, '{}.csv'.format(zipcode))
@@ -154,6 +160,8 @@ class LoadControlAlgorithm:
 
     def generate_profiles(self, num_run, num_sessions, charge_rate):
         """Generate profiles as training data"""
+        print('Generating Profile...')
+
         peak_inds = np.arange(int(12 * 4), int(18 * 4))
         partpeak_inds = np.concatenate((np.arange(int(8.5 * 4), int(12 * 4)), np.arange(int(18 * 4), int(21.5 * 4))))
         energy_prices = np.concatenate((np.repeat(rate_energy_offpeak, int(8.5 * 4)),
@@ -168,7 +176,7 @@ class LoadControlAlgorithm:
         list_violations = []
         for i in range(num_runs):
             print('On run: ', i)
-            df_sessions, df_intervals, chosen_session_indexes = self.new_df_and_sessions(county, num_sessions) #this first! 
+            df_sessions, df_intervals, chosen_session_indexes = LoadControlAlgorithm.new_intervals_and_sessions(county, num_sessions) #this first! 
             saved_indices[:, i] = chosen_session_indexes
             power, arrival_inds, departure_inds, energies = self.uncontrolled_load(num_sessions, chosen_session_indexes, df_sessions, df_intervals, charge_rate)
             schedule, power, violations = self.controlled_load(num_sessions,
@@ -186,9 +194,12 @@ class LoadControlAlgorithm:
             self.baseline_profiles[:, i] = np.sum(power, axis=1)
             self.controlled_profiles[:, i] = np.sum(schedule, axis=1)
             list_violations.append(violations)
+            print('Violations: {}'.format(violations))
 
     def generate_model(self, dir_name):
         """Generate Linear Regression model"""
+        print('Generating Model...')
+
         # Split data into train and test sets
         X_train, X_test, y_train, y_test = train_test_split(np.transpose(self.baseline_profiles),
                                                             np.transpose(self.controlled_profiles),
@@ -226,9 +237,13 @@ class LoadControlAlgorithm:
         with open(os.path.join(dir_path, 'model.clf'), 'ab') as clf_file:
             pickle.dump(clf, clf_file)
 
-    @staticmethod
-    def cache_data(s3_session_path, s3_interval_path):
+        print('Model: {} generated!'.format(dir_name))
+
+    @classmethod
+    def cache_data(cls, s3_session_path, s3_interval_path):
         """download all session and interval data from s3 and categorize data by zipcodes"""
+        print('Processing session data...')
+
         session_list = []
         if s3_session_path.endswith('.csv'):
             session_list.append(s3_session_path)
@@ -249,13 +264,15 @@ class LoadControlAlgorithm:
         # categorize by zipcodes and save to ./data
         if not os.path.exists(SESSIONS_DIR):
             os.makedirs(SESSIONS_DIR)
-        zipcodes = get_zipcodes_from_local()
+        zipcodes = cls.get_zipcodes_from_local()
         session_ids = {}
         for zip_code in zipcodes:
             df = df_sessions[df_sessions['Zip Code'] == zip_code]
             session_ids[zip_code] = df['Session ID'].values
             file_path = os.path.join(SESSIONS_DIR, '{}.csv'.format(zip_code))
             df.to_csv(file_path, index=False)
+
+        print('Processing interval data...')
 
         interval_list = []
         if s3_interval_path.endswith('.csv'):
@@ -277,9 +294,11 @@ class LoadControlAlgorithm:
         # categorize by zipcodes and save to ./data
         if not os.path.exists(INTERVALS_DIR):
             os.makedirs(INTERVALS_DIR)
-        zipcodes = get_zipcodes_from_local()
+        zipcodes = cls.get_zipcodes_from_local()
         for zip_code in zipcodes:
             ids = session_ids[zip_code]
-            df = intervals[df_intervals['Session ID'].isin(ids)]
+            df = df_intervals[df_intervals['Session ID'].isin(ids)]
             file_path = os.path.join(INTERVALS_DIR, '{}.csv'.format(zip_code))
             df.to_csv(file_path, index=False)
+
+        print('Processing Complete!')
