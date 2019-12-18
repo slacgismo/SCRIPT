@@ -6,6 +6,8 @@ import json
 import os
 import pytz
 import pickle
+import psycopg2
+from pathlib import Path
 from datetime import datetime
 import sklearn
 from sklearn.model_selection import train_test_split
@@ -235,6 +237,40 @@ class LoadControlAlgorithm:
             pickle.dump(clf, clf_file)
 
         print('Model: {} generated!'.format(dir_name))
+
+    @staticmethod
+    def upload_config(db_host, db_port, table_name, postgres_db, postgres_user, postgres_password):
+        """save all model configs to database"""
+        conn = psycopg2.connect(
+            host=db_host,
+            dbname=postgres_db,
+            user=postgres_user,
+            password=postgres_password,
+            port=db_port
+        )
+        cur = conn.cursor()
+
+        for filename in Path(MODELS_DIR).rglob('*.conf'):
+            filepath = os.path.join(MODELS_DIR, filename)
+            with open(filepath) as json_file:
+                config = json.load(json_file)
+
+            cur.execute("INSERT INTO " + table_name + \
+                " (county_id, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
+                " rate_demand_peak, rate_demand_partpeak, rate_demand_overall)" + \
+                " VALUES ('{}', {}, {}, {}, {}, {}, {})".format(
+                    config['county'], config['rate_energy_peak'], config['rate_energy_partpeak'], config['rate_energy_offpeak'],
+                    config['rate_demand_peak'], config['rate_demand_partpeak'], config['rate_demand_overall']
+                )
+            )
+
+        print('Config insertion finished!')
+        # Make the changes to the database persistent
+        conn.commit()
+
+        # Close communication with the database
+        cur.close()
+        conn.close()
 
     @classmethod
     def cache_data(cls, s3_session_path, s3_interval_path):
