@@ -1,6 +1,6 @@
 # entry to fit data using existing models for Celery
 from celery import shared_task, current_task
-from load_control_algorithm import LoadControlAlgorithm
+from .load_control_algorithm import LoadControlAlgorithm
 from pathlib import Path
 import os
 import pickle
