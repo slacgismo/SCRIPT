@@ -29,7 +29,9 @@ def load_control_fit(county, rate_energy_peak, rate_energy_partpeak, rate_energy
             modelpath = filepath.rreplace('.conf', '.clf', 1)
             with open(modelpath, 'rb') as clf_file:
                 clf = pickle.load(clf_file)
+            # TODO: check if the results have been cached in the database
             # TODO: read data from s3
             # TODO: fit
+            # TODO: cache the results to the database
             # success
             return 'success!'

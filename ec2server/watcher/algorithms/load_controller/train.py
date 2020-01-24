@@ -1,4 +1,4 @@
-# TODO: entry to train and generate models
+# entry to train and generate models
 
 import load_control_algorithm
 
@@ -16,7 +16,7 @@ parser.add_argument('--rate_demand_partpeak', type=float, default=5.85)
 parser.add_argument('--rate_demand_overall', type=float, default=19.10)
 parser.add_argument('--s3_session_path', type=str, help='An s3 .csv file or a prefix', default='s3://script.chargepoint.data/clean/sessions_paired.csv')
 parser.add_argument('--s3_interval_path', type=str, help='An s3 .csv file or a prefix', default='s3://script.chargepoint.data/clean/intervals_paired.csv')
-parser.add_argument('--model_name', type=str, help='Prefix of model name', default='test')
+parser.add_argument('--model_name', type=str, help='Prefix of model name. Models with the same prefix should use the same argument set.', default='test')
 args = parser.parse_args()
 
 county_list = [county.replace('-', ' ') for county in args.county]
