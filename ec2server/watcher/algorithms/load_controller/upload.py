@@ -5,10 +5,12 @@ import load_control_algorithm
 import argparse
 import json
 import psycopg2
+from pathlib import Path
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--db_host', type=str, required=True)
-parser.add_argument('--table_name', type=str, default='script_algorithm_load_controller')
+parser.add_argument('--table_name', type=str, default='script_config_load_controller')
 parser.add_argument('--postgres_db', type=str, required=True)
 parser.add_argument('--postgres_user', type=str, required=True)
 parser.add_argument('--postgres_password', type=str, required=True)
@@ -41,11 +43,11 @@ for filename in Path(MODELS_DIR).rglob('*_*/model.conf'):
     with open(filepath) as json_file:
         config = json.load(json_file)
     total += 1
-    cur.execute("INSERT INTO {}" + \
-        " (county_name, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
+    cur.execute("INSERT INTO {}".format(TABLE_NAME) + \
+        " (county_id, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
         " rate_demand_peak, rate_demand_partpeak, rate_demand_overall)" + \
-        " VALUES ({}, {}, {}, {}, {}, {}, {})".format(
-            TABLE_NAME, config['county'], config['rate_energy_peak'], config['rate_energy_partpeak'], config['rate_energy_offpeak'],
+        " VALUES ('{}', {}, {}, {}, {}, {}, {})".format(
+            config['county'], config['rate_energy_peak'], config['rate_energy_partpeak'], config['rate_energy_offpeak'],
             config['rate_demand_peak'], config['rate_demand_partpeak'], config['rate_demand_overall']))
 
 
@@ -56,4 +58,4 @@ conn.commit()
 cur.close()
 conn.close()
 
-print('{} models uploaded to the database successfully!'.format(total))
+print('{} model(s) uploaded to the database successfully!'.format(total))
