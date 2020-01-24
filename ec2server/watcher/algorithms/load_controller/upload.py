@@ -10,7 +10,6 @@ import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--db_host', type=str, required=True)
-parser.add_argument('--table_name', type=str, default='script_config_load_controller')
 parser.add_argument('--postgres_db', type=str, required=True)
 parser.add_argument('--postgres_user', type=str, required=True)
 parser.add_argument('--postgres_password', type=str, required=True)
@@ -18,7 +17,7 @@ args = parser.parse_args()
 
 MODELS_DIR = load_control_algorithm.MODELS_DIR
 DB_HOST = args.db_host
-TABLE_NAME = args.table_name
+TABLE_NAME = 'script_config_load_controller'
 POSTGRES_DB = args.postgres_db
 POSTGRES_USER = args.postgres_user
 POSTGRES_PASSWORD = args.postgres_password
