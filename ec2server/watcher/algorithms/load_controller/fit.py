@@ -51,6 +51,44 @@ def insert_result(uncontrolled_load, controlled_load, config_id):
     )
 
 
+def fit():
+    # TODO: fit
+    baselien_profiles, controlled_profiles = LoadControlAlgorithm.fit()
+
+    baseline_profiles_list = []
+    controlled_profiles_list = []
+
+    start_hour = 0
+    start_minute = 0
+
+    lines = len(baseline_profiles / 4)
+    for line in range(lines):
+        hour_str = str((start_hour + line % 4)% 24)
+        minute = 15 * (line % 4)
+        if minute is 0:
+            minute_str = '00'
+        else:
+            minute_str = str(minute)
+
+        self.total_energy += int(baseline_profiles[line][self.num_of_run - 1])
+        baseline_profiles_list.append(
+            {
+                'time': hour_str + ':' + minute_str,
+                'load': str(baseline_profiles[line][self.num_of_run - 1])
+            }
+        )
+
+        controlled_profiles_list.append(
+            {
+                'time': hour_str + ':' + minute_str,
+                'load': str(controlled_profiles[line][self.num_of_run - 1])
+            }
+        )
+    
+    return baseline_profiles_list, controlled_profiles_list
+
+
+# TODO: there should be two counties: model_county and data_county
 @shared_task
 def load_control_fit(county, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak, rate_demand_peak, rate_demand_partpeak, rate_demand_overall):
     target_config = {
@@ -85,11 +123,13 @@ def load_control_fit(county, rate_energy_peak, rate_energy_partpeak, rate_energy
             # get config_id
             config_id = get_config_id(target_config)
             # check if the results have been cached in the database
+            # TODO: this part has a duplicate in views.py!!!!
             res = check_algorithm_result(config_id)
             ret = None
             if res is None:
                 # TODO: read data from s3
                 # TODO: fit
+                uncontrolled_load, controlled_load = fit(modelpath, county, data_county)
                 # cache the results to the database
                 insert_result(json.dumps(uncontrolled_load), json.dumps(controlled_load), config_id)
                 ret = (uncontrolled_load, controlled_load)
