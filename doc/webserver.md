@@ -17,3 +17,4 @@ Another trick I want to mention is that to have a simpler schema design, we are 
 ## What can be improved
 
 1. Because we haven't fully understood the algorithms, we don't know if our design for algorithm results are good. That's also another reason why we decided to use a single `JSONField`. But feel free to change it if you have better idea.
+2. We are now testing with a real PostgreSQL database instance, which can be quite slow if you have a lot of test cases. A better solution could be `mock test`.
