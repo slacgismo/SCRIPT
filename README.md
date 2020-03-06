@@ -15,6 +15,7 @@ SCRIPT/
         script/                 ---- script web app
     frontend/                   ---- React
         Dockerfile
+        package.json
         src/                    ---- source code
     s3watch/                    ---- Watch the algorithm results, trigger endpoint to update db
     ec2setup/                   ---- code running on EC2
@@ -30,8 +31,11 @@ SCRIPT/
 
 ### webserver design
 
-See [webserver](doc/webserver.md).
+Refer to [webserver](/doc/webserver.md).
 
+### frontend design
+
+Refer to [frontend](/doc/frontend.md).
 
 
 
