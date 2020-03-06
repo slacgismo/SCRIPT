@@ -1,5 +1,9 @@
 # SCRIPT - Smart ChaRging Infrastructure Planning Tool
 
+## Architecture
+
+![architecture](/doc/images/script-architecture.png)
+
 ## Structure
 
 ```text
@@ -23,6 +27,13 @@ SCRIPT/
     variable.env                ---- Configuration for environment variables
     run.py                      ---- One-key script to start the whole project
 ```
+
+### webserver design
+
+See [webserver](doc/webserver.md).
+
+
+
 
 ## How To Run
 
