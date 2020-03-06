@@ -76,7 +76,7 @@ To remove the container:
 docker rm my_postgres
 ```
 
-3. (Optionally) Now, you can connect to PostgreSQL via port 5433 using shell.
+3. (Optionally) Now, you can connect to PostgreSQL via port 5432 using shell.
 
 To connect to the database (you will need to install `postgresql`):
 
