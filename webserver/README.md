@@ -3,31 +3,12 @@
 
 ## Prerequisites
 
-The best way to get started is to install `docker` and `docker-compose`.
-For more details, please read [Install Docker](https://docs.docker.com/v17.09/engine/installation/) and [Install Docker Compose](https://docs.docker.com/compose/install/).
+1. Install `docker`. For more details, please refer to [Install Docker](https://docs.docker.com/v17.09/engine/installation/).
+2. Ensure you are running the anaconda `4.5.x +`.
 
-## Run
+## Development Environment Setup
 
-Run the dockerized Django App with dockerized PostgreSQL database using:
-
-```bash
-docker-compose up
-```
-
-If you make any modification on the code, you probably need to run the following command to remove the containers and volumes and re-build the images.
-
-```bash
-docker-compose rm -f
-docker-compose build
-```
-
-Then navigate to localhost:8000 on your browser.
-
-# Development Environment Setup
-
-Ensure you are running the anaconda `4.5.x +`
-
-## Creating the env
+### Create the env
 
 ```bash
 conda env create -f script-environment.yml
@@ -35,30 +16,40 @@ conda env create -f script-environment.yml
 
 If you get error installing `psycopg2`, you can probably refer to [How to install psycopg2 with “pip” on Python?](https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python).
 
-## Updating the env after adding new packages
+To update the env after adding new packages:
 
 ```bash
 conda env update -f script-environment.yml
 ```
 
-## Starting the env
+### Activate the env
 
 ```bash
 conda activate venv_script
 ```
 
-## Stopping the env
+To deactivate the env:
 
 ```bash
 conda deactivate
 ```
 
-## Setup and launch PostgreSQL
+### Set up PostgreSQL
 
-You can configure your own PostgreSQL and Django settings. However, we recommend to use dockerized PostgreSQL.
+You can configure your own PostgreSQL and Django settings. However, we recommend to use dockerized PostgreSQL and follow the following steps.
+
+1. create a docker volume named `script_volume`
 
 ```bash
-docker run -d --name my_postgres -v <path_to_save_postgres_data>:/var/lib/postgresql/data -p 5433:5432 -e POSTGRES_USER=script_admin -e POSTGRES_PASSWORD=script_passwd -e POSTGRES_DB=scriptdb postgres:9
+docker volume create script_volume
+```
+
+You can list all volumes using `docker volume ls` and delete a volume using `docker volume rm <volume-name>`.
+
+2. start a new container:
+
+```bash
+docker run -d --name my_postgres -v script_volume:/var/lib/postgresql/data -p 5432:5432 -e POSTGRES_USER=script_admin -e POSTGRES_PASSWORD=script_passwd -e POSTGRES_DB=scriptdb postgres:9
 ```
 
 Or start an existing container:
@@ -67,7 +58,11 @@ Or start an existing container:
 docker container start my_postgres
 ```
 
-Now, you can connect to PostgreSQL via port 5433.
+To see all running containers:
+
+```bash
+docker ps
+```
 
 To stop it:
 
@@ -78,23 +73,20 @@ docker stop my_postgres
 To remove the container:
 
 ```bash
-docker rm /my_postgres
+docker rm my_postgres
 ```
+
+3. (Optionally) Now, you can connect to PostgreSQL via port 5433 using shell.
 
 To connect to the database (you will need to install `postgresql`):
 
 ```bash
-psql postgresql://script_admin:script_passwd@localhost:5433/scriptdb
+psql postgresql://script_admin:script_passwd@localhost:5432/scriptdb
 ```
 
-To start the web server using the dockerized postgre:
-```bash
-python manage.py runserver --settings=app.settings.base
-```
+## Run The Project for Development
 
-## Running The Project
-
-### Migrate your models defined in Django
+### Migrate the models defined in Django
 
 ```bash
 python manage.py makemigrations
@@ -104,12 +96,27 @@ python manage.py migrate
 ### Start server 
 
 ```bash
-./run_server
+python manage.py runserver --settings=app.settings.base
 ```
 
-Then navigate to localhost:8000 on your browser.
+Then navigate to `localhost:8000/api` on your browser to check available REST APIs.
 
-## Unit Tests for The Project
+## Run Unit Tests for The Project
+
+1. Start a new PostgreSQL container
+
+```bash
+docker run --name test_postgres -p 5433:5432 -d postgres:9
+```
+
+2. Initialize the database
+
+```bash
+python manage.py makemigrations script --settings=app.settings.test
+python manage.py migrate --settings=app.settings.test
+```
+
+3. Run the tests
 
 ```bash
 python manage.py test --settings=app.settings.test
