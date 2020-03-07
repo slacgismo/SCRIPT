@@ -17,12 +17,10 @@ SCRIPT/
         Dockerfile
         package.json
         src/                    ---- source code
-    s3watch/                    ---- Watch the algorithm results, trigger endpoint to update db
     ec2setup/                   ---- code running on EC2
     utils/                      ---- Utils which can be copied by all images during image build
         aws/
             terraform/          ---- terraform configuration
-        upload/                 ---- shell/python script to split raw data and upload
         mosek/                  ---- mosek license
     docker-compose.yml          ---- Docker compose config
     variable.env                ---- Configuration for environment variables
@@ -40,6 +38,10 @@ Refer to [frontend](/doc/frontend.md).
 ### ec2setup design
 
 Refer to [ec2setup](/doc/ec2setup.md).
+
+### infrastructure design
+
+Refer to [AWS Terraform](/doc/infrastructure.md)
 
 ## How To Run
 
