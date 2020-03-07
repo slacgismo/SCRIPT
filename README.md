@@ -37,7 +37,9 @@ Refer to [webserver](/doc/webserver.md).
 
 Refer to [frontend](/doc/frontend.md).
 
+### ec2setup design
 
+Refer to [ec2setup](/doc/ec2setup.md).
 
 ## How To Run
 

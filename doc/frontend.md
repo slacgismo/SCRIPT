@@ -15,3 +15,4 @@ The UI and functionalities are basically implemented. Although our current front
 1. There is no unit test for the frontend. **However, it's quite important to have unit tests for development.**
 2. We only tested it using hardcoded dummy data. However, current integration with webserver is not tested using real data. Thus, we cannot guarantee it works.
 3. Although webserver is started and it initializes the tables in the database, it will not initialize any data. Thus, the response from the webserver might be empty. And it will result in a critical issue that the frontend will have some `TypeErrors` of "attribute undefined" because the frontend doesn't check if the response is empty. That's also the reason why I highly recommend to add unit tests.
+4. Currently, functionalities of communicating with [ec2server](/doc/ec2setup.md) is not implemented.
