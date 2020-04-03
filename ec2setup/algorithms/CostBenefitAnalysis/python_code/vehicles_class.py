@@ -5,6 +5,7 @@ from builtins import range
 from builtins import object
 import copy
 import constants
+import helpers
 from collections import Counter
 class Vehicles(object):
 
@@ -57,8 +58,6 @@ class Vehicles(object):
         self.ice_gasoline_consumption_co2 = {}
         self.ev_share = {}
 
-
-        # SRP Specific Inputs
         self.bev100_population = {}
         self.phev10_population = {}
         self.phev20_population = {}
@@ -304,24 +303,22 @@ class Vehicles(object):
             model_years, self.phev40_population, self.phev40_sales, self.phev40_replacements,
             self.phev40_vmt, metrictons_per_gallon, nox_emis, pm10_emis, so2_emis, voc_emis)
 
-        self.gallons_avoided = \
-            dict(Counter(bev100_gallons_avoided) + Counter(phev10_gallons_avoided) +
-                 Counter(phev20_gallons_avoided) + Counter(phev40_gallons_avoided))
+        self.gallons_avoided = (helpers.dsum(bev100_gallons_avoided, phev10_gallons_avoided,
+                                             phev20_gallons_avoided, phev40_gallons_avoided))
+        self.co2_savings = (helpers.dsum(bev100_co2_savings, phev10_co2_savings,
+                                         phev20_co2_savings, phev40_co2_savings))
+        self.nox_savings = (helpers.dsum(bev100_nox_savings, phev10_nox_savings,
+                                         phev20_nox_savings, phev40_nox_savings))
+        self.pm10_savings = (helpers.dsum(bev100_pm10_savings, phev10_pm10_savings,
+                                          phev20_pm10_savings, phev40_pm10_savings))
+        self.so2_savings = (helpers.dsum(bev100_so2_savings, phev10_so2_savings,
+                                         phev20_so2_savings, phev40_so2_savings))
+        self.voc_savings = (helpers.dsum(bev100_voc_savings, phev10_voc_savings,
+                                         phev20_voc_savings, phev40_voc_savings))
 
-        self.co2_savings = dict(Counter(bev100_co2_savings) + Counter(phev10_co2_savings) +
-                                Counter(phev20_co2_savings) + Counter(phev40_co2_savings))
-        self.nox_savings = dict(Counter(bev100_nox_savings) + Counter(phev10_nox_savings) +
-                                Counter(phev20_nox_savings) + Counter(phev40_nox_savings))
-        self.pm10_savings = dict(Counter(bev100_pm10_savings) + Counter(phev10_pm10_savings) +
-                                Counter(phev20_pm10_savings) + Counter(phev40_pm10_savings))
-        self.so2_savings = dict(Counter(bev100_so2_savings) + Counter(phev10_so2_savings) +
-                                Counter(phev20_so2_savings) + Counter(phev40_so2_savings))
-        self.voc_savings = dict(Counter(bev100_voc_savings) + Counter(phev10_voc_savings) +
-                                Counter(phev20_voc_savings) + Counter(phev40_voc_savings))
 
-        self.gasoline_savings =\
-            dict(Counter(bev100_gasoline_savings) + Counter(phev10_gasoline_savings) +
-                 Counter(phev20_gasoline_savings) + Counter(phev40_gasoline_savings))
+        self.gasoline_savings = (helpers.dsum(bev100_gasoline_savings, phev10_gasoline_savings,
+                                              phev20_gasoline_savings, phev40_gasoline_savings))
 
     def gasoline_avoided(self, model_years, population, sales_dict, replacements, vmt, co2_metrictons_per_gallon,
                          nox_emis, pm10_emis, so2_emis, voc_emis):
@@ -391,7 +388,7 @@ class Vehicles(object):
             pm_10_savings[year] = gallons_avoided * pm10_emis
             so2_savings[year] = gallons_avoided * so2_emis
             voc_savings[year] = gallons_avoided * voc_emis
-            gasoline_savings[year] = gallons_avoided*self.gas_prices[year]
+            gasoline_savings[year] = gallons_avoided * self.gas_prices[year]
 
         return gallons_avoided_dict, co2_savings, nox_savings, pm_10_savings, so2_savings, voc_savings, gasoline_savings
 

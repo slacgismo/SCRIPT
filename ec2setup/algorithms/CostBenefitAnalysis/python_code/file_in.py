@@ -16,13 +16,14 @@ import constants
 import datetime
 import sys
 import helpers
+import pandas as pd
 
 class MODEL_INPUTS(object):
     """
     Python object where the inputs to a model run are stored. All inputs read from files are read in this script.
     """
 
-    def __init__(self):
+    def __init__(self, case_name):
 
         ### DIRECTORIES ###
         self.PYTHON_DIR = str()
@@ -38,7 +39,6 @@ class MODEL_INPUTS(object):
 
         ### Inputs read from config file ###
         # Year inputs
-        self.rate_data_year = int()
         self.start_year = int()
         self.first_adoption_year = int()
         self.end_year = int()
@@ -128,7 +128,7 @@ class MODEL_INPUTS(object):
         self.allEVload_onTandD = bool()
 
         ### CREATED INPUTS ###
-        self.get_directories()
+        self.get_directories(case_name)
         self.read_config('config')
         self.read_loadprofile_allocation('loadprofile_allocation')
         self.get_charger_assignments('charger_assignments')
@@ -149,7 +149,7 @@ class MODEL_INPUTS(object):
         :param config_name: The name of the config file to be read in.
         :return: Each attribute in the config CSV is added as an attribute to the MODEL_INPUTS instance.
         """
-        config_dir = self.CONFIG_DIR + '/%s.csv' % config_name
+        config_dir = self.CONFIG_DIR + r'\%s.csv' % config_name
         with open(config_dir) as config_file:
             config_data = csv.reader(config_file)
             first_row = True
@@ -195,7 +195,7 @@ class MODEL_INPUTS(object):
         :return: MODEL_INPUTS.loadprofile_to_rate and MODEL_INPUTS.loadprofile_names are defined in this function.
         """
 
-        allocation_dir = self.DATA_DIR + '/%s.csv' % allocation_name
+        allocation_dir = self.DATA_DIR + r'\%s.csv' % allocation_name
         with open(allocation_dir) as allocation_file:
             allocation_data = csv.reader(allocation_file)
             first_row = True
@@ -234,7 +234,7 @@ class MODEL_INPUTS(object):
 
     def get_charger_assignments(self, filename):
 
-        chargerassignment_dir = self.DATA_DIR + '/%s.csv' % filename
+        chargerassignment_dir = self.DATA_DIR + r'\%s.csv' % filename
         with open(chargerassignment_dir) as chargerassignment_file:
             chargerassignment_data = csv.reader(chargerassignment_file)
             first_row = True
@@ -248,37 +248,45 @@ class MODEL_INPUTS(object):
                     charger_name = row[1]
                     self.loadprofile_to_charger[loadprofile_name] = charger_name
 
-    def get_directories(self):
+    def get_directories(self, case_name):
         """
         Build all of the directories required for a model run.
         """
 
         self.PYTHON_DIR = os.getcwd()
-        self.MODEL_DIR = self.PYTHON_DIR.replace('/python_code', '')
-        self.CASE_DIR = self.MODEL_DIR + '/cases/' + sys.argv[1]
-        self.DATA_DIR = self.CASE_DIR + '/data'
-        self.CONFIG_DIR = self.DATA_DIR + '/configs'
-        self.RATES_DIR = self.MODEL_DIR + '/rates'
-        self.LOADPROFILE_DIR = self.MODEL_DIR + '/EV Loads' + '/load profiles'
-        self.TESTFILE_DIR = self.CASE_DIR + '/test_files'
-        # test by Hao
-        self.RESULTS_DIR = self.CASE_DIR + '/results_hao'
+        self.MODEL_DIR = self.PYTHON_DIR.replace('\python_code', '')
+        self.CASE_DIR = self.MODEL_DIR + r'\cases\\' + case_name
+        self.DATA_DIR = self.CASE_DIR + r'\data'
+        self.CONFIG_DIR = self.DATA_DIR + r'\configs'
+        self.RATES_DIR = self.MODEL_DIR + r'\rates'
+        self.LOADPROFILE_DIR = self.MODEL_DIR + r'\EV Loads\load profiles'
+        self.TESTFILE_DIR = self.CASE_DIR + r'\test_files'
+        self.RESULTS_DIR = self.CASE_DIR + r'\results'
 
         # Create directories if they don't already exist
         for directory in constants.directory_list:
             helpers.make_dir_if_not_exist(getattr(self, directory))
 
-    def create_rate(self, rate_name, model_years):
+    def create_rate(self, rate_name, model_years, rate_escalator):
         """
         Creates a rate object from the rate_name data file.
         """
-        rate_dir = self.RATES_DIR + '/%s.csv' % rate_name
+        rate_dir = self.RATES_DIR + r'\%s.csv' % rate_name
 
         with open(rate_dir) as rate_file:
             rate_data = csv.reader(rate_file)
-            rate = rate_class.Rate(rate_data, model_years)
+            rate = rate_class.Rate(rate_data, model_years, rate_escalator)
 
         return rate
+
+    def read_rate_escalators(self):
+        """
+        Creates a rate object from the rate_name data file.
+        """
+        rate_escalator_df = pd.read_csv(self.RATES_DIR + r'\Rate Escalators.csv').set_index("Year")
+
+
+        return rate_escalator_df
 
     def create_vehicles(self, annual_filename):
         """
@@ -290,12 +298,12 @@ class MODEL_INPUTS(object):
 
         vehicles = vehicles_class.Vehicles()
 
-        annual_dir = self.DATA_DIR + '/%s.csv' % annual_filename
+        annual_dir = self.DATA_DIR + r'\%s.csv' % annual_filename
         with open(annual_dir) as annual_file:
             annual_data = csv.reader(annual_file)
             vehicles.process_annual_data(annual_data)
 
-        gasprice_dir = self.DATA_DIR + '/gas_prices.csv'
+        gasprice_dir = self.DATA_DIR + r'\gas_prices.csv'
         with open(gasprice_dir) as gasprice_file:
             gasprice_data = csv.reader(gasprice_file)
             vehicles.process_gasprices(gasprice_data)
@@ -313,7 +321,7 @@ class MODEL_INPUTS(object):
 
         load_profile = loadprofile_class.LoadProfile(loadprofile_name)
 
-        loadprofile_dir = self.LOADPROFILE_DIR + '/%s.csv' % loadprofile_name
+        loadprofile_dir = self.LOADPROFILE_DIR + r'\%s.csv' % loadprofile_name
         with open(loadprofile_dir) as loadprofile_file:
             loadprofile_data = csv.reader(loadprofile_file)
             load_profile.process_data(loadprofile_data, scalar=scalar)
@@ -328,7 +336,7 @@ class MODEL_INPUTS(object):
         :return:
         """
 
-        energy_mc_dir = self.DATA_DIR + '/%s.csv' % energy_mc_name
+        energy_mc_dir = self.DATA_DIR + r'\%s.csv' % energy_mc_name
         with open(energy_mc_dir) as loadprofile_file:
             energy_mc_data = csv.reader(loadprofile_file)
             # process open file
@@ -362,7 +370,7 @@ class MODEL_INPUTS(object):
         :return:
         """
 
-        capacity_mc_dir = self.DATA_DIR + '/%s.csv' % capacity_mc_name
+        capacity_mc_dir = self.DATA_DIR + r'\%s.csv' % capacity_mc_name
         with open(capacity_mc_dir) as loadprofile_file:
             capacity_mc_data = csv.reader(loadprofile_file)
             # process open file
@@ -396,7 +404,7 @@ class MODEL_INPUTS(object):
         :return:
         """
 
-        building_load = self.DATA_DIR + '/%s.csv' % building_load_name
+        building_load = self.DATA_DIR + r'\%s.csv' % building_load_name
         with open(building_load) as building_load_file:
             building_load_data = csv.reader(building_load_file)
             # process open file
@@ -437,7 +445,7 @@ class MODEL_INPUTS(object):
         :return:
         """
 
-        timesteps_dir = self.DATA_DIR + '/timesteps.csv'
+        timesteps_dir = self.DATA_DIR + r'\timesteps.csv'
         timesteps = {i: {} for i in range(8760)}
         weekday_weekend_count = {year: {month: {'weekdays': 0, 'weekends': 0}
                                     for month in range(1,13)}
@@ -487,7 +495,7 @@ class MODEL_INPUTS(object):
         Creates a Chargers instance from charger_class.py based on chargerfile_name.
         """
 
-        charger_dir = self.DATA_DIR + '/%s.csv' % chargerfile_name
+        charger_dir = self.DATA_DIR + r'\%s.csv' % chargerfile_name
 
         with open(charger_dir) as charger_file:
             charger_data = csv.reader(charger_file)
@@ -501,7 +509,7 @@ class MODEL_INPUTS(object):
         """
         TODO
         """
-        workplace_dir = self.DATA_DIR + '/static_workplace_chargers.csv'
+        workplace_dir = self.DATA_DIR + r'\static_workplace_chargers.csv'
 
         with open(workplace_dir) as workplace_file:
             workplace_data = csv.reader(workplace_file)

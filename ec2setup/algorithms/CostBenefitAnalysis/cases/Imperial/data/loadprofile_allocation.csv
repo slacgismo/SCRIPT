@@ -1,0 +1,6 @@
+Load Profile,PGE Residential EV Rate,PGE Medium Commercial Rate,PGE Large Commercial Rate,SCE Residential EV Rate,SCE Medium Commercial Rate,SCE Large Commercial Rate,SCE Commercial EV Rate,SDGE Residential EV Rate,SDGE Commercial Rate
+Imperial_Residential_L2,0,0,0,1,0,0,0,0,0
+Imperial_Residential_MUD,0,0,0,0,1,0,0,0,0
+Imperial_Public_L2,0,0,0,0,1,0,0,0,0
+Imperial_Workplace_L2,0,0,0,0,1,0,0,0,0
+Imperial_Public_DCFC,0,0,0,0,0,0,1,0,0

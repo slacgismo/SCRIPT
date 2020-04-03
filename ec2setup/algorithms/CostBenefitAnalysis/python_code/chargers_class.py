@@ -89,7 +89,7 @@ class Chargers(object):
                 new_sales = self.res_evses[year] - self.res_evses[year - 1]
 
             try:
-                replacements = self.res_sales[year - vehicles.vehicle_lifetime]
+                replacements = self.res_evse_sales[year - vehicles.vehicle_lifetime]
             except KeyError:
                 replacements = 0.0
             self.res_evse_new_sales[year] = new_sales

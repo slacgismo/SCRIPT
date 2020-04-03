@@ -15,17 +15,18 @@ import simple_TandD
 import time
 import constants
 from collections import Counter
+import pandas as pd
 import numpy as np
 
 class ModelInstance(object):
 
-    def __init__(self):
+    def __init__(self, case_name):
 
         start = time.time()
         print('Loading Inputs')
 
         # Load external inputs for model run
-        self.inputs = file_in.MODEL_INPUTS()
+        self.inputs = file_in.MODEL_INPUTS(case_name)
 
         ### CALCULATE TIMESTEP INPUTS ###
 
@@ -54,7 +55,11 @@ class ModelInstance(object):
                 if key not in list_of_rate_names:
                     list_of_rate_names.append(key)
 
-        self.rates = {name: self.inputs.create_rate(name, self.model_years) for name in list_of_rate_names}
+        # Read in rate escalators file:
+        rate_escalators = self.inputs.read_rate_escalators()
+
+        self.rates = {name: self.inputs.create_rate(
+            name, self.model_years, rate_escalators[name]) for name in list_of_rate_names}
 
         # Determine what portion of workplace load falls under each rate
         self.proportions_by_loadprofile_and_rate = self.get_loadprofile_and_rate_proportions()
@@ -315,6 +320,7 @@ class ModelInstance(object):
             self.total_work_load[year] = {}
             self.total_public_load[year] = {}
             self.dcfc_meter_load[year] = {}
+
             for hour in hours:
                 try:
                     self.total_work_load[year][hour] += self.workplace_loadprofile.annual_load[year][hour] * \
@@ -388,9 +394,16 @@ class ModelInstance(object):
                     self.volumetric_revenue[year] = bill_calculator.weekday_energy_bill[year] + bill_calculator.weekend_energy_bill[year]
 
                 if year in list(self.demand_revenue.keys()):
-                    self.demand_revenue[year] += bill_calculator.total_monthly_max_bill[year]
+                    self.demand_revenue[year] += bill_calculator.total_monthly_max_bill[year] + \
+                                                 bill_calculator.total_onpeak_max_bill[year] + \
+                                                 bill_calculator.total_partpeak_max_bill1[year] + \
+                                                 bill_calculator.total_partpeak_max_bill2[year]
+
                 else:
-                    self.demand_revenue[year] = bill_calculator.total_monthly_max_bill[year]
+                    self.demand_revenue[year] = bill_calculator.total_monthly_max_bill[year] + \
+                                                 bill_calculator.total_onpeak_max_bill[year] + \
+                                                 bill_calculator.total_partpeak_max_bill1[year] + \
+                                                 bill_calculator.total_partpeak_max_bill2[year]
 
                 if charger_name == 'Residential L2':
                     if year in list(self.res_revenue.keys()):

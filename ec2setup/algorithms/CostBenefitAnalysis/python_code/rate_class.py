@@ -7,15 +7,14 @@ import constants
 
 class Rate(object):
 
-    def __init__(self, data, model_years):
+    def __init__(self, data, model_years, rate_escalator):
 
         self.name = str()
         self.description = str()
         self.data_author = str()
         self.fixed_monthly_charges = float()
         self.meter_day_charge = float()
-        self.rate_data_year = int()
-        self.rate_escalators = {}
+        self.rate_escalators = rate_escalator.to_dict()
         self.energy_charges = {}
         self.demand_charges = {}
         self.demand_charge_periods = {(category, month): [] for month in range(1,13)
@@ -42,28 +41,25 @@ class Rate(object):
                 setattr(self, name, value)
 
             # Fixed charges of rate
-            elif i in range(4,7):
+            elif i in range(4, 6):
                 name = row[0]
                 value = float(row[1])
                 setattr(self, name, value)
 
-            # Rate escalators
-            elif i in range(10,38):
-                year = int(row[0])
-                escalator = float(row[1])
-                self.rate_escalators[year] = escalator
-
             # Energy charges of rate
-            elif i in range(41,89):
+            elif i in range(42, 282):
                 daytype = row[1]
                 hour = int(row[2])
                 for j in range(0,12):
                     month = j+1
                     value = 0. if row[j+3] == '' else float(row[j+3])
-                    base_energy[(month, hour, daytype)] = value
+                    try:
+                        base_energy[(month, hour, daytype)] += value
+                    except:
+                        base_energy[(month, hour, daytype)] = value
 
             # Demand charges of rate
-            elif i in range(92,284):
+            elif i in range(285, 525):
                 component = int(row[0])
                 category = constants.demandcharge_components[component]
                 daytype = row[1]
@@ -86,6 +82,7 @@ class Rate(object):
 
         self.expand_escalators(model_years)
         self.escalate_rate(model_years, base_energy, base_demand)
+
 
     def expand_escalators(self, model_years):
 

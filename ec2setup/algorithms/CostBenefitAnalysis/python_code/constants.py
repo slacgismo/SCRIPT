@@ -4,7 +4,8 @@ from __future__ import unicode_literals
 demandcharge_components = {1: 'monthly_max',
                            2: 'peak_max',
                            3: 'partpeak_max1',
-                           4: 'partpeak_max2'}
+                           4: 'partpeak_max2',
+                           5: 'additional_demand_charge'}
 inflation = 0.022
 
 charger_name_to_population_attr = {
