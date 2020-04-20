@@ -228,6 +228,10 @@ class OverviewMap extends React.PureComponent {
     }
 
   onMouseOver = e => {
+      if (!counties[e.target.attributes.id.value]) {
+        return
+      }
+      
       this.setState({ current: {
           countyName: e.target.attributes.name.value,
           [this.state.chosenParam]: (counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
