@@ -80,6 +80,9 @@ class AlgInputsLoadControl extends Component {
         });
 
         loadControlPromise.then(res => {
+            if(!res.data.length) {
+                return
+            }
             this.setState({
                 result: [{
                     controlled_load: res.data[0].controlled_load,
