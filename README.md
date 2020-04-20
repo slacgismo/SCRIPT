@@ -24,7 +24,45 @@ SCRIPT/
     run.py                      ---- One-key script to start the whole project
 ```
 
-## How To Run
+## Get SCRIPT Running Locally
+I used anaconda to manage my environment. However, you can easily replicate this with virtualenv. Docker instructions are below...
+```bash
+# create the needed environemnt
+conda create -n venv_script python-3.7
+conda activate venv_script
+# install the backend dependencies
+cd webserver
+pip install -r requirements.txt
+# install the frontend dependencies
+cd ../frontend
+npm install
+```
+
+Make sure you have postgres installed locally.
+
+Create a database named `scriptdb` - I used [TablePlus](https://tableplus.com/) to create a DB with that name on my `localhost`. You can easily achieve the same thing via the cmd line. Also, connection params for development are the postgres defaults. You can also check the settings file to find them: `webserver/app/settings/base.py`
+
+```bash
+# migrate the DB
+cd webserver
+python manage.py migrate --settings=app.settings.base
+```
+
+Running the project:
+```bash
+cd webserver
+# project assumes localhost:8000 - which should be the default
+python manage.py runserver --settings=app.settings.base
+cd ../frontend
+npm start 
+```
+
+Your browser should launch automatically and point to `localhost:3000`
+
+
+
+---
+## (OLD) How To Run
 
 ### Install Docker
 
