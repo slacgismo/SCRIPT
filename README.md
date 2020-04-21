@@ -28,7 +28,7 @@ SCRIPT/
 I used anaconda to manage my environment. However, you can easily replicate this with virtualenv. Docker instructions are below...
 ```bash
 # create the needed environemnt
-conda create -n venv_script python-3.7
+conda create -n venv_script python=3.7
 conda activate venv_script
 # install the backend dependencies
 cd webserver
