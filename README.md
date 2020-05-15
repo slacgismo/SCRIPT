@@ -33,6 +33,10 @@ conda activate venv_script
 # install the backend dependencies
 cd webserver
 pip install -r requirements.txt
+# other parts of the project requires other dependencies....
+# instead of going through them and figuring out that you need those dependencies
+# when your code breaks, just install them now:
+pip install celery pandas cvxpy sklearn
 # install the frontend dependencies
 cd ../frontend
 npm install
