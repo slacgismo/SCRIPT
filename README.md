@@ -27,6 +27,11 @@ SCRIPT/
 ## Get SCRIPT Running Locally
 I used anaconda to manage my environment. However, you can easily replicate this with virtualenv. Docker instructions are below...
 ```bash
+# install postgres first to avoid headaches
+brew install postgresql
+# to start the DB you can just:
+brew services start postgresql
+
 # create the needed environemnt
 conda create -n venv_script python=3.7
 conda activate venv_script
@@ -39,7 +44,7 @@ pip install -r requirements.txt
 pip install celery pandas cvxpy sklearn
 # install the frontend dependencies
 cd ../frontend
-npm install
+yarn install
 ```
 
 Make sure you have postgres installed locally.
@@ -58,7 +63,7 @@ cd webserver
 # project assumes localhost:8000 - which should be the default
 python manage.py runserver --settings=app.settings.base
 cd ../frontend
-npm start 
+yarn start 
 ```
 
 Your browser should launch automatically and point to `localhost:3000`
