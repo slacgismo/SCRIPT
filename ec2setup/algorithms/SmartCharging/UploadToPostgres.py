@@ -18,7 +18,7 @@ class UploadToPostgres():
             postgres_info = json.load(json_file)
         
         self.db_host = postgres_info['DB_HOST']
-        self.table_name = "script_algorithm_load_controller"
+        self.table_name = "script_config_load_controller"
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
@@ -49,7 +49,7 @@ class UploadToPostgres():
 
 
         # create table on Postgres
-        cur.execute("CREATE TABLE IF NOT EXISTS County_Summary" + " (id serial PRIMARY KEY, county_name varchar, total_energy varchar, total_number_of_session varchar," + \
+        cur.execute("CREATE TABLE IF NOT EXISTS script_county" + " (id serial PRIMARY KEY, name varchar, total_energy float, total_session float," + \
             " rate_energy_peak varchar);")
 
         # create table on Postgres

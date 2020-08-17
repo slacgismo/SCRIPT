@@ -186,15 +186,19 @@ class UploadToPostgres():
                 elif line_count == 23:
                     self.npv_result_dict["Transmission Cost"] = str(row[1])
                     line_count += 1
-                
 
-        self.db_host = postgres_info['DB_HOST']
         self.cba_net_present_table_name = "script_algorithm_cba_net_present_value"
         self.gas_consumption_table_name = "script_algorithm_cba_gas_consumption"
-        self.cba_net_emission_table_name = "script_algorithm_cba_net_emission"
+        self.cba_emission_table_name = "script_algorithm_cba_emission"
         self.cba_cost_benefit_table_name = "script_algorithm_cba_cost_benefit"
         self.cba_load_profile_table_name = "script_algorithm_cba_load_profile"
+        self.config_cba_net_present_table_name = "script_config_cba_net_present_value"
+        self.config_gas_consumption_table_name = "script_config_cba_gas_consumption"
+        self.config_cba_emission_table_name = "script_config_cba_emission"
+        self.config_cba_cost_benefit_table_name = "script_config_cba_cost_benefit"
+        self.config_cba_load_profile_table_name = "script_config_cba_load_profile"
 
+        self.db_host = postgres_info['DB_HOST']
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
@@ -222,8 +226,7 @@ class UploadToPostgres():
 
     def run_load_profile(self):
         # create table on Postgres
-        self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_load_profile_table_name + " (id serial PRIMARY KEY, config_id INTEGER, poi varchar, year INTEGER, day_type varchar, loads varchar);")
-
+        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_load_profile_table_name + " (id serial PRIMARY KEY, config_id INTEGER, poi varchar, year INTEGER, day_type varchar, loads varchar);")
         tmp_load = {}
 
         for i in range(self.load_profile_year_len):
@@ -238,10 +241,17 @@ class UploadToPostgres():
                             tmp_load[poi][cur_year][day_type].append(
                                 self.load_profile_result_dict[poi][day_type][hour][i]
                             )
-        
-                        self.cur.execute("INSERT INTO " + self.cba_load_profile_table_name + " (config_id, poi, year, day_type, loads) VALUES (%s, %s, %s, %s, %s)",
+                        self.cur.execute("INSERT INTO " + self.config_cba_load_profile_table_name + " (lf_config, poi, year, day_type) VALUES (%s, %s, %s, %s)",
                             (
-                                '1', str(poi), int(cur_year), str(day_type), json.dumps(tmp_load[poi][cur_year][day_type])
+                                '1', str(poi), int(cur_year), str(day_type)
+                            )
+                        )
+
+                        # config_load_profile_id = self.cur.fetchone()[0]
+
+                        self.cur.execute("INSERT INTO " + self.cba_load_profile_table_name + " (config_id, loads) VALUES (%s, %s)",
+                            (
+                                config_load_profile_id, json.dumps(tmp_load[poi][cur_year][day_type])
                             )
                         )
 
