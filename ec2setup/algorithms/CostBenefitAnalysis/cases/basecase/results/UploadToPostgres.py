@@ -247,6 +247,8 @@ class UploadToPostgres():
                             )
                         )
 
+                        #commit to db
+                        #query for the id of the config table
                         # config_load_profile_id = self.cur.fetchone()[0]
 
                         self.cur.execute("INSERT INTO " + self.cba_load_profile_table_name + " (config_id, loads) VALUES (%s, %s)",
