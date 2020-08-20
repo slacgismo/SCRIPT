@@ -16,7 +16,7 @@ class LoadControllerConfig(models.Model):
         (7) rate_demand_overall
     """
 
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
+    county = models.ForeignKey(County, on_delete=models.CASCADE, db_column="county")
     rate_energy_peak = models.FloatField(validators=[validate_positive])
     rate_energy_partpeak = models.FloatField(validators=[validate_positive])
     rate_energy_offpeak = models.FloatField(validators=[validate_positive])

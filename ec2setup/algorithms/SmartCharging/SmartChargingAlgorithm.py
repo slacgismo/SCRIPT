@@ -195,6 +195,7 @@ class SmartChargingAlgorithm:
             baseline_profiles[:, i] = np.sum(power, axis=1)
             controlled_profiles[:, i] = np.sum(schedule, axis=1)
             list_violations.append(violations)
+            print(list_violations)
 
         #np.save(sca_dir + "baseline_profiles_" + county.replace(' ', '_') + "_500.npy", baseline_profiles)
         #np.save(sca_dir + "controlled_profiles_" + county.replace(' ', '_') + "_500.npy", controlled_profiles)

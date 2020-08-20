@@ -17,7 +17,7 @@ class LoadController(models.Model):
             (2) controlled load (cvx optimized) (load - time)
     """
 
-    config = models.ForeignKey(LoadControllerConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(LoadControllerConfig, on_delete=models.CASCADE, db_column="config")
     uncontrolled_load = JSONField()
     controlled_load = JSONField()
 
