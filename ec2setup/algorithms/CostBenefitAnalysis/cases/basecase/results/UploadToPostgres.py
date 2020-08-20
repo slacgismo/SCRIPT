@@ -256,7 +256,7 @@ class UploadToPostgres():
 
                         self.cur.execute("INSERT INTO " + self.cba_load_profile_table_name + " (config, loads) VALUES (%s, %s)",
                             (
-                                config_load_profile_id, json.dumps(tmp_load[poi][cur_year][day_type])
+                                str(config_load_profile_id), json.dumps(tmp_load[poi][cur_year][day_type])
                             )
                         )
 
@@ -351,7 +351,7 @@ class UploadToPostgres():
         
         self.cur.execute("INSERT INTO " + self.cba_net_present_table_name + " (config, npv) VALUES (%s, %s)",
             (
-                config_net_present_id, json.dumps(self.npv_result_dict)
+                str(config_net_present_id), json.dumps(self.npv_result_dict)
             )
         )
 
@@ -376,7 +376,7 @@ class UploadToPostgres():
                     '1', str(self.emission_result_dict['Year'][i])
                 )
             )
-            
+
             self.conn.commit()
 
             self.cur.execute("SELECT id FROM "+self.config_cba_emission_table_name + " ORDER BY id DESC LIMIT 1")
@@ -384,7 +384,7 @@ class UploadToPostgres():
 
             self.cur.execute("INSERT INTO " + self.cba_emission_table_name + " (config, emissions) VALUES (%s, %s)",
                 (
-                    config_emission_id, json.dumps(tmp_res)
+                    str(config_emission_id), json.dumps(tmp_res)
                 )
             )
 

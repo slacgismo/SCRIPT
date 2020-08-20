@@ -114,14 +114,8 @@ class EVLoadModel(object):
                                       int(self.config.fast_time_steps_per_hour / self.config.time_steps_per_hour))
                     xset2 = np.arange(0, self.config.fast_num_time_steps + 1)
                     xset3 = np.arange(0, self.config.fast_num_time_steps)
-                    print(np)
-                    print(xset1)
-                    print(load, load[0])
-                    print(xset2)
-                    print(xset3)
-                    print(np.append(load, load[0]))
                     self.ev_segmented_load[:, segment_number] = \
-                        scipy.interpolate.BSpline(xset1, np.append(load, load[0]), xset2)[xset3]
+                        scipy.interpolate.spline(xset1, np.append(load, load[0]), xset2)[xset3]
                 else:
                     self.ev_segmented_load[:, segment_number] = load
 
@@ -137,12 +131,12 @@ class EVLoadModel(object):
             xset1 = np.arange(0, self.config.num_time_steps + 1, int(self.config.time_steps_per_hour))
             xset2 = np.arange(0, self.config.num_time_steps + 1)
             xset3 = np.arange(0, self.config.num_time_steps)
-            self.nonEV_load = 1000*scipy.interpolate.BSpline(xset1, np.append(nonEV_load, nonEV_load[0]), xset2)[xset3]
+            self.nonEV_load = 1000*scipy.interpolate.spline(xset1, np.append(nonEV_load, nonEV_load[0]), xset2)[xset3]
         else:
             xset1 = np.arange(0, self.config.fast_num_time_steps + 1, int(self.config.fast_time_steps_per_hour))
             xset2 = np.arange(0, self.config.fast_num_time_steps + 1)
             xset3 = np.arange(0, self.config.fast_num_time_steps)
-            self.nonEV_load = 1000*scipy.interpolate.BSpline(xset1, np.append(nonEV_load, nonEV_load[0]), xset2)[xset3]
+            self.nonEV_load = 1000*scipy.interpolate.spline(xset1, np.append(nonEV_load, nonEV_load[0]), xset2)[xset3]
 
         # 1000 factor is to convert nonEV load into kW from MW
         self.total_load = self.nonEV_load + self.basic_load

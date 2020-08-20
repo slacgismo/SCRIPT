@@ -79,7 +79,7 @@ class LoadProfileConfig(models.Model):
         (4) day_type
     """
 
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE,db_column="lf_config")
+    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
     poi = models.CharField(max_length=20, choices=POI.choices(), default=POI.UNKNOWN)
     year = models.IntegerField()
     day_type = models.CharField(max_length=20, choices=DayType.choices(), default=DayType.WEEKDAY)

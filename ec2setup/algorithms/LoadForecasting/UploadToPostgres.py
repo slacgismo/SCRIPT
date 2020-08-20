@@ -72,6 +72,10 @@ class UploadToPostgres():
             )
         )
 
+        conn.commit()
+        cur.execute("SELECT id FROM "+self.config_table_name + " ORDER BY id DESC LIMIT 1")
+        config_id = cur.fetchone()
+
         # upload data into Postgres
         residential_l1_load_list = []
         residential_l2_load_list = []
@@ -144,12 +148,13 @@ class UploadToPostgres():
                 }
             )
 
+
         cur.execute("INSERT INTO " + self.table_name + \
             " (config, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
             " work_load, public_l2_load, total_load)" + \
             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
             (
-                str(config_name),
+                str(config_id),
                 json.dumps(residential_l1_load_list), json.dumps(residential_l2_load_list),
                 json.dumps(residential_mud_load_list), json.dumps(fast_load_list),
                 json.dumps(work_load_list), json.dumps(public_l2_load_list), json.dumps(total_load_list)
