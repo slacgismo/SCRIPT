@@ -48,7 +48,7 @@ class LoadForecast(models.Model):
             (7) Total (load - time)
     """
 
-    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="config")
     residential_l1_load = JSONField()
     residential_l2_load = JSONField()
     residential_mud_load = JSONField()
@@ -72,7 +72,7 @@ class LoadProfile(models.Model):
             (1) Aggregate&DCFC&Residential&Public L2&Workplace load profile throughout 24 hours of a weekday&weekend&peak
     """
 
-    config = models.ForeignKey(LoadProfileConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(LoadProfileConfig, on_delete=models.CASCADE, db_column="config")
     loads = JSONField()
 
     class Meta:
@@ -120,7 +120,7 @@ class GasConsumption(models.Model):
             (16) EEV Share (%) in the next several decades
     """
 
-    config = models.ForeignKey(GasConsumptionConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(GasConsumptionConfig, on_delete=models.CASCADE, db_column="config")
     consumption = JSONField()
 
     class Meta:
@@ -188,7 +188,7 @@ class CostBenefit(models.Model):
             (26) Capacity Cost in the next several decades
     """
 
-    config = models.ForeignKey(CostBenefitConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(CostBenefitConfig, on_delete=models.CASCADE, db_column="config")
     cost_benefit = JSONField()
 
     class Meta:
@@ -251,7 +251,7 @@ class NetPresentValue(models.Model):
             (23) NPV of Transmission Cost by the certain year
     """
 
-    config = models.ForeignKey(NetPresentValueConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(NetPresentValueConfig, on_delete=models.CASCADE, db_column="config")
     npv = JSONField()
 
     class Meta:
@@ -277,7 +277,7 @@ class Emission(models.Model):
             (5) VOC emissions in the next several decades
     """
 
-    config = models.ForeignKey(EmissionConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(EmissionConfig, on_delete=models.CASCADE, db_column="config")
     emissions = JSONField()
 
     class Meta:
