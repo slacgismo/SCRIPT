@@ -11,6 +11,7 @@ import axios from "axios";
 import { loadForecastPromise, fieldsLoadForecast } from "../Api/AlgorithmData";
 import { countyRes } from "../Api/CountyData";
 import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
+import { serverUrl } from "../Api/server"
 
 const styles = theme => ({
     container: {
@@ -47,6 +48,7 @@ class AlgInputsLoadForecast extends Component {
             counties: [],
 
             // Alg params
+            config_name: loadForecastDefaultParams.config_name,
             aggregation_level: loadForecastDefaultParams.aggregation_level,
             num_evs: loadForecastDefaultParams.num_evs,
             county_choice: loadForecastDefaultParams.county_choice,
@@ -91,9 +93,45 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ open: false});
     };
 
+    update = (field) => {
+        return e => this.setState({ [field]: e.currentTarget.value })
+    };
+
     /* TODO save results(profile) of Load Forecast*/
     saveResults = () => {
+
+        // change var name
+        const postData = {
+            config_name: this.state.config_name,
+            aggregation_level: this.state.aggregation_level,
+            num_evs: this.state.num_evs,
+            choice: this.state.county_choice,
+            fast_percent: this.state.fast_percent,
+            work_percent: this.state.work_percent,
+            res_percent: this.state.res_percent,
+            l1_percent: this.state.l1_percent,
+            public_l2_percent: this.state.publicl2_percent
+        }
+
+        const postUrl = `${ serverUrl }/config/load_forecast/`;
+
+        axios({
+            method: 'post',
+            url: postUrl,
+            data: postData,
+        })
+        .then((response) => {
+            console.log(response);
+        }, (error) => {
+            console.log(error);
+        });
+
+        // const res = axios.post('/api/config/load_forecast/', post_list);
+
         this.setState({ open: false});
+
+
+
         // TODO: backend
         // POST data to save as a profile
     };
@@ -102,7 +140,7 @@ class AlgInputsLoadForecast extends Component {
     getResult = async (county) => {
         this.setState({ county: document.getElementById("standard-county").value });
         console.log(county);
-        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ county }`);
+        const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?county=${ county }`);
         console.log(res.data);
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {
@@ -130,12 +168,12 @@ class AlgInputsLoadForecast extends Component {
             });
         });
     }
-      
+
     runAlgorithm = async (county) => {
         this.setState({ open: true });
         this.props.visualizeResults(await this.getResult(county));
     };
-  
+
     render() {
         const { classes } = this.props;
         return (
@@ -150,7 +188,7 @@ class AlgInputsLoadForecast extends Component {
                             className: classes.menu,
                         },
                     }}
-                    helperText="Please select a county"  
+                    helperText="Please select a county"
                     margin="normal"
                     value={ this.state.county_choice }
                 >
@@ -173,6 +211,7 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.aggregation_level }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ this.update("aggregation_level") }
                 />
                 <TextField
                     id="standard-num_evs"
@@ -180,6 +219,7 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.num_evs }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ this.update("num_evs") }
                 />
                 <TextField
                     id="standard-fast_percent"
@@ -187,6 +227,7 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.fast_percent }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ this.update("fast_percent") }
                 />
                 <TextField
                     id="standard-work_percent"
@@ -194,6 +235,7 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.work_percent }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ this.update("work_percent") }
                 />
                 <TextField
                     id="standard-res_percent"
@@ -201,6 +243,7 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.res_percent }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ this.update("res_percent") }
                 />
                 <TextField
                     id="standard-l1_percent"
@@ -208,6 +251,7 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.l1_percent }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ this.update("l1_percent") }
                 />
                 <TextField
                     id="standard-public_l2_percent"
@@ -215,6 +259,7 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.publicl2_percent }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ this.update("public_l2_percent") }
                 />
                 <p/>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
@@ -231,6 +276,8 @@ class AlgInputsLoadForecast extends Component {
                             margin="dense"
                             id="profile_name"
                             label="Profile Name"
+                            value={ this.state.config_name }
+                            onChange={ this.update("config_name") }
                             fullWidth
                         />
                     </DialogContent>
