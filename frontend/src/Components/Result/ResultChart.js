@@ -55,19 +55,21 @@ class ResultChart extends React.Component {
                 title: results[attr].yAxis,
                 color: colors[i],
             });
+            console.log(newItems)
             newData.push({
                 key: attr,
                 data: results[attr].data,
                 color: colors[i],
             });
+            console.log(newData)
         });
 
         return (
             <div className="chart-grid">
                 {
                     /* title of chart */
-                    this.props.legendPosition == "none" &&
-                    <h5 class='chartTitle'>{ Object.keys(results)[0] }</h5>
+                    this.props.legendPosition === "none" &&
+                    <h5 className='chartTitle'>{ Object.keys(results)[0] }</h5>
                 }
 
                 {/* X Axis Label */}
@@ -75,7 +77,7 @@ class ResultChart extends React.Component {
 
                 <XYPlot height={ this.props.graphHeight } width={ this.props.graphWidth }>
                     {
-                        this.props.legendPosition == "right" &&
+                        this.props.legendPosition === "right" &&
                         <DiscreteColorLegend
                             style={{
                                 position: "absolute",
@@ -106,6 +108,8 @@ class ResultChart extends React.Component {
                         position="end"
                         tickFormat={(d) => {
                             if (this.props.results[Object.keys(this.props.results)[0]].xAxis === "Time") { // options (time / year)
+                                console.log("THIS PROPS")
+                                console.log(this.props.results[Object.keys(this.props.results)[0]].xAxis)
                                 const minute = d * 15;
                                 return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
                             } else {
@@ -126,7 +130,7 @@ class ResultChart extends React.Component {
                     /> */}
 
                     {
-                        this.props.legendPosition != "none" &&
+                        this.props.legendPosition !== "none" &&
                         <ChartLabel
                             text={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
                             className="alt-y-label"

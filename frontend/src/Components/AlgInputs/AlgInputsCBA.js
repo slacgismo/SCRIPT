@@ -59,6 +59,8 @@ class AlgInputsCBA extends Component {
         axios("http://127.0.0.1:8000/api/config/load_forecast/")
             .then(res => {
                 this.setState({ profileData: res.data });
+                console.log("ALGINPUTS res data")
+                console.log(res.data)
                 const profiles = res.data;
                 const profileNames = [];
                 for (var i = 0; i < res.data.length; i++) {
@@ -67,7 +69,6 @@ class AlgInputsCBA extends Component {
                     profileNamesUnit.name = profiles[i]["config_name"];
                     profileNames.push(profileNamesUnit);
                 }
-                console.log(profileNames);
                 this.setState({ profileNames });
                 console.log(this.state.profileNames);
                 this.setState({ profileName: document.getElementById("standard-profile").value});
@@ -116,6 +117,7 @@ class AlgInputsCBA extends Component {
         // const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ this.state.county }`);
         const dataLoadForecast = [];
         axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast").then(res => {
+            console.log("RES DATA FOR LOAD FORECAST")
             console.log(res.data);
             
             for (var i = 0; i < res.data.length; i++) {
@@ -155,6 +157,8 @@ class AlgInputsCBA extends Component {
         
         for (var i = 0; i < res.data.length; i++) {
             const dataCBAUnit = res.data[i];
+            console.log("DATACBAUNIT")
+            console.log(dataCBAUnit)
             dataCBAUnit.consumption = (res.data[i].consumption);  
             dataCBASub.push(dataCBAUnit);
         }

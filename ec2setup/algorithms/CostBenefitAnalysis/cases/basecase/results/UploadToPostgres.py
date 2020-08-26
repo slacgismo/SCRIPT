@@ -213,10 +213,10 @@ class UploadToPostgres():
 
         self.cur = self.conn.cursor()
 
-        self.run_load_profile()
-        self.run_cost_benefit()
-        #self.run_gas_consumption()
-        #self.run_npv()
+        # self.run_load_profile()
+        # self.run_cost_benefit()
+        self.run_gas_consumption()
+        self.run_npv()
         self.run_emission()
 
         # Close communication with the database
@@ -242,17 +242,17 @@ class UploadToPostgres():
                                 self.load_profile_result_dict[poi][day_type][hour][i]
                             )
 
-                        self.cur.execute("INSERT INTO " + self.config_cba_load_profile_table_name + " (lf_config, poi, year, day_type) VALUES (%s, %s, %s, %s)",
-                            (
-                                '1', str(poi), int(cur_year), str(day_type)
-                            )
-                        )
+                        # self.cur.execute("INSERT INTO " + self.config_cba_load_profile_table_name + " (lf_config, poi, year, day_type) VALUES (%s, %s, %s, %s)",
+                        #     (
+                        #         'profile-1', str(poi), int(cur_year), str(day_type)
+                        #     )
+                        # )
 
                         self.conn.commit()
 
                         #query for the id of the config table
                         self.cur.execute("SELECT id FROM "+self.config_cba_load_profile_table_name + " ORDER BY id DESC LIMIT 1")
-                        config_load_profile_id = self.cur.fetchone()
+                        config_load_profile_id = self.cur.fetchone()[0]
 
                         self.cur.execute("INSERT INTO " + self.cba_load_profile_table_name + " (config, loads) VALUES (%s, %s)",
                             (
@@ -279,19 +279,19 @@ class UploadToPostgres():
                     print("********** key name: " + key)
                     tmp_res[key] = self.cost_benefit_result_dict[key][i]
 
-            self.cur.execute("INSERT INTO " + self.config_cba_cost_benefit_table_name + " (lf_config, year) VALUES (%s, %s)",
-                (
-                    '1', str(self.cost_benefit_result_dict['Year'][i])
-                )
-            )
+            # self.cur.execute("INSERT INTO " + self.config_cba_cost_benefit_table_name + " (lf_config, year) VALUES (%s, %s)",
+            #     (
+            #         'profile-1', str(self.cost_benefit_result_dict['Year'][i])
+            #     )
+            # )
             self.conn.commit()
 
             self.cur.execute("SELECT id FROM "+self.config_cba_cost_benefit_table_name + " ORDER BY id DESC LIMIT 1")
-            config_cost_benefit_id = self.cur.fetchone()
+            config_cost_benefit_id = self.cur.fetchone()[0]
 
             self.cur.execute("INSERT INTO " + self.cba_cost_benefit_table_name + " (config, cost_benefit) VALUES (%s, %s)",
                 (
-                    str(config_cost_benefit_id), str(self.cost_benefit_result_dict['Year'][i]), json.dumps(tmp_res)
+                    str(config_cost_benefit_id), json.dumps(tmp_res)
                 )
             )
 
@@ -312,16 +312,16 @@ class UploadToPostgres():
                 if key != 'Year':
                     tmp_res[key] = self.gas_consumption_result_dict[key][i]
 
-            self.cur.execute("INSERT INTO " + self.config_gas_consumption_table_name + " (lf_config, year) VALUES (%s, %s, %s)",
+            self.cur.execute("INSERT INTO " + self.config_gas_consumption_table_name + " (lf_config, year) VALUES (%s, %s)",
                 (
-                    '1', str(self.gas_consumption_result_dict['Year'][i])
+                    'profile-1', str(self.gas_consumption_result_dict['Year'][i])
                 )
             )
 
             self.conn.commit()
 
             self.cur.execute("SELECT id FROM "+self.config_gas_consumption_table_name + " ORDER BY id DESC LIMIT 1")
-            config_gas_consumption_id = self.cur.fetchone()
+            config_gas_consumption_id = self.cur.fetchone()[0]
 
             self.cur.execute("INSERT INTO " + self.gas_consumption_table_name + " (config, consumption) VALUES (%s, %s)",
                 (
@@ -340,14 +340,14 @@ class UploadToPostgres():
         # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_net_present_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, npv varchar);")
         self.cur.execute("INSERT INTO " + self.config_cba_net_present_table_name + " (lf_config, year) VALUES (%s, %s)",
             (
-                '1', '2020'
+                'profile-1', '2020'
             )
         )
 
         self.conn.commit()
 
         self.cur.execute("SELECT id FROM "+self.config_cba_net_present_table_name + " ORDER BY id DESC LIMIT 1")
-        config_net_present_id = self.cur.fetchone()
+        config_net_present_id = self.cur.fetchone()[0]
         
         self.cur.execute("INSERT INTO " + self.cba_net_present_table_name + " (config, npv) VALUES (%s, %s)",
             (
@@ -373,14 +373,14 @@ class UploadToPostgres():
             
             self.cur.execute("INSERT INTO " + self.config_cba_emission_table_name + " (lf_config, year) VALUES (%s, %s)",
                 (
-                    '1', str(self.emission_result_dict['Year'][i])
+                    'profile-1', str(self.emission_result_dict['Year'][i])
                 )
             )
 
             self.conn.commit()
 
             self.cur.execute("SELECT id FROM "+self.config_cba_emission_table_name + " ORDER BY id DESC LIMIT 1")
-            config_emission_id = self.cur.fetchone()
+            config_emission_id = self.cur.fetchone()[0]
 
             self.cur.execute("INSERT INTO " + self.cba_emission_table_name + " (config, emissions) VALUES (%s, %s)",
                 (
