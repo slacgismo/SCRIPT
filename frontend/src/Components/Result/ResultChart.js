@@ -44,10 +44,6 @@ class ResultChart extends React.Component {
             "#911955",
         ];
         const { results } = this.props;
-
-        console.log("Results in a chart");
-        console.log(results);
-
         const newItems = [];
         const newData = [];
         Object.keys(results).forEach((attr, i) => {
@@ -66,8 +62,8 @@ class ResultChart extends React.Component {
             <div className="chart-grid">
                 {
                     /* title of chart */
-                    this.props.legendPosition == "none" &&
-                    <h5 class='chartTitle'>{ Object.keys(results)[0] }</h5>
+                    this.props.legendPosition === "none" &&
+                    <h5 className='chartTitle'>{ Object.keys(results)[0] }</h5>
                 }
 
                 {/* X Axis Label */}
@@ -75,7 +71,7 @@ class ResultChart extends React.Component {
 
                 <XYPlot height={ this.props.graphHeight } width={ this.props.graphWidth }>
                     {
-                        this.props.legendPosition == "right" &&
+                        this.props.legendPosition === "right" &&
                         <DiscreteColorLegend
                             style={{
                                 position: "absolute",
@@ -126,7 +122,7 @@ class ResultChart extends React.Component {
                     /> */}
 
                     {
-                        this.props.legendPosition != "none" &&
+                        this.props.legendPosition !== "none" &&
                         <ChartLabel
                             text={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
                             className="alt-y-label"
