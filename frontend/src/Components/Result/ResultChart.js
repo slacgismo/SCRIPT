@@ -44,10 +44,6 @@ class ResultChart extends React.Component {
             "#911955",
         ];
         const { results } = this.props;
-
-        console.log("Results in a chart");
-        console.log(results);
-
         const newItems = [];
         const newData = [];
         Object.keys(results).forEach((attr, i) => {
@@ -55,13 +51,11 @@ class ResultChart extends React.Component {
                 title: results[attr].yAxis,
                 color: colors[i],
             });
-            console.log(newItems)
             newData.push({
                 key: attr,
                 data: results[attr].data,
                 color: colors[i],
             });
-            console.log(newData)
         });
 
         return (
@@ -108,8 +102,6 @@ class ResultChart extends React.Component {
                         position="end"
                         tickFormat={(d) => {
                             if (this.props.results[Object.keys(this.props.results)[0]].xAxis === "Time") { // options (time / year)
-                                console.log("THIS PROPS")
-                                console.log(this.props.results[Object.keys(this.props.results)[0]].xAxis)
                                 const minute = d * 15;
                                 return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
                             } else {

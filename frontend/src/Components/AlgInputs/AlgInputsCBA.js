@@ -59,8 +59,6 @@ class AlgInputsCBA extends Component {
         axios("http://127.0.0.1:8000/api/config/load_forecast/")
             .then(res => {
                 this.setState({ profileData: res.data });
-                console.log("ALGINPUTS res data")
-                console.log(res.data)
                 const profiles = res.data;
                 const profileNames = [];
                 for (var i = 0; i < res.data.length; i++) {
@@ -70,16 +68,13 @@ class AlgInputsCBA extends Component {
                     profileNames.push(profileNamesUnit);
                 }
                 this.setState({ profileNames });
-                console.log(this.state.profileNames);
                 this.setState({ profileName: document.getElementById("standard-profile").value});
-                console.log(this.state.profileName);
                 
             })
             .catch(console.log);
     }
 
     handleClose = () => {
-        console.log(this);
         this.setState({ openResult: false });
         this.setState({ openUpload: false });
     }
@@ -117,8 +112,6 @@ class AlgInputsCBA extends Component {
         // const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ this.state.county }`);
         const dataLoadForecast = [];
         axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast").then(res => {
-            console.log("RES DATA FOR LOAD FORECAST")
-            console.log(res.data);
             
             for (var i = 0; i < res.data.length; i++) {
                 const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
@@ -139,9 +132,6 @@ class AlgInputsCBA extends Component {
             }
     
             this.setState({ resultsLoadForecast: dataLoadForecast});
-            
-            console.log(dataLoadForecast);
-
         });
 
         return dataLoadForecast;
@@ -153,17 +143,13 @@ class AlgInputsCBA extends Component {
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/gas_consumption");
         const dataCBA = {gasConsumption: []};
         const dataCBASub = [];
-        console.log(res.data);
         
         for (var i = 0; i < res.data.length; i++) {
             const dataCBAUnit = res.data[i];
-            console.log("DATACBAUNIT")
-            console.log(dataCBAUnit)
             dataCBAUnit.consumption = (res.data[i].consumption);  
             dataCBASub.push(dataCBAUnit);
         }
         dataCBA.gasConsumption = dataCBASub;
-        console.log(dataCBA);
         return this.preprocessData(dataCBA);
     };
 
@@ -200,10 +186,6 @@ class AlgInputsCBA extends Component {
                 [field]: result[field],
             });
         }
-
-        console.log("preprocessed data:");
-        console.log(resultFlattened);
-
         return resultFlattened;
     };
 

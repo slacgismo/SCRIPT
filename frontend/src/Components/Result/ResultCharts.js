@@ -10,7 +10,6 @@ function ResultCharts(props) {
         FULL_WIDTH / MAX_GRAPH_PER_LINE ;
     
     // If only one line, it should be enough to use title only, so no legend is needed.
-    console.log(props.results);
     const legendPosition = Object.keys(props.results[0]).length === 1 ? "none" : "right";
 
     const resultCharts = props.results.map((result, i) => (

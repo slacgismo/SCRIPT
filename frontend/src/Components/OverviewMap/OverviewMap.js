@@ -112,7 +112,7 @@ class OverviewMap extends React.PureComponent {
             styledMap: null,
         };
 
-        // addCountyColorByAttr(counties, this.props.overviewParam);
+        addCountyColorByAttr(counties, this.props.overviewParam);
 
         // this.styledMap = getStyledMapWrapperByCountyColors(
         //   counties,
@@ -149,8 +149,6 @@ class OverviewMap extends React.PureComponent {
                     peak_energy: data.peak_energy,
                 };
             });
-
-            console.log(counties);
             this.updateMap("total_energy");
             
             svgPanZoom("#usa-ca");
@@ -246,10 +244,10 @@ class OverviewMap extends React.PureComponent {
       });
   }
 
-  onMouseOut = () => {
+  onMouseOut = e => {
       this.setState({ current: {
-          countyName: null,
-          [this.state.chosenParam]: null,
+          countyName: e.target.attributes.name.value,
+          [this.state.chosenParam]: (counties[e.target.attributes.name.value][this.state.chosenParam] * 1000).toFixed(1),
       }, isTooltipVisible: false });
   }
 }

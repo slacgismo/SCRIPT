@@ -242,11 +242,11 @@ class UploadToPostgres():
                                 self.load_profile_result_dict[poi][day_type][hour][i]
                             )
 
-                        # self.cur.execute("INSERT INTO " + self.config_cba_load_profile_table_name + " (lf_config, poi, year, day_type) VALUES (%s, %s, %s, %s)",
-                        #     (
-                        #         'profile-1', str(poi), int(cur_year), str(day_type)
-                        #     )
-                        # )
+                        self.cur.execute("INSERT INTO " + self.config_cba_load_profile_table_name + " (lf_config, poi, year, day_type) VALUES (%s, %s, %s, %s)",
+                            (
+                                'profile-1', str(poi), int(cur_year), str(day_type)
+                            )
+                        )
 
                         self.conn.commit()
 
@@ -279,11 +279,11 @@ class UploadToPostgres():
                     print("********** key name: " + key)
                     tmp_res[key] = self.cost_benefit_result_dict[key][i]
 
-            # self.cur.execute("INSERT INTO " + self.config_cba_cost_benefit_table_name + " (lf_config, year) VALUES (%s, %s)",
-            #     (
-            #         'profile-1', str(self.cost_benefit_result_dict['Year'][i])
-            #     )
-            # )
+            self.cur.execute("INSERT INTO " + self.config_cba_cost_benefit_table_name + " (lf_config, year) VALUES (%s, %s)",
+                (
+                    'profile-1', str(self.cost_benefit_result_dict['Year'][i])
+                )
+            )
             self.conn.commit()
 
             self.cur.execute("SELECT id FROM "+self.config_cba_cost_benefit_table_name + " ORDER BY id DESC LIMIT 1")

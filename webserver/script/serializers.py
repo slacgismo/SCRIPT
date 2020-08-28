@@ -23,8 +23,6 @@ class EnergySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
-
 class LoadControllerConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = LoadControllerConfig

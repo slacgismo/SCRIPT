@@ -139,9 +139,7 @@ class AlgInputsLoadForecast extends Component {
     // TODO: backend
     getResult = async (county) => {
         this.setState({ county: document.getElementById("standard-county").value });
-        console.log(county);
         const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?county=${ county }`);
-        console.log(res.data);
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {
             const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
