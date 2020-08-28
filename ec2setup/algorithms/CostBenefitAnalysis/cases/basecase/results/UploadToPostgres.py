@@ -213,8 +213,8 @@ class UploadToPostgres():
 
         self.cur = self.conn.cursor()
 
-        # self.run_load_profile()
-        # self.run_cost_benefit()
+        self.run_load_profile()
+        self.run_cost_benefit()
         self.run_gas_consumption()
         self.run_npv()
         self.run_emission()
@@ -227,6 +227,7 @@ class UploadToPostgres():
     def run_load_profile(self):
         # create table on Postgres
         # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_load_profile_table_name + " (id serial PRIMARY KEY, config_id INTEGER, poi varchar, year INTEGER, day_type varchar, loads varchar);")
+        
         tmp_load = {}
 
         for i in range(self.load_profile_year_len):
@@ -301,7 +302,6 @@ class UploadToPostgres():
 
 
     def run_gas_consumption(self):
-
         # create table on Postgres
         # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.gas_consumption_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, consumption varchar);")
 
@@ -335,9 +335,9 @@ class UploadToPostgres():
 
 
     def run_npv(self):
-
         # create table on Postgres
         # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_net_present_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, npv varchar);")
+        
         self.cur.execute("INSERT INTO " + self.config_cba_net_present_table_name + " (lf_config, year) VALUES (%s, %s)",
             (
                 'profile-1', '2020'
@@ -361,7 +361,7 @@ class UploadToPostgres():
         self.conn.commit()
     
     def run_emission(self):
-         # create table on Postgres
+        # create table on Postgres
         # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.config_cba_emission_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, emissions varchar);")
 
         for i in range(self.emission_year_len):
