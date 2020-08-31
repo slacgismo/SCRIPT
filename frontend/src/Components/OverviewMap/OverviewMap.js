@@ -28,7 +28,6 @@ import {
     getBasicColor,
     getColorPercentageEsp,
 } from "./overviewMapStyled";
-// import { counties } from "../Api/sampleCounties";
 import OverviewMapLegend from "./OverviewMapLegend";
 import { countyRes } from "../Api/CountyData";
 
@@ -113,12 +112,10 @@ class OverviewMap extends React.PureComponent {
         };
 
         addCountyColorByAttr(counties, this.props.overviewParam);
-
         this.styledMap = getStyledMapWrapperByCountyColors(
           counties,
         )
         this.Viewer = null;
-
         this.updateMap = this.updateMap.bind(this);
     }
 
@@ -142,7 +139,6 @@ class OverviewMap extends React.PureComponent {
     componentDidMount = () => {
         countyRes.then(res => {
             const countyData = res.data;
-            console.log("COUNTYDATA", countyData, "RES", res);
             countyData.forEach(data => {
                 counties[data.name] = {
                     total_energy: data.total_energy,
@@ -150,16 +146,8 @@ class OverviewMap extends React.PureComponent {
                     peak_energy: data.peak_energy,
                 };
             });
-<<<<<<< HEAD
-
-            console.log('counties', counties);
-=======
->>>>>>> origin
             this.updateMap("total_energy");
-            
             svgPanZoom("#usa-ca");
-
-
         });
     }
 
@@ -173,7 +161,6 @@ class OverviewMap extends React.PureComponent {
         // }
 
         const { current, isTooltipVisible, tooltipX, tooltipY } = this.state;
-        console.log("CURRENT", current);
         const layerProps = {
             onMouseOver: this.onMouseOver,
             onMouseMove: this.onMouseMove,
@@ -231,28 +218,14 @@ class OverviewMap extends React.PureComponent {
     
     }
 
-//   onMouseOver = e => {
-//       console.log('onMouseover', e.target.attributes);
-//       if (!counties[e.target.attributes.id.value]) {
-//         return
-//       }
-      
-//       this.setState({ current: {
-//           countyName: e.target.attributes.name.value,
-//           [this.state.chosenParam]: (counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
-//       } });
-//   }
-
   onMouseOver = e => {
+    if (!counties[e.target.attributes.name.value]) {
+        return
+    }
     let newState = { current: {
         countyName: e.target.attributes.name.value,
-        [this.state.chosenParam]: (e.target.attributes.id.value[this.state.chosenParam] * 1000).toFixed(1),
+        [this.state.chosenParam]: (counties[e.target.attributes.name.value][this.state.chosenParam] * 1000).toFixed(1),
     } }
-    console.log('onMouseover', newState);
-    // if (!counties[e.target.attributes.id.value]) {
-    //     return
-    // }
-      
     this.setState(newState);
 }
 
@@ -264,23 +237,11 @@ class OverviewMap extends React.PureComponent {
       });
   }
 
-<<<<<<< HEAD
   onMouseOut = e => {
-      let newState = { current: {
-        countyName: e.target.attributes.name.value,
-        [this.state.chosenParam]: (e.target.attributes.name.value[this.state.chosenParam] * 1000).toFixed(1),
-      }, isTooltipVisible: false }
-      console.log('onMouseOut', newState);
-      this.setState(newState);
-  }
-=======
-  onMouseOut = () => {
-    this.setState({ current: {
-        countyName: null,
-        [this.state.chosenParam]: null,
-    }, isTooltipVisible: false });
-}
->>>>>>> origin
+      this.setState({
+          isTooltipVisible: false
+      })
+    }
 }
 
 export default OverviewMap;
