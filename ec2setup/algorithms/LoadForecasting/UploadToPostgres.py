@@ -55,12 +55,12 @@ class UploadToPostgres():
         cur = conn.cursor()
 
         # create table on Postgres
-        cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, aggregation_level varchar, num_evs INTEGER," + \
-            " choice varchar, fast_percent numeric, work_percent numeric, res_percent numeric, l1_percent numeric, public_l2_percent numeric, residential_l1_load varchar, residential_l2_load varchar, residential_mud_load varchar," + \
-            " work_load varchar, fast_load varchar, public_l2_load varchar, total_load varchar);")
+        # cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, aggregation_level varchar, num_evs INTEGER," + \
+        #     " choice varchar, fast_percent numeric, work_percent numeric, res_percent numeric, l1_percent numeric, public_l2_percent numeric, residential_l1_load varchar, residential_l2_load varchar, residential_mud_load varchar," + \
+        #     " work_load varchar, fast_load varchar, public_l2_load varchar, total_load varchar);")
 
-        cur.execute("CREATE TABLE IF NOT EXISTS " + self.config_table_name + " (id serial PRIMARY KEY, config_name varchar, aggregation_level varchar, num_evs INTEGER," + \
-            " choice varchar, fast_percent numeric, work_percent numeric, res_percent numeric, l1_percent numeric, public_l2_percent numeric);")
+        # cur.execute("CREATE TABLE IF NOT EXISTS " + self.config_table_name + " (id serial PRIMARY KEY, config_name varchar, aggregation_level varchar, num_evs INTEGER," + \
+        #     " choice varchar, fast_percent numeric, work_percent numeric, res_percent numeric, l1_percent numeric, public_l2_percent numeric);")
 
         cur.execute("INSERT INTO " + self.config_table_name + \
             " (config_name, aggregation_level, num_evs, choice," + \
@@ -71,6 +71,10 @@ class UploadToPostgres():
                     str(work_percent), str(res_percent), str(l1_percent), str(publicl2_percent)
             )
         )
+
+        conn.commit()
+        cur.execute("SELECT id FROM "+self.config_table_name + " ORDER BY id DESC LIMIT 1")
+        config_id = cur.fetchone()
 
         # upload data into Postgres
         residential_l1_load_list = []
@@ -144,13 +148,13 @@ class UploadToPostgres():
                 }
             )
 
+
         cur.execute("INSERT INTO " + self.table_name + \
-            " (aggregation_level, num_evs, choice, fast_percent, work_percent, res_percent, l1_percent, public_l2_percent, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
+            " (config, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
             " work_load, public_l2_load, total_load)" + \
-            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
             (
-                str(aggregation_level), str(int(num_evs)), str(county_choice), str(fast_percent), 
-                    str(work_percent), str(res_percent), str(l1_percent), str(publicl2_percent),
+                str(config_id),
                 json.dumps(residential_l1_load_list), json.dumps(residential_l2_load_list),
                 json.dumps(residential_mud_load_list), json.dumps(fast_load_list),
                 json.dumps(work_load_list), json.dumps(public_l2_load_list), json.dumps(total_load_list)

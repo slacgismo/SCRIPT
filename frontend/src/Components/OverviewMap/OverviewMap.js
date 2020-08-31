@@ -112,11 +112,11 @@ class OverviewMap extends React.PureComponent {
             styledMap: null,
         };
 
-        // addCountyColorByAttr(counties, this.props.overviewParam);
+        addCountyColorByAttr(counties, this.props.overviewParam);
 
-        // this.styledMap = getStyledMapWrapperByCountyColors(
-        //   counties,
-        // )
+        this.styledMap = getStyledMapWrapperByCountyColors(
+          counties,
+        )
         this.Viewer = null;
 
         this.updateMap = this.updateMap.bind(this);
@@ -150,8 +150,11 @@ class OverviewMap extends React.PureComponent {
                     peak_energy: data.peak_energy,
                 };
             });
+<<<<<<< HEAD
 
             console.log('counties', counties);
+=======
+>>>>>>> origin
             this.updateMap("total_energy");
             
             svgPanZoom("#usa-ca");
@@ -261,6 +264,7 @@ class OverviewMap extends React.PureComponent {
       });
   }
 
+<<<<<<< HEAD
   onMouseOut = e => {
       let newState = { current: {
         countyName: e.target.attributes.name.value,
@@ -269,6 +273,14 @@ class OverviewMap extends React.PureComponent {
       console.log('onMouseOut', newState);
       this.setState(newState);
   }
+=======
+  onMouseOut = () => {
+    this.setState({ current: {
+        countyName: null,
+        [this.state.chosenParam]: null,
+    }, isTooltipVisible: false });
+}
+>>>>>>> origin
 }
 
 export default OverviewMap;

@@ -18,7 +18,7 @@ class County(models.Model):
 class ZipCode(models.Model):
     """Zip Code"""
     code = models.CharField(max_length=5, validators=[validate_zipcode], primary_key=True)
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
+    county = models.ForeignKey(County, on_delete=models.CASCADE, db_column="county")
 
     class Meta:
         db_table = 'script_zip_code'
@@ -27,7 +27,7 @@ class ZipCode(models.Model):
 class ChargingStation(models.Model):
     """Charging station"""
     id = models.CharField(max_length=6, primary_key=True)
-    zipcode = models.ForeignKey(ZipCode, on_delete=models.CASCADE)
+    zipcode = models.ForeignKey(ZipCode, on_delete=models.CASCADE, db_column="zipcode")
 
     class Meta:
         db_table = 'script_charging_station'
@@ -36,7 +36,7 @@ class ChargingStation(models.Model):
 class ChargingPort(models.Model):
     """Charging port"""
     id = models.CharField(max_length=6, primary_key=True)
-    station = models.ForeignKey(ChargingStation, on_delete=models.CASCADE)
+    station = models.ForeignKey(ChargingStation, on_delete=models.CASCADE, db_column="station")
     connector = models.CharField(max_length=20, choices=ChargingConnector.choices(), default=ChargingConnector.UNKNOWN)
 
     class Meta:
@@ -46,7 +46,7 @@ class ChargingPort(models.Model):
 class Driver(models.Model):
     """Driver"""
     id = models.CharField(max_length=7, primary_key=True)
-    zipcode = models.ForeignKey(ZipCode, on_delete=models.CASCADE)
+    zipcode = models.ForeignKey(ZipCode, on_delete=models.CASCADE, db_column="zipcode")
 
     class Meta:
         db_table = 'script_driver'
@@ -70,7 +70,7 @@ class ChargingSession(models.Model):
     id = models.CharField(max_length=9, primary_key=True)
     start_time = models.DateTimeField() # default timezone PT
     end_time = models.DateTimeField()
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, db_column="driver")
     session_time = models.IntegerField() # sec
     charging_time = models.IntegerField() # sec
 
@@ -81,7 +81,7 @@ class ChargingSession(models.Model):
 class ChargingInterval(models.Model):
     """Charging interval"""
     id = models.CharField(max_length=9, primary_key=True)
-    session = models.ForeignKey(ChargingSession, on_delete=models.CASCADE)
+    session = models.ForeignKey(ChargingSession, on_delete=models.CASCADE, db_column="session")
     peak_power = models.FloatField(validators=[validate_positive])
     avg_power = models.FloatField(validators=[validate_positive])
     energy = models.FloatField(validators=[validate_positive])

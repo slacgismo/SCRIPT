@@ -119,9 +119,7 @@ class AlgInputsLoadControl extends Component {
     // // TODO: backend
     async getResult() {
         var county = document.getElementById("standart-county").value;
-        console.log(county);
         const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_controller/?county=${ county }`);
-        console.log(res.data);
         const dataLoadControll = [];
         for (var i = 0; i < res.data.length; i++) {
             const  dataLoadControllUnit = {uncontrolled_load: "", controlled_load: ""};
@@ -129,7 +127,6 @@ class AlgInputsLoadControl extends Component {
             dataLoadControllUnit.controlled_load = (res.data[i].controlled_load);
             dataLoadControll.push(dataLoadControllUnit);
         }
-        console.log(dataLoadControll);
         return dataLoadControll;
     }
 
