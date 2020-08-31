@@ -85,7 +85,7 @@ export const getStyledMapWrapperByCountyColors = (countyColors) => {
     let countyColorsCSS = "";
     Object.keys(countyColors).forEach(county => {
         countyColorsCSS += `
-      path[id='${county}'] {
+      path[name='${county}'] {
         fill: ${countyColors[county]["color"]};
       }
     `;
