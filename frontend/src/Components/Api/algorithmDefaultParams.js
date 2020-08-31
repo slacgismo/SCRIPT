@@ -9,7 +9,9 @@ export const loadControlDefaultParams = {
 };
 
 export const loadForecastDefaultParams = {
-    aggregation_level: "county",
+
+    config_name: "",
+    aggregation_level: "COUNTY",
     num_evs: 1e6,
     county_choice: "santa clara",
     fast_percent: 0.1,

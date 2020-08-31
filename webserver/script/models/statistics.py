@@ -4,7 +4,7 @@ from script.validators import validate_month, validate_year
 
 class Energy(models.Model):
     """Energy consumed by county and year-month"""
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
+    county = models.ForeignKey(County, on_delete=models.CASCADE, db_column="county")
     year = models.IntegerField(validators=[validate_year])
     month = models.IntegerField(validators=[validate_month])
     energy = models.FloatField()

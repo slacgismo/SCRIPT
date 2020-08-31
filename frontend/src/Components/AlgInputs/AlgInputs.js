@@ -34,9 +34,6 @@ export default function AlgInputs (props) {
         // const result = props.data;
         const data_to_visualize_all = [];
 
-        console.log("results arr:");
-        console.log(resultArr);
-
         const isTimeSeries = resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
 
         for (const result of resultArr) {
@@ -60,9 +57,6 @@ export default function AlgInputs (props) {
 
             data_to_visualize_all.push(data_to_visualize);
         }
-
-        console.log("In all charts");
-        console.log(data_to_visualize_all);
         
         props.visualizeResults(data_to_visualize_all);
     };
