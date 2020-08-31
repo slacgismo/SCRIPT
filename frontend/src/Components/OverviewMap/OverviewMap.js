@@ -28,7 +28,6 @@ import {
     getBasicColor,
     getColorPercentageEsp,
 } from "./overviewMapStyled";
-// import { counties } from "../Api/sampleCounties";
 import OverviewMapLegend from "./OverviewMapLegend";
 import { countyRes } from "../Api/CountyData";
 
@@ -113,12 +112,10 @@ class OverviewMap extends React.PureComponent {
         };
 
         addCountyColorByAttr(counties, this.props.overviewParam);
-
         this.styledMap = getStyledMapWrapperByCountyColors(
           counties,
         )
         this.Viewer = null;
-
         this.updateMap = this.updateMap.bind(this);
     }
 
@@ -150,10 +147,7 @@ class OverviewMap extends React.PureComponent {
                 };
             });
             this.updateMap("total_energy");
-            
             svgPanZoom("#usa-ca");
-
-
         });
     }
 
@@ -167,7 +161,6 @@ class OverviewMap extends React.PureComponent {
         // }
 
         const { current, isTooltipVisible, tooltipX, tooltipY } = this.state;
-    
         const layerProps = {
             onMouseOver: this.onMouseOver,
             onMouseMove: this.onMouseMove,
@@ -226,15 +219,15 @@ class OverviewMap extends React.PureComponent {
     }
 
   onMouseOver = e => {
-      if (!counties[e.target.attributes.id.value]) {
+    if (!counties[e.target.attributes.name.value]) {
         return
-      }
-      
-      this.setState({ current: {
-          countyName: e.target.attributes.name.value,
-          [this.state.chosenParam]: (counties[e.target.attributes.id.value][this.state.chosenParam] * 1000).toFixed(1),
-      } });
-  }
+    }
+    let newState = { current: {
+        countyName: e.target.attributes.name.value,
+        [this.state.chosenParam]: (counties[e.target.attributes.name.value][this.state.chosenParam] * 1000).toFixed(1),
+    } }
+    this.setState(newState);
+}
 
   onMouseMove = e => {
       this.setState({
@@ -244,12 +237,11 @@ class OverviewMap extends React.PureComponent {
       });
   }
 
-  onMouseOut = () => {
-    this.setState({ current: {
-        countyName: null,
-        [this.state.chosenParam]: null,
-    }, isTooltipVisible: false });
-}
+  onMouseOut = e => {
+      this.setState({
+          isTooltipVisible: false
+      })
+    }
 }
 
 export default OverviewMap;
