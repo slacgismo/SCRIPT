@@ -116,6 +116,10 @@ class AlgInputsLoadControl extends Component {
         // });
     }
 
+    update = (field, event) => {
+        this.setState({ [field]: event.currentTarget.value })
+    };
+
     // // TODO: backend
     async getResult() {
         var county = document.getElementById("standart-county").value;
@@ -131,6 +135,7 @@ class AlgInputsLoadControl extends Component {
     }
 
     runAlgorithm = async () => {
+        console.log(this.getResult())
         this.props.visualizeResults(await this.getResult());
     }
 
@@ -150,7 +155,7 @@ class AlgInputsLoadControl extends Component {
                             className: classes.menu,
                         },
                     }}
-                    helperText="Please select a county"  
+                    helperText="Please select a county"
                     margin="normal"
                     // value={ this.state.county }
                 >
@@ -173,6 +178,7 @@ class AlgInputsLoadControl extends Component {
                     value={ this.state.rate_energy_peak }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ e => this.update("rate_energy_peak", e) }
                 />
                 <TextField
                     id="standard-rate_energy_partpeak"
@@ -180,6 +186,7 @@ class AlgInputsLoadControl extends Component {
                     value={ this.state.rate_energy_partpeak }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ e => this.update("rate_energy_partpeak", e) }
                 />
                 <TextField
                     id="standard-rate_energy_offpeak"
@@ -187,6 +194,7 @@ class AlgInputsLoadControl extends Component {
                     value={ this.state.rate_energy_offpeak }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ e => this.update("rate_energy_offpeak", e) }
                 />
                 <TextField
                     id="standard-rate_demand_peak"
@@ -194,6 +202,7 @@ class AlgInputsLoadControl extends Component {
                     value={ this.state.rate_demand_peak }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ e => this.update("rate_demand_peak", e) }
                 />
                 <TextField
                     id="standard-rate_demand_partpeak"
@@ -201,6 +210,7 @@ class AlgInputsLoadControl extends Component {
                     value={ this.state.rate_demand_partpeak }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ e => this.update("rate_demand_partpeak", e) }
                 />
                 <TextField
                     id="standard-rate_demand_overall"
@@ -208,6 +218,7 @@ class AlgInputsLoadControl extends Component {
                     value={ this.state.rate_demand_overall }
                     className={classes.textField}
                     margin="normal"
+                    onChange={ e => this.update("rate_demand_overall", e) }
                 />
                 <br />
                 <Button
@@ -221,7 +232,7 @@ class AlgInputsLoadControl extends Component {
             </>
         );
     }
-    
+
 }
 
 export default withStyles(styles, { withTheme: true})(AlgInputsLoadControl);
