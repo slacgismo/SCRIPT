@@ -65,8 +65,6 @@ class GasConsumptionConfigSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
-
 class LoadControllerSerializer(serializers.ModelSerializer):
     class Meta:
         model = LoadController
@@ -89,6 +87,7 @@ class GasConsumptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GasConsumption
         fields = '__all__'
+        depth = 1
 
 
 class CostBenefitSerializer(serializers.ModelSerializer):

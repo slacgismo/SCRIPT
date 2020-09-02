@@ -164,7 +164,7 @@ class AlgInputsCBA extends Component {
         }
 
         data.forEach(dataItem => {
-            const year = dataItem.year;
+            const year = dataItem.config.year;
             const allFields = dataItem.consumption;
             for (const field of fields) {
                 // try {
