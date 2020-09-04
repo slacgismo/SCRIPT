@@ -45,8 +45,8 @@ function AlgorithmPageLoadControll(props) {
                         Gas consumption
                         </MenuItem>
                         <MenuItem value={"load_profile"}>Load profile</MenuItem>
-                        <MenuItem value={"cost_benefit"}>Cost_benefit</MenuItem>
-                        <MenuItem value={"net_present_value"}>Net_present_value</MenuItem>
+                        <MenuItem value={"cost_benefit"}>Cost benefit</MenuItem>
+                        <MenuItem value={"net_present_value"}>Net present value</MenuItem>
                         <MenuItem value={"emission"}>Emission</MenuItem>
 
                     </Select>

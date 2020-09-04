@@ -255,7 +255,7 @@ class UploadToPostgres():
                         self.cur.execute("SELECT id FROM "+self.config_cba_load_profile_table_name + " ORDER BY id DESC LIMIT 1")
                         config_load_profile_id = self.cur.fetchone()[0]
 
-                        self.cur.execute("INSERT INTO " + self.cba_load_profile_table_name + " (config, loads) VALUES (%s, %s)",
+                        self.cur.execute("INSERT INTO " + self.cba_load_profile_table_name + " (config, values) VALUES (%s, %s)",
                             (
                                 str(config_load_profile_id), json.dumps(tmp_load[poi][cur_year][day_type])
                             )
@@ -290,7 +290,7 @@ class UploadToPostgres():
             self.cur.execute("SELECT id FROM "+self.config_cba_cost_benefit_table_name + " ORDER BY id DESC LIMIT 1")
             config_cost_benefit_id = self.cur.fetchone()[0]
 
-            self.cur.execute("INSERT INTO " + self.cba_cost_benefit_table_name + " (config, cost_benefit) VALUES (%s, %s)",
+            self.cur.execute("INSERT INTO " + self.cba_cost_benefit_table_name + " (config, values) VALUES (%s, %s)",
                 (
                     str(config_cost_benefit_id), json.dumps(tmp_res)
                 )
@@ -323,7 +323,7 @@ class UploadToPostgres():
             self.cur.execute("SELECT id FROM "+self.config_gas_consumption_table_name + " ORDER BY id DESC LIMIT 1")
             config_gas_consumption_id = self.cur.fetchone()[0]
 
-            self.cur.execute("INSERT INTO " + self.gas_consumption_table_name + " (config, consumption) VALUES (%s, %s)",
+            self.cur.execute("INSERT INTO " + self.gas_consumption_table_name + " (config, values) VALUES (%s, %s)",
                 (
                     str(config_gas_consumption_id), json.dumps(tmp_res)
                 )
@@ -349,7 +349,7 @@ class UploadToPostgres():
         self.cur.execute("SELECT id FROM "+self.config_cba_net_present_table_name + " ORDER BY id DESC LIMIT 1")
         config_net_present_id = self.cur.fetchone()[0]
         
-        self.cur.execute("INSERT INTO " + self.cba_net_present_table_name + " (config, npv) VALUES (%s, %s)",
+        self.cur.execute("INSERT INTO " + self.cba_net_present_table_name + " (config, values) VALUES (%s, %s)",
             (
                 str(config_net_present_id), json.dumps(self.npv_result_dict)
             )
@@ -382,7 +382,7 @@ class UploadToPostgres():
             self.cur.execute("SELECT id FROM "+self.config_cba_emission_table_name + " ORDER BY id DESC LIMIT 1")
             config_emission_id = self.cur.fetchone()[0]
 
-            self.cur.execute("INSERT INTO " + self.cba_emission_table_name + " (config, emissions) VALUES (%s, %s)",
+            self.cur.execute("INSERT INTO " + self.cba_emission_table_name + " (config, values) VALUES (%s, %s)",
                 (
                     str(config_emission_id), json.dumps(tmp_res)
                 )
