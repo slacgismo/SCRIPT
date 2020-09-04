@@ -47,7 +47,6 @@ class ResultChart extends React.Component {
         const newItems = [];
         const newData = [];
         Object.keys(results).forEach((attr, i) => {
-            console.log("LOOK AT ME", results)
             newItems.push({
                 title: results[attr].yAxis,
                 color: colors[i],
