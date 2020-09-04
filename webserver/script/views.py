@@ -3,6 +3,8 @@ from rest_framework import views, viewsets, permissions, mixins, generics
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from rest_framework.views import APIView
+from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
@@ -11,6 +13,12 @@ from script.models.algorithms import LoadController, LoadForecast, LoadProfile, 
 from script.serializers import LoadControllerConfigSerializer, LoadForecastConfigSerializer, LoadProfileConfigSerializer, EmissionConfigSerializer, NetPresentValueConfigSerializer, CostBenefitConfigSerializer, GasConsumptionConfigSerializer
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
+
+class LoadControlRunner(APIView):
+
+    def get(self, request, format=None):
+        print("yo what's up")
+        return Response({"usernames": "hello world"})
 
 
 class CountyViewSet(viewsets.ModelViewSet):
@@ -37,7 +45,6 @@ class EnergyViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = EnergySerializer
     filter_fields = ('county', 'year', 'month') # using django-filter
-
 
 
 
@@ -122,8 +129,6 @@ class CostBenefitConfigViewSet(viewsets.ModelViewSet):
     serializer_class = CostBenefitConfigSerializer
     filter_fields = ('lf_config',
                     'year') # using django-filter
-
-
 
 
 class LoadControllerViewSet(viewsets.ModelViewSet):

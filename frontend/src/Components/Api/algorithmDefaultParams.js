@@ -1,5 +1,5 @@
 export const loadControlDefaultParams = {
-    county: "santa clara",
+    county: "Santa Clara",
     rate_energy_peak: 0.16997,
     rate_energy_partpeak: 0.12236,
     rate_energy_offpeak: 0.09082,
@@ -13,7 +13,7 @@ export const loadForecastDefaultParams = {
     config_name: "",
     aggregation_level: "COUNTY",
     num_evs: 1e6,
-    county_choice: "santa clara",
+    county_choice: "Santa Clara",
     fast_percent: 0.1,
     work_percent: 0.2,
     res_percent: 0.7,

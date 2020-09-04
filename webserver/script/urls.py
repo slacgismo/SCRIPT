@@ -3,8 +3,7 @@ from rest_framework import routers
 from script.views import CountyViewSet, ZipCodeViewSet, EnergyViewSet
 from script.views import LoadControllerConfigViewSet, LoadForecastConfigViewSet, LoadProfileConfigViewSet, GasConsumptionConfigViewSet, NetPresentValueConfigViewSet, EmissionConfigViewSet, CostBenefitConfigViewSet
 from script.views import LoadForecastViewSet, LoadControllerViewSet, LoadProfileViewSet, GasConsumptionViewSet, CostBenefitViewSet, NetPresentValueViewSet, EmissionViewSet
-
-
+from script.views import LoadControlRunner
 # set up a router for RESTful API
 # ref1: https://www.django-rest-framework.org/api-guide/routers/
 # ref2: https://www.django-rest-framework.org/api-guide/filtering/
@@ -13,6 +12,7 @@ from script.views import LoadForecastViewSet, LoadControllerViewSet, LoadProfile
 
 # Tip:
 # 1. replace space with %20 in the request urls
+
 
 router = routers.DefaultRouter()
 router.register('county', CountyViewSet, 'county')
@@ -45,5 +45,6 @@ router.register('algorithm/cost_benefit_analysis/emission', EmissionViewSet, 'al
 
 
 urlpatterns = [
+    path('create', LoadControlRunner),
     path('', include(router.urls)),
 ]

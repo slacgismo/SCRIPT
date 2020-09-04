@@ -72,7 +72,7 @@ class UploadToPostgres():
                     'load': str(controlled_profiles[line][self.num_of_run - 1])
                 }
             )
-            
+
 
         cur.execute("INSERT INTO " + self.table_name + \
             " (county, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \

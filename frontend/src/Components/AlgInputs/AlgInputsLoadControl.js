@@ -64,7 +64,7 @@ class AlgInputsLoadControl extends Component {
             // Alg params
             county: loadControlDefaultParams.county,
             rate_energy_peak: loadControlDefaultParams.rate_energy_peak,
-            rate_energy_partpeak: loadControlDefaultParams.rate_demand_partpeak,
+            rate_energy_partpeak: loadControlDefaultParams.rate_energy_partpeak,
             rate_energy_offpeak: loadControlDefaultParams.rate_energy_offpeak,
             rate_demand_peak: loadControlDefaultParams.rate_demand_peak,
             rate_demand_partpeak: loadControlDefaultParams.rate_demand_partpeak,
