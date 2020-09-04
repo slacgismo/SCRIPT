@@ -20,12 +20,14 @@ class AlgorithmPage extends Component {
     }
 
     visualizeResults(results) {
+        console.log(results)
         this.setState({
             results: results,
         });
     }
 
     render() {
+        console.log("THIS STATE", this.state.results)
         return (
             <div>
                 <Base 

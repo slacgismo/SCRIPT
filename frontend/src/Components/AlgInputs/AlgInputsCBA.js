@@ -154,9 +154,6 @@ class AlgInputsCBA extends Component {
         return this.preprocessData(dataCBA);
     };
 
-
-
-
     preprocessData = async (allData) => {
         const data = allData.dataValues;
         const fields = data[0] ? Object.keys(data[0].values): [0];
