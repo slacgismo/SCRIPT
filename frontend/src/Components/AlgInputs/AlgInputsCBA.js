@@ -12,6 +12,7 @@ import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
 import { withStyles } from "@material-ui/core/styles";
 import ResultCharts from "../Result/ResultCharts";
 import AlgInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
+import AlgorithmPageLoadControll from "../AlgorithmPage/AlgorithmPageCBA"
 
 const styles = theme => ({
     container: {
@@ -51,10 +52,10 @@ class AlgInputsCBA extends Component {
             profileName: "",
             county: "",
             resultsLoadForecast: [],
-            shouldRender: false,
+            shouldRender: false
         };
     }
-    
+
     componentDidMount() {
         axios("http://127.0.0.1:8000/api/config/load_forecast/")
             .then(res => {
@@ -140,22 +141,25 @@ class AlgInputsCBA extends Component {
 
     // TODO: backend
     getResult = async () => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/gas_consumption");
-        const dataCBA = {gasConsumption: []};
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
+        const dataCBA = {dataValues: []};
         const dataCBASub = [];
         
         for (var i = 0; i < res.data.length; i++) {
             const dataCBAUnit = res.data[i];
-            dataCBAUnit.consumption = (res.data[i].consumption);  
+            dataCBAUnit.values = (res.data[i].values); 
             dataCBASub.push(dataCBAUnit);
         }
-        dataCBA.gasConsumption = dataCBASub;
+        dataCBA.dataValues = dataCBASub;
         return this.preprocessData(dataCBA);
     };
 
+
+
+
     preprocessData = async (allData) => {
-        const data = allData.gasConsumption;
-        const fields = Object.keys(data[0].consumption);
+        const data = allData.dataValues;
+        const fields = data[0] ? Object.keys(data[0].values): [0];
 
         // Init result
         const result = {};
@@ -165,7 +169,7 @@ class AlgInputsCBA extends Component {
 
         data.forEach(dataItem => {
             const year = dataItem.config.year;
-            const allFields = dataItem.consumption;
+            const allFields = dataItem.values;
             for (const field of fields) {
                 // try {
                 result[field].push({
@@ -189,9 +193,17 @@ class AlgInputsCBA extends Component {
         return resultFlattened;
     };
 
+
     runAlgorithm = async () => {
         this.props.visualizeResults(await this.getResult());
     };
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.category !== this.props.category) {
+          this.getResult()
+          this.runAlgorithm()
+        }
+    }
 
     uploadFile = () => {
         this.setState({ openUpload: true});

@@ -20,16 +20,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function AlgorithmPageLoadControll(props) {
-    const [category, setCategory] = React.useState("");
+    const [category, setCategory] = React.useState("gas_consumption");
 
     const handleChange = event => {
         setCategory(event.target.value);
+
     };
       
     const classes = useStyles();
 
     return (
         <AlgorithmPage
+            categoryProp = {category}
             compo= {
                 <FormControl className={classes.formControl}>
                     <Select
@@ -42,10 +44,10 @@ function AlgorithmPageLoadControll(props) {
                         <MenuItem value="gas_consumption">
                         Gas consumption
                         </MenuItem>
-                        {/* <MenuItem value={"load_profile"}>Load profile</MenuItem>
+                        <MenuItem value={"load_profile"}>Load profile</MenuItem>
                         <MenuItem value={"cost_benefit"}>Cost_benefit</MenuItem>
                         <MenuItem value={"net_present_value"}>Net_present_value</MenuItem>
-                        <MenuItem value={"emission"}>Emission</MenuItem> */}
+                        <MenuItem value={"emission"}>Emission</MenuItem>
 
                     </Select>
                     <FormHelperText>Choose a category</FormHelperText>

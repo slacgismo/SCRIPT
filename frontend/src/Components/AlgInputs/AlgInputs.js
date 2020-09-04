@@ -33,8 +33,7 @@ export default function AlgInputs (props) {
     const visualizeResults = (resultArr) => {
         // const result = props.data;
         const data_to_visualize_all = [];
-
-        const isTimeSeries = resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
+        const isTimeSeries = resultArr[0].length==null ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
 
         for (const result of resultArr) {
             const data_to_visualize = {};
@@ -69,6 +68,7 @@ export default function AlgInputs (props) {
         <div>
             <form noValidate autoComplete="off">
                 <AlgInputCustomized
+                    category = { props.category }
                     visualizeResults={ (result) => visualizeResults(result) }
                 />
             </form>    
