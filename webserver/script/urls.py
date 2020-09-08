@@ -45,6 +45,6 @@ router.register('algorithm/cost_benefit_analysis/emission', EmissionViewSet, 'al
 
 
 urlpatterns = [
-    path('create', LoadControlRunner),
+    path('load_control_runner', LoadControlRunner.as_view()),
     path('', include(router.urls)),
 ]

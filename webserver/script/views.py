@@ -13,12 +13,14 @@ from script.models.algorithms import LoadController, LoadForecast, LoadProfile, 
 from script.serializers import LoadControllerConfigSerializer, LoadForecastConfigSerializer, LoadProfileConfigSerializer, EmissionConfigSerializer, NetPresentValueConfigSerializer, CostBenefitConfigSerializer, GasConsumptionConfigSerializer
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
+from script.SmartCharging.SmartChargingAlgorithm import *
 
 class LoadControlRunner(APIView):
-
-    def get(self, request, format=None):
-        print("yo what's up")
-        return Response({"usernames": "hello world"})
+    def post(self, request, format=None):
+        sca = SmartChargingAlgorithm('script.chargepoint.data')
+        print(request.data)
+        # baseline_profiles, controlled_profiles = sca.run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
+        return Response("Smart Charging run succeeded")
 
 
 class CountyViewSet(viewsets.ModelViewSet):
