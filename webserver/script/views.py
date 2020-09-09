@@ -18,8 +18,8 @@ from script.SmartCharging.SmartChargingAlgorithm import *
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
         sca = SmartChargingAlgorithm('script.chargepoint.data')
-        print(request.data)
-        # baseline_profiles, controlled_profiles = sca.run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
+        baseline_profiles, controlled_profiles = sca.run(request.data["county"], request.data["rate_energy_peak"], request.data["rate_energy_partpeak"], request.data["rate_energy_offpeak"], request.data["rate_demand_peak"], request.data["rate_demand_partpeak"], request.data["rate_demand_overall"])
+        sca.uploadToPostgres(baseline_profiles, controlled_profiles)
         return Response("Smart Charging run succeeded")
 
 

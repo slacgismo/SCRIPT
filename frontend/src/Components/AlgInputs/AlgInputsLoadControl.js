@@ -6,6 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { countyRes } from "../Api/CountyData";
 import { loadControlPromise } from "../Api/AlgorithmData";
 import { loadControlDefaultParams } from "../Api/algorithmDefaultParams";
+import { serverUrl } from "../Api/server";
 import axios from "axios";
 
 const styles = theme => ({
@@ -123,7 +124,8 @@ class AlgInputsLoadControl extends Component {
     // // TODO: backend
     async getResult() {
         var county = document.getElementById("standart-county").value;
-        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_controller/?county=${ county }`);
+
+        const res = await axios.get(`${ serverUrl }/algorithm/load_controller/?county=${ county }`);
         const dataLoadControll = [];
         for (var i = 0; i < res.data.length; i++) {
             const  dataLoadControllUnit = {uncontrolled_load: "", controlled_load: ""};
@@ -135,7 +137,26 @@ class AlgInputsLoadControl extends Component {
     }
 
     runAlgorithm = async () => {
-        console.log(this.getResult())
+        const postData = {
+            county: this.state.county,
+            rate_energy_peak: this.state.rate_energy_peak,
+            rate_energy_partpeak: this.state.rate_energy_partpeak,
+            rate_energy_offpeak: this.state.rate_energy_offpeak,
+            rate_demand_peak: this.state.rate_demand_peak,
+            rate_demand_partpeak: this.state.rate_demand_partpeak,
+            rate_demand_overall: this.state.rate_demand_overall
+        }
+        const postUrl = `${ serverUrl }/load_control_runner`;
+        axios({
+            method: 'post',
+            url: postUrl,
+            data: postData,
+        })
+        .then((response) => {
+            console.log(response);
+        }, (error) => {
+            console.log(error);
+        });
         this.props.visualizeResults(await this.getResult());
     }
 

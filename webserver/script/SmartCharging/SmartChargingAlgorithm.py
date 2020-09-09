@@ -7,10 +7,12 @@ import os
 import pytz
 from datetime import datetime
 from script.SmartCharging.UploadToPostgres import *
+from django.conf import settings
+
 #from SmartChargingFitting import *
 
 s3 = boto3.resource('s3')
-sca_dir = ""
+sca_dir = settings.BASE_DIR[:-3]
 
 class SmartChargingAlgorithm:
     def __init__(self, s3_bucket_name):
@@ -26,27 +28,27 @@ class SmartChargingAlgorithm:
         self.rate_demand_overall = ''
 
         # load data from S3
-        # self.load_county_data_from_local()
+        self.load_county_data_from_local()
 
 
-    # def load_county_data_from_S3(self):
-    #     """
-    #         load data from S3 and save to local
-    #     """
-    #     self.zip_county_lookup = pd.read_csv('s3://script.forecast.inputsoutputs/zip_county_lookup_cleaned.csv')
-    #     self.zip_county_lookup['Zip Code'] = self.zip_county_lookup['Zip Code'].astype(int)
-    #     self.county_list = np.unique(self.zip_county_lookup['County'].values)
-    #     print('County options: ', self.county_list)
+    def load_county_data_from_S3(self):
+        """
+            load data from S3 and save to local
+        """
+        self.zip_county_lookup = pd.read_csv('s3://script.forecast.inputsoutputs/zip_county_lookup_cleaned.csv')
+        self.zip_county_lookup['Zip Code'] = self.zip_county_lookup['Zip Code'].astype(int)
+        self.county_list = np.unique(self.zip_county_lookup['County'].values)
+        print('County options: ', self.county_list)
 
-    # def load_county_data_from_local(self):
-    #     """
-    #         Read from local
-    #     """
-    #     self.zip_county_lookup = pd.read_csv(sca_dir + 'zip_county_lookup.json')
-    #     self.zip_county_lookup['Zip Code'] = self.zip_county_lookup['Zip Code'].astype(int)
-    #
-    #     self.county_list = np.unique(self.zip_county_lookup['County'].values)
-    #     print('County options: ', self.county_list)
+    def load_county_data_from_local(self):
+        """
+            Read from local
+        """
+        self.zip_county_lookup = pd.read_csv(sca_dir + 'script/SmartCharging/zip_county_lookup.json')
+        self.zip_county_lookup['Zip Code'] = self.zip_county_lookup['Zip Code'].astype(int)
+
+        self.county_list = np.unique(self.zip_county_lookup['County'].values)
+        print('County options: ', self.county_list)
 
     def new_df_and_sessions(self, county, num_sessions):
         """
@@ -241,7 +243,6 @@ class SmartChargingAlgorithm:
 if __name__ == "__main__":
     # test
     sca = SmartChargingAlgorithm('script.chargepoint.data')
-    #sca.demo_run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
     baseline_profiles, controlled_profiles = sca.run('Santa Clara', 0.16997, 0.12236, 0.09082, 21.23, 5.85, 19.10)
     sca.uploadToPostgres(baseline_profiles, controlled_profiles)
 
