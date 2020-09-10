@@ -31,9 +31,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function AlgInputs (props) {
     const visualizeResults = (resultArr) => {
-        // const result = props.data;
         const data_to_visualize_all = [];
-        const isTimeSeries = resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
+        const isTimeSeries = resultArr.length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
         for (const result of resultArr) {
             const data_to_visualize = {};
 
@@ -55,7 +54,6 @@ export default function AlgInputs (props) {
 
             data_to_visualize_all.push(data_to_visualize);
         }
-        
         props.visualizeResults(data_to_visualize_all);
     };
 
