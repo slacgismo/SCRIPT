@@ -29,9 +29,13 @@ class UploadToPostgres():
         self.rate_demand_peak = rate_demand_peak
         self.rate_demand_partpeak = rate_demand_partpeak
         self.rate_demand_overall = rate_demand_overall
+        self.total_number_of_session = 0
+        self.total_energy = 0
         self.num_of_run = 4
 
     def run(self, baseline_profiles, controlled_profiles):
+        # update self.total_number_of_session
+        self.total_number_of_session = len(baseline_profiles)
 
         conn = psycopg2.connect(
             host=self.db_host,
@@ -42,6 +46,15 @@ class UploadToPostgres():
         )
 
         cur = conn.cursor()
+
+
+        # create table on Postgres
+        # cur.execute("CREATE TABLE IF NOT EXISTS script_county" + " (id serial PRIMARY KEY, name varchar, total_energy float, total_session float," + \
+        #     " rate_energy_peak varchar);")
+
+        # create table on Postgres
+        # cur.execute("CREATE TABLE IF NOT EXISTS " + self.table_name + " (id serial PRIMARY KEY, county varchar, rate_energy_peak varchar, rate_energy_partpeak varchar," + \
+        #     " rate_energy_offpeak varchar, rate_demand_peak varchar, rate_demand_partpeak varchar, rate_demand_overall varchar, uncontrolled_load varchar, controlled_load varchar);")
 
         # upload data into Postgres
         baseline_profiles_list = []
@@ -59,6 +72,7 @@ class UploadToPostgres():
             else:
                 minute_str = str(minute)
 
+            self.total_energy += int(baseline_profiles[line][self.num_of_run - 1])
             baseline_profiles_list.append(
                 {
                     'time': hour_str + ':' + minute_str,
@@ -73,6 +87,15 @@ class UploadToPostgres():
                 }
             )
 
+        cur.execute("INSERT INTO script_county" + \
+            " (name, total_energy, total_session, peak_energy)" + \
+            " VALUES (%s, %s, %s, %s)",
+            (
+                self.county, self.total_energy, self.total_number_of_session, self.rate_energy_peak
+            )
+        )
+
+        conn.commit()
 
         cur.execute("INSERT INTO " + self.table_name + \
             " (county, rate_energy_peak, rate_energy_partpeak, rate_energy_offpeak," + \
@@ -86,7 +109,7 @@ class UploadToPostgres():
 
         conn.commit()
 
-        cur.execute("SELECT id FROM " + self.table_name + " ORDER BY id DESC LIMIT 1")
+        cur.execute("SELECT id FROM "+self.table_name + " ORDER BY id DESC LIMIT 1")
 
         config_id = cur.fetchone()
 
