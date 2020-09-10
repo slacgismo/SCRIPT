@@ -217,26 +217,26 @@ class SmartChargingAlgorithm:
         upload_to_postgres_client.run(baseline_profiles, controlled_profiles)
         print('Upload to Postgres succeeded.')
 
-    def demo_run(
-            self,
-            county,
-            rate_energy_peak,
-            rate_energy_partpeak,
-            rate_energy_offpeak,
-            rate_demand_peak,
-            rate_demand_partpeak,
-            rate_demand_overall
-        ):
-        self.county = county
-        self.rate_energy_peak = rate_energy_peak
-        self.rate_energy_partpeak = rate_energy_partpeak
-        self.rate_energy_offpeak = rate_energy_offpeak
-        self.rate_demand_peak = rate_demand_peak
-        self.rate_demand_partpeak = rate_demand_partpeak
-        self.rate_demand_overall = rate_demand_overall
-        baseline_profiles = np.load("baseline_profiles_Santa_Clara_500.npy")
-        controlled_profiles = np.load("controlled_profiles_Santa_Clara_500.npy")  
-        self.uploadToPostgres(baseline_profiles, controlled_profiles)
+    # def demo_run(
+    #         self,
+    #         county,
+    #         rate_energy_peak,
+    #         rate_energy_partpeak,
+    #         rate_energy_offpeak,
+    #         rate_demand_peak,
+    #         rate_demand_partpeak,
+    #         rate_demand_overall
+    #     ):
+    #     self.county = county
+    #     self.rate_energy_peak = rate_energy_peak
+    #     self.rate_energy_partpeak = rate_energy_partpeak
+    #     self.rate_energy_offpeak = rate_energy_offpeak
+    #     self.rate_demand_peak = rate_demand_peak
+    #     self.rate_demand_partpeak = rate_demand_partpeak
+    #     self.rate_demand_overall = rate_demand_overall
+    #     baseline_profiles = np.load("baseline_profiles_Santa_Clara_500.npy")
+    #     controlled_profiles = np.load("controlled_profiles_Santa_Clara_500.npy")  
+    #     self.uploadToPostgres(baseline_profiles, controlled_profiles)
 
 if __name__ == "__main__":
     # test

@@ -73,7 +73,7 @@ class LoadProfile(models.Model):
     """
 
     config = models.ForeignKey(LoadProfileConfig, on_delete=models.CASCADE, db_column="config")
-    loads = JSONField()
+    values = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_load_profile'
@@ -121,7 +121,7 @@ class GasConsumption(models.Model):
     """
 
     config = models.ForeignKey(GasConsumptionConfig, on_delete=models.CASCADE, db_column="config")
-    consumption = JSONField()
+    values = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_gas_consumption'
@@ -189,7 +189,7 @@ class CostBenefit(models.Model):
     """
 
     config = models.ForeignKey(CostBenefitConfig, on_delete=models.CASCADE, db_column="config")
-    cost_benefit = JSONField()
+    values = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_cost_benefit'
@@ -252,7 +252,7 @@ class NetPresentValue(models.Model):
     """
 
     config = models.ForeignKey(NetPresentValueConfig, on_delete=models.CASCADE, db_column="config")
-    npv = JSONField()
+    values = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_net_present_value'
@@ -278,8 +278,9 @@ class Emission(models.Model):
     """
 
     config = models.ForeignKey(EmissionConfig, on_delete=models.CASCADE, db_column="config")
-    emissions = JSONField()
+    values = JSONField()
 
     class Meta:
         db_table = 'script_algorithm_cba_emission'
         unique_together = (('config',),)
+  

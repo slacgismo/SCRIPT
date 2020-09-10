@@ -152,7 +152,6 @@ class AlgInputsLoadForecast extends Component {
             dataLoadForecastUnit.total_load = (res.data[i].total_load);
             dataLoadForecast.push(dataLoadForecastUnit);
         }
-
         return dataLoadForecast;
     };
 
