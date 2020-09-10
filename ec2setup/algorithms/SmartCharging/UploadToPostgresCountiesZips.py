@@ -11,7 +11,7 @@ class UploadToPostgres():
     ):
         with open('postgres_info.json') as json_file:
             postgres_info = json.load(json_file)
-        
+
         self.db_host = postgres_info['DB_HOST']
         self.table_county = "script_county"
         self.table_zipcode = "script_zip_code"
@@ -63,7 +63,7 @@ class UploadToPostgres():
                             str(zip_code), str(row['County'])
                         )
                     )
-        
+
         conn.commit()
 
         # Close communication with the database

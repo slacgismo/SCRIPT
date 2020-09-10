@@ -11,7 +11,7 @@ import axios from "axios";
 import { loadForecastPromise, fieldsLoadForecast } from "../Api/AlgorithmData";
 import { countyRes } from "../Api/CountyData";
 import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
-import { serverUrl } from "../Api/server"
+import { serverUrl } from "../Api/server";
 
 const styles = theme => ({
     container: {
