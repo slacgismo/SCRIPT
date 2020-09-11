@@ -14,6 +14,7 @@ import { ResultCharts } from "../Result/ResultCharts";
 import AlgInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
 import AlgorithmPageLoadControll from "../AlgorithmPage/AlgorithmPageCBA"
 import { serverUrl } from "../Api/server";
+import { processResults } from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -61,7 +62,6 @@ class AlgInputsCBA extends Component {
     componentDidMount() {
         axios("http://127.0.0.1:8000/api/config/load_forecast/")
             .then(res => {
-                this.setState({ profileData: res.data });
                 const profiles = res.data;
                 const profileNames = [];
                 for (var i = 0; i < res.data.length; i++) {
@@ -70,72 +70,51 @@ class AlgInputsCBA extends Component {
                     profileNamesUnit.name = profiles[i]["config_name"];
                     profileNames.push(profileNamesUnit);
                 }
-                this.setState({ profileNames });
-                this.setState({ profileName: document.getElementById("standard-profile").value});
+                this.setState({ profileData: res.data, profileNames: profileNames, profileName: document.getElementById("standard-profile").value });
             });
         
         const dataLoadForecast = [];
 
-        axios("http://127.0.0.1:8000/api/algorithm/load_forecast").then(res => {    
-            for (var i = 0; i < res.data.length; i++) {
-                const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-                dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
-                dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
-                dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
-                dataLoadForecastUnit.work_load = (res.data[i].work_load);
-                dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
-                dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
-                dataLoadForecastUnit.total_load = (res.data[i].total_load);
-                dataLoadForecast.push(dataLoadForecastUnit);
-            }
-            this.setState({ loadForecastResults: dataLoadForecast});
-        });
-    }
+        axios("http://127.0.0.1:8000/api/algorithm/load_forecast")
+            .then(res => {    
+                for (var i = 0; i < res.data.length; i++) {
+                    const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+                    dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
+                    dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
+                    dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
+                    dataLoadForecastUnit.work_load = (res.data[i].work_load);
+                    dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
+                    dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
+                    dataLoadForecastUnit.total_load = (res.data[i].total_load);
+                    dataLoadForecast.push(dataLoadForecastUnit);
+                }
+                console.log('data load', dataLoadForecast)
+                this.setState({ loadForecastResults: dataLoadForecast });
+            });
+        }
 
     handleClose = () => {
-        this.setState({ openResult: false });
-        this.setState({ openUpload: false });
-    }
-
-    showResults = async () => {
-        this.setState({ openResult: true });
-        this.setState({ shouldRender: true  });
-        this.processLoadForecastResults(this.state.loadForecastResults);
+        this.setState({ openResult: false, openUpload: false });
     };
 
-    processLoadForecastResults = async (resultArr) => {
-        const data_to_visualize_all = [];
-        const isTimeSeries = resultArr.length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false;
-        for (const result of resultArr) {
-            const data_to_visualize = {};
-
-            for (const field of Object.keys(result)) {
-                const data = result[field];
-                const dataFormatted = data.map((datapoint, i) => (
-                    {
-                        x: isTimeSeries ? i : datapoint.year,
-                        y: isTimeSeries ? parseFloat(datapoint.load) : parseFloat(datapoint.data)
-                    }   
-                ));
-                data_to_visualize[field] = {
-                    yAxis: `${field}`.replace(/_/g, " "),
-                    unit: "Power (kW)",
-                    xAxis: isTimeSeries ? "Time" : "Year",
-                    data: dataFormatted,
-                };
-            }
-            data_to_visualize_all.push(data_to_visualize);
-        }
-        this.setState({ processLoadForecastResults: data_to_visualize_all});
+    setLoadForecastResults = () => {
+        console.log('this state', this.state.loadForecastResults)
+        const processedLoadForecastResults = processResults(this.state.loadForecastResults);
+        this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
     };
 
     findProfile = async () => {
+        // check for corresponding CBA input table for current load forecast profile
         const config_res = await axios.get("http://127.0.0.1:8000/api/config/" + this.props.category, {
             params: {
                 lf_config: this.state.profileName
             }
         });
+        this.runCostBenefitAnalysis(config_res)
+    };
 
+    runCostBenefitAnalysis = async (config_res) => {
+        // if the load forecast profile does not have CBA inputs, run cost benefit analysis to insert to database
         if(config_res.data.length == 0){
             const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
             axios({
@@ -143,13 +122,11 @@ class AlgInputsCBA extends Component {
                 url: postUrl,
                 data: {load_profile: this.state.profileName},
             })
-            .then((response) => {
-                console.log(response);
+            .then(() => {
                 return this.getResult();
             }, (error) => {
                 console.log(error);
             });
-
         } else {
             return this.getResult();
         }
@@ -157,9 +134,9 @@ class AlgInputsCBA extends Component {
 
     getResult = async () => {
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
+        console.log('res', res)
         const dataCBA = {dataValues: []};
-        const dataCBASub = [];
-            
+        const dataCBASub = [];          
         for (var i = 0; i < res.data.length; i++) {
             const dataCBAUnit = res.data[i];
             dataCBAUnit.values = (res.data[i].values); 
@@ -169,7 +146,7 @@ class AlgInputsCBA extends Component {
         return this.preprocessData(dataCBA);
     };
 
-    preprocessData = async (allData) => {
+    preprocessData = (allData) => {
         const data = allData.dataValues;
         const fields = data[0] ? Object.keys(data[0].values): [0];
 
@@ -232,6 +209,7 @@ class AlgInputsCBA extends Component {
 
     render() {
         const { classes } = this.props;
+        console.log(this.props)
         return (
             <div>
                 <TextField
@@ -255,7 +233,7 @@ class AlgInputsCBA extends Component {
                         ))
                     }
                 </TextField>
-                <Button variant="contained" className={classes.button} onClick={this.showResults}>
+                <Button variant="contained" className={classes.button} onClick={this.setLoadForecastResults}>
                     Review
                 </Button>
                 {/* <Button variant="contained" className={classes.button} onClick={this.uploadFile}>
@@ -272,8 +250,8 @@ class AlgInputsCBA extends Component {
                         <DialogTitle onClose={this.handleClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
                         <DialogContent>    
                             <ResultCharts
-                                results={ this.state.processLoadForecastResults }
-                                algId={2}
+                                results={ this.state.processedLoadForecastResults }
+                                algId={ 2 }
                             />
                         </DialogContent>
                         <DialogActions>
