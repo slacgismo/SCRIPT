@@ -14,6 +14,8 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
+from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
+
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -21,6 +23,12 @@ class LoadControlRunner(APIView):
         baseline_profiles, controlled_profiles = sca.run(request.data["county"], request.data["rate_energy_peak"], request.data["rate_energy_partpeak"], request.data["rate_energy_offpeak"], request.data["rate_demand_peak"], request.data["rate_demand_partpeak"], request.data["rate_demand_overall"])
         sca.uploadToPostgres(baseline_profiles, controlled_profiles)
         return Response("Smart Charging run succeeded")
+
+
+class CostBenefitAnalysisRunner(APIView):
+    def post(self, request, format=None):
+        UploadToPostgres(load_profile = request.data['load_profile'])
+        return Response("Cost Benefit Analysis run succeeded")
 
 
 class CountyViewSet(viewsets.ModelViewSet):

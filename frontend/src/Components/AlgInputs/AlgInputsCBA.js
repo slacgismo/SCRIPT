@@ -13,6 +13,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { ResultCharts } from "../Result/ResultCharts";
 import AlgInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
 import AlgorithmPageLoadControll from "../AlgorithmPage/AlgorithmPageCBA"
+import { serverUrl } from "../Api/server";
 
 const styles = theme => ({
     container: {
@@ -104,7 +105,7 @@ class AlgInputsCBA extends Component {
 
     processLoadForecastResults = async (resultArr) => {
         const data_to_visualize_all = [];
-        const isTimeSeries = resultArr.length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
+        const isTimeSeries = resultArr.length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false;
         for (const result of resultArr) {
             const data_to_visualize = {};
 
@@ -113,13 +114,13 @@ class AlgInputsCBA extends Component {
                 const dataFormatted = data.map((datapoint, i) => (
                     {
                         x: isTimeSeries ? i : datapoint.year,
-                        y: isTimeSeries ? parseFloat(datapoint.load) : parseFloat(datapoint.data)  // option
+                        y: isTimeSeries ? parseFloat(datapoint.load) : parseFloat(datapoint.data)
                     }   
                 ));
                 data_to_visualize[field] = {
                     yAxis: `${field}`.replace(/_/g, " "),
                     unit: "Power (kW)",
-                    xAxis: isTimeSeries ? "Time" : "Year",  // TODO: other options?
+                    xAxis: isTimeSeries ? "Time" : "Year",
                     data: dataFormatted,
                 };
             }
@@ -128,11 +129,37 @@ class AlgInputsCBA extends Component {
         this.setState({ processLoadForecastResults: data_to_visualize_all});
     };
 
+    findProfile = async () => {
+        const config_res = await axios.get("http://127.0.0.1:8000/api/config/" + this.props.category, {
+            params: {
+                lf_config: this.state.profileName
+            }
+        });
+
+        if(config_res.data.length == 0){
+            const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
+            axios({
+                method: "post",
+                url: postUrl,
+                data: {load_profile: this.state.profileName},
+            })
+            .then((response) => {
+                console.log(response);
+                return this.getResult();
+            }, (error) => {
+                console.log(error);
+            });
+
+        } else {
+            return this.getResult();
+        }
+    };
+
     getResult = async () => {
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
         const dataCBA = {dataValues: []};
         const dataCBASub = [];
-        
+            
         for (var i = 0; i < res.data.length; i++) {
             const dataCBAUnit = res.data[i];
             dataCBAUnit.values = (res.data[i].values); 
@@ -178,13 +205,22 @@ class AlgInputsCBA extends Component {
         return resultFlattened;
     };
 
-    runAlgorithm = async () => {
-        this.props.visualizeResults(await this.getResult());
+    runAlgorithm = async () => {            
+        this.props.visualizeResults(await this.findProfile());
     };
+
+    updateData = async () => {
+        this.props.visualizeResults(await this.getResult())
+    }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.category !== this.props.category) {
-          this.runAlgorithm()
+            this.updateData();
+        }
+        if (prevState.profileName !== document.getElementById("standard-profile").value) {
+            this.setState({profileName: document.getElementById("standard-profile").value}, () => {
+                this.runAlgorithm();
+            })
         }
     }
 
