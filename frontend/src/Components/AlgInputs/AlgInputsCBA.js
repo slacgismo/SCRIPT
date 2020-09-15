@@ -7,7 +7,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
-import stringify from "qs";
 import { withStyles } from "@material-ui/core/styles";
 import { ResultCharts } from "../Result/ResultCharts";
 import { serverUrl } from "../Api/server";
@@ -38,8 +37,6 @@ const styles = theme => ({
     },
 });
 
-let results = [];
-
 class AlgInputsCBA extends Component {
     constructor(props) {
         super(props);
@@ -49,7 +46,6 @@ class AlgInputsCBA extends Component {
             profileNames: [],
             profileData: [],
             profileName: "",
-            county: "",
             loadForecastResults: [],
             processedLoadForecastResults: [],
             shouldRender: false
@@ -107,7 +103,9 @@ class AlgInputsCBA extends Component {
                 lf_config: this.state.profileName
             }
         });
-        if(config_res.data.length == 0){
+
+        // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
+        if(config_res.data.length === 0){
             const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
             axios({
                 method: "post",
@@ -117,7 +115,7 @@ class AlgInputsCBA extends Component {
         };
     };
 
-    getResult = async () => {
+    getCBAResult = async () => {
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category)
         const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName)
         const dataCBA = {dataValues: []};
@@ -131,22 +129,25 @@ class AlgInputsCBA extends Component {
         return preprocessData(dataCBA);
     };
 
-    runAlgorithm = async () => {     
-        this.findProfile();       
-        this.props.visualizeResults(await this.getResult());
-    };
-
-    updateData = async () => {
-        this.props.visualizeResults(await this.getResult());
+    updateCharts = async () => {
+        this.props.visualizeResults(await this.getCBAResult());
     }
 
+    updateProfileAndCharts = async () => {     
+        this.findProfile();       
+        this.props.visualizeResults(await this.getCBAResult());
+    };
+
     componentDidUpdate(prevProps, prevState) {
+        // if different dropdown menu category selected (e.g. gas consumption)
         if (prevProps.category !== this.props.category) {
-            this.updateData();
+            this.updateCharts();
         }
+
+        // if different load forecast profile selected 
         if (prevState.profileName !== document.getElementById("standard-profile").value) {
             this.setState({profileName: document.getElementById("standard-profile").value}, () => {
-                this.runAlgorithm();
+                this.updateProfileAndCharts();
             })
         }
     }

@@ -2,7 +2,18 @@
 
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
-    const isTimeSeries = resultArr.length == 0 || resultArr[0][0].length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false;
+    let isTimeSeries = false;
+
+    if (resultArr[0][0] != undefined && resultArr[0][0].length === 0) {
+        isTimeSeries = false
+    } else if (resultArr.length == 0) {
+        isTimeSeries = false
+    } else if (resultArr[0][Object.keys(resultArr[0])[0]][0].time) {
+        isTimeSeries = true
+    } else {
+        isTimeSeries = false
+    }
+
     for (const result of resultArr) {
         const data_to_visualize = {};
 
@@ -35,20 +46,14 @@ export function preprocessData(allData) {
     for (const field of fields) {
         result[field] = [];
     }
-
     data.forEach(dataItem => {
         const year = dataItem.config.year;
         const allFields = dataItem.values;
         for (const field of fields) {
-            // try {
             result[field].push({
                 year: year,
                 data: parseFloat(allFields[field]),
             });
-            // } catch (error) {
-            //     console.log("!!!!!!!!!!!");
-            //     console.log(allFields[field]);
-            // }
         }
     });
     const resultFlattened = [];
