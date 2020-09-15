@@ -61,13 +61,15 @@ class AlgInputsCBA extends Component {
             .then(res => {
                 const profiles = res.data;
                 const profileNames = [];
-                for (var i = 0; i < res.data.length; i++) {
-                    const profileNamesUnit = {id: "", name: ""};
-                    profileNamesUnit.id = profiles[i]["id"];
-                    profileNamesUnit.name = profiles[i]["config_name"];
-                    profileNames.push(profileNamesUnit);
+                if (profiles.length > 0) {
+                    for (var i = 0; i < profiles.length; i++) {
+                        const profileNamesUnit = {id: "", name: ""};
+                        profileNamesUnit.id = profiles[i]["id"];
+                        profileNamesUnit.name = profiles[i]["config_name"];
+                        profileNames.push(profileNamesUnit);
+                    }
+                    this.setState({ profileData: profiles, profileNames: profileNames, profileName: document.getElementById("standard-profile").value });
                 }
-                this.setState({ profileData: res.data, profileNames: profileNames, profileName: document.getElementById("standard-profile").value });
             });
         
         const dataLoadForecast = [];

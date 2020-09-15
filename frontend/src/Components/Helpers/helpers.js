@@ -2,7 +2,7 @@
 
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
-    const isTimeSeries = resultArr.length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false;
+    const isTimeSeries = resultArr.length == 0 || resultArr[0][0].length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false;
     for (const result of resultArr) {
         const data_to_visualize = {};
 
