@@ -82,7 +82,7 @@ class AlgInputsLoadControl extends Component {
 
         loadControlPromise.then(res => {
             if(!res.data.length) {
-                return
+                return;
             }
             this.setState({
                 result: [{
@@ -118,7 +118,7 @@ class AlgInputsLoadControl extends Component {
     }
 
     update = (field, event) => {
-        this.setState({ [field]: event.currentTarget.value })
+        this.setState({ [field]: event.currentTarget.value });
     };
 
     // // TODO: backend
@@ -145,18 +145,18 @@ class AlgInputsLoadControl extends Component {
             rate_demand_peak: this.state.rate_demand_peak,
             rate_demand_partpeak: this.state.rate_demand_partpeak,
             rate_demand_overall: this.state.rate_demand_overall
-        }
+        };
         const postUrl = `${ serverUrl }/load_control_runner`;
         axios({
-            method: 'post',
+            method: "post",
             url: postUrl,
             data: postData,
         })
-        .then((response) => {
-            console.log(response);
-        }, (error) => {
-            console.log(error);
-        });
+            .then((response) => {
+                console.log(response);
+            }, (error) => {
+                console.log(error);
+            });
         this.props.visualizeResults(await this.getResult());
     }
 

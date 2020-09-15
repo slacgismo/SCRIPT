@@ -1,6 +1,6 @@
 import React from "react";
 import AlgorithmPage from "./AlgorithmPage";
-import AlgorithmInputsLoadForecast from '../AlgInputs/AlgInputsLoadForecast'
+import AlgorithmInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
 
 function AlgorithmPageLoadForecast(props) {
     return (

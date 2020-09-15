@@ -85,7 +85,7 @@ class AlgInputsCBA extends Component {
                 }
                 this.setState({ loadForecastResults: dataLoadForecast });
             });
-        }
+    }
 
     handleClose = () => {
         this.setState({ openResult: false, openUpload: false });
@@ -111,13 +111,13 @@ class AlgInputsCBA extends Component {
                 method: "post",
                 url: postUrl,
                 data: {load_profile: this.state.profileName},
-            })
-        };
+            });
+        }
     };
 
     getCBAResult = async () => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category)
-        const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName)
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
+        const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
         const dataCBA = {dataValues: []};
         const dataCBASub = [];          
         for (var i = 0; i < filteredRes.length; i++) {
@@ -148,7 +148,7 @@ class AlgInputsCBA extends Component {
         if (prevState.profileName !== document.getElementById("standard-profile").value) {
             this.setState({profileName: document.getElementById("standard-profile").value}, () => {
                 this.updateProfileAndCharts();
-            })
+            });
         }
     }
 

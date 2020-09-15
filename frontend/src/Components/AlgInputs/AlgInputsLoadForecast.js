@@ -94,7 +94,7 @@ class AlgInputsLoadForecast extends Component {
     };
 
     update = (field, event) => {
-        this.setState({ [field]: event.currentTarget.value })
+        this.setState({ [field]: event.currentTarget.value });
     };
 
     /* TODO save results(profile) of Load Forecast*/
@@ -111,20 +111,20 @@ class AlgInputsLoadForecast extends Component {
             res_percent: this.state.res_percent,
             l1_percent: this.state.l1_percent,
             public_l2_percent: this.state.publicl2_percent
-        }
+        };
 
         const postUrl = `${ serverUrl }/config/load_forecast/`;
 
         axios({
-            method: 'post',
+            method: "post",
             url: postUrl,
             data: postData,
         })
-        .then((response) => {
-            console.log(response);
-        }, (error) => {
-            console.log(error);
-        });
+            .then((response) => {
+                console.log(response);
+            }, (error) => {
+                console.log(error);
+            });
 
         // const res = axios.post('/api/config/load_forecast/', post_list);
 
