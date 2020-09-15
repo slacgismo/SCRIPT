@@ -17,11 +17,13 @@ class County(models.Model):
 
 class ZipCode(models.Model):
     """Zip Code"""
-    code = models.CharField(max_length=5, validators=[validate_zipcode], primary_key=True)
+
+    code = models.CharField(max_length=5, validators=[validate_zipcode])
     county = models.ForeignKey(County, on_delete=models.CASCADE, db_column="county")
 
     class Meta:
         db_table = 'script_zip_code'
+        unique_together = (('code', 'county'))
 
 
 class ChargingStation(models.Model):
