@@ -1,8 +1,5 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import AlgInputsCBA from "./AlgInputsCBA";
-import Button from "@material-ui/core/Button";
-import axios from "axios";
 import { processResults } from "../Helpers/helpers";
 
 const useStyles = makeStyles(theme => ({
@@ -32,7 +29,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function AlgInputs (props) {
     const visualizeResults = (resultArr) => {
-        console.log('RESULT ARRRRR', resultArr)
         props.visualizeResults(processResults(resultArr));
   };
 

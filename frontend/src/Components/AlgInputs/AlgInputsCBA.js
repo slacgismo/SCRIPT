@@ -4,17 +4,14 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
-import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
+import stringify from "qs";
 import { withStyles } from "@material-ui/core/styles";
 import { ResultCharts } from "../Result/ResultCharts";
-import AlgInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
-import AlgorithmPageLoadControll from "../AlgorithmPage/AlgorithmPageCBA"
 import { serverUrl } from "../Api/server";
-import { processResults } from "../Helpers/helpers";
+import { processResults, preprocessData } from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -60,7 +57,7 @@ class AlgInputsCBA extends Component {
     }
 
     componentDidMount() {
-        axios("http://127.0.0.1:8000/api/config/load_forecast/")
+        axios("http://127.0.0.1:8000/api/config/load_forecast")
             .then(res => {
                 const profiles = res.data;
                 const profileNames = [];
@@ -88,7 +85,6 @@ class AlgInputsCBA extends Component {
                     dataLoadForecastUnit.total_load = (res.data[i].total_load);
                     dataLoadForecast.push(dataLoadForecastUnit);
                 }
-                console.log('data load', dataLoadForecast)
                 this.setState({ loadForecastResults: dataLoadForecast });
             });
         }
@@ -98,7 +94,6 @@ class AlgInputsCBA extends Component {
     };
 
     setLoadForecastResults = () => {
-        console.log('this state', this.state.loadForecastResults)
         const processedLoadForecastResults = processResults(this.state.loadForecastResults);
         this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
     };
@@ -110,11 +105,6 @@ class AlgInputsCBA extends Component {
                 lf_config: this.state.profileName
             }
         });
-        this.runCostBenefitAnalysis(config_res)
-    };
-
-    runCostBenefitAnalysis = async (config_res) => {
-        // if the load forecast profile does not have CBA inputs, run cost benefit analysis to insert to database
         if(config_res.data.length == 0){
             const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
             axios({
@@ -122,72 +112,30 @@ class AlgInputsCBA extends Component {
                 url: postUrl,
                 data: {load_profile: this.state.profileName},
             })
-            .then(() => {
-                return this.getResult();
-            }, (error) => {
-                console.log(error);
-            });
-        } else {
-            return this.getResult();
-        }
+        };
     };
 
     getResult = async () => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
-        console.log('res', res)
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category)
+        const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName)
         const dataCBA = {dataValues: []};
         const dataCBASub = [];          
-        for (var i = 0; i < res.data.length; i++) {
-            const dataCBAUnit = res.data[i];
-            dataCBAUnit.values = (res.data[i].values); 
+        for (var i = 0; i < filteredRes.length; i++) {
+            const dataCBAUnit = filteredRes[i];
+            dataCBAUnit.values = (filteredRes[i].values); 
             dataCBASub.push(dataCBAUnit);
         }
         dataCBA.dataValues = dataCBASub;
-        return this.preprocessData(dataCBA);
+        return preprocessData(dataCBA);
     };
 
-    preprocessData = (allData) => {
-        const data = allData.dataValues;
-        const fields = data[0] ? Object.keys(data[0].values): [0];
-
-        // Init result
-        const result = {};
-        for (const field of fields) {
-            result[field] = [];
-        }
-
-        data.forEach(dataItem => {
-            const year = dataItem.config.year;
-            const allFields = dataItem.values;
-            for (const field of fields) {
-                // try {
-                result[field].push({
-                    year: year,
-                    data: parseFloat(allFields[field]),
-                });
-                // } catch (error) {
-                //     console.log("!!!!!!!!!!!");
-                //     console.log(allFields[field]);
-                // }
-            }
-        });
-
-        // Flatten result
-        const resultFlattened = [];
-        for (const field of fields) {
-            resultFlattened.push({
-                [field]: result[field],
-            });
-        }
-        return resultFlattened;
-    };
-
-    runAlgorithm = async () => {            
-        this.props.visualizeResults(await this.findProfile());
+    runAlgorithm = async () => {     
+        this.findProfile();       
+        this.props.visualizeResults(await this.getResult());
     };
 
     updateData = async () => {
-        this.props.visualizeResults(await this.getResult())
+        this.props.visualizeResults(await this.getResult());
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -209,7 +157,6 @@ class AlgInputsCBA extends Component {
 
     render() {
         const { classes } = this.props;
-        console.log(this.props)
         return (
             <div>
                 <TextField

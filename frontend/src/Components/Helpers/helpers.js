@@ -1,3 +1,5 @@
+// Helper functions
+
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
     const isTimeSeries = resultArr.length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false;
@@ -23,3 +25,37 @@ export function processResults(resultArr) {
     }
     return data_to_visualize_all;
 }
+
+export function preprocessData(allData) {
+    const data = allData.dataValues;
+    const fields = data[0] ? Object.keys(data[0].values): [0];
+
+    // Init result
+    const result = {};
+    for (const field of fields) {
+        result[field] = [];
+    }
+
+    data.forEach(dataItem => {
+        const year = dataItem.config.year;
+        const allFields = dataItem.values;
+        for (const field of fields) {
+            // try {
+            result[field].push({
+                year: year,
+                data: parseFloat(allFields[field]),
+            });
+            // } catch (error) {
+            //     console.log("!!!!!!!!!!!");
+            //     console.log(allFields[field]);
+            // }
+        }
+    });
+    const resultFlattened = [];
+    for (const field of fields) {
+        resultFlattened.push({
+            [field]: result[field],
+        });
+    }
+    return resultFlattened;
+};
