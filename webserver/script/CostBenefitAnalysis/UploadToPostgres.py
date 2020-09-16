@@ -18,7 +18,6 @@ class UploadToPostgres():
         self.load_profile_result_dict = {}
         self.load_profile_start_year = 0
         self.load_profile = load_profile
-        print('self', self.load_profile)
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/results/aggregate_loadprofile.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.load_profile_result_dict['All'] = {}
@@ -226,6 +225,7 @@ class UploadToPostgres():
         # Close communication with the database
         self.cur.close()
         self.conn.close()
+        print("Cost Benefit Analysis Runner successfully completed")
 
 
     def run_load_profile(self):
@@ -263,23 +263,17 @@ class UploadToPostgres():
                             )
                         )
 
-        print('Insertion finished...')
         # Make the changes to the database persistent
         self.conn.commit()
     
 
     def run_cost_benefit(self):
-        # create table on Postgres
-        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_cost_benefit_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, cost_benefit varchar);")
 
-        print('********** len' + str(self.cost_benefit_year_len))
         for i in range(self.cost_benefit_year_len):
             tmp_res = {}
 
             for key in self.cost_benefit_result_dict.keys():
                 if key != 'Year':
-                    print("******** len each row" + str(len(self.cost_benefit_result_dict[key])))
-                    print("********** key name: " + key)
                     tmp_res[key] = self.cost_benefit_result_dict[key][i]
 
             self.cur.execute("INSERT INTO " + self.config_cba_cost_benefit_table_name + " (lf_config, year) VALUES (%s, %s)",
@@ -298,14 +292,11 @@ class UploadToPostgres():
                 )
             )
 
-        print('Insertion finished...')
         # Make the changes to the database persistent
         self.conn.commit()
 
 
     def run_gas_consumption(self):
-        # create table on Postgres
-        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.gas_consumption_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, consumption varchar);")
 
         for i in range(self.gas_consumption_year_len):
             tmp_res = {}
@@ -331,15 +322,12 @@ class UploadToPostgres():
                 )
             )
 
-        print('Insertion finished...')
         # Make the changes to the database persistent
         self.conn.commit()
 
 
     def run_npv(self):
-        # create table on Postgres
-        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.cba_net_present_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, npv varchar);")
-        
+
         self.cur.execute("INSERT INTO " + self.config_cba_net_present_table_name + " (lf_config, year) VALUES (%s, %s)",
             (
                 self.load_profile, '2020'
@@ -357,14 +345,10 @@ class UploadToPostgres():
             )
         )
 
-
-        print('Insertion finished...')
         # Make the changes to the database persistent
         self.conn.commit()
     
     def run_emission(self):
-        # create table on Postgres
-        # self.cur.execute("CREATE TABLE IF NOT EXISTS " + self.config_cba_emission_table_name + " (id serial PRIMARY KEY, config_id INTEGER, year INTEGER, emissions varchar);")
 
         for i in range(self.emission_year_len):
             tmp_res = {}
@@ -390,9 +374,5 @@ class UploadToPostgres():
                 )
             )
 
-        print('Insertion finished...')
         # Make the changes to the database persistent
         self.conn.commit()
-
-
-# client = UploadToPostgres()
