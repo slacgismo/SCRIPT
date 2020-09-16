@@ -18,6 +18,7 @@ class UploadToPostgres():
         self.load_profile_result_dict = {}
         self.load_profile_start_year = 0
         self.load_profile = load_profile
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/results/aggregate_loadprofile.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.load_profile_result_dict['All'] = {}
@@ -77,6 +78,7 @@ class UploadToPostgres():
         # gas consumption result related 
         self.gas_consumption_year_len = 0
         self.gas_consumption_result_dict = {}
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/results/annual_gas_consumption.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
@@ -88,6 +90,7 @@ class UploadToPostgres():
         # cost benefit result related 
         self.cost_benefit_year_len = 0
         self.cost_benefit_result_dict = {}
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/results/annual_results.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
@@ -104,6 +107,7 @@ class UploadToPostgres():
         # emission result related 
         self.emission_year_len = 0
         self.emission_result_dict = {}
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/results/Emissions.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
@@ -114,6 +118,7 @@ class UploadToPostgres():
 
         # npv result related
         self.npv_result_dict = {}
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/results/npv_results.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
@@ -225,7 +230,8 @@ class UploadToPostgres():
         # Close communication with the database
         self.cur.close()
         self.conn.close()
-        print("Cost Benefit Analysis Runner successfully completed")
+
+        print("Cost Benefit Analysis Runner completed successfully.")
 
 
     def run_load_profile(self):

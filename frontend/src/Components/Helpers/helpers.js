@@ -5,13 +5,13 @@ export function processResults(resultArr) {
     let isTimeSeries = false;
 
     if (resultArr[0][0] != undefined && resultArr[0][0].length === 0) {
-        isTimeSeries = false
+        isTimeSeries = false;
     } else if (resultArr.length == 0) {
-        isTimeSeries = false
+        isTimeSeries = false;
     } else if (resultArr[0][Object.keys(resultArr[0])[0]][0].time) {
-        isTimeSeries = true
+        isTimeSeries = true;
     } else {
-        isTimeSeries = false
+        isTimeSeries = false;
     }
 
     for (const result of resultArr) {
@@ -63,4 +63,4 @@ export function preprocessData(allData) {
         });
     }
     return resultFlattened;
-};
+}
