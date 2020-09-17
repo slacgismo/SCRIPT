@@ -180,42 +180,6 @@ class EVLoadModel(object):
 
         return output
 
-    def plot_labeled_load(self, plotting_data=None, other_labels=None, save_str=None, force_mw=False, set_ylim=None):
-
-        if plotting_data is None:
-            plotting_data = self.ev_segmented_load
-
-        x = (24 / np.shape(plotting_data)[0]) * np.arange(0, np.shape(plotting_data)[0])
-        mark = np.zeros(np.shape(x))
-        scaling = 1
-        unit = 'kW'
-        if (np.max(plotting_data) > 1e5) or force_mw:
-            scaling = 1 / 1000
-            unit = 'MW'
-        plt.figure(figsize=(8, 5))
-        for segment_number in range(len(self.config.categories_dict['Segment'])):
-            plt.plot(x, scaling * (mark + plotting_data[:, segment_number]))
-            plt.fill_between(x, scaling * mark, scaling * (mark + plotting_data[:, segment_number]), alpha=0.5)
-            mark += plotting_data[:, segment_number]
-        plt.plot(x, scaling * mark, 'k')
-        if other_labels is None:
-            plt.legend(labels=self.config.categories_dict['Label'], fontsize=12, loc='upper left')
-        else:
-            plt.legend(labels=other_labels, fontsize=12, loc=(0,1.05), ncol=3)
-        plt.xlim([0, np.max(x)])
-        if set_ylim is None:
-            plt.ylim([0, 1.1 * np.max(scaling * mark)])
-        else:
-            plt.ylim([0, set_ylim])
-        plt.ylabel(unit, fontsize=14)
-        plt.xlabel('Hour', fontsize=14)
-        plt.xticks(fontsize=14)
-        plt.yticks(fontsize=14)
-        if save_str is not None:
-            plt.tight_layout()
-            plt.savefig(save_str, bbox_inches='tight')
-        plt.show()
-
     def end_times_and_load(self, start_times, energies, rate, time_steps_per_hour=None, num_time_steps=None):
 
         if time_steps_per_hour is None:
