@@ -32,13 +32,13 @@ class UploadToPostgres():
         county_zip_codes = []
 
         # loops on the unique county names to gather corresponding data
-        for x in range(len(county_names)):
+        for x, name in enumerate(county_names):
             # kWh - so takes average data used
-            county_total_energy.append(data.loc[data['County'] == county_names[x], 'Energy (kWh)'].sum()/county_session_count[x])
-            county_peak_energy.append(data.loc[data['County'] == county_names[x], 'Energy (kWh)'].max())
+            county_total_energy.append(data.loc[data['County'] == name, 'Energy (kWh)'].sum()/county_session_count[x])
+            county_peak_energy.append(data.loc[data['County'] == name, 'Energy (kWh)'].max())
             # create a list of zipcodes for each county
-            county_zip_codes.append(data.loc[data['County'] == county_names[x], 'Zip Code'].drop_duplicates())
-            county_names[x] = county_names[x].replace(' County', "")
+            county_zip_codes.append(data.loc[data['County'] == name, 'Zip Code'].drop_duplicates())
+            county_names[x] = name.replace(' County', "")
 
         county_data = pd.DataFrame()
         county_data['name'] = county_names
@@ -63,22 +63,22 @@ class UploadToPostgres():
         county_data = self.createCountyUploadData("s3://script.chargepoint.data/clean/sessions_clean.csv")
         cur = conn.cursor()
 
-        for x in range(len(county_data["name"])):
+        for x, (k, name) in enumerate(county_data["name"].items()):
             cur.execute("INSERT INTO " + self.table_county + \
                 " (name, total_session, total_energy, peak_energy)" + \
                 " VALUES (%s, %s, %s, %s)",
                 (
-                    county_data["name"][x],
-                    county_data["total_session"][x],
-                    county_data["total_energy"][x],
-                    county_data["peak_energy"][x]
+                    name,
+                    county_data["total_session"][k],
+                    county_data["total_energy"][k],
+                    county_data["peak_energy"][k]
                 )
             )
-            for zipcode in county_data["zip_code"][x]:
+            for zipcode in county_data["zip_code"][k]:
                 cur.execute("INSERT INTO " + self.table_zipcode + " (code, county)" + " VALUES (%s, %s)",
                     (
                         str(zipcode),
-                        str(county_data["name"][x])
+                        str(name)
                     )
                 )
 
