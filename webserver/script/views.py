@@ -14,6 +14,7 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
+from script.LoadForecasting.LoadForecastingRunner import lf_runner
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -21,6 +22,36 @@ class LoadControlRunner(APIView):
         baseline_profiles, controlled_profiles = sca.run(request.data["county"], request.data["rate_energy_peak"], request.data["rate_energy_partpeak"], request.data["rate_energy_offpeak"], request.data["rate_demand_peak"], request.data["rate_demand_partpeak"], request.data["rate_demand_overall"])
         sca.uploadToPostgres(baseline_profiles, controlled_profiles)
         return Response("Smart Charging run succeeded")
+
+
+class LoadForecastRunner(APIView):
+    def post(self, request, format=None):
+        for key, item in request.data.items():
+            if item == "None":
+                request.data[key] = None
+        print(request.data)
+        lf_runner(
+            request.data["num_evs"],
+            request.data["aggregation_level"],
+            request.data["county"],
+            request.data["fast_percent"],
+            request.data["work_percent"],
+            request.data["res_percent"],
+            request.data["l1_percent"],
+            request.data["public_l2_percent"],
+            request.data["res_daily_use"],
+            request.data["work_daily_use"],
+            request.data["fast_daily_use"],
+            request.data["rent_percent"],
+            request.data["res_l2_smooth"],
+            request.data["week_day"],
+            request.data["publicl2_daily_use"],
+            request.data["mixed_batteries"],
+            request.data["timer_control"],
+            request.data["work_control"],
+            request.data["config_name"]
+        )
+        return Response("Load Forecast run succeeded")
 
 
 class CountyViewSet(viewsets.ModelViewSet):

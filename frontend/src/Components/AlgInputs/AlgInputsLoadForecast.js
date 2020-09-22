@@ -38,8 +38,6 @@ const styles = theme => ({
     },
 });
 
-
-
 class AlgInputsLoadForecast extends Component {
     constructor(props) {
         super(props);
@@ -56,12 +54,19 @@ class AlgInputsLoadForecast extends Component {
             work_percent: loadForecastDefaultParams.work_percent,
             res_percent: loadForecastDefaultParams.res_percent,
             l1_percent: loadForecastDefaultParams.l1_percent,
-            publicl2_percent: loadForecastDefaultParams.publicl2_percent,
+            public_l2_percent: loadForecastDefaultParams.public_l2_percent,
 
-            res_daily_use: 1.0,
-            work_daily_use: 1.0,
-            fast_daily_use: 0.5,
-            rent_percent: 0.4,
+            res_daily_use: loadForecastDefaultParams.res_daily_use,
+            work_daily_use: loadForecastDefaultParams.work_daily_use,
+            fast_daily_use: loadForecastDefaultParams.fast_daily_use,
+            rent_percent: loadForecastDefaultParams.rent_percent,
+
+            res_l2_smooth: loadForecastDefaultParams.res_l2_smooth,
+            week_day: loadForecastDefaultParams.week_day,
+            publicl2_daily_use: loadForecastDefaultParams.publicl2_daily_use,
+            mixed_batteries: loadForecastDefaultParams.mixed_batteries,
+            timer_control: loadForecastDefaultParams.timer_control,
+            work_control: loadForecastDefaultParams.work_control,
         };
     }
 
@@ -97,23 +102,34 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ [field]: event.currentTarget.value })
     };
 
-    /* TODO save results(profile) of Load Forecast*/
     saveResults = () => {
 
         // change var name
         const postData = {
             config_name: this.state.config_name,
             aggregation_level: this.state.aggregation_level,
-            num_evs: this.state.num_evs,
-            choice: this.state.county_choice,
-            fast_percent: this.state.fast_percent,
-            work_percent: this.state.work_percent,
-            res_percent: this.state.res_percent,
-            l1_percent: this.state.l1_percent,
-            public_l2_percent: this.state.publicl2_percent
+            num_evs: parseInt(this.state.num_evs),
+            county: this.state.county_choice,
+            fast_percent: parseFloat(this.state.fast_percent),
+            work_percent: parseFloat(this.state.work_percent),
+            res_percent: parseFloat(this.state.res_percent),
+            l1_percent: parseFloat(this.state.l1_percent),
+            public_l2_percent: parseFloat(this.state.public_l2_percent),
+
+            res_daily_use: parseFloat(this.state.res_daily_use),
+            work_daily_use: parseFloat(this.state.work_daily_use),
+            fast_daily_use: parseFloat(this.state.fast_daily_use),
+            rent_percent: parseFloat(this.state.rent_percent),
+
+            res_l2_smooth: this.state.res_l2_smooth,
+            week_day: this.state.week_day,
+            publicl2_daily_use: parseFloat(this.state.publicl2_daily_use),
+            mixed_batteries: this.state.mixed_batteries,
+            timer_control: this.state.timer_control,
+            work_control: this.state.work_control,
         }
 
-        const postUrl = `${ serverUrl }/config/load_forecast/`;
+        const postUrl = `${ serverUrl }/load_forecast_runner`;
 
         axios({
             method: 'post',
@@ -129,11 +145,6 @@ class AlgInputsLoadForecast extends Component {
         // const res = axios.post('/api/config/load_forecast/', post_list);
 
         this.setState({ open: false});
-
-
-
-        // TODO: backend
-        // POST data to save as a profile
     };
 
     // TODO: backend
@@ -188,6 +199,7 @@ class AlgInputsLoadForecast extends Component {
                     helperText="Please select a county"
                     margin="normal"
                     value={ this.state.county_choice }
+                    onChange={ e => this.update("county_choice", e) }
                 >
                     {
                         this.state.counties.map(option => (
@@ -253,11 +265,94 @@ class AlgInputsLoadForecast extends Component {
                 <TextField
                     id="standard-public_l2_percent"
                     label="public_l2_percent"
-                    value={ this.state.publicl2_percent }
+                    value={ this.state.public_l2_percent }
                     className={classes.textField}
                     margin="normal"
                     onChange={ e => this.update("public_l2_percent", e) }
                 />
+
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="res_daily_use"
+                    value={ this.state.res_daily_use }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("res_daily_use", e) }
+                />
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="work_daily_use"
+                    value={ this.state.work_daily_use }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("work_daily_use", e) }
+                />
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="fast_daily_use"
+                    value={ this.state.fast_daily_use }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("fast_daily_use", e) }
+                />
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="rent_percent"
+                    value={ this.state.rent_percent }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("rent_percent", e) }
+                />
+
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="res_l2_smooth"
+                    value={ this.state.res_l2_smooth }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("res_l2_smooth", e) }
+                />
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="week_day"
+                    value={ this.state.week_day }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("week_day", e) }
+                />
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="publicl2_daily_use"
+                    value={ this.state.publicl2_daily_use }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("publicl2_daily_use", e) }
+                />
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="mixed_batteries"
+                    value={ this.state.mixed_batteries }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("mixed_batteries", e) }
+                />
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="timer_control"
+                    value={ this.state.timer_control }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("timer_control", e) }
+                />
+                <TextField
+                    id="standard-public_l2_percent"
+                    label="work_control"
+                    value={ this.state.work_control }
+                    className={classes.textField}
+                    margin="normal"
+                    onChange={ e => this.update("work_control", e) }
+                />
+
                 <p/>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
                     Run
