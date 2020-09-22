@@ -369,4 +369,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# CBA tool files
+.idea/*
+.idea/
+*.pyc
+
 # End of https://www.gitignore.io/api/macos,django,python,windows,pycharm,sublimetext,visualstudiocode
