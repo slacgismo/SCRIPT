@@ -1,0 +1,8 @@
+Load Profile, Charger Assignment
+Residential TOU Charging Load 1,Residential L2
+Residential Flat Rate Charging Load,Residential L2
+Residential TOU Charging Load 2,Residential L2
+Residential EV TOU Charging Load,Residential L2
+Public Charging Load,Public L2
+Workplace Charging Load,Workplace L2
+DCFC Charging Load,DCFC
