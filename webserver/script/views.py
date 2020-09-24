@@ -27,9 +27,8 @@ class LoadControlRunner(APIView):
 class LoadForecastRunner(APIView):
     def post(self, request, format=None):
         for key, item in request.data.items():
-            if item == "None":
+            if item == "None" || item == "none" || item == "NONE":
                 request.data[key] = None
-        print(request.data)
         lf_runner(
             request.data["num_evs"],
             request.data["aggregation_level"],
