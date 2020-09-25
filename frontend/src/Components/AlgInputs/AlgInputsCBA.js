@@ -116,7 +116,6 @@ class AlgInputsCBA extends Component {
     };
 
     getCBAResult = async () => {
-        console.log("DIS?")  
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
         const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
         const dataCBA = {dataValues: []};
@@ -130,13 +129,11 @@ class AlgInputsCBA extends Component {
         return preprocessData(dataCBA);
     };
 
-    updateCharts = async () => {
-        console.log("ABOUT HERE?")  
+    updateCharts = async () => { 
         this.props.visualizeResults(await this.getCBAResult());
     }
 
     updateProfileAndCharts = async () => { 
-        console.log("AM HERE?")    
         this.findProfile();       
         this.props.visualizeResults(await this.getCBAResult());
     };
