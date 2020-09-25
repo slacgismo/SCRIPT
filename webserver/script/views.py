@@ -14,8 +14,10 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
-from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
-
+from script.CostBenefitAnalysis.python_code.UploadToPostgres import UploadToPostgres
+import sys
+sys.path.append("CostBenefitAnalysis/python_code/")
+import model_class
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -27,7 +29,14 @@ class LoadControlRunner(APIView):
 
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
+        #TODO:
+        #run csv converter to format load profile for cba tool (only basecase load profiles now)
+        model_class.ModelInstance()
+        
+        # currently only runs case with basecase setup
+        # add in error handling
         UploadToPostgres(load_profile = request.data['load_profile'])
+        
         return Response("Cost Benefit Analysis run succeeded")
 
 
