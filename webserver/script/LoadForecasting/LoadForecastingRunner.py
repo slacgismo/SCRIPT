@@ -3,6 +3,9 @@ from script.LoadForecasting.configurations_script import FinalReport
 import numpy as np
 import pandas as pd
 from script.LoadForecasting.UploadToPostgres import *
+import logging
+
+logger = logging.getLogger(__name__)
 
 def lf_runner(
         total_num_evs,
@@ -25,7 +28,7 @@ def lf_runner(
         work_control,
         config_name,
     ):
-    
+
     config = FinalReport(total_num_evs=total_num_evs, aggregation_level=aggregation_level, county=county,
                          res_percent=res_percent, fast_percent=fast_percent, publicl2_percent=publicl2_percent, work_percent=work_percent,
                          rent_percent=rent_percent, l1_percent=l1_percent, res_l2_smooth=res_l2_smooth, week_day=week_day,
@@ -71,6 +74,16 @@ def lf_runner(
         work_percent,
         res_percent,
         l1_percent,
-        publicl2_percent
+        publicl2_percent,
+        res_daily_use,
+        work_daily_use,
+        fast_daily_use,
+        rent_percent,
+        res_l2_smooth,
+        week_day,
+        publicl2_daily_use,
+        mixed_batteries,
+        timer_control,
+        work_control
     )
-    print('Upload to Postgres succeeded.')
+    logger.info('Upload to Postgres for Load Forecasting succeeded.')

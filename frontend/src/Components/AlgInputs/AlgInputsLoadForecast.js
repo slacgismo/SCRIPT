@@ -44,7 +44,6 @@ class AlgInputsLoadForecast extends Component {
         this.state = {
             open: false,
             counties: [],
-
             // Alg params
             config_name: loadForecastDefaultParams.config_name,
             aggregation_level: loadForecastDefaultParams.aggregation_level,
@@ -55,12 +54,10 @@ class AlgInputsLoadForecast extends Component {
             res_percent: loadForecastDefaultParams.res_percent,
             l1_percent: loadForecastDefaultParams.l1_percent,
             public_l2_percent: loadForecastDefaultParams.public_l2_percent,
-
             res_daily_use: loadForecastDefaultParams.res_daily_use,
             work_daily_use: loadForecastDefaultParams.work_daily_use,
             fast_daily_use: loadForecastDefaultParams.fast_daily_use,
             rent_percent: loadForecastDefaultParams.rent_percent,
-
             res_l2_smooth: loadForecastDefaultParams.res_l2_smooth,
             week_day: loadForecastDefaultParams.week_day,
             publicl2_daily_use: loadForecastDefaultParams.publicl2_daily_use,
@@ -95,7 +92,7 @@ class AlgInputsLoadForecast extends Component {
     }
 
     handleClose = () => {
-        this.setState({ open: false});
+        this.setState({ open: false });
     };
 
     update = (field, event) => {
@@ -115,12 +112,10 @@ class AlgInputsLoadForecast extends Component {
             res_percent: parseFloat(this.state.res_percent),
             l1_percent: parseFloat(this.state.l1_percent),
             public_l2_percent: parseFloat(this.state.public_l2_percent),
-
             res_daily_use: parseFloat(this.state.res_daily_use),
             work_daily_use: parseFloat(this.state.work_daily_use),
             fast_daily_use: parseFloat(this.state.fast_daily_use),
             rent_percent: parseFloat(this.state.rent_percent),
-
             res_l2_smooth: this.state.res_l2_smooth,
             week_day: this.state.week_day,
             publicl2_daily_use: parseFloat(this.state.publicl2_daily_use),
@@ -142,15 +137,19 @@ class AlgInputsLoadForecast extends Component {
             console.log(error);
         });
 
-        this.setState({ open: false});
+        this.setState({ open: false });
     };
 
     // TODO: backend
     getResult = async (county) => {
+
         if(document.getElementById("standard-county") === null) {
-            this.state.county_choice = null;
+            county = null;
         }
-        county = this.state.county_choice;
+        else {
+            county = this.state.county_choice;
+        }
+
         const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?county=${ county }`);
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {
