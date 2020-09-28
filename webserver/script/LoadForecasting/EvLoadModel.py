@@ -108,13 +108,14 @@ class EVLoadModel(object):
                                                                                           'Energies': energies,
                                                                                           'Load': load}
 
-        self.sum_and_sample_load(load_segments_dict=self.load_segments)
+        self.ev_segmented_load, self.basic_load, self.sampled_loads_dict, self.sampled_loads_dict['Total'] = self.sum_and_sample_load(load_segments_dict=self.load_segments)
 
     def sum_and_sample_load(self, overwrite=True, load_segments_dict=None, discontinuity_dict={}):
 
         if load_segments_dict is None:
             load_segments_dict = copy.deepcopy(self.load_segments)
         ev_segmented_load = np.zeros(np.shape(self.ev_segmented_load))
+
         sampled_loads_dict = {}
         for segment_number in range(len(self.config.categories_dict['Segment'])):
             load = load_segments_dict[self.config.categories_dict['Segment'][segment_number]]['Load']
@@ -137,10 +138,7 @@ class EVLoadModel(object):
             ev_segmented_load[:, segment_number] = ev_segmented_load_here
 
         if overwrite:
-            self.ev_segmented_load = ev_segmented_load
-            self.basic_load = np.sum(self.ev_segmented_load, axis=1)
-            self.sampled_loads_dict = copy.deepcopy(sampled_loads_dict)
-            self.sampled_loads_dict['Total'] = self.basic_load
+            return ev_segmented_load, np.sum(self.ev_segmented_load, axis=1), copy.deepcopy(sampled_loads_dict), self.basic_load
 
         else:
             return ev_segmented_load, np.sum(ev_segmented_load, axis=1), sampled_loads_dict
