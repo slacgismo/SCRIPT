@@ -115,7 +115,6 @@ class EVLoadModel(object):
         if load_segments_dict is None:
             load_segments_dict = copy.deepcopy(self.load_segments)
         ev_segmented_load = np.zeros(np.shape(self.ev_segmented_load))
-
         sampled_loads_dict = {}
         for segment_number in range(len(self.config.categories_dict['Segment'])):
             load = load_segments_dict[self.config.categories_dict['Segment'][segment_number]]['Load']
