@@ -58,6 +58,17 @@ class LoadForecastConfig(models.Model):
     res_percent = models.FloatField()
     l1_percent = models.FloatField()
     public_l2_percent = models.FloatField()
+    res_daily_use = models.FloatField()
+    work_daily_use = models.FloatField()
+    fast_daily_use = models.FloatField()
+    rent_percent = models.FloatField()
+    res_l2_smooth = models.CharField(max_length=30)
+    week_day = models.CharField(max_length=30)
+    publicl2_daily_use = models.FloatField()
+    mixed_batteries = models.CharField(max_length=50)
+    timer_control = models.CharField(max_length=30)
+    work_control = models.CharField(max_length=30)
+
 
     class Meta:
         db_table = 'script_config_ev_load_forecast'
@@ -68,7 +79,18 @@ class LoadForecastConfig(models.Model):
                             'work_percent',
                             'res_percent',
                             'l1_percent',
-                            'public_l2_percent'),)
+                            'public_l2_percent',
+                            'res_daily_use',
+                            'work_daily_use',
+                            'fast_daily_use',
+                            'rent_percent',
+                            'res_l2_smooth',
+                            'week_day',
+                            'publicl2_daily_use',
+                            'mixed_batteries',
+                            'timer_control',
+                            'work_control',
+                            ),)
 
 
 class LoadProfileConfig(models.Model):

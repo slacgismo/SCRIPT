@@ -14,10 +14,14 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
+<<<<<<< HEAD
 from script.CostBenefitAnalysis.python_code.UploadToPostgres import UploadToPostgres
 import sys
 sys.path.append("CostBenefitAnalysis/python_code/")
 import model_class
+=======
+from script.LoadForecasting.LoadForecastingRunner import lf_runner
+>>>>>>> origin
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -27,6 +31,7 @@ class LoadControlRunner(APIView):
         return Response("Smart Charging run succeeded")
 
 
+<<<<<<< HEAD
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
         #TODO:
@@ -38,6 +43,35 @@ class CostBenefitAnalysisRunner(APIView):
         UploadToPostgres(load_profile = request.data['load_profile'])
         
         return Response("Cost Benefit Analysis run succeeded")
+=======
+class LoadForecastRunner(APIView):
+    def post(self, request, format=None):
+        for key, item in request.data.items():
+            if item in ["None", "none", "NONE"]:
+                request.data[key] = None
+        lf_runner(
+            request.data["num_evs"],
+            request.data["aggregation_level"],
+            request.data["county"],
+            request.data["fast_percent"],
+            request.data["work_percent"],
+            request.data["res_percent"],
+            request.data["l1_percent"],
+            request.data["public_l2_percent"],
+            request.data["res_daily_use"],
+            request.data["work_daily_use"],
+            request.data["fast_daily_use"],
+            request.data["rent_percent"],
+            request.data["res_l2_smooth"],
+            request.data["week_day"],
+            request.data["publicl2_daily_use"],
+            request.data["mixed_batteries"],
+            request.data["timer_control"],
+            request.data["work_control"],
+            request.data["config_name"]
+        )
+        return Response("Load Forecast run succeeded")
+>>>>>>> origin
 
 
 class CountyViewSet(viewsets.ModelViewSet):

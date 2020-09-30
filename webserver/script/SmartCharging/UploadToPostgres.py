@@ -15,7 +15,7 @@ class UploadToPostgres():
         rate_demand_partpeak,
         rate_demand_overall
     ):
-        with open(settings.BASE_DIR[:-3] + 'script/SmartCharging/postgres_info.json') as json_file:
+        with open(settings.BASE_DIR + '/postgres_info.json') as json_file:
             postgres_info = json.load(json_file)
 
         self.db_host = postgres_info['DB_HOST']

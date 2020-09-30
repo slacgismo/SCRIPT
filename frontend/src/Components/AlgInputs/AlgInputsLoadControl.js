@@ -178,6 +178,8 @@ class AlgInputsLoadControl extends Component {
                     }}
                     helperText="Please select a county"
                     margin="normal"
+                    value={ this.state.county }
+                    onChange={ e => this.update("county", e) }
                     // value={ this.state.county }
                 >
                     {

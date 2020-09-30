@@ -43,7 +43,22 @@ class UploadToPostgres():
         work_percent,
         res_percent,
         l1_percent,
+<<<<<<< HEAD
         publicl2_percent
+=======
+        publicl2_percent,
+        res_daily_use,
+        work_daily_use,
+        fast_daily_use,
+        rent_percent,
+        res_l2_smooth,
+        week_day,
+        publicl2_daily_use,
+        mixed_batteries,
+        timer_control,
+        work_control
+
+>>>>>>> origin
     ):
 
         conn = psycopg2.connect(
@@ -58,11 +73,23 @@ class UploadToPostgres():
 
         cur.execute("INSERT INTO " + self.config_table_name + \
             " (config_name, aggregation_level, num_evs, choice," + \
+<<<<<<< HEAD
             " fast_percent, work_percent, res_percent, l1_percent, public_l2_percent)" + \
             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 str(config_name), str(aggregation_level), str(int(num_evs)), str(county_choice), str(fast_percent), \
                     str(work_percent), str(res_percent), str(l1_percent), str(publicl2_percent)
+=======
+            " fast_percent, work_percent, res_percent, l1_percent, public_l2_percent," + \
+            " res_daily_use, work_daily_use, fast_daily_use, rent_percent, res_l2_smooth," + \
+            " week_day, publicl2_daily_use, mixed_batteries, timer_control, work_control)" + \
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (
+                str(config_name), str(aggregation_level), str(int(num_evs)), str(county_choice), str(fast_percent), \
+                str(work_percent), str(res_percent), str(l1_percent), str(publicl2_percent), str(res_daily_use), \
+                str(work_daily_use), str(fast_daily_use), str(rent_percent), str(res_l2_smooth), str(week_day), \
+                str(publicl2_daily_use), str(mixed_batteries), str(timer_control), str(work_control)
+>>>>>>> origin
             )
         )
 
@@ -151,11 +178,18 @@ class UploadToPostgres():
                 json.dumps(work_load_list), json.dumps(public_l2_load_list), json.dumps(total_load_list)
             )
         )
+<<<<<<< HEAD
 
         print('Insertion finished...')
+=======
+>>>>>>> origin
         # Make the changes to the database persistent
         conn.commit()
 
         # Close communication with the database
         cur.close()
+<<<<<<< HEAD
         conn.close()
+=======
+        conn.close()
+>>>>>>> origin
