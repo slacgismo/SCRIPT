@@ -3,7 +3,7 @@ from rest_framework import routers
 from script.views import CountyViewSet, ZipCodeViewSet, EnergyViewSet
 from script.views import LoadControllerConfigViewSet, LoadForecastConfigViewSet, LoadProfileConfigViewSet, GasConsumptionConfigViewSet, NetPresentValueConfigViewSet, EmissionConfigViewSet, CostBenefitConfigViewSet
 from script.views import LoadForecastViewSet, LoadControllerViewSet, LoadProfileViewSet, GasConsumptionViewSet, CostBenefitViewSet, NetPresentValueViewSet, EmissionViewSet
-from script.views import CostBenefitAnalysisRunner
+from script.views import  CostBenefitAnalysisRunner
 from script.views import LoadControlRunner, LoadForecastRunner
 # set up a router for RESTful API
 # ref1: https://www.django-rest-framework.org/api-guide/routers/
@@ -44,13 +44,10 @@ router.register('algorithm/cost_benefit_analysis/cost_benefit', CostBenefitViewS
 router.register('algorithm/cost_benefit_analysis/net_present_value', NetPresentValueViewSet, 'algorithm/cost_benefit_analysis/net_present_value')
 router.register('algorithm/cost_benefit_analysis/emission', EmissionViewSet, 'algorithm/cost_benefit_analysis/emission')
 
+
 urlpatterns = [
     path('load_control_runner', LoadControlRunner.as_view()),
-<<<<<<< HEAD
     path('cost_benefit_analysis_runner', CostBenefitAnalysisRunner.as_view()),
-    path('', include(router.urls))
-=======
     path('load_forecast_runner', LoadForecastRunner.as_view()),
     path('', include(router.urls)),
->>>>>>> origin
 ]
