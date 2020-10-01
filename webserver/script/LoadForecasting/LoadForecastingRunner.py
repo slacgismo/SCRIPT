@@ -50,9 +50,6 @@ def lf_runner(
     total[:, 6] = np.sum(total, axis=1)
     total_df = pd.DataFrame(data=total, columns=['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total'])
 
-    # pd.DataFrame(model.sampled_loads_dict).to_csv('s3://script.forecast.inputsoutputs/Control_Paper_Scenarios/'+name+'_uncontrolled_load.csv')
-    # pd.DataFrame(model.sampled_controlled_loads_dict).to_csv('s3://script.forecast.inputsoutputs/Control_Paper_Scenarios/'+name+'_controlled_load_'+savestr+'.csv')
-
     upload_to_postgres_client = UploadToPostgres(
         total[:, 0],
         total[:, 1],
