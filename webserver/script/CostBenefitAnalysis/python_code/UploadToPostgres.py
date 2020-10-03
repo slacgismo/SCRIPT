@@ -236,13 +236,6 @@ class UploadToPostgres():
 
         # Close communication with the database
         self.cur.close()
-
-
-
-
-
-
-
         self.conn.close()
 
         print("Cost Benefit Analysis Runner completed successfully.")

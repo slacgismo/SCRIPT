@@ -216,6 +216,7 @@ class SmartChargingAlgorithm:
         )
         upload_to_postgres_client.run(baseline_profiles, controlled_profiles)
         print('Upload to Postgres succeeded.')
+        return
 
     # def demo_run(
     #         self,

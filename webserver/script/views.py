@@ -15,10 +15,9 @@ from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerial
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
 from script.CostBenefitAnalysis.python_code.UploadToPostgres import UploadToPostgres
+from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
+from script.CostBenefitAnalysis.python_code.model_class import ModelInstance
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
-import sys
-sys.path.append("CostBenefitAnalysis/python_code/")
-import model_class
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -29,15 +28,19 @@ class LoadControlRunner(APIView):
 
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
-        #TODO:
-        #run csv converter to format load profile for cba tool (only basecase load profiles now)
-        model_class.ModelInstance()
+
+        try:
+            # TODO: requires an updated version of CBA Tool 
+            # While waiting for the updated CBA tool,
+            # this setup runs the split file module correctly, but saves the csv to test files in CBA tool
+            # CBA tool instead is processing old ev load profiles in the meantime and saving basecase results to db
+            split_file(county = request.data['county'])
+            ModelInstance()
+            UploadToPostgres(load_profile = request.data['load_profile'])
+            return Response("Cost Benefit Analysis run succeeded")
         
-        # currently only runs case with basecase setup
-        # add in error handling
-        UploadToPostgres(load_profile = request.data['load_profile'])
-        
-        return Response("Cost Benefit Analysis run succeeded")
+        except (ValueError, RuntimeError, TypeError, KeyError, NameError) as e:
+            raise e
 
 class LoadForecastRunner(APIView):
     def post(self, request, format=None):
@@ -116,7 +119,8 @@ class LoadForecastConfigViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = LoadForecastConfigSerializer
-    filter_fields = ('aggregation_level',
+    filter_fields = ('config_name',
+                    'aggregation_level',
                     'num_evs',
                     'choice',
                     'fast_percent',

@@ -382,3 +382,4 @@ webserver/script/costbenefitanalysis/preprocessing_loadprofiles/county_list/*
 webserver/script/costbenefitanalysis/preprocessing_loadprofiles/driver_counts/*
 webserver/script/costbenefitanalysis/preprocessing_loadprofiles/inputs/*
 webserver/script/costbenefitanalysis/preprocessing_loadprofiles/outputs/*
+webserver/script/costbenefitanalysis/cases/test_files

@@ -34,27 +34,6 @@ const styles = theme => ({
     },
 });
 
-// const counties = [
-//     {
-//         name: "Santa Clara",
-//         residents: "1",
-//     },
-//     {
-//         name: "Santa Cruz",
-//         residents: "2",
-//     },
-//     {
-//         name: "San Francisco",
-//         residents: "3",
-//     },
-//     {
-//         name: "San Diego",
-//         residents: "4",
-//     },
-// ];
-
-
-
 class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);

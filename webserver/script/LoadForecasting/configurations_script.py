@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> origin
 import numpy as np
 import pickle
 import pandas as pd
@@ -102,8 +98,4 @@ class FinalReport(object):
                                                     'sessions2019_other_fast_weekend_allbatt_se_5_gmm.p']
 
         if res_l2_smooth:
-<<<<<<< HEAD
             self.categories_dict['GMM Sub Path'][1] = self.categories_dict['GMM Sub Path'][0]
-=======
-            self.categories_dict['GMM Sub Path'][1] = self.categories_dict['GMM Sub Path'][0]
->>>>>>> origin

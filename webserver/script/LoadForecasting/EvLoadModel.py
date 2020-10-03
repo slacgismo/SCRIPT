@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> origin
 import numpy as np
 import scipy
 import scipy.interpolate
@@ -112,11 +108,7 @@ class EVLoadModel(object):
                                                                                           'Energies': energies,
                                                                                           'Load': load}
 
-<<<<<<< HEAD
-        self.sum_and_sample_load(load_segments_dict=self.load_segments)
-=======
         self.ev_segmented_load, self.basic_load, self.sampled_loads_dict, self.sampled_loads_dict['Total'] = self.sum_and_sample_load(load_segments_dict=self.load_segments)
->>>>>>> origin
 
     def sum_and_sample_load(self, overwrite=True, load_segments_dict=None, discontinuity_dict={}):
 
@@ -145,14 +137,7 @@ class EVLoadModel(object):
             ev_segmented_load[:, segment_number] = ev_segmented_load_here
 
         if overwrite:
-<<<<<<< HEAD
-            self.ev_segmented_load = ev_segmented_load
-            self.basic_load = np.sum(self.ev_segmented_load, axis=1)
-            self.sampled_loads_dict = copy.deepcopy(sampled_loads_dict)
-            self.sampled_loads_dict['Total'] = self.basic_load
-=======
             return ev_segmented_load, np.sum(self.ev_segmented_load, axis=1), copy.deepcopy(sampled_loads_dict), self.basic_load
->>>>>>> origin
 
         else:
             return ev_segmented_load, np.sum(ev_segmented_load, axis=1), sampled_loads_dict
@@ -362,8 +347,4 @@ class EVLoadModel(object):
                                                                                  load_segments_dict=self.controlled_load_segments_dict)
         self.controlled_segmented_load = segmented_load
         self.controlled_load = total_load
-<<<<<<< HEAD
         self.sampled_controlled_loads_dict = sampled_load_dict
-=======
-        self.sampled_controlled_loads_dict = sampled_load_dict
->>>>>>> origin

@@ -16,6 +16,7 @@ import constants
 import datetime
 import sys
 import helpers
+from pathlib import Path
 
 class MODEL_INPUTS(object):
     """
@@ -253,8 +254,8 @@ class MODEL_INPUTS(object):
         Build all of the directories required for a model run.
         """
 
-        self.PYTHON_DIR = os.getcwd()
-        self.MODEL_DIR = self.PYTHON_DIR + r'/script/CostBenefitAnalysis'
+        self.PYTHON_DIR = str(Path(__file__).parent.parent.resolve())
+        self.MODEL_DIR = self.PYTHON_DIR 
         self.CASE_DIR = self.MODEL_DIR + r'/cases'
         self.DATA_DIR = self.CASE_DIR + r'/data'
         self.CONFIG_DIR = self.DATA_DIR + r'/configs'

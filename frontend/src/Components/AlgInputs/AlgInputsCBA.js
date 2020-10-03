@@ -67,25 +67,29 @@ class AlgInputsCBA extends Component {
                     this.setState({ profileData: profiles, profileNames: profileNames, profileName: document.getElementById("standard-profile").value });
                 }
             });
-        
-        const dataLoadForecast = [];
-
-        axios("http://127.0.0.1:8000/api/algorithm/load_forecast")
-            .then(res => {    
-                for (var i = 0; i < res.data.length; i++) {
-                    const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-                    dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
-                    dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
-                    dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
-                    dataLoadForecastUnit.work_load = (res.data[i].work_load);
-                    dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
-                    dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
-                    dataLoadForecastUnit.total_load = (res.data[i].total_load);
-                    dataLoadForecast.push(dataLoadForecastUnit);
-                }
-                this.setState({ loadForecastResults: dataLoadForecast });
-            });
+        this.getLoadForecastData();
     }
+
+    getLoadForecastData = async() => {
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast", {
+            params: {
+                config: this.state.profileName
+            }
+        })
+        const dataLoadForecast = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
+            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
+            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
+            dataLoadForecastUnit.work_load = (res.data[i].work_load);
+            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
+            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
+            dataLoadForecastUnit.total_load = (res.data[i].total_load);
+            dataLoadForecast.push(dataLoadForecastUnit);
+        }
+        this.setState({ loadForecastResults: dataLoadForecast });
+    };
 
     handleClose = () => {
         this.setState({ openResult: false, openUpload: false });
@@ -95,6 +99,10 @@ class AlgInputsCBA extends Component {
         const processedLoadForecastResults = processResults(this.state.loadForecastResults);
         this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
     };
+
+    setProfileName = () => {
+        this.setState({profileName: this.state.profileName})
+    }
 
     findProfile = async () => {
         // check for corresponding CBA input table for current load forecast profile
@@ -107,11 +115,14 @@ class AlgInputsCBA extends Component {
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
         if(config_res.data.length === 0){
             const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
+            const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
+            const countyMatch = profileMatch.map(profile => profile["choice"])
             axios({
                 method: "post",
                 url: postUrl,
-                data: {load_profile: this.state.profileName},
+                data: {load_profile: this.state.profileName, county: countyMatch},
             });
+            this.props.visualizeResults(await this.getCBAResult());
         }
     };
 
@@ -133,7 +144,8 @@ class AlgInputsCBA extends Component {
         this.props.visualizeResults(await this.getCBAResult());
     }
 
-    updateProfileAndCharts = async () => { 
+    updateProfileAndCharts = async () => {
+        this.setState({profileName: document.getElementById("standard-profile").value});
         this.findProfile();       
         this.props.visualizeResults(await this.getCBAResult());
     };
@@ -144,10 +156,10 @@ class AlgInputsCBA extends Component {
             this.updateCharts();
         }
 
-        // if different load forecast profile selected 
+        // if different load forecast profile selected, change load forecast chart
         if (prevState.profileName !== document.getElementById("standard-profile").value) {
             this.setState({profileName: document.getElementById("standard-profile").value}, () => {
-                this.updateProfileAndCharts();
+                this.getLoadForecastData();
             });
         }
     }
@@ -174,6 +186,7 @@ class AlgInputsCBA extends Component {
                     }}
                     helperText="Please select a profile"
                     margin="normal"
+                    onChange={this.setProfileName}
                 >
                     {
                         this.state.profileNames.map(option => (
@@ -190,7 +203,7 @@ class AlgInputsCBA extends Component {
                     Upload
                 </Button> */}
                 <p/>
-                <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.updateProfileAndCharts}>
                     Run
                 </Button>
 
