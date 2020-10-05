@@ -28,19 +28,14 @@ class LoadControlRunner(APIView):
 
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
-
-        try:
-            # TODO: requires an updated version of CBA Tool 
-            # While waiting for the updated CBA tool,
-            # this setup runs the split file module correctly, but saves the csv to test files in CBA tool
-            # CBA tool instead is processing old ev load profiles in the meantime and saving basecase results to db
-            split_file(county = request.data['county'])
-            ModelInstance()
-            UploadToPostgres(load_profile = request.data['load_profile'])
-            return Response("Cost Benefit Analysis run succeeded")
-        
-        except (ValueError, RuntimeError, TypeError, KeyError, NameError) as e:
-            raise e
+        # TODO: requires an updated version of CBA Tool 
+        # While waiting for the updated CBA tool,
+        # this setup runs the split file module correctly, but saves the csv to test files in CBA tool
+        # CBA tool instead is processing old ev load profiles in the meantime and saving basecase results to db
+        split_file(county = request.data['county'])
+        ModelInstance()
+        UploadToPostgres(load_profile = request.data['load_profile'])
+        return Response("Cost Benefit Analysis run succeeded")
 
 class LoadForecastRunner(APIView):
     def post(self, request, format=None):
