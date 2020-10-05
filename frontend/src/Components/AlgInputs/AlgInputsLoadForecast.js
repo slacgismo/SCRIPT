@@ -101,7 +101,7 @@ class AlgInputsLoadForecast extends Component {
 
     saveResults = async() => {
         // check if current load forecast profile already exists before saving
-        const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.config_name}`)
+        const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.config_name}`);
 
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
         if(config_res.data.length === 0){
@@ -126,7 +126,7 @@ class AlgInputsLoadForecast extends Component {
                 mixed_batteries: this.state.mixed_batteries,
                 timer_control: this.state.timer_control,
                 work_control: this.state.work_control,
-            }
+            };
 
             const postUrl = `${ serverUrl }/load_forecast_runner`;
 
@@ -141,7 +141,7 @@ class AlgInputsLoadForecast extends Component {
                     console.log(error);
                 });
             this.setState({ open: false });
-        };
+        }
     };
 
     getResult = async (county) => {
@@ -233,12 +233,12 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.aggregation_level }
                     onChange={ e => this.update("aggregation_level", e) }
                 >
-                        <option key="county" value="county">
+                    <option key="county" value="county">
                             County
-                        </option>
-                        <option key="state" value="state">
+                    </option>
+                    <option key="state" value="state">
                             State
-                        </option>
+                    </option>
                 </TextField>
 
                 { countyNames }

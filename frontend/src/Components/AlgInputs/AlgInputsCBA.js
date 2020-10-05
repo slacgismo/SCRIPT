@@ -75,7 +75,7 @@ class AlgInputsCBA extends Component {
             params: {
                 config: this.state.profileName
             }
-        })
+        });
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {
             const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
@@ -101,7 +101,7 @@ class AlgInputsCBA extends Component {
     };
 
     setProfileName = () => {
-        this.setState({profileName: this.state.profileName})
+        this.setState({profileName: this.state.profileName});
     }
 
     findProfile = async () => {
@@ -116,7 +116,7 @@ class AlgInputsCBA extends Component {
         if(config_res.data.length === 0){
             const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
             const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
-            const countyMatch = profileMatch.map(profile => profile["choice"])
+            const countyMatch = profileMatch.map(profile => profile["choice"]);
             axios({
                 method: "post",
                 url: postUrl,

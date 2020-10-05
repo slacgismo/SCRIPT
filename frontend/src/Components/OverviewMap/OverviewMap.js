@@ -113,8 +113,8 @@ class OverviewMap extends React.PureComponent {
 
         addCountyColorByAttr(counties, this.props.overviewParam);
         this.styledMap = getStyledMapWrapperByCountyColors(
-          counties,
-        )
+            counties,
+        );
         this.Viewer = null;
         this.updateMap = this.updateMap.bind(this);
     }
@@ -219,15 +219,15 @@ class OverviewMap extends React.PureComponent {
     }
 
   onMouseOver = e => {
-    if (!counties[e.target.attributes.name.value]) {
-        return
-    }
-    let newState = { current: {
-        countyName: e.target.attributes.name.value,
-        [this.state.chosenParam]: (counties[e.target.attributes.name.value][this.state.chosenParam] * 1000).toFixed(1),
-    } }
-    this.setState(newState);
-}
+      if (!counties[e.target.attributes.name.value]) {
+          return;
+      }
+      let newState = { current: {
+          countyName: e.target.attributes.name.value,
+          [this.state.chosenParam]: (counties[e.target.attributes.name.value][this.state.chosenParam] * 1000).toFixed(1),
+      } };
+      this.setState(newState);
+  }
 
   onMouseMove = e => {
       this.setState({
@@ -240,8 +240,8 @@ class OverviewMap extends React.PureComponent {
   onMouseOut = e => {
       this.setState({
           isTooltipVisible: false
-      })
-    }
+      });
+  }
 }
 
 export default OverviewMap;
