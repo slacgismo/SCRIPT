@@ -1,18 +1,18 @@
-import React, {Component} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
-import { countyRes } from '../Api/CountyData';
-import { loadControlPromise } from '../Api/AlgorithmData';
-import { loadControlDefaultParams } from '../Api/algorithmDefaultParams';
-import { serverUrl } from '../Api/server';
-import axios from 'axios';
+import React, {Component} from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { withStyles } from "@material-ui/core/styles";
+import { countyRes } from "../Api/CountyData";
+import { loadControlPromise } from "../Api/AlgorithmData";
+import { loadControlDefaultParams } from "../Api/algorithmDefaultParams";
+import { serverUrl } from "../Api/server";
+import axios from "axios";
 
 const styles = theme => ({
     container: {
-        display: 'flex',
-        flexWrap: 'wrap',
+        display: "flex",
+        flexWrap: "wrap",
     },
     textField: {
         marginLeft: theme.spacing(1),
@@ -39,11 +39,11 @@ class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            counties: ['Alameda', 'Contra Costa', 'Marin', 'Orange', 'Sacramento', 'San Francisco', 'San Mateo', 'Santa Clara', 'Solano'],
+            counties: ["Alameda", "Contra Costa", "Marin", "Orange", "Sacramento", "San Francisco", "San Mateo", "Santa Clara", "Solano"],
             result: null,
             county: loadControlDefaultParams.county,
-            rate_structures: ['PGEcev', 'PGEcev_demand', 'PGEcev_energy', 'PGEe19', 'SCEtouev8', 'SDGEmedian', 'SDGErandom', 'cap', 'minpeak'],
-            rate_structure: 'PGEe19',
+            rate_structures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
+            rate_structure: "PGEe19",
         };
     }
 
@@ -59,7 +59,7 @@ class AlgInputsLoadControl extends Component {
         const postUrl = `${ serverUrl }/load_control_runner`;
 
         axios({
-            method: 'post',
+            method: "post",
             url: postUrl,
             data: postData,
         })
@@ -77,7 +77,7 @@ class AlgInputsLoadControl extends Component {
         return !this.state.counties ? <></> : (
             <>
                 <TextField
-                    id='standart-county'
+                    id="standart-county"
                     select
                     className={classes.textField}
                     SelectProps={{
@@ -86,10 +86,10 @@ class AlgInputsLoadControl extends Component {
                             className: classes.menu,
                         },
                     }}
-                    helperText='Please select a county'
-                    margin='normal'
+                    helperText="Please select a county"
+                    margin="normal"
                     value={ this.state.county }
-                    onChange={ e => this.update('county', e) }
+                    onChange={ e => this.update("county", e) }
                     // value={ this.state.county }
                 >
                     {
@@ -102,19 +102,19 @@ class AlgInputsLoadControl extends Component {
                 </TextField>
 
                 <TextField
-                    id='rate_structure'
+                    id="rate_structure"
                     select
                     value={ this.state.rate_structure }
                     className={classes.textField}
-                    helperText='rate_structure'
+                    helperText="rate_structure"
                     SelectProps={{
                         native: true,
                         MenuProps: {
                             className: classes.menu,
                         },
                     }}
-                    margin='normal'
-                    onChange={ e => this.update('rate_structure', e) }
+                    margin="normal"
+                    onChange={ e => this.update("rate_structure", e) }
                 >
                 {
                     this.state.rate_structures.map(option => (
@@ -127,8 +127,8 @@ class AlgInputsLoadControl extends Component {
                 </TextField>
                 <br />
                 <Button
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     className={classes.button}
                     onClick={ () => this.runAlgorithm() }
                 >
