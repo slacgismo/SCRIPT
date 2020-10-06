@@ -3,9 +3,9 @@ from s3fs.core import S3FileSystem
 import json
 
 def getScaData(item_name, bucket_name="script.data.control.study"):
-    ''' gets and cleans the sca data when there is no user data input ''' 
+    ''' gets and cleans the sca data when there is no user data input '''
     s3 = S3FileSystem()
-    df = np.load(s3.open('{}/{}'.format(bucket_name, item_name)))
+    df = np.load(s3.open("{}/{}".format(bucket_name, item_name)))
     sca_load = (0.25*np.arange(0, 96), np.sum(df, axis=0))
 
     data_final = []
