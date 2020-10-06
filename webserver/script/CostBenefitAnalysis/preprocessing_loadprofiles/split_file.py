@@ -117,7 +117,6 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
                         # weekend_aggregated = hourly(weekend_array)
 
                         output = []
-                        # output.append(weekday_aggregated)
                         for i in range(day_type.shape[0]):
                             if day_type['DayType'][i] == 1:
                                 output.append(weekday_aggregated)
@@ -150,6 +149,3 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
                         stock_rollover_output.to_csv(os.path.join(
                             str(path.parent), "cases/test_files",  "{}_{}_{}_{}_load.csv".format(
                                 Scenario, county, field_name, Management)),index = True)
-
-# for testing manually
-# split_file(['Amador'], {'Scenario 1': 'BaseCase'}, ['uncontrolled'], ['2025'])
