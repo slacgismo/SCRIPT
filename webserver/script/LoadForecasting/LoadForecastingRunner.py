@@ -50,6 +50,9 @@ def lf_runner(
     total[:, 6] = np.sum(total, axis=1)
     total_df = pd.DataFrame(data=total, columns=['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total'])
 
+    # model.apply_control(control_rule=work_control, segment='Work')
+    # savestr = 'work_control_'+str(work_control)
+
     upload_to_postgres_client = UploadToPostgres(
         total[:, 0],
         total[:, 1],
