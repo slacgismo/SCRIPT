@@ -34,24 +34,23 @@ const styles = theme => ({
     },
 });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin
 class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            counties: [],
+            counties: ["Alameda", "Contra Costa", "Marin", "Orange", "Sacramento", "San Francisco", "San Mateo", "Santa Clara", "Solano"],
             result: null,
-
-            // Alg params
             county: loadControlDefaultParams.county,
-            rate_energy_peak: loadControlDefaultParams.rate_energy_peak,
-            rate_energy_partpeak: loadControlDefaultParams.rate_energy_partpeak,
-            rate_energy_offpeak: loadControlDefaultParams.rate_energy_offpeak,
-            rate_demand_peak: loadControlDefaultParams.rate_demand_peak,
-            rate_demand_partpeak: loadControlDefaultParams.rate_demand_partpeak,
-            rate_demand_overall: loadControlDefaultParams.rate_demand_overall,
+            rate_structures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
+            rate_structure: "PGEe19",
         };
     }
 
+<<<<<<< HEAD
     componentDidMount() {
         countyRes.then(res => {
             this.setState({
@@ -96,28 +95,16 @@ class AlgInputsLoadControl extends Component {
         // });
     }
 
+=======
+>>>>>>> origin
     update = (field, event) => {
         this.setState({ [field]: event.currentTarget.value });
     };
 
-    // // TODO: backend
-    async getResult() {
-        var county = document.getElementById("standart-county").value;
-
-        const res = await axios.get(`${ serverUrl }/algorithm/load_controller/?county=${ county }`);
-        const dataLoadControll = [];
-        for (var i = 0; i < res.data.length; i++) {
-            const  dataLoadControllUnit = {uncontrolled_load: "", controlled_load: ""};
-            dataLoadControllUnit.uncontrolled_load = (res.data[i].uncontrolled_load);
-            dataLoadControllUnit.controlled_load = (res.data[i].controlled_load);
-            dataLoadControll.push(dataLoadControllUnit);
-        }
-        return dataLoadControll;
-    }
-
     runAlgorithm = async () => {
         const postData = {
             county: this.state.county,
+<<<<<<< HEAD
             rate_energy_peak: this.state.rate_energy_peak,
             rate_energy_partpeak: this.state.rate_energy_partpeak,
             rate_energy_offpeak: this.state.rate_energy_offpeak,
@@ -125,25 +112,38 @@ class AlgInputsLoadControl extends Component {
             rate_demand_partpeak: this.state.rate_demand_partpeak,
             rate_demand_overall: this.state.rate_demand_overall
         };
+=======
+            rate_structure: this.state.rate_structure,
+        }
+>>>>>>> origin
         const postUrl = `${ serverUrl }/load_control_runner`;
+
         axios({
             method: "post",
             url: postUrl,
             data: postData,
         })
+<<<<<<< HEAD
             .then((response) => {
                 console.log(response);
             }, (error) => {
                 console.log(error);
             });
         this.props.visualizeResults(await this.getResult());
-    }
+=======
+        .then((response) => {
+            const sca_data = [JSON.parse(response.data)]
+            this.props.visualizeResults(sca_data)
 
+        }, (error) => {
+            console.log(error);
+        });
+>>>>>>> origin
+    }
 
     render() {
         const { classes } = this.props;
         return !this.state.counties ? <></> : (
-        // return (
             <>
                 <TextField
                     id="standart-county"
@@ -163,65 +163,37 @@ class AlgInputsLoadControl extends Component {
                 >
                     {
                         this.state.counties.map(option => (
-                            <option key={option.name} value={option.name}>
-                                {option.name}
+                            <option key={option} value={option}>
+                                {option}
                             </option>
                         ))
                     }
                 </TextField>
-                {/* <br />
-                <Button variant="contained" className={classes.button} onClick={this.useDefaultParameters}>
-                    Set parameters as default
-                </Button> */}
-                <br/>
+
                 <TextField
-                    id="standard-rate_energy_peak"
-                    label="rate_energy_peak"
-                    value={ this.state.rate_energy_peak }
+                    id="rate_structure"
+                    select
+                    value={ this.state.rate_structure }
                     className={classes.textField}
+                    helperText="rate_structure"
+                    SelectProps={{
+                        native: true,
+                        MenuProps: {
+                            className: classes.menu,
+                        },
+                    }}
                     margin="normal"
-                    onChange={ e => this.update("rate_energy_peak", e) }
-                />
-                <TextField
-                    id="standard-rate_energy_partpeak"
-                    label="rate_energy_partpeak"
-                    value={ this.state.rate_energy_partpeak }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("rate_energy_partpeak", e) }
-                />
-                <TextField
-                    id="standard-rate_energy_offpeak"
-                    label="rate_energy_offpeak"
-                    value={ this.state.rate_energy_offpeak }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("rate_energy_offpeak", e) }
-                />
-                <TextField
-                    id="standard-rate_demand_peak"
-                    label="rate_demand_peak"
-                    value={ this.state.rate_demand_peak }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("rate_demand_peak", e) }
-                />
-                <TextField
-                    id="standard-rate_demand_partpeak"
-                    label="rate_demand_partpeak"
-                    value={ this.state.rate_demand_partpeak }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("rate_demand_partpeak", e) }
-                />
-                <TextField
-                    id="standard-rate_demand_overall"
-                    label="rate_demand_overall"
-                    value={ this.state.rate_demand_overall }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("rate_demand_overall", e) }
-                />
+                    onChange={ e => this.update("rate_structure", e) }
+                >
+                {
+                    this.state.rate_structures.map(option => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))
+                }
+
+                </TextField>
                 <br />
                 <Button
                     variant="contained"

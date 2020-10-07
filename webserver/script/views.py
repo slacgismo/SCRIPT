@@ -18,13 +18,17 @@ from script.CostBenefitAnalysis.python_code.UploadToPostgres import UploadToPost
 from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
 from script.CostBenefitAnalysis.python_code.model_class import ModelInstance
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
+from script.SmartCharging.SmartChargingDefault import getScaData
+import json
+
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
-        sca = SmartChargingAlgorithm('script.chargepoint.data')
-        baseline_profiles, controlled_profiles = sca.run(request.data["county"], request.data["rate_energy_peak"], request.data["rate_energy_partpeak"], request.data["rate_energy_offpeak"], request.data["rate_demand_peak"], request.data["rate_demand_partpeak"], request.data["rate_demand_overall"])
-        sca.uploadToPostgres(baseline_profiles, controlled_profiles)
-        return Response("Smart Charging run succeeded")
+        ''' currently only runs with default data '''
+        item_controlled = request.data["county"] + "_controlled_" + request.data["rate_structure"] + "_200_outputs.npy"
+        item_uncontrolled = request.data["county"] + "_uncontrolled_200_inputs.npy"
+        sca_response = {"controlled_load" : getScaData(item_controlled), "uncontrolled_load" : getScaData(item_uncontrolled)}
+        return Response(json.dumps(sca_response))
 
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
