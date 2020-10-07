@@ -145,7 +145,4 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
                         stock_rollover_output.to_csv(os.path.join(
                             str(path), "outputs",  "{}_{}_{}_{}_load.csv".format(
                                 Scenario, county, field_name, Management)),index = True)
-                        
-                        stock_rollover_output.to_csv(os.path.join(
-                            str(path.parent), "cases/test_files",  "{}_{}_{}_{}_load.csv".format(
-                                Scenario, county, field_name, Management)),index = True)
+
