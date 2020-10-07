@@ -63,13 +63,9 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
     bucket = 's3://script.control.tool'
     path = Path(__file__).parent.resolve()
 
-    # Input Loads
-    #currently only setting up for weekday loads
+    # Input Loads - currently only setting up for weekday loads
     WEEKDAY_SLAC_DATA_PATH = str(path)+'/inputs/weekdays/'
-    # WEEKEND_SLAC_DATA_PATH = str(path)+'/inputs/weekends/'
-
     weekday_load_list = list(WEEKDAY_SLAC_DATA_PATH)
-    # weekend_load_list = os.listdir(WEEKEND_SLAC_DATA_PATH)
 
     # Driver Counts Path
     driver_counts_path = 'Driver Counts'
@@ -96,10 +92,8 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
 
                     if Scenario in ['WorkPublic', 'FastPublic', 'Work', 'Equity']:
                         weekday_file_name = "{}_rescaled_{}_weekday_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
-                        # weekend_file_name = "{}_rescaled_{}_weekend_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
                     else:
                         weekday_file_name = "{}_{}_weekday_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
-                        # weekend_file_name = "{}_{}_weekend_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
 
                     driver_count = float(driver_count_df.loc[driver_count_df['County'] == county]['Num Drivers'])
 
@@ -107,18 +101,14 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
                         pd.read_excel(f"{bucket}/{adoption_path}", sheet_name=county).set_index(['year'])[' BEV_population']
 
                     weekday_all = pd.read_csv(os.path.join(WEEKDAY_SLAC_DATA_PATH,weekday_file_name))
-                    # weekend_all = pd.read_csv(os.path.join(WEEKEND_SLAC_DATA_PATH,weekend_file_name))
                     day_type = pd.read_csv(os.path.join(str(path),'day_type.csv'))
 
                     weekday_all = weekday_all.drop(list(weekday_all)[0],axis=1)
-                    # weekend_all = weekend_all.drop(list(weekend_all)[0],axis=1) #remove the index column from the original file
                     col_names = list(weekday_all.columns)
 
                     for field_name in col_names:
                         weekday_array = np.array(weekday_all[field_name])
                         weekday_aggregated = hourly(weekday_array) # convert from 1-min to 1-hour
-                        # weekend_array = np.array(weekend_all[field_name])
-                        # weekend_aggregated = hourly(weekend_array)
 
                         output = []
                         for i in range(day_type.shape[0]):
@@ -126,7 +116,6 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
                                 output.append(weekday_aggregated)
                             else:
                                 output.append(weekday_aggregated)
-                        #         output.append(weekend_aggregated)
 
                         annual_output = output * 52
                         output = np.array(annual_output)
