@@ -154,7 +154,6 @@ class UploadToPostgres():
                 }
             )
 
-
         cur.execute("INSERT INTO " + self.table_name + \
             " (config, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
             " work_load, public_l2_load, total_load)" + \

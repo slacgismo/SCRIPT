@@ -96,51 +96,54 @@ class AlgInputsLoadForecast extends Component {
     };
 
     update = (field, event) => {
-        this.setState({ [field]: event.currentTarget.value })
+        this.setState({ [field]: event.currentTarget.value });
     };
 
-    saveResults = () => {
+    saveResults = async() => {
+        // check if current load forecast profile already exists before saving
+        const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.config_name}`);
 
-        // change var name
-        const postData = {
-            config_name: this.state.config_name,
-            aggregation_level: this.state.aggregation_level,
-            num_evs: parseInt(this.state.num_evs),
-            county: this.state.county_choice,
-            fast_percent: parseFloat(this.state.fast_percent),
-            work_percent: parseFloat(this.state.work_percent),
-            res_percent: parseFloat(this.state.res_percent),
-            l1_percent: parseFloat(this.state.l1_percent),
-            public_l2_percent: parseFloat(this.state.public_l2_percent),
-            res_daily_use: parseFloat(this.state.res_daily_use),
-            work_daily_use: parseFloat(this.state.work_daily_use),
-            fast_daily_use: parseFloat(this.state.fast_daily_use),
-            rent_percent: parseFloat(this.state.rent_percent),
-            res_l2_smooth: this.state.res_l2_smooth,
-            week_day: this.state.week_day,
-            publicl2_daily_use: parseFloat(this.state.publicl2_daily_use),
-            mixed_batteries: this.state.mixed_batteries,
-            timer_control: this.state.timer_control,
-            work_control: this.state.work_control,
+        // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
+        if(config_res.data.length === 0){
+            // change var name
+            const postData = {
+                config_name: this.state.config_name,
+                aggregation_level: this.state.aggregation_level,
+                num_evs: parseInt(this.state.num_evs),
+                county: this.state.county_choice,
+                fast_percent: parseFloat(this.state.fast_percent),
+                work_percent: parseFloat(this.state.work_percent),
+                res_percent: parseFloat(this.state.res_percent),
+                l1_percent: parseFloat(this.state.l1_percent),
+                public_l2_percent: parseFloat(this.state.public_l2_percent),
+                res_daily_use: parseFloat(this.state.res_daily_use),
+                work_daily_use: parseFloat(this.state.work_daily_use),
+                fast_daily_use: parseFloat(this.state.fast_daily_use),
+                rent_percent: parseFloat(this.state.rent_percent),
+                res_l2_smooth: this.state.res_l2_smooth,
+                week_day: this.state.week_day,
+                publicl2_daily_use: parseFloat(this.state.publicl2_daily_use),
+                mixed_batteries: this.state.mixed_batteries,
+                timer_control: this.state.timer_control,
+                work_control: this.state.work_control,
+            };
+
+            const postUrl = `${ serverUrl }/load_forecast_runner`;
+
+            axios({
+                method: "post",
+                url: postUrl,
+                data: postData,
+            })
+                .then((response) => {
+                    console.log(response);
+                }, (error) => {
+                    console.log(error);
+                });
+            this.setState({ open: false });
         }
-
-        const postUrl = `${ serverUrl }/load_forecast_runner`;
-
-        axios({
-            method: 'post',
-            url: postUrl,
-            data: postData,
-        })
-        .then((response) => {
-            console.log(response);
-        }, (error) => {
-            console.log(error);
-        });
-
-        this.setState({ open: false });
     };
 
-    // TODO: backend
     getResult = async (county) => {
 
         if(document.getElementById("standard-county") === null) {
@@ -230,12 +233,12 @@ class AlgInputsLoadForecast extends Component {
                     value={ this.state.aggregation_level }
                     onChange={ e => this.update("aggregation_level", e) }
                 >
-                        <option key="county" value="county">
+                    <option key="county" value="county">
                             County
-                        </option>
-                        <option key="state" value="state">
+                    </option>
+                    <option key="state" value="state">
                             State
-                        </option>
+                    </option>
                 </TextField>
 
                 { countyNames }
@@ -411,7 +414,7 @@ class AlgInputsLoadForecast extends Component {
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
                     Run
                 </Button>
-                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title" fullWidth={true} maxWidth={"lg"}>
                     <DialogTitle id="form-dialog-title">Save</DialogTitle>
                     <DialogContent>
                         <DialogContentText>

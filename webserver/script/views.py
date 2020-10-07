@@ -14,10 +14,16 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
+from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
+from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
 import json
 
+#for running CBA tool
+import sys
+sys.path.append("script/CostBenefitAnalysis/python_code/")
+from model_class import ModelInstance
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -27,6 +33,13 @@ class LoadControlRunner(APIView):
         sca_response = {"controlled_load" : getScaData(item_controlled), "uncontrolled_load" : getScaData(item_uncontrolled)}
         return Response(json.dumps(sca_response))
 
+class CostBenefitAnalysisRunner(APIView):
+    def post(self, request, format=None):
+        # TODO: requires an updated version of CBA Tool 
+        split_file(county = request.data['county'])
+        ModelInstance()
+        UploadToPostgres(load_profile = request.data['load_profile'])
+        return Response("Cost Benefit Analysis run succeeded")
 
 class LoadForecastRunner(APIView):
     def post(self, request, format=None):
@@ -105,7 +118,8 @@ class LoadForecastConfigViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = LoadForecastConfigSerializer
-    filter_fields = ('aggregation_level',
+    filter_fields = ('config_name',
+                    'aggregation_level',
                     'num_evs',
                     'choice',
                     'fast_percent',

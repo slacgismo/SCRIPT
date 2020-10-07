@@ -4,15 +4,13 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
-import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
 import { withStyles } from "@material-ui/core/styles";
 import { ResultCharts } from "../Result/ResultCharts";
-import AlgInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
-import AlgorithmPageLoadControll from "../AlgorithmPage/AlgorithmPageCBA"
+import { serverUrl } from "../Api/server";
+import { processResults, preprocessData} from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -39,8 +37,6 @@ const styles = theme => ({
     },
 });
 
-let results = [];
-
 class AlgInputsCBA extends Component {
     constructor(props) {
         super(props);
@@ -50,7 +46,6 @@ class AlgInputsCBA extends Component {
             profileNames: [],
             profileData: [],
             profileName: "",
-            county: "",
             loadForecastResults: [],
             processedLoadForecastResults: [],
             shouldRender: false
@@ -58,133 +53,111 @@ class AlgInputsCBA extends Component {
     }
 
     componentDidMount() {
-        axios("http://127.0.0.1:8000/api/config/load_forecast/")
+        axios("http://127.0.0.1:8000/api/config/load_forecast")
             .then(res => {
-                this.setState({ profileData: res.data });
                 const profiles = res.data;
                 const profileNames = [];
-                for (var i = 0; i < res.data.length; i++) {
-                    const profileNamesUnit = {id: "", name: ""};
-                    profileNamesUnit.id = profiles[i]["id"];
-                    profileNamesUnit.name = profiles[i]["config_name"];
-                    profileNames.push(profileNamesUnit);
+                if (profiles.length > 0) {
+                    for (var i = 0; i < profiles.length; i++) {
+                        const profileNamesUnit = {id: "", name: ""};
+                        profileNamesUnit.id = profiles[i]["id"];
+                        profileNamesUnit.name = profiles[i]["config_name"];
+                        profileNames.push(profileNamesUnit);
+                    }
+                    this.setState({ profileData: profiles, profileNames: profileNames });
                 }
-                this.setState({ profileNames });
-                this.setState({ profileName: document.getElementById("standard-profile").value});
             });
-        
-        const dataLoadForecast = [];
-
-        axios("http://127.0.0.1:8000/api/algorithm/load_forecast").then(res => {    
-            for (var i = 0; i < res.data.length; i++) {
-                const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-                dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
-                dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
-                dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
-                dataLoadForecastUnit.work_load = (res.data[i].work_load);
-                dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
-                dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
-                dataLoadForecastUnit.total_load = (res.data[i].total_load);
-                dataLoadForecast.push(dataLoadForecastUnit);
-            }
-            this.setState({ loadForecastResults: dataLoadForecast});
-        });
+        this.getLoadForecastData();
     }
+
+    getLoadForecastData = async() => {
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast", {
+            params: {
+                config: this.state.profileName
+            }
+        });
+        const dataLoadForecast = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
+            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
+            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
+            dataLoadForecastUnit.work_load = (res.data[i].work_load);
+            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
+            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
+            dataLoadForecastUnit.total_load = (res.data[i].total_load);
+            dataLoadForecast.push(dataLoadForecastUnit);
+        }
+        this.setState({ loadForecastResults: dataLoadForecast });
+    };
 
     handleClose = () => {
-        this.setState({ openResult: false });
-        this.setState({ openUpload: false });
-    }
-
-    showResults = async () => {
-        this.setState({ openResult: true });
-        this.setState({ shouldRender: true  });
-        this.processLoadForecastResults(this.state.loadForecastResults);
+        this.setState({ openResult: false, openUpload: false });
     };
 
-    processLoadForecastResults = async (resultArr) => {
-        const data_to_visualize_all = [];
-        const isTimeSeries = resultArr.length == 0 ? false : resultArr[0][Object.keys(resultArr[0])[0]][0].time ? true : false; // Time or Year
-        for (const result of resultArr) {
-            const data_to_visualize = {};
+    setLoadForecastResults = () => {
+        const processedLoadForecastResults = processResults(this.state.loadForecastResults);
+        this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
+    };
 
-            for (const field of Object.keys(result)) {
-                const data = result[field];
-                const dataFormatted = data.map((datapoint, i) => (
-                    {
-                        x: isTimeSeries ? i : datapoint.year,
-                        y: isTimeSeries ? parseFloat(datapoint.load) : parseFloat(datapoint.data)  // option
-                    }   
-                ));
-                data_to_visualize[field] = {
-                    yAxis: `${field}`.replace(/_/g, " "),
-                    unit: "Power (kW)",
-                    xAxis: isTimeSeries ? "Time" : "Year",  // TODO: other options?
-                    data: dataFormatted,
-                };
+    update = (field, event) => {
+        this.setState({ [field]: event.currentTarget.value });
+    };
+
+    findProfile = async () => {
+        // check for corresponding CBA input table for current load forecast profile
+        const config_res = await axios.get("http://127.0.0.1:8000/api/config/" + this.props.category, {
+            params: {
+                lf_config: this.state.profileName
             }
-            data_to_visualize_all.push(data_to_visualize);
+        });
+
+        // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
+        if(!config_res.data.length){
+            const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
+            const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
+            const countyMatch = profileMatch.map(profile => profile["choice"]);
+            axios({
+                method: "post",
+                url: postUrl,
+                data: {load_profile: this.state.profileName, county: countyMatch},
+            });
+            this.props.visualizeResults(await this.getCBAResult());
         }
-        this.setState({ processLoadForecastResults: data_to_visualize_all});
     };
 
-    getResult = async () => {
+    getCBAResult = async () => {
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
+        const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
         const dataCBA = {dataValues: []};
-        const dataCBASub = [];
-        
-        for (var i = 0; i < res.data.length; i++) {
-            const dataCBAUnit = res.data[i];
-            dataCBAUnit.values = (res.data[i].values); 
+        const dataCBASub = [];          
+        for (var i = 0; i < filteredRes.length; i++) {
+            const dataCBAUnit = filteredRes[i];
+            dataCBAUnit.values = (filteredRes[i].values); 
             dataCBASub.push(dataCBAUnit);
         }
         dataCBA.dataValues = dataCBASub;
-        return this.preprocessData(dataCBA);
+        return preprocessData(dataCBA);
     };
 
-    preprocessData = async (allData) => {
-        const data = allData.dataValues;
-        const fields = data[0] ? Object.keys(data[0].values): [0];
+    updateCharts = async () => { 
+        this.props.visualizeResults(await this.getCBAResult());
+    }
 
-        // Init result
-        const result = {};
-        for (const field of fields) {
-            result[field] = [];
-        }
-
-        data.forEach(dataItem => {
-            const year = dataItem.config.year;
-            const allFields = dataItem.values;
-            for (const field of fields) {
-                // try {
-                result[field].push({
-                    year: year,
-                    data: parseFloat(allFields[field]),
-                });
-                // } catch (error) {
-                //     console.log("!!!!!!!!!!!");
-                //     console.log(allFields[field]);
-                // }
-            }
-        });
-
-        // Flatten result
-        const resultFlattened = [];
-        for (const field of fields) {
-            resultFlattened.push({
-                [field]: result[field],
-            });
-        }
-        return resultFlattened;
-    };
-
-    runAlgorithm = async () => {
-        this.props.visualizeResults(await this.getResult());
+    updateProfileAndCharts = async () => {
+        this.findProfile();       
+        this.props.visualizeResults(await this.getCBAResult());
     };
 
     componentDidUpdate(prevProps, prevState) {
+        // if different dropdown menu category selected (e.g. gas consumption)
         if (prevProps.category !== this.props.category) {
-          this.runAlgorithm()
+            this.updateCharts();
+        }
+
+        // if different load forecast profile selected, change load forecast chart
+        if (prevState.profileName !== this.state.profileName) {
+                this.getLoadForecastData();
         }
     }
 
@@ -210,6 +183,7 @@ class AlgInputsCBA extends Component {
                     }}
                     helperText="Please select a profile"
                     margin="normal"
+                    onChange={ e => this.update("profileName", e)}
                 >
                     {
                         this.state.profileNames.map(option => (
@@ -219,14 +193,14 @@ class AlgInputsCBA extends Component {
                         ))
                     }
                 </TextField>
-                <Button variant="contained" className={classes.button} onClick={this.showResults}>
+                <Button variant="contained" className={classes.button} onClick={this.setLoadForecastResults}>
                     Review
                 </Button>
                 {/* <Button variant="contained" className={classes.button} onClick={this.uploadFile}>
                     Upload
                 </Button> */}
                 <p/>
-                <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.updateProfileAndCharts}>
                     Run
                 </Button>
 
@@ -236,8 +210,8 @@ class AlgInputsCBA extends Component {
                         <DialogTitle onClose={this.handleClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
                         <DialogContent>    
                             <ResultCharts
-                                results={ this.state.processLoadForecastResults }
-                                algId={2}
+                                results={ this.state.processedLoadForecastResults }
+                                algId={ 2 }
                             />
                         </DialogContent>
                         <DialogActions>

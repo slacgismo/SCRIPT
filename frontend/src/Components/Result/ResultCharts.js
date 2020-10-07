@@ -9,8 +9,8 @@ export function ResultCharts(props) {
         FULL_WIDTH / props.results.length :
         FULL_WIDTH / MAX_GRAPH_PER_LINE ;
     
-    // If only one line, it should be enough to use title only, so no legend is needed.
-    const legendPosition = props.results.length === 1 ? "none" : "right";
+    // If no results, no legend is needed.
+    const legendPosition = !props.results.length ? "none" : "right";
 
     const resultCharts = props.results.map((result, i) => (
         <ResultChart

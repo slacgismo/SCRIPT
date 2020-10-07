@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from script.LoadForecasting.UploadToPostgres import *
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +51,14 @@ def lf_runner(
     total[:, 6] = np.sum(total, axis=1)
     total_df = pd.DataFrame(data=total, columns=['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total'])
 
+    # save csv of dataframe for later CBA processing
+    path = Path(__file__).parent.resolve()
+    parent_path = path.parent
+    pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_weekday_' + county + '_county_uncontrolled_load.csv')
+
+    # TODO: apply control, for uncontrolled and controlled pairs for load forecast
     # model.apply_control(control_rule=work_control, segment='Work')
-    # savestr = 'work_control_'+str(work_control)
+    # pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/BaseCase_2025_weekday_' + county + '_county_controlled_load.csv')
 
     upload_to_postgres_client = UploadToPostgres(
         total[:, 0],
@@ -84,3 +91,6 @@ def lf_runner(
         work_control
     )
     logger.info('Upload to Postgres for Load Forecasting succeeded.')
+
+# for testing manually
+# lf_runner(5e6, "county", "Santa Clara", 0.05, 0.15, 0.75, 0.2, 0.05, 0.8, 0.8, 0.33, 0.1, True, True, 0.33, None, None, "minpeak", "config_test")

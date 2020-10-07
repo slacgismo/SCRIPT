@@ -34,7 +34,6 @@ const styles = theme => ({
     },
 });
 
-
 class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);
@@ -48,7 +47,7 @@ class AlgInputsLoadControl extends Component {
     }
 
     update = (field, event) => {
-        this.setState({ [field]: event.currentTarget.value })
+        this.setState({ [field]: event.currentTarget.value });
     };
 
     runAlgorithm = async () => {
