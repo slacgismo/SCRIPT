@@ -4,9 +4,6 @@ import json
 import csv
 import psycopg2
 from django.conf import settings
-import sys
-sys.path.append("script/CostBenefitAnalysis/python_code/")
-import model_class
 
 
 class UploadToPostgres():

@@ -14,13 +14,16 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
-from script.CostBenefitAnalysis.python_code.UploadToPostgres import UploadToPostgres
+from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
 from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
-from script.CostBenefitAnalysis.python_code.model_class import ModelInstance
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
 import json
 
+#for running CBA tool
+import sys
+sys.path.append("script/CostBenefitAnalysis/python_code/")
+from model_class import ModelInstance
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -33,9 +36,6 @@ class LoadControlRunner(APIView):
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
         # TODO: requires an updated version of CBA Tool 
-        # While waiting for the updated CBA tool,
-        # this setup runs the split file module correctly, but saves the csv to test files in CBA tool
-        # CBA tool instead is processing old ev load profiles in the meantime and saving basecase results to db
         split_file(county = request.data['county'])
         ModelInstance()
         UploadToPostgres(load_profile = request.data['load_profile'])
