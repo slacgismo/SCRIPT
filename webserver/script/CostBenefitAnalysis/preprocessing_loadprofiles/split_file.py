@@ -8,6 +8,7 @@ import pandas as pd
 import os
 import numpy as np
 from pathlib import Path 
+from s3fs.core import S3FileSystem
 
 def stock_rollover(adoption_start, adoption_end, vehicle_lifetime, population):
     
@@ -58,21 +59,23 @@ def hourly(array):
 
 def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['uncontrolled'], years=['2025']):
 
+    s3 = S3FileSystem(anon=False)
+    bucket = 's3://script.control.tool'
     path = Path(__file__).parent.resolve()
 
-    # Input Loads from SLAC
+    # Input Loads
+    #currently only setting up for weekday loads
     WEEKDAY_SLAC_DATA_PATH = str(path)+'/inputs/weekdays/'
     # WEEKEND_SLAC_DATA_PATH = str(path)+'/inputs/weekends/'
-    #only setting up for weekday loads
 
     weekday_load_list = list(WEEKDAY_SLAC_DATA_PATH)
     # weekend_load_list = os.listdir(WEEKEND_SLAC_DATA_PATH)
 
     # Driver Counts Path
-    driver_counts_path = str(path) + "/driver_counts"
+    driver_counts_path = 'Driver Counts'
 
     # Adoption File - This file must correspond to the scenario selected.
-    adoption_path = str(path) + "/adoption_files/vehicle_adoption_base_case.xlsx"
+    adoption_path = 'Adoption Files/vehicle_adoption base case.xlsx'
 
     combined_output = pd.DataFrame()
 
@@ -86,12 +89,12 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
         for Management in controlled_types:
             for county in county:
                 for SLAC_Year in years:
+
                     # Read SLAC Driver Count
-                    Driver_count_file_name = "{}_{}_weekend__driver_counts.csv".format(Scenario, SLAC_Year)
-                    driver_count_df = pd.read_csv(os.path.join(driver_counts_path, Driver_count_file_name))
+                    Driver_counts_file_name = "{}_{}_weekday__driver_counts.csv".format(Scenario, SLAC_Year)
+                    driver_count_df = pd.read_csv("{}/{}/{}".format(bucket, driver_counts_path, Driver_counts_file_name))
 
-                    if Scenario in ['WorkPublic', 'FastPublic', "Work", 'Equity']:
-
+                    if Scenario in ['WorkPublic', 'FastPublic', 'Work', 'Equity']:
                         weekday_file_name = "{}_rescaled_{}_weekday_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
                         # weekend_file_name = "{}_rescaled_{}_weekend_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
                     else:
@@ -99,8 +102,9 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
                         # weekend_file_name = "{}_{}_weekend_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
 
                     driver_count = float(driver_count_df.loc[driver_count_df['County'] == county]['Num Drivers'])
+
                     adoption_spreadsheet_df = \
-                        pd.read_excel(open(adoption_path, 'rb'), sheet_name=county).set_index(['year'])[' BEV_population']
+                        pd.read_excel(f"{bucket}/{adoption_path}", sheet_name=county).set_index(['year'])[' BEV_population']
 
                     weekday_all = pd.read_csv(os.path.join(WEEKDAY_SLAC_DATA_PATH,weekday_file_name))
                     # weekend_all = pd.read_csv(os.path.join(WEEKEND_SLAC_DATA_PATH,weekend_file_name))
@@ -145,4 +149,3 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
                         stock_rollover_output.to_csv(os.path.join(
                             str(path), "outputs",  "{}_{}_{}_{}_load.csv".format(
                                 Scenario, county, field_name, Management)),index = True)
-
