@@ -381,3 +381,6 @@ webserver/script/costbenefitanalysis/preprocessing_loadprofiles/adoption_files/*
 webserver/script/costbenefitanalysis/preprocessing_loadprofiles/county_list/*
 webserver/script/costbenefitanalysis/preprocessing_loadprofiles/driver_counts/*
 webserver/script/costbenefitanalysis/cases/test_files
+webserver/script/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/*
+webserver/script/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/*
+webserver/script/costbenefitanalysis/preprocessing_loadprofiles/outputs/*
