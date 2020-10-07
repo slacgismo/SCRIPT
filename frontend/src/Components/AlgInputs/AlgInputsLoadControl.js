@@ -34,10 +34,6 @@ const styles = theme => ({
     },
 });
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin
 class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);
@@ -50,53 +46,6 @@ class AlgInputsLoadControl extends Component {
         };
     }
 
-<<<<<<< HEAD
-    componentDidMount() {
-        countyRes.then(res => {
-            this.setState({
-                counties: res.data,
-            });
-        });
-
-        loadControlPromise.then(res => {
-            if(!res.data.length) {
-                return;
-            }
-            this.setState({
-                result: [{
-                    controlled_load: res.data[0].controlled_load,
-                    uncontrolled_load: res.data[0].uncontrolled_load,
-                }]
-            });
-        });
-
-        // this.useDefaultParameters();
-    }
-
-    /* TODO change default parameters of Load Controll */
-    useDefaultParameters = () => {
-        // TODO: backend * 3
-        // Get default parameter set
-
-        Object.keys(loadControlDefaultParams).forEach(param => {
-            this.setState({
-                [param]: loadControlDefaultParams[param],
-            });
-        });
-
-        // this.setState({
-        //     county: loadControlDefaultParams.county,
-        //     rate_energy_peak: loadControlDefaultParams.rate_energy_peak,
-        //     rate_energy_partpeak: loadControlDefaultParams.rate_energy_partpeak,
-        //     rate_energy_offpeak: loadControlDefaultParams.rate_energy_offpeak,
-        //     rate_demand_peak: loadControlDefaultParams.rate_demand_peak,
-        //     rate_demand_partpeak: loadControlDefaultParams.rate_demand_partpeak,
-        //     rate_demand_overall: loadControlDefaultParams.rate_demand_overall,
-        // });
-    }
-
-=======
->>>>>>> origin
     update = (field, event) => {
         this.setState({ [field]: event.currentTarget.value });
     };
@@ -104,18 +53,8 @@ class AlgInputsLoadControl extends Component {
     runAlgorithm = async () => {
         const postData = {
             county: this.state.county,
-<<<<<<< HEAD
-            rate_energy_peak: this.state.rate_energy_peak,
-            rate_energy_partpeak: this.state.rate_energy_partpeak,
-            rate_energy_offpeak: this.state.rate_energy_offpeak,
-            rate_demand_peak: this.state.rate_demand_peak,
-            rate_demand_partpeak: this.state.rate_demand_partpeak,
-            rate_demand_overall: this.state.rate_demand_overall
-        };
-=======
             rate_structure: this.state.rate_structure,
         }
->>>>>>> origin
         const postUrl = `${ serverUrl }/load_control_runner`;
 
         axios({
@@ -123,14 +62,6 @@ class AlgInputsLoadControl extends Component {
             url: postUrl,
             data: postData,
         })
-<<<<<<< HEAD
-            .then((response) => {
-                console.log(response);
-            }, (error) => {
-                console.log(error);
-            });
-        this.props.visualizeResults(await this.getResult());
-=======
         .then((response) => {
             const sca_data = [JSON.parse(response.data)]
             this.props.visualizeResults(sca_data)
@@ -138,7 +69,6 @@ class AlgInputsLoadControl extends Component {
         }, (error) => {
             console.log(error);
         });
->>>>>>> origin
     }
 
     render() {

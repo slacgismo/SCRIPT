@@ -10,7 +10,7 @@ import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import { ResultCharts } from "../Result/ResultCharts";
 import { serverUrl } from "../Api/server";
-import { processResults, preprocessData } from "../Helpers/helpers";
+import { processResults, preprocessData} from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -64,7 +64,7 @@ class AlgInputsCBA extends Component {
                         profileNamesUnit.name = profiles[i]["config_name"];
                         profileNames.push(profileNamesUnit);
                     }
-                    this.setState({ profileData: profiles, profileNames: profileNames, profileName: document.getElementById("standard-profile").value });
+                    this.setState({ profileData: profiles, profileNames: profileNames });
                 }
             });
         this.getLoadForecastData();
@@ -100,9 +100,9 @@ class AlgInputsCBA extends Component {
         this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
     };
 
-    setProfileName = () => {
-        this.setState({profileName: this.state.profileName});
-    }
+    update = (field, event) => {
+        this.setState({ [field]: event.currentTarget.value });
+    };
 
     findProfile = async () => {
         // check for corresponding CBA input table for current load forecast profile
@@ -113,7 +113,7 @@ class AlgInputsCBA extends Component {
         });
 
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
-        if(config_res.data.length === 0){
+        if(!config_res.data.length){
             const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
             const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
             const countyMatch = profileMatch.map(profile => profile["choice"]);
@@ -145,7 +145,6 @@ class AlgInputsCBA extends Component {
     }
 
     updateProfileAndCharts = async () => {
-        this.setState({profileName: document.getElementById("standard-profile").value});
         this.findProfile();       
         this.props.visualizeResults(await this.getCBAResult());
     };
@@ -157,10 +156,8 @@ class AlgInputsCBA extends Component {
         }
 
         // if different load forecast profile selected, change load forecast chart
-        if (prevState.profileName !== document.getElementById("standard-profile").value) {
-            this.setState({profileName: document.getElementById("standard-profile").value}, () => {
+        if (prevState.profileName !== this.state.profileName) {
                 this.getLoadForecastData();
-            });
         }
     }
 
@@ -186,7 +183,7 @@ class AlgInputsCBA extends Component {
                     }}
                     helperText="Please select a profile"
                     margin="normal"
-                    onChange={this.setProfileName}
+                    onChange={ e => this.update("profileName", e)}
                 >
                     {
                         this.state.profileNames.map(option => (

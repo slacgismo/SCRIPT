@@ -10,7 +10,7 @@ export function ResultCharts(props) {
         FULL_WIDTH / MAX_GRAPH_PER_LINE ;
     
     // If no results, no legend is needed.
-    const legendPosition = props.results.length === 0 ? "none" : "right";
+    const legendPosition = !props.results.length ? "none" : "right";
 
     const resultCharts = props.results.map((result, i) => (
         <ResultChart

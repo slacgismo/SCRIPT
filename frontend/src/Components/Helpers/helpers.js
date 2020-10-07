@@ -4,7 +4,7 @@ export function processResults(resultArr) {
     const data_to_visualize_all = [];
     let isTimeSeries = false;
 
-    if (resultArr.length == 0) {
+    if (!resultArr.length) {
         isTimeSeries = false;
     } else if (resultArr[0][0] != undefined && resultArr[0][0].length === 0) {
         isTimeSeries = false;
