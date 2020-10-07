@@ -6,7 +6,7 @@ export function processResults(resultArr) {
 
     if (!resultArr.length) {
         isTimeSeries = false;
-    } else if (resultArr[0][0] != undefined && resultArr[0][0].length === 0) {
+    } else if (resultArr[0][0] !== undefined && resultArr[0][0].length === 0) {
         isTimeSeries = false;
     } else if (resultArr[0][Object.keys(resultArr[0])[0]][0].time) {
         isTimeSeries = true;
