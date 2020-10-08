@@ -38,7 +38,7 @@ class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            counties: ["Alameda", "Contra Costa", "Marin", "Orange", "Sacramento", "San Francisco", "San Mateo", "Santa Clara", "Solano"],
+            counties: ["All Counties", "Alameda", "Contra Costa", "Marin", "Orange", "Sacramento", "San Francisco", "San Mateo", "Santa Clara", "Solano"],
             result: null,
             county: loadControlDefaultParams.county,
             rate_structures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
