@@ -12,6 +12,7 @@ import { loadForecastPromise, fieldsLoadForecast } from "../Api/AlgorithmData";
 import { countyRes } from "../Api/CountyData";
 import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
 import { serverUrl } from "../Api/server";
+import "./AlgInputs.css";
 
 const styles = theme => ({
     container: {
@@ -64,6 +65,7 @@ class AlgInputsLoadForecast extends Component {
             mixed_batteries: loadForecastDefaultParams.mixed_batteries,
             timer_control: loadForecastDefaultParams.timer_control,
             work_control: loadForecastDefaultParams.work_control,
+            work_controls: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
         };
     }
 
@@ -218,198 +220,225 @@ class AlgInputsLoadForecast extends Component {
 
         return (
             <>
-                <TextField
-                    id="standard-aggregation_level"
-                    select
-                    className={classes.textField}
-                    SelectProps={{
-                        native: true,
-                        MenuProps: {
-                            className: classes.menu,
-                        },
-                    }}
-                    helperText="Please select an aggregation level"
-                    margin="normal"
-                    value={ this.state.aggregation_level }
-                    onChange={ e => this.update("aggregation_level", e) }
-                >
-                    <option key="county" value="county">
-                            County
-                    </option>
-                    <option key="state" value="state">
-                            State
-                    </option>
-                </TextField>
+                <fieldset class="field_set">
+                    <TextField
+                        id="standard-aggregation_level"
+                        select
+                        className={classes.textField}
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        helperText="Please select an aggregation level"
+                        margin="normal"
+                        value={ this.state.aggregation_level }
+                        onChange={ e => this.update("aggregation_level", e) }
+                    >
+                        <option key="county" value="county">
+                                County
+                        </option>
+                        <option key="state" value="state">
+                                State
+                        </option>
+                    </TextField>
 
-                { countyNames }
+                    { countyNames }
 
+                    <TextField
+                        id="standard-num_evs"
+                        helperText="Total number of EVs"
+                        value={ this.state.num_evs }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("num_evs", e) }
+                    />
+                    <TextField
+                        id="standard-res_l2_smooth"
+                        select
+                        value={ this.state.res_l2_smooth }
+                        className={classes.textField}
+                        label="Residential Smooth"
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        margin="normal"
+                        onChange={ e => this.update("res_l2_smooth", e) }
+                    >
+                        <option key="true" value="true">
+                            true
+                        </option>
+                        <option key="false" value="false">
+                            false
+                        </option>
+                    </TextField>
+                    <TextField
+                        id="standard-mixed_batteries"
+                        label="Battery Mix"
+                        value={ this.state.mixed_batteries }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("mixed_batteries", e) }
+                    />
+                </fieldset>
+                <br/>
+                <br/>
                 {/* <br/>
                 <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
                     Set parameters as default
                 </Button> */}
-                <br/>
-
-                <TextField
-                    id="standard-num_evs"
-                    label="num_evs"
-                    value={ this.state.num_evs }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("num_evs", e) }
-                />
-                <TextField
-                    id="standard-fast_percent"
-                    label="fast_percent"
-                    value={ this.state.fast_percent }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("fast_percent", e) }
-                />
-                <TextField
-                    id="standard-work_percent"
-                    label="work_percent"
-                    value={ this.state.work_percent }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("work_percent", e) }
-                />
-                <TextField
-                    id="standard-res_percent"
-                    label="rate_res_percent"
-                    value={ this.state.res_percent }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("res_percent", e) }
-                />
-                <TextField
-                    id="standard-l1_percent"
-                    label="l1_percent"
-                    value={ this.state.l1_percent }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("l1_percent", e) }
-                />
-                <TextField
-                    id="standard-public_l2_percent"
-                    label="public_l2_percent"
-                    value={ this.state.public_l2_percent }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("public_l2_percent", e) }
-                />
-
-                <TextField
-                    id="standard-res_daily_use"
-                    label="res_daily_use"
-                    value={ this.state.res_daily_use }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("res_daily_use", e) }
-                />
-                <TextField
-                    id="standard-work_daily_use"
-                    label="work_daily_use"
-                    value={ this.state.work_daily_use }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("work_daily_use", e) }
-                />
-                <TextField
-                    id="standard-fast_daily_use"
-                    label="fast_daily_use"
-                    value={ this.state.fast_daily_use }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("fast_daily_use", e) }
-                />
-                <TextField
+                <fieldset class="field_set">
+                    <legend>Charging Types Percentage</legend>
+                    <TextField
+                        id="standard-fast_percent"
+                        label="Fast"
+                        value={ this.state.fast_percent }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("fast_percent", e) }
+                    />
+                    <TextField
+                        id="standard-work_percent"
+                        label="Workplace"
+                        value={ this.state.work_percent }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("work_percent", e) }
+                    />
+                    <TextField
                     id="standard-rent_percent"
-                    label="rent_percent"
+                    label="Rent"
                     value={ this.state.rent_percent }
                     className={classes.textField}
                     margin="normal"
                     onChange={ e => this.update("rent_percent", e) }
-                />
+                    />
+                    <TextField
+                        id="standard-res_percent"
+                        label="Residential Level 2"
+                        value={ this.state.res_percent }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("res_percent", e) }
+                    />
+                    <TextField
+                        id="standard-l1_percent"
+                        label="Level 1"
+                        value={ this.state.l1_percent }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("l1_percent", e) }
+                    />
+                    <TextField
+                        id="standard-public_l2_percent"
+                        label="Public Level 2"
+                        value={ this.state.public_l2_percent }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("public_l2_percent", e) }
+                    />
+                </fieldset>
+                <br/>
+                <br/>
+                <fieldset class="field_set">
+                    <legend>Charging Segment Daily Usage Percentage</legend>
+                    <TextField
+                        id="standard-week_day"
+                        select
+                        value={ this.state.week_day }
+                        className={classes.textField}
+                        margin="normal"
+                        label="Week Day"
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        onChange={ e => this.update("week_day", e) }
+                    >
+                        <option key="true" value="true">
+                            true
+                        </option>
+                        <option key="false" value="false">
+                            false
+                        </option>
+                    </TextField>
+                    <TextField
+                        id="standard-res_daily_use"
+                        label="Residential"
+                        value={ this.state.res_daily_use }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("res_daily_use", e) }
+                    />
+                    <TextField
+                        id="standard-work_daily_use"
+                        label="Workplace"
+                        value={ this.state.work_daily_use }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("work_daily_use", e) }
+                    />
+                    <TextField
+                        id="standard-fast_daily_use"
+                        label="Fast"
+                        value={ this.state.fast_daily_use }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("fast_daily_use", e) }
+                    />
+                    <TextField
+                        id="standard-publicl2_daily_use"
+                        label="Public Level 2"
+                        value={ this.state.publicl2_daily_use }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("publicl2_daily_use", e) }
+                    />
+                </fieldset>
+                <br/>
+                <br/>
+                <fieldset class="field_set">
+                    <legend>Control</legend>
+                    <TextField
+                        id="standard-timer_control"
+                        label="Residential Timer"
+                        value={ this.state.timer_control }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("timer_control", e) }
+                    />
+                    <TextField
+                        id="standard-work_control"
+                        select
+                        value={ this.state.work_control }
+                        className={classes.textField}
+                        label="Workplace"
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        margin="normal"
+                        onChange={ e => this.update("work_control", e) }
+                    >
+                    {
+                        this.state.work_controls.map(option => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))
+                    }
 
-                <TextField
-                    id="standard-res_l2_smooth"
-                    select
-                    value={ this.state.res_l2_smooth }
-                    className={classes.textField}
-                    helperText="res_l2_smooth"
-                    SelectProps={{
-                        native: true,
-                        MenuProps: {
-                            className: classes.menu,
-                        },
-                    }}
-                    margin="normal"
-                    onChange={ e => this.update("res_l2_smooth", e) }
-                >
-                    <option key="true" value="true">
-                        true
-                    </option>
-                    <option key="false" value="false">
-                        false
-                    </option>
-                </TextField>
-
-                <TextField
-                    id="standard-week_day"
-                    select
-                    value={ this.state.week_day }
-                    className={classes.textField}
-                    margin="normal"
-                    helperText="week_day"
-                    SelectProps={{
-                        native: true,
-                        MenuProps: {
-                            className: classes.menu,
-                        },
-                    }}
-                    onChange={ e => this.update("week_day", e) }
-                >
-                    <option key="true" value="true">
-                        true
-                    </option>
-                    <option key="false" value="false">
-                        false
-                    </option>
-                </TextField>
-
-                <TextField
-                    id="standard-publicl2_daily_use"
-                    label="publicl2_daily_use"
-                    value={ this.state.publicl2_daily_use }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("publicl2_daily_use", e) }
-                />
-                <TextField
-                    id="standard-mixed_batteries"
-                    label="mixed_batteries"
-                    value={ this.state.mixed_batteries }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("mixed_batteries", e) }
-                />
-                <TextField
-                    id="standard-timer_control"
-                    label="timer_control"
-                    value={ this.state.timer_control }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("timer_control", e) }
-                />
-                <TextField
-                    id="standard-work_control"
-                    label="work_control"
-                    value={ this.state.work_control }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("work_control", e) }
-                />
-
+                    </TextField>
+                </fieldset>
+                <br/>
                 <p/>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
                     Run
