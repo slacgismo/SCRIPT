@@ -270,10 +270,10 @@ class AlgInputsLoadForecast extends Component {
                         onChange={ e => this.update("res_l2_smooth", e) }
                     >
                         <option key="true" value="true">
-                            true
+                            True
                         </option>
                         <option key="false" value="false">
-                            false
+                            False
                         </option>
                     </TextField>
                     <TextField
@@ -362,10 +362,10 @@ class AlgInputsLoadForecast extends Component {
                         onChange={ e => this.update("week_day", e) }
                     >
                         <option key="true" value="true">
-                            true
+                            True
                         </option>
                         <option key="false" value="false">
-                            false
+                            False
                         </option>
                     </TextField>
                     <TextField
