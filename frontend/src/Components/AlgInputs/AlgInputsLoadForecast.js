@@ -196,13 +196,13 @@ class AlgInputsLoadForecast extends Component {
                 id="standard-county"
                 select
                 className={classes.textField}
+                label="Please select a county"
                 SelectProps={{
                     native: true,
                     MenuProps: {
                         className: classes.menu,
                     },
                 }}
-                helperText="Please select a county"
                 margin="normal"
                 value={ this.state.county_choice }
                 onChange={ e => this.update("county_choice", e) }
@@ -231,7 +231,7 @@ class AlgInputsLoadForecast extends Component {
                                 className: classes.menu,
                             },
                         }}
-                        helperText="Please select an aggregation level"
+                        label="Please select an aggregation level"
                         margin="normal"
                         value={ this.state.aggregation_level }
                         onChange={ e => this.update("aggregation_level", e) }
@@ -248,7 +248,7 @@ class AlgInputsLoadForecast extends Component {
 
                     <TextField
                         id="standard-num_evs"
-                        helperText="Total number of EVs"
+                        label="Total number of EVs"
                         value={ this.state.num_evs }
                         className={classes.textField}
                         margin="normal"
