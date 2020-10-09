@@ -1,0 +1,27 @@
+Year,NPV
+Utility Bills,2367134745.5325313
+Utility Bills (volumetric),1699162693.9082348
+Utility Bills (demand),609075516.8871213
+Utility Bills (res),1337476820.6070333
+Utility Bills (work),878322226.6596166
+Utility Bills (pub L2),58943400.39291459
+Utility Bills (DCFC),92392297.87296705
+Incremental upfront vehicle cost,91083950.60799088
+Charging infrastructure cost,1712786734.333135
+Charging infrastructure cost (res),516528460.075235
+Charging infrastructure cost (work L2),834286541.397069
+Charging infrastructure cost (public L2),134684727.24209145
+Charging infrastructure cost (DCFC),227287005.61873943
+Avoided vehicle gasoline,2704879066.985461
+Vehicle O&M Savings,621051413.2162845
+Federal EV Tax Credit,306493487.4429055
+Total Energy Supply Cost,956992987.0470939
+Energy Cost,847501609.6173269
+Generation Capacity Cost,109491377.4297674
+Vehicle Sales (NPV),236181.19627465372
+Transmission and Distribution Cost,156444112.23559073
+Distribution Cost,138025806.73004365
+Transmission Cost,18418305.505547106
+Emissions Savings from Avoided Gasoline ($),0.0
+Emissions associated with EV adoption ($),0.0
+Net emissions savings ($),0.0

@@ -48,6 +48,7 @@ class Rate(object):
 
             # Energy charges of rate
             elif i in range(42, 282):
+
                 daytype = row[1]
                 hour = int(row[2])
                 for j in range(0,12):

@@ -1,69 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="766abf13-b47b-44b9-ab3b-bb914877bf9f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Cases to run.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../Cases to run.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../EV Loads/load profiles/DCFC Charging Load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../EV Loads/load profiles/Public Charging Load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../EV Loads/load profiles/Residential EV TOU Charging Load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../EV Loads/load profiles/Residential Flat Rate Charging Load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../EV Loads/load profiles/Residential TOU Charging Load 1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../EV Loads/load profiles/Residential TOU Charging Load 2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../EV Loads/load profiles/Workplace Charging Load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/CO2_emissions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/NOX_emissions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/PM10_emissions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/SO2_emissions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/VOC_emissions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/building_load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/charger_assignments.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/configs/config.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/dcfc_building_load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/distribution_mc.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/energy_mc.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/evse_cluster_sizes.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/gas_prices.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/generation_mc.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/loadprofile_allocation.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/ports_adoption.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/public_building_load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/timesteps.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/transmission_mc.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/vehicle_adoption.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/data/workplace_building_load.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/AllDCFC_loadprofile.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/AllPublicL2_loadprofile.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/AllResidential_loadprofile.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/AllWorkplace_loadprofile.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/Emissions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/aggregate_loadprofile.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/annual_gas_consumption.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/annual_results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cases/Base Case/results/npv_results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/chargers_class.py" beforeDir="false" afterPath="$PROJECT_DIR$/chargers_class.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_class.py" beforeDir="false" afterPath="$PROJECT_DIR$/model_class.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rates/Public Building Rate.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rates/Rate Escalators.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../rates/Rate Escalators.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rates/Residential EV TOU Rate.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rates/Residential Flat Rate.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rates/Residential TOU Rate 1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rates/Residential TOU Rate 2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rates/Workplace Building Rate.csv" beforeDir="false" />
-    </list>
+    <list default="true" id="2c366206-7f1e-4f58-b296-549bce8cacac" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="python_code" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model_class.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rate_class.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="249" column="26" selection-start-line="249" selection-start-column="26" selection-end-line="249" selection-end-column="26" />
+            <state relative-caret-position="799">
+              <caret line="52" column="34" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="34" />
+              <folding>
+                <element signature="e#0#39#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/constants.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" selection-start-line="3" selection-end-line="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/file_in.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5151">
+              <caret line="321" column="47" selection-start-line="321" selection-start-column="47" selection-end-line="321" selection-end-column="47" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -72,57 +47,21 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/file_out.py">
+        <entry file="file://$PROJECT_DIR$/model_class.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+            <state relative-caret-position="1700">
+              <caret line="118" column="42" selection-start-line="118" selection-start-column="42" selection-end-line="118" selection-end-column="42" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
+        <entry file="file://$PROJECT_DIR$/loadprofile_class.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="21" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
+            <state relative-caret-position="68">
+              <caret line="13" column="8" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
               <folding>
-                <element signature="e#0#39#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rate_class.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="19" column="32" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
-              <folding>
-                <element signature="e#0#39#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vehicles_class.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="306" column="93" selection-start-line="306" selection-start-column="93" selection-end-line="306" selection-end-column="93" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/helpers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="12" column="4" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#0#37#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -131,35 +70,35 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chargers_class.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="203" column="18" lean-forward="true" selection-start-line="203" selection-start-column="18" selection-end-line="203" selection-end-column="18" />
-              <folding>
-                <element signature="e#0#37#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="867">
+              <caret line="58" column="1" selection-start-line="58" selection-start-column="1" selection-end-line="58" selection-end-column="1" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/file_in.py">
+        <entry file="file://$PROJECT_DIR$/file_out.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
-              <caret line="492" column="17" selection-start-line="492" selection-start-column="17" selection-end-line="492" selection-end-column="17" />
-              <folding>
-                <element signature="e#0#37#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="4505">
+              <caret line="271" selection-start-line="271" selection-end-line="271" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/vehicles_class.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="262">
+              <caret line="214" column="38" lean-forward="true" selection-start-line="214" selection-start-column="38" selection-end-line="214" selection-end-column="38" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loadprofile_class.py">
+        <entry file="file://$PROJECT_DIR$/../../../Data processing/split_file.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2839">
-              <caret line="176" column="8" selection-start-line="176" selection-start-column="8" selection-end-line="176" selection-end-column="8" />
-              <folding>
-                <element signature="e#0#37#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="2210">
+              <caret line="133" lean-forward="true" selection-start-line="133" selection-end-line="133" />
             </state>
           </provider>
         </entry>
@@ -167,8 +106,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/simple_TandD.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="29" selection-start-line="29" selection-end-line="29" />
+            <state relative-caret-position="34">
+              <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -180,39 +119,40 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>default_allocation</find>
-      <find>RESOLVE</find>
-      <find>print</find>
-      <find>smartcharging_bool</find>
-      <find>get_flexibl</find>
-      <find>flexible_load</find>
-      <find>get_cls</find>
-      <find>get_cluster_</find>
-      <find>add_flex</find>
-      <find>default_all</find>
-      <find>default_</find>
-      <find>allocation_of</find>
-      <find>allocation_of_smart</find>
-      <find># try</find>
-      <find>building_load</find>
-      <find>building_</find>
-      <find>self.dcfc_loadprofile</find>
-      <find>portsperEVSE</find>
-      <find>vehicle_adoption_</find>
-      <find>tODO</find>
-      <find>self.smartcharging</find>
-      <find># peak</find>
-      <find>npv_sales</find>
-      <find>npv_oandm</find>
-      <find>with open</find>
-      <find>gasoline_savings</find>
-      <find>Counter</find>
-      <find>public_dcfc_propor</find>
-      <find>pro_lite</find>
-      <find>port_population</find>
+      <find>self.population</find>
+      <find>inc_p</find>
+      <find>bev_inc_price</find>
+      <find>self.new_mpg</find>
+      <find>self.annual_load</find>
+      <find>public_buil</find>
+      <find>capacity</find>
+      <find>workplace_l2_sa</find>
+      <find>pro_lite_</find>
+      <find>get_public_l2_</find>
+      <find>TOTAL_population</find>
+      <find>/</find>
+      <find>MODEL_INPUTS</find>
+      <find>gallons_per_ice</find>
+      <find>bev100</find>
+      <find>TandD_instance</find>
+      <find>weekday_energy_bill</find>
+      <find>avg_week</find>
+      <find>exit()</find>
+      <find>ready</find>
+      <find>stock_</find>
+      <find>allEV</find>
+      <find>annual_gasol</find>
+      <find>gasoline_consumption</find>
+      <find>population_escalation_factor</find>
+      <find>GHG_cost</find>
+      <find>stock_roll</find>
+      <find>gasoline</find>
+      <find>.keys()</find>
+      <find>stock</find>
     </findStrings>
     <replaceStrings>
-      <replace>'w'</replace>
+      <replace>_emissions_savings.append</replace>
+      <replace>_</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -222,23 +162,25 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/constants.py" />
-        <option value="$PROJECT_DIR$/billcalculator_class.py" />
+        <option value="$PROJECT_DIR$/rate_class.py" />
         <option value="$PROJECT_DIR$/loadprofile_class.py" />
+        <option value="$PROJECT_DIR$/chargers_class.py" />
         <option value="$PROJECT_DIR$/file_in.py" />
-        <option value="$PROJECT_DIR$/file_out.py" />
-        <option value="$PROJECT_DIR$/model_class.py" />
-        <option value="$PROJECT_DIR$/helpers.py" />
+        <option value="$PROJECT_DIR$/billcalculator_class.py" />
         <option value="$PROJECT_DIR$/vehicles_class.py" />
-        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/file_out.py" />
+        <option value="$PROJECT_DIR$/../../../Data processing/split_file.py" />
+        <option value="$PROJECT_DIR$/model_class.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-10" />
+    <option name="y" value="-10" />
+    <option name="width" value="1220" />
+    <option name="height" value="1103" />
   </component>
+  <component name="ProjectId" id="1aKBtbAZc8sirV5tA4gdFh5rI7a" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -259,9 +201,15 @@
       </pane>
     </panes>
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -289,27 +237,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="&quot;Base Case&quot;" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="model_class" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="python_code" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model_class.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -318,14 +245,31 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <list>
-      <item itemvalue="Python.main" />
-      <item itemvalue="Python.model_class" />
-    </list>
+    <configuration name="split_file" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="python_code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../../Data processing" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../../Data processing/split_file.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.model_class" />
+        <item itemvalue="Python.split_file" />
       </list>
     </recent_temporary>
   </component>
@@ -334,25 +278,25 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="766abf13-b47b-44b9-ab3b-bb914877bf9f" name="Default Changelist" comment="" />
-      <created>1571781009840</created>
+      <changelist id="2c366206-7f1e-4f58-b296-549bce8cacac" name="Default Changelist" comment="" />
+      <created>1585277334120</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1571781009840</updated>
+      <updated>1585277334120</updated>
     </task>
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24973656" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49126637" visible="true" weight="0.07481559" />
+      <window_info id="Structure" order="1" sideWeight="0.5098468" side_tool="true" weight="0.120871864" />
+      <window_info id="Favorites" order="2" sideWeight="0.5007072" side_tool="true" weight="0.24966975" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32981783" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.35219237" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39869988" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -364,123 +308,115 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49126637" visible="true" weight="0.120871864" />
+      <window_info id="Structure" order="1" sideWeight="0.5098468" side_tool="true" visible="true" weight="0.120871864" />
+      <window_info id="Favorites" order="2" sideWeight="0.5007072" side_tool="true" weight="0.24966975" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.35219237" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39869988" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="-1506" y="241" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586475186226">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state x="-1506" y="241" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586475186226" />
+    <state x="-1180" y="341" key="FileChooserDialogImpl" timestamp="1586474929424">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state x="-1180" y="341" key="FileChooserDialogImpl/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586474929424" />
+    <state width="1899" height="309" key="GridCell.Tab.0.bottom" timestamp="1586534213920">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="1899" height="309" key="GridCell.Tab.0.bottom/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586534213920" />
+    <state width="1899" height="309" key="GridCell.Tab.0.center" timestamp="1586534213920">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="1899" height="309" key="GridCell.Tab.0.center/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586534213920" />
+    <state width="1899" height="309" key="GridCell.Tab.0.left" timestamp="1586534213920">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="1899" height="309" key="GridCell.Tab.0.left/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586534213920" />
+    <state width="1899" height="309" key="GridCell.Tab.0.right" timestamp="1586534213920">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="1899" height="309" key="GridCell.Tab.0.right/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586534213920" />
+    <state width="1899" height="309" key="GridCell.Tab.1.bottom" timestamp="1586534213920">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="1899" height="309" key="GridCell.Tab.1.bottom/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586534213920" />
+    <state width="1899" height="309" key="GridCell.Tab.1.center" timestamp="1586534213920">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="1899" height="309" key="GridCell.Tab.1.center/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586534213920" />
+    <state width="1899" height="309" key="GridCell.Tab.1.left" timestamp="1586534213920">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="1899" height="309" key="GridCell.Tab.1.left/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586534213920" />
+    <state width="1899" height="309" key="GridCell.Tab.1.right" timestamp="1586534213920">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="1899" height="309" key="GridCell.Tab.1.right/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586534213920" />
+    <state x="-1459" y="228" key="SettingsEditor" timestamp="1586475172780">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state x="-1459" y="228" key="SettingsEditor/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586475172780" />
+    <state width="968" height="588" key="XDebugger.FullValuePopup" timestamp="1586482168501">
+      <screen x="-1920" y="6" width="1920" height="1160" />
+    </state>
+    <state width="968" height="588" key="XDebugger.FullValuePopup/0.0.1920.1160/-1920.6.1920.1160@-1920.6.1920.1160" timestamp="1586482168501" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/tests.py" />
-    <entry file="file://$PROJECT_DIR$/full_TandD.py" />
-    <entry file="file://$PROJECT_DIR$/substation_class.py" />
-    <entry file="file://$PROJECT_DIR$/constants.py">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-332">
-          <caret column="39" selection-start-column="39" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/boolean.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="19" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3/collections/__init__.pyi">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="244" column="8" selection-start-line="244" selection-start-column="8" selection-end-line="244" selection-end-column="8" />
+        <state relative-caret-position="187">
+          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/billcalculator_class.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3128">
-          <caret line="192" column="62" selection-start-line="192" selection-start-column="62" selection-end-line="192" selection-end-column="62" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/file_out.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+        <state relative-caret-position="1275">
+          <caret line="83" column="35" selection-start-line="83" selection-start-column="35" selection-end-line="83" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rate_class.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="19" column="32" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
+        <state relative-caret-position="799">
+          <caret line="52" column="34" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="34" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/helpers.py">
+    <entry file="file://$PROJECT_DIR$/constants.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="12" column="4" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loadprofile_class.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2839">
-          <caret line="176" column="8" selection-start-line="176" selection-start-column="8" selection-end-line="176" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/simple_TandD.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="29" selection-start-line="29" selection-end-line="29" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vehicles_class.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="306" column="93" selection-start-line="306" selection-start-column="93" selection-end-line="306" selection-end-column="93" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="21" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/file_in.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="492" column="17" selection-start-line="492" selection-start-column="17" selection-end-line="492" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chargers_class.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="203" column="18" lean-forward="true" selection-start-line="203" selection-start-column="18" selection-end-line="203" selection-end-column="18" />
+        <state relative-caret-position="5151">
+          <caret line="321" column="47" selection-start-line="321" selection-start-column="47" selection-end-line="321" selection-end-column="47" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
@@ -489,11 +425,56 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model_class.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="249" column="26" selection-start-line="249" selection-start-column="26" selection-end-line="249" selection-end-column="26" />
+        <state relative-caret-position="1700">
+          <caret line="118" column="42" selection-start-line="118" selection-start-column="42" selection-end-line="118" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loadprofile_class.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="13" column="8" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chargers_class.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="867">
+          <caret line="58" column="1" selection-start-line="58" selection-start-column="1" selection-end-line="58" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/file_out.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4505">
+          <caret line="271" selection-start-line="271" selection-end-line="271" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../Data processing/split_file.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2210">
+          <caret line="133" lean-forward="true" selection-start-line="133" selection-end-line="133" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/simple_TandD.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vehicles_class.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="214" column="38" lean-forward="true" selection-start-line="214" selection-start-column="38" selection-end-line="214" selection-end-column="38" />
         </state>
       </provider>
     </entry>

@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+BaseCase_Santa Clara_Residential L1_uncontrolled_load,Residential L1
+BaseCase_Santa Clara_Residential L2_uncontrolled_load,Residential L2
+BaseCase_Santa Clara_Residential MUD_uncontrolled_load,Residential L2
+BaseCase_Santa Clara_Public L2_uncontrolled_load,Public L2
+BaseCase_Santa Clara_Work_uncontrolled_load,Workplace L2
+BaseCase_Santa Clara_Fast_uncontrolled_load,DCFC

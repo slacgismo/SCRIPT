@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+BaseCase_San Joaquin_Residential L1_e19controlled_load,Residential L1
+BaseCase_San Joaquin_Residential L2_e19controlled_load,Residential L2
+BaseCase_San Joaquin_Residential MUD_e19controlled_load,Residential L2
+BaseCase_San Joaquin_Public L2_e19controlled_load,Public L2
+BaseCase_San Joaquin_Work_e19controlled_load,Workplace L2
+BaseCase_San Joaquin_Fast_e19controlled_load,DCFC

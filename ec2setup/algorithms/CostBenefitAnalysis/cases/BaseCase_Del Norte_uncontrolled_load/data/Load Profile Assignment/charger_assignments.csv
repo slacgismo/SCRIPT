@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+BaseCase_Del Norte_Residential L1_uncontrolled_load,Residential L1
+BaseCase_Del Norte_Residential L2_uncontrolled_load,Residential L2
+BaseCase_Del Norte_Residential MUD_uncontrolled_load,Residential L2
+BaseCase_Del Norte_Public L2_uncontrolled_load,Public L2
+BaseCase_Del Norte_Work_uncontrolled_load,Workplace L2
+BaseCase_Del Norte_Fast_uncontrolled_load,DCFC

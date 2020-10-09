@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+FastPublic_California_Residential L1_e19controlled_load,Residential L1
+FastPublic_California_Residential L2_e19controlled_load,Residential L2
+FastPublic_California_Residential MUD_e19controlled_load,Residential L2
+FastPublic_California_Public L2_e19controlled_load,Public L2
+FastPublic_California_Work_e19controlled_load,Workplace L2
+FastPublic_California_Fast_e19controlled_load,DCFC

@@ -29,7 +29,6 @@ class BillCalculator(object):
         self.fixed_monthly_bill = {}
         self.fixed_daily_bill = {}
 
-
     def calculate_bill(self, model_years, weekday_weekend_count,workplace_peak_hour, dcfc_peak_hour,
                                            publicl2_peak_hour, charger_name):
 
@@ -65,7 +64,7 @@ class BillCalculator(object):
 
             # Monthly max demand charge
 
-            if charger_name == 'Residential L2':
+            if charger_name == 'Residential L2' or 'Residential L1':
                 peak = max(peak_shape_kw.values())
             elif charger_name == 'Public L2':
                 peak = peak_shape_kw[publicl2_peak_hour[year]]
@@ -188,7 +187,9 @@ class BillCalculator(object):
             self.annual_bill[year] = weekday_energy_charge \
                                 + weekend_energy_charge \
                                 + total_monthly_max_charge \
-                                + total_onpeak_max_charge \
-                                + total_partpeak_max_charge1 \
-                                + total_partpeak_max_charge2 \
                                 + fixed_monthly_charges + fixed_daily_charges
+                                # + total_onpeak_max_charge \
+                                # + total_partpeak_max_charge1 \
+                                # + total_partpeak_max_charge2 \
+
+

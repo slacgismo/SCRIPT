@@ -9,4 +9,4 @@ case_number = 1
 for case in case_list:
     print("Running Case {} of {} - Case Name: '{}'".format(case_number, len(case_list), case))
     model = model_class.ModelInstance(case)
-    case_number += 1p
+    case_number += 1

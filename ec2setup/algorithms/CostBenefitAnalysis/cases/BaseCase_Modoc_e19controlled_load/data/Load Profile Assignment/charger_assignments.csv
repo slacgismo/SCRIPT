@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+BaseCase_Modoc_Residential L1_e19controlled_load,Residential L1
+BaseCase_Modoc_Residential L2_e19controlled_load,Residential L2
+BaseCase_Modoc_Residential MUD_e19controlled_load,Residential L2
+BaseCase_Modoc_Public L2_e19controlled_load,Public L2
+BaseCase_Modoc_Work_e19controlled_load,Workplace L2
+BaseCase_Modoc_Fast_e19controlled_load,DCFC

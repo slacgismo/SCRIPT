@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+BaseCase_Shasta_Residential L1_e19controlled_load,Residential L1
+BaseCase_Shasta_Residential L2_e19controlled_load,Residential L2
+BaseCase_Shasta_Residential MUD_e19controlled_load,Residential L2
+BaseCase_Shasta_Public L2_e19controlled_load,Public L2
+BaseCase_Shasta_Work_e19controlled_load,Workplace L2
+BaseCase_Shasta_Fast_e19controlled_load,DCFC

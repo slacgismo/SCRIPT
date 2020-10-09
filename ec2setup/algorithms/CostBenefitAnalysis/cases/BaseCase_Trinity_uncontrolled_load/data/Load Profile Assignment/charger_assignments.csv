@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+BaseCase_Trinity_Residential L1_uncontrolled_load,Residential L1
+BaseCase_Trinity_Residential L2_uncontrolled_load,Residential L2
+BaseCase_Trinity_Residential MUD_uncontrolled_load,Residential L2
+BaseCase_Trinity_Public L2_uncontrolled_load,Public L2
+BaseCase_Trinity_Work_uncontrolled_load,Workplace L2
+BaseCase_Trinity_Fast_uncontrolled_load,DCFC

@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+BaseCase_Santa Cruz_Residential L1_e19controlled_load,Residential L1
+BaseCase_Santa Cruz_Residential L2_e19controlled_load,Residential L2
+BaseCase_Santa Cruz_Residential MUD_e19controlled_load,Residential L2
+BaseCase_Santa Cruz_Public L2_e19controlled_load,Public L2
+BaseCase_Santa Cruz_Work_e19controlled_load,Workplace L2
+BaseCase_Santa Cruz_Fast_e19controlled_load,DCFC

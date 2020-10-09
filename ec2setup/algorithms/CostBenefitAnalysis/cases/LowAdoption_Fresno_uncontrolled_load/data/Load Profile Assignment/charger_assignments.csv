@@ -1,0 +1,7 @@
+Load Profile, Charger Assignment
+LowAdoption_Fresno_Residential L1_uncontrolled_load,Residential L1
+LowAdoption_Fresno_Residential L2_uncontrolled_load,Residential L2
+LowAdoption_Fresno_Residential MUD_uncontrolled_load,Residential L2
+LowAdoption_Fresno_Public L2_uncontrolled_load,Public L2
+LowAdoption_Fresno_Work_uncontrolled_load,Workplace L2
+LowAdoption_Fresno_Fast_uncontrolled_load,DCFC
