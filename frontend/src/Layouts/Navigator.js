@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
+import { NavLink } from 'react-router-dom';
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -22,9 +23,9 @@ const categories = [
     {
         id: "Algorithms",
         children: [
-            { id: "alg-loadcontrol", name: "Load Control", icon: <DnsRoundedIcon />},
-            { id: "alg-loadforecast", name: "Load Forecast", icon: <PermMediaOutlinedIcon /> },
-            { id: "alg-cba", name: "Cost Benefit Analysis", icon: <PublicIcon /> },
+            { id: "alg-loadcontrol", name: "Load Control", clicked: true, icon: <DnsRoundedIcon />},
+            { id: "alg-loadforecast", name: "Load Forecast", clicked: false, icon: <PermMediaOutlinedIcon /> },
+            { id: "alg-cba", name: "Cost Benefit Analysis", clicked: false, icon: <PublicIcon /> },
         ],
     },
 ];
@@ -48,7 +49,7 @@ const styles = theme => ({
         paddingTop: 1,
         paddingBottom: 1,
         color: "rgba(255, 255, 255, 0.7)",
-        "&:hover,&:focus": {
+        "&:hover": {
             backgroundColor: "rgba(255, 255, 255, 0.08)",
         },
     },
@@ -63,8 +64,9 @@ const styles = theme => ({
         fontSize: 30,
         color: theme.palette.common.white,
     },
-    itemActiveItem: {
+    active: {
         color: "#4fc3f7",
+        backgroundColor: "rgba(255, 255, 255, 0.08)"
     },
     itemPrimary: {
         fontSize: "inherit",
@@ -91,8 +93,9 @@ function Navigator(props) {
                 <ListItem 
                     className={clsx(classes.item, classes.itemCategory)} 
                     button 
-                    component={Link} 
-                    to={"/"}>
+                    component={NavLink}
+                    exact to={"/"}
+                    activeClassName={classes.active}>
                     <ListItemIcon className={classes.itemIcon}>
                         <HomeIcon />
                     </ListItemIcon>
@@ -108,8 +111,9 @@ function Navigator(props) {
                 <ListItem 
                     className={clsx(classes.item, classes.itemCategory)} 
                     button 
-                    component={Link}
-                    to={"/Upload"}>
+                    component={NavLink}
+                    exact to={"/Upload"}
+                    activeClassName={classes.active}>
                     <ListItemIcon className={classes.itemIcon}>
                         <PermMediaOutlinedIcon />
                     </ListItemIcon>
@@ -141,9 +145,10 @@ function Navigator(props) {
                             <ListItem
                                 key={childId}
                                 button
-                                className={clsx(classes.item, active && classes.itemActiveItem)}
-                                component={Link}
-                                to={"/"+childId}
+                                className={clsx(classes.item)}
+                                component={NavLink}
+                                exact to={"/"+childId}
+                                activeClassName={classes.active}
                             >
                                 <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
                                 <ListItemText
@@ -163,8 +168,9 @@ function Navigator(props) {
                 <ListItem 
                     className={clsx(classes.item, classes.itemCategory)} 
                     button 
-                    component={Link} 
-                    to={"/About"}>
+                    component={NavLink} 
+                    exact to={"/About"}
+                    activeClassName={classes.active}>
                     <ListItemIcon className={classes.itemIcon}>
                         <PeopleIcon />
                     </ListItemIcon>
