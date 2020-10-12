@@ -19,7 +19,7 @@ from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import spl
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
 import json
-
+from settings.celery import debug_task
 #for running CBA tool
 import sys
 sys.path.append("script/CostBenefitAnalysis/python_code/")
@@ -36,6 +36,7 @@ class LoadControlRunner(APIView):
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
         # TODO: requires an updated version of CBA Tool 
+        debug_task.delay("hello")
         split_file(county = request.data['county'])
         ModelInstance()
         UploadToPostgres(load_profile = request.data['load_profile'])
