@@ -5,6 +5,7 @@ import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
 
 import AlgInputs from "../AlgInputs/AlgInputs";
+import ProgressBar from "../ProgressBar/ProgressBar";
 import ResultCharts from "../Result/ResultCharts";
 import { dataLoadControll, dataLoadForecast } from "../Api/AlgorithmData";
 import { makeStyles } from "@material-ui/core/styles";
@@ -43,6 +44,15 @@ class AlgorithmPage extends Component {
                                     />
                                 }
                             />
+                            <br/>
+                            {
+                                <Content
+                                    text={`Loading...`}
+                                    compo={
+                                        <ProgressBar/>
+                                    }
+                                />
+                            }
                             <br/>
                             {
                                 

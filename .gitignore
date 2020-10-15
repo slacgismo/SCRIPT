@@ -380,3 +380,5 @@ webserver/script/costbenefitanalysis/cases/test_files
 webserver/script/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/*
 webserver/script/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/*
 webserver/script/costbenefitanalysis/preprocessing_loadprofiles/outputs/*
+webserver/app/redis-6.0.8
+webserver/app/redis-6.0.8.tar.gz

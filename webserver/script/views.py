@@ -14,16 +14,10 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
-from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
-from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
 import json
-from settings.celery import debug_task
-#for running CBA tool
-import sys
-sys.path.append("script/CostBenefitAnalysis/python_code/")
-from model_class import ModelInstance
+from script.tasks import split_file, run_cba_tool, upload_to_db
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -36,10 +30,12 @@ class LoadControlRunner(APIView):
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
         # TODO: requires an updated version of CBA Tool 
-        debug_task.delay("hello")
-        split_file(county = request.data['county'])
-        ModelInstance()
-        UploadToPostgres(load_profile = request.data['load_profile'])
+        split_input_file.delay(request.data['county'])
+        run_cba_tool.delay()
+        upload_to_db.delay(request.data['load_profile'])
+
+        # return 'display_progress.html', context={'task_id': result.task_id})
+
         return Response("Cost Benefit Analysis run succeeded")
 
 class LoadForecastRunner(APIView):
