@@ -17,7 +17,8 @@ from script.SmartCharging.SmartChargingAlgorithm import *
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
 import json
-from script.tasks import split_file, run_cba_tool, upload_to_db
+from script.tasks import run_cba_tool, check_task_status
+import time
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -30,12 +31,7 @@ class LoadControlRunner(APIView):
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
         # TODO: requires an updated version of CBA Tool 
-        split_input_file.delay(request.data['county'])
-        run_cba_tool.delay()
-        upload_to_db.delay(request.data['load_profile'])
-
-        # return 'display_progress.html', context={'task_id': result.task_id})
-
+        run_cba_tool.delay(request.data['county'], request.data['load_profile'])
         return Response("Cost Benefit Analysis run succeeded")
 
 class LoadForecastRunner(APIView):
@@ -65,6 +61,18 @@ class LoadForecastRunner(APIView):
             request.data["config_name"]
         )
         return Response("Load Forecast run succeeded")
+
+
+class CheckAlgorithmRunnerStatus(APIView):
+    def post(self, request, format=None):
+        ''' checks celery if algorithm runner status is still pending '''
+        loading = True
+        while loading == True:
+            status = check_task_status.delay(request.data["task_name"])
+            if status is not "PENDING":
+                loading = False
+            time.sleep(10)
+        return Response(loading)
 
 
 class CountyViewSet(viewsets.ModelViewSet):

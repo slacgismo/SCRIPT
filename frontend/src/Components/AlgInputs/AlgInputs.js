@@ -42,6 +42,7 @@ export default function AlgInputs (props) {
                 <AlgInputCustomized
                     category = { props.category }
                     visualizeResults={ (result) => visualizeResults(result) }
+                    loadingResults={ () => props.loadingResults()}
                 />
             </form>    
         </div>

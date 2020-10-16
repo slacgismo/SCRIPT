@@ -114,6 +114,7 @@ class AlgInputsCBA extends Component {
 
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
         if(!config_res.data.length){
+            this.props.loadingResults();
             const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
             const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
             const countyMatch = profileMatch.map(profile => profile["choice"]);
