@@ -6,6 +6,8 @@ from rest_framework.decorators import detail_route
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
+import json
+
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
 from script.models.config import LoadControllerConfig, LoadForecastConfig, LoadProfileConfig, GasConsumptionConfig, CostBenefitConfig, NetPresentValueConfig, EmissionConfig
@@ -16,9 +18,7 @@ from script.serializers import LoadControllerSerializer, LoadForecastSerializer,
 from script.SmartCharging.SmartChargingAlgorithm import *
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
-import json
-from script.tasks import run_cba_tool, check_task_status
-import time
+from script.tasks import run_cba_tool
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -31,8 +31,9 @@ class LoadControlRunner(APIView):
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
         # TODO: requires an updated version of CBA Tool 
-        run_cba_tool.delay(request.data['county'], request.data['load_profile'])
-        return Response("Cost Benefit Analysis run succeeded")
+        task = run_cba_tool.delay(request.data['county'], request.data['load_profile'])
+        cba_response = {"task_id": task.id, "status": task.status}
+        return Response(cba_response)
 
 class LoadForecastRunner(APIView):
     def post(self, request, format=None):
@@ -61,19 +62,6 @@ class LoadForecastRunner(APIView):
             request.data["config_name"]
         )
         return Response("Load Forecast run succeeded")
-
-
-class CheckAlgorithmRunnerStatus(APIView):
-    def post(self, request, format=None):
-        ''' checks celery if algorithm runner status is still pending '''
-        loading = True
-        while loading == True:
-            status = check_task_status.delay(request.data["task_name"])
-            if status is not "PENDING":
-                loading = False
-            time.sleep(10)
-        return Response(loading)
-
 
 class CountyViewSet(viewsets.ModelViewSet):
     queryset = County.objects.all()

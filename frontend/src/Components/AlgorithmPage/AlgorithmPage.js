@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import PropTypes from "prop-types";
 
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
@@ -7,11 +6,7 @@ import Content from "../../Layouts/Content";
 import AlgInputs from "../AlgInputs/AlgInputs";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import ResultCharts from "../Result/ResultCharts";
-import { dataLoadControll, dataLoadForecast } from "../Api/AlgorithmData";
-import { makeStyles } from "@material-ui/core/styles";
 
-import TextField from "@material-ui/core/TextField";
-import axios from "axios";
 
 class AlgorithmPage extends Component {
     constructor(props) {
@@ -22,22 +17,11 @@ class AlgorithmPage extends Component {
         };
     }
 
-    loadingResults = async() => {
+    loadingResults(bool) {
         this.setState({
-            loading: true
+            loading: bool
         })
-        const res = await axios({
-            url: "http://127.0.0.1:8000/api/check_algorithm_runner_status",
-            method: "post",
-            data: {task_name:  "script.tasks.run_cba_tool"}
-        });
-        if (res['data']===false){
-            this.setState({
-                loading: false
-            })
-        }
     }
-
 
     visualizeResults(results) {
         this.setState({
@@ -78,8 +62,7 @@ class AlgorithmPage extends Component {
                                     text={`${ this.props.title } Results`}
                                     // 
                                     textField = {this.props.compo}
-                                    compo={
-                                        
+                                    compo={              
                                         <ResultCharts
                                             results={ this.state.results }
                                             algId={2}

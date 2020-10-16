@@ -64,3 +64,7 @@ export function preprocessData(allData) {
     }
     return resultFlattened;
 }
+
+export function sleep(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+}

@@ -10,7 +10,7 @@ import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import { ResultCharts } from "../Result/ResultCharts";
 import { serverUrl } from "../Api/server";
-import { processResults, preprocessData} from "../Helpers/helpers";
+import { processResults, preprocessData, sleep} from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -105,6 +105,7 @@ class AlgInputsCBA extends Component {
     };
 
     findProfile = async () => {
+
         // check for corresponding CBA input table for current load forecast profile
         const config_res = await axios.get("http://127.0.0.1:8000/api/config/" + this.props.category, {
             params: {
@@ -114,17 +115,41 @@ class AlgInputsCBA extends Component {
 
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
         if(!config_res.data.length){
-            this.props.loadingResults();
-            const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
+
+            // starts progress bar to show loading to user
+            this.props.loadingResults(true)
+
+            // data inputs to run the cba tool
             const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
             const countyMatch = profileMatch.map(profile => profile["choice"]);
-            axios({
+
+            // runs cba task with celery on backend
+            const cba_res = await axios({
+                url: `${ serverUrl }/cost_benefit_analysis_runner`,
                 method: "post",
-                url: postUrl,
-                data: {load_profile: this.state.profileName, county: countyMatch},
+                data: {load_profile: this.state.profileName, county: countyMatch}
+            
             });
+
+            // celery-flower monitoring to check task status on cba tool
+            let status = cba_res.data.status
+            const task_id = cba_res.data.task_id
+            while (status !== "SUCCESS") {
+            const task_res = await axios({
+                    url: `http://localhost:5555/api/task/result/${ task_id }`,
+                    method: "get"
+                });
+                status = task_res.data.state
+                await sleep(3000)
+            }
+            
+            // removes progress bar
+            this.props.loadingResults(false);
+
+            // displays results
             this.props.visualizeResults(await this.getCBAResult());
         }
+        
     };
 
     getCBAResult = async () => {
