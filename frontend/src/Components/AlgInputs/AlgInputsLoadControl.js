@@ -54,7 +54,7 @@ class AlgInputsLoadControl extends Component {
         const postData = {
             county: this.state.county,
             rate_structure: this.state.rate_structure,
-        }
+        };
         const postUrl = `${ serverUrl }/load_control_runner`;
 
         axios({
@@ -62,13 +62,13 @@ class AlgInputsLoadControl extends Component {
             url: postUrl,
             data: postData,
         })
-        .then((response) => {
-            const sca_data = [JSON.parse(response.data)]
-            this.props.visualizeResults(sca_data)
+            .then((response) => {
+                const sca_data = [JSON.parse(response.data)];
+                this.props.visualizeResults(sca_data);
 
-        }, (error) => {
-            console.log(error);
-        });
+            }, (error) => {
+                console.log(error);
+            });
     }
 
     render() {
@@ -115,13 +115,13 @@ class AlgInputsLoadControl extends Component {
                     margin="normal"
                     onChange={ e => this.update("rate_structure", e) }
                 >
-                {
-                    this.state.rate_structures.map(option => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))
-                }
+                    {
+                        this.state.rate_structures.map(option => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))
+                    }
 
                 </TextField>
                 <br />

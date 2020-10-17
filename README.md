@@ -76,14 +76,18 @@ Running the project:
 cd webserver
 # project assumes localhost:8000 - which should be the default
 python manage.py runserver --settings=app.settings.base
-#run celery in another tab
+
+# run celery in another tab
 celery -A app worker --loglevel=INFO
-#run flower in another tab
+
+# run flower in another tab
 flower -A app --port=5555
-#run redis in another tab
+
+# run redis in another tab
 cd app
 redis-server
-#run frontend in another tab
+
+# run frontend in another tab
 cd ../../frontend
 yarn start 
 ```

@@ -20,7 +20,7 @@ class AlgorithmPage extends Component {
     loadingResults(bool) {
         this.setState({
             loading: bool
-        })
+        });
     }
 
     visualizeResults(results) {
@@ -50,7 +50,7 @@ class AlgorithmPage extends Component {
                             <br/>
                             {   this.state.loading === true &&
                                 <Content
-                                    text={`Loading...`}
+                                    text={"Loading..."}
                                     compo={ <ProgressBar/> }
                                 />
                             }

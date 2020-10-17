@@ -117,7 +117,7 @@ class AlgInputsCBA extends Component {
         if(!config_res.data.length){
 
             // starts progress bar to show loading to user
-            this.props.loadingResults(true)
+            this.props.loadingResults(true);
 
             // data inputs to run the cba tool
             const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
@@ -132,15 +132,15 @@ class AlgInputsCBA extends Component {
             });
 
             // celery-flower monitoring to check task status on cba tool
-            let status = cba_res.data.status
-            const task_id = cba_res.data.task_id
+            let status = cba_res.data.status;
+            const task_id = cba_res.data.task_id;
             while (status !== "SUCCESS") {
-            const task_res = await axios({
+                const task_res = await axios({
                     url: `http://localhost:5555/api/task/result/${ task_id }`,
                     method: "get"
                 });
-                status = task_res.data.state
-                await sleep(3000)
+                status = task_res.data.state;
+                await sleep(3000);
             }
             
             // removes progress bar
@@ -183,7 +183,7 @@ class AlgInputsCBA extends Component {
 
         // if different load forecast profile selected, change load forecast chart
         if (prevState.profileName !== this.state.profileName) {
-                this.getLoadForecastData();
+            this.getLoadForecastData();
         }
     }
 
