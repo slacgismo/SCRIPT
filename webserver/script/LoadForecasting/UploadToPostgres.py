@@ -58,7 +58,7 @@ class UploadToPostgres():
         public_l2_load,
         total_load,
     ):
-    ''' data separated into lists before upload to db '''
+        ''' data separated into lists before upload to db '''
         residential_l1_load_list = []
         residential_l2_load_list = []
         residential_mud_load_list = []
