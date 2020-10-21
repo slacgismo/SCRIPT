@@ -7,13 +7,20 @@ from django.conf import settings
 class UploadToPostgres():
     def __init__(
         self,
-        residential_l1_load,
-        residential_l2_load,
-        residential_mud_load,
-        work_load,
-        fast_load,
-        public_l2_load,
-        total_load
+        residential_l1_load_uncontrolled,
+        residential_l2_load_uncontrolled,
+        residential_mud_load_uncontrolled,
+        work_load_uncontrolled,
+        fast_load_uncontrolled,
+        public_l2_load_uncontrolled,
+        total_load_uncontrolled,
+        residential_l1_load_controlled,
+        residential_l2_load_controlled,
+        residential_mud_load_controlled,
+        work_load_controlled,
+        fast_load_controlled,
+        public_l2_load_controlled,
+        total_load_controlled
     ):
 
         with open(settings.BASE_DIR + '/postgres_info.json') as json_file:
@@ -25,13 +32,109 @@ class UploadToPostgres():
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
-        self.residential_l1_load = residential_l1_load
-        self.residential_l2_load = residential_l2_load
-        self.residential_mud_load = residential_mud_load
-        self.fast_load = fast_load
-        self.work_load = work_load
-        self.public_l2_load = public_l2_load
-        self.total_load = total_load
+        self.residential_l1_load_uncontrolled = residential_l1_load_uncontrolled
+        self.residential_l2_load_uncontrolled = residential_l2_load_uncontrolled
+        self.residential_mud_load_uncontrolled = residential_mud_load_uncontrolled
+        self.fast_load_uncontrolled = fast_load_uncontrolled
+        self.work_load_uncontrolled = work_load_uncontrolled
+        self.public_l2_load_uncontrolled = public_l2_load_uncontrolled
+        self.total_load_uncontrolled = total_load_uncontrolled
+        self.residential_l1_load_controlled = residential_l1_load_controlled
+        self.residential_l2_load_controlled = residential_l2_load_controlled
+        self.residential_mud_load_controlled = residential_mud_load_controlled
+        self.fast_load_controlled = fast_load_controlled
+        self.work_load_controlled = work_load_controlled
+        self.public_l2_load_controlled = public_l2_load_controlled
+        self.total_load_controlled = total_load_controlled
+
+
+    def prep_data(
+        self,
+        residential_l1_load,
+        residential_l2_load,
+        residential_mud_load,
+        work_load,
+        fast_load,
+        public_l2_load,
+        total_load,
+    ):
+        # upload data into Postgres
+        residential_l1_load_list = []
+        residential_l2_load_list = []
+        residential_mud_load_list = []
+        fast_load_list = []
+        work_load_list = []
+        public_l2_load_list = []
+        total_load_list = []
+
+        start_hour = 0
+        start_minute = 0
+
+        time_point_len = len(residential_l1_load)
+
+        for i in range(time_point_len):
+            hour_str = str((start_hour + i // 4) % 24)
+            minute = 15 * (i % 4)
+            if minute is 0:
+                minute_str = '00'
+            else:
+                minute_str = str(minute)
+
+            residential_l1_load_list.append(
+                {
+                    'time': hour_str + ':' + minute_str,
+                    'load': str(round(residential_l1_load[i], 2))
+                }
+            )
+
+            residential_l2_load_list.append(
+                {
+                    'time': hour_str + ':' + minute_str,
+                    'load': str(round(residential_l2_load[i], 2))
+                }
+            )
+
+            residential_mud_load_list.append(
+                {
+                    'time': hour_str + ':' + minute_str,
+                    'load': str(round(residential_mud_load[i], 2))
+                }
+            )
+
+            fast_load_list.append(
+                {
+                    'time': hour_str + ':' + minute_str,
+                    'load': str(round(fast_load[i], 2))
+                }
+            )
+
+            work_load_list.append(
+                {
+                    'time': hour_str + ':' + minute_str,
+                    'load': str(round(work_load[i], 2))
+                }
+            )
+
+            public_l2_load_list.append(
+                {
+                    'time': hour_str + ':' + minute_str,
+                    'load': str(round(public_l2_load[i], 2))
+                }
+            )
+
+            total_load_list.append(
+                {
+                    'time': hour_str + ':' + minute_str,
+                    'load': str(round(total_load[i], 2))
+                }
+            )
+        return (residential_l1_load_list,
+                residential_l2_load_list,
+                residential_mud_load_list,
+                fast_load_list,
+                work_load_list,
+                public_l2_load_list,
+                total_load_list)
 
     def run(
         self,
@@ -54,7 +157,6 @@ class UploadToPostgres():
         mixed_batteries,
         timer_control,
         work_control
-
     ):
 
         conn = psycopg2.connect(
@@ -81,88 +183,61 @@ class UploadToPostgres():
             )
         )
 
-        conn.commit()
-
-        # upload data into Postgres
-        residential_l1_load_list = []
-        residential_l2_load_list = []
-        residential_mud_load_list = []
-        fast_load_list = []
-        work_load_list = []
-        public_l2_load_list = []
-        total_load_list = []
-
-        start_hour = 0
-        start_minute = 0
-
-        time_point_len = len(self.residential_l1_load)
-
-        for i in range(time_point_len):
-            hour_str = str((start_hour + i // 4) % 24)
-            minute = 15 * (i % 4)
-            if minute is 0:
-                minute_str = '00'
-            else:
-                minute_str = str(minute)
-
-            residential_l1_load_list.append(
-                {
-                    'time': hour_str + ':' + minute_str,
-                    'load': str(round(self.residential_l1_load[i], 2))
-                }
+        (residential_l1_load_list_uncontrolled,
+        residential_l2_load_list_uncontrolled,
+        residential_mud_load_list_uncontrolled,
+        fast_load_list_uncontrolled,
+        work_load_list_uncontrolled,
+        public_l2_load_list_uncontrolled,
+        total_load_list_uncontrolled) = self.prep_data(
+            self.residential_l1_load_uncontrolled,
+            self.residential_l2_load_uncontrolled,
+            self.residential_mud_load_uncontrolled,
+            self.fast_load_uncontrolled,
+            self.work_load_uncontrolled,
+            self.public_l2_load_uncontrolled,
+            self.total_load_uncontrolled,
             )
 
-            residential_l2_load_list.append(
-                {
-                    'time': hour_str + ':' + minute_str,
-                    'load': str(round(self.residential_l2_load[i], 2))
-                }
-            )
-
-            residential_mud_load_list.append(
-                {
-                    'time': hour_str + ':' + minute_str,
-                    'load': str(round(self.residential_mud_load[i], 2))
-                }
-            )
-
-            fast_load_list.append(
-                {
-                    'time': hour_str + ':' + minute_str,
-                    'load': str(round(self.fast_load[i], 2))
-                }
-            )
-
-            work_load_list.append(
-                {
-                    'time': hour_str + ':' + minute_str,
-                    'load': str(round(self.work_load[i], 2))
-                }
-            )
-
-            public_l2_load_list.append(
-                {
-                    'time': hour_str + ':' + minute_str,
-                    'load': str(round(self.public_l2_load[i], 2))
-                }
-            )
-
-            total_load_list.append(
-                {
-                    'time': hour_str + ':' + minute_str,
-                    'load': str(round(self.total_load[i], 2))
-                }
-            )
 
         cur.execute("INSERT INTO " + self.table_name + \
-            " (config, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
+            " (config, controlled, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
             " work_load, public_l2_load, total_load)" + \
-            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
-                str(config_name),
-                json.dumps(residential_l1_load_list), json.dumps(residential_l2_load_list),
-                json.dumps(residential_mud_load_list), json.dumps(fast_load_list),
-                json.dumps(work_load_list), json.dumps(public_l2_load_list), json.dumps(total_load_list)
+                str(config_name), str(0),
+                json.dumps(residential_l1_load_list_uncontrolled), json.dumps(residential_l2_load_list_uncontrolled),
+                json.dumps(residential_mud_load_list_uncontrolled), json.dumps(fast_load_list_uncontrolled),
+                json.dumps(work_load_list_uncontrolled), json.dumps(public_l2_load_list_uncontrolled), json.dumps(total_load_list_uncontrolled)
+            )
+        )
+
+        (residential_l1_load_list_controlled,
+        residential_l2_load_list_controlled,
+        residential_mud_load_list_controlled,
+        fast_load_list_controlled,
+        work_load_list_controlled,
+        public_l2_load_list_controlled,
+        total_load_list_controlled) = self.prep_data(
+            self.residential_l1_load_controlled,
+            self.residential_l2_load_controlled,
+            self.residential_mud_load_controlled,
+            self.fast_load_controlled,
+            self.work_load_controlled,
+            self.public_l2_load_controlled,
+            self.total_load_controlled,
+            )
+
+
+        cur.execute("INSERT INTO " + self.table_name + \
+            " (config, controlled, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
+            " work_load, public_l2_load, total_load)" + \
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (
+                str(config_name), str(1),
+                json.dumps(residential_l1_load_list_controlled), json.dumps(residential_l2_load_list_controlled),
+                json.dumps(residential_mud_load_list_controlled), json.dumps(fast_load_list_controlled),
+                json.dumps(work_load_list_controlled), json.dumps(public_l2_load_list_controlled), json.dumps(total_load_list_controlled)
             )
         )
         # Make the changes to the database persistent

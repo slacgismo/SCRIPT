@@ -101,6 +101,24 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ [field]: event.currentTarget.value });
     };
 
+    getResult = async (county) => {
+
+        const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?config=${this.state.config_name}`);
+        const dataLoadForecast = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
+            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
+            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
+            dataLoadForecastUnit.work_load = (res.data[i].work_load);
+            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
+            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
+            dataLoadForecastUnit.total_load = (res.data[i].total_load);
+            dataLoadForecast.push(dataLoadForecastUnit);
+        }
+        return dataLoadForecast;
+    };
+
     saveResults = async() => {
         // check if current load forecast profile already exists before saving
         const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.config_name}`);
@@ -137,38 +155,14 @@ class AlgInputsLoadForecast extends Component {
                 url: postUrl,
                 data: postData,
             })
-                .then((response) => {
+                .then(async (response) => {
                     console.log(response);
+                    this.props.visualizeResults(await this.getResult());
                 }, (error) => {
                     console.log(error);
                 });
             this.setState({ open: false });
         }
-    };
-
-    getResult = async (county) => {
-
-        if(document.getElementById("standard-county") === null) {
-            county = null;
-        }
-        else {
-            county = this.state.county_choice;
-        }
-
-        const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?county=${ county }`);
-        const dataLoadForecast = [];
-        for (var i = 0; i < res.data.length; i++) {
-            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
-            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
-            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
-            dataLoadForecastUnit.work_load = (res.data[i].work_load);
-            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
-            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
-            dataLoadForecastUnit.total_load = (res.data[i].total_load);
-            dataLoadForecast.push(dataLoadForecastUnit);
-        }
-        return dataLoadForecast;
     };
 
     useDefaultParameters = () => {
@@ -182,9 +176,8 @@ class AlgInputsLoadForecast extends Component {
         });
     }
 
-    runAlgorithm = async (county) => {
+    runAlgorithm = () => {
         this.setState({ open: true });
-        this.props.visualizeResults(await this.getResult(county));
     };
 
 
