@@ -74,7 +74,7 @@ def lf_runner(
     pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_weekday_' + county + '_county_uncontrolled_load.csv')
     pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/BaseCase_2025_weekday_' + county + '_county_controlled_load.csv')
 
-    upload_to_postgres_client_uncontrolled = UploadToPostgres(
+    upload_to_postgres_client = UploadToPostgres(
         total[:, 0],
         total[:, 1],
         total[:, 2],
@@ -91,7 +91,7 @@ def lf_runner(
         total_controlled[:, 6],
     )
 
-    upload_to_postgres_client_uncontrolled.run(
+    upload_to_postgres_client.run(
         config_name,
         aggregation_level,
         total_num_evs,
