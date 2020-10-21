@@ -58,7 +58,7 @@ class UploadToPostgres():
         public_l2_load,
         total_load,
     ):
-        # upload data into Postgres
+    ''' data separated into lists before upload to db '''
         residential_l1_load_list = []
         residential_l2_load_list = []
         residential_mud_load_list = []
@@ -136,6 +136,7 @@ class UploadToPostgres():
                 public_l2_load_list,
                 total_load_list)
 
+
     def run(
         self,
         config_name,
@@ -183,6 +184,7 @@ class UploadToPostgres():
             )
         )
 
+        # uncontrolled
         (residential_l1_load_list_uncontrolled,
         residential_l2_load_list_uncontrolled,
         residential_mud_load_list_uncontrolled,
@@ -212,6 +214,7 @@ class UploadToPostgres():
             )
         )
 
+        # controlled
         (residential_l1_load_list_controlled,
         residential_l2_load_list_controlled,
         residential_mud_load_list_controlled,

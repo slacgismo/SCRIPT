@@ -101,8 +101,8 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ [field]: event.currentTarget.value });
     };
 
-    getResult = async (county) => {
-
+    getResult = async () => {
+        // receives 2 lists (uncontrolled, controlled) when form is saved
         const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?config=${this.state.config_name}`);
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {

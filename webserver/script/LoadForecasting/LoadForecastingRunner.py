@@ -31,10 +31,8 @@ def lf_runner(
         config_name,
     ):
 
-    # THESE ARE ALL INPUTS
-
+    # below values are temp, will be updated on the next PR with updated alg files
     battery_dict = {'smallbatt': 0, 'allbatt':0.7, 'bigbatt':0.3}
-
     even_spread_geo_percent = 0
 
     config = FinalReport(total_num_evs=total_num_evs, aggregation_level='county', county=county,
@@ -45,6 +43,8 @@ def lf_runner(
     model = EVLoadModel(config)
     model.calculate_basic_load(verbose=False)
 
+    # uncontrolled data prep before db
+    # 1440 rows -> 96 rows for better plotting in the fron end
     total = np.zeros((np.shape(model.load_segments['Residential L1']['Load'])[0], 7))
     total[:, 0] = model.load_segments['Residential L1']['Load']
     total[:, 1] = model.load_segments['Residential L2']['Load']
@@ -55,7 +55,8 @@ def lf_runner(
     total[:, 6] = np.sum(total, axis=1)
     total_df = pd.DataFrame(data=total, columns=['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total'])
 
-    # TODO: apply control, for uncontrolled and controlled pairs for load forecast
+    # controlled data prep before db
+    # 1440 rows -> 96 rows for better plotting in the fron end
     model.apply_control(control_rule=work_control, segment='Work')
     total_controlled = np.zeros((np.shape(model.controlled_load_segments_dict['Residential L1']['Load'])[0], 7))
     total_controlled[:, 0] = model.controlled_load_segments_dict['Residential L1']['Load']
@@ -67,6 +68,7 @@ def lf_runner(
     total_controlled[:, 6] = np.sum(total_controlled, axis=1)
     total_controlled_df = pd.DataFrame(data=total_controlled, columns=['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total'])
 
+    # inputs to the cba tool
     path = Path(__file__).parent.resolve()
     parent_path = path.parent
     pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_weekday_' + county + '_county_uncontrolled_load.csv')
