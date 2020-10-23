@@ -1,4 +1,6 @@
 // Helper functions
+import axios from "axios";
+import React from "react";
 
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
@@ -68,3 +70,27 @@ export function preprocessData(allData) {
 export function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
+
+export async function checkFlowerTaskStatus (task_id) {
+    const task_res = await axios({
+        url: `http://localhost:5555/api/task/result/${ task_id }`,
+        method: "get"
+    });
+    return task_res.data.state
+}
+
+export async function exponentialBackoff (checkStatus, task_id, delay, callback) {
+    let status = await checkStatus(task_id);
+    if (status==="SUCCESS") {
+        callback();
+    } else {
+        if (status==="PENDING") {
+            setTimeout(function() {
+                exponentialBackoff(checkStatus, task_id, delay * 2, callback);
+            }, delay);
+        } else if (status==="FAILURE") {
+            //to do - UI for failure
+            console.log('failure');   
+        }
+    }
+};

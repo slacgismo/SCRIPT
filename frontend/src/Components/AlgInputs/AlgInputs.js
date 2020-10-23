@@ -42,7 +42,7 @@ export default function AlgInputs (props) {
                 <AlgInputCustomized
                     category = { props.category }
                     visualizeResults={ (result) => visualizeResults(result) }
-                    loadingResults={ (bool) => props.loadingResults(bool)}
+                    loadingResults={ (isLoading) => props.loadingResults(isLoading)}
                 />
             </form>    
         </div>

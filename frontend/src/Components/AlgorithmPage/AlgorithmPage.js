@@ -17,9 +17,9 @@ class AlgorithmPage extends Component {
         };
     }
 
-    loadingResults(bool) {
+    loadingResults(isLoading) {
         this.setState({
-            loading: bool
+            loading: isLoading
         });
     }
 

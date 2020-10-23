@@ -11,7 +11,3 @@ app.config_from_object('django.conf:settings')
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks(settings.INSTALLED_APPS)
-
-@app.task(bind=True)
-def debug_task(self):
-    print(f'Request: {self.request!r}')

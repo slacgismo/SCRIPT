@@ -46,16 +46,6 @@ pip install -r requirements.txt
 pip install celery==4.4.7
 pip install pandas cvxpy sklearn matplotlib s3fs flower redis xlrd
 
-# install redis
-# https://redis.io/topics/quickstart
-cd app
-wget http://download.redis.io/redis-stable.tar.gz
-tar xvzf redis-stable.tar.gz
-cd redis-stable
-make
-
-
-
 # install the frontend dependencies
 cd ../frontend
 yarn install
@@ -77,15 +67,14 @@ cd webserver
 # project assumes localhost:8000 - which should be the default
 python manage.py runserver --settings=app.settings.base
 
+# run redis in another tab
+redis-server
+
 # run celery in another tab
 celery -A app worker --loglevel=INFO
 
 # run flower in another tab
 flower -A app --port=5555
-
-# run redis in another tab
-cd app
-redis-server
 
 # run frontend in another tab
 cd ../../frontend

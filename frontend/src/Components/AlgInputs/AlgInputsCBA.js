@@ -10,7 +10,7 @@ import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import { ResultCharts } from "../Result/ResultCharts";
 import { serverUrl } from "../Api/server";
-import { processResults, preprocessData, sleep} from "../Helpers/helpers";
+import { processResults, preprocessData, checkFlowerTaskStatus, exponentialBackoff, sleep} from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -134,22 +134,15 @@ class AlgInputsCBA extends Component {
             // celery-flower monitoring to check task status on cba tool
             let status = cba_res.data.status;
             const task_id = cba_res.data.task_id;
-            while (status !== "SUCCESS") {
-                const task_res = await axios({
-                    url: `http://localhost:5555/api/task/result/${ task_id }`,
-                    method: "get"
-                });
-                status = task_res.data.state;
-                await sleep(3000);
-            }
-            
-            // removes progress bar
-            this.props.loadingResults(false);
 
-            // displays results
-            this.props.visualizeResults(await this.getCBAResult());
+            // celery-flower monitoring to check task status on cba tool
+            exponentialBackoff(checkFlowerTaskStatus, task_id, 100, async () => {
+                this.props.loadingResults(false);
+                this.props.visualizeResults(await this.getCBAResult());
+            })
+
         }
-        
+
     };
 
     getCBAResult = async () => {
@@ -174,6 +167,11 @@ class AlgInputsCBA extends Component {
         this.findProfile();       
         this.props.visualizeResults(await this.getCBAResult());
     };
+
+    loadedResultsandCharts = async() => {
+        this.props.loadingResults(false);
+        this.props.visualizeResults(await this.getCBAResult());
+    }
 
     componentDidUpdate(prevProps, prevState) {
         // if different dropdown menu category selected (e.g. gas consumption)
