@@ -1,7 +1,0 @@
-Load Profile,PGE Residential EV Rate,PGE Medium Commercial Rate,PGE Large Commercial Rate,SCE Residential EV Rate,SCE Medium Commercial Rate,SCE Large Commercial Rate,SCE Commercial EV Rate,SDGE Residential EV Rate,SDGE Commercial Rate
-BaseCase_Shasta_Residential L1_uncontrolled_load,1,0,0,0,0,0,0,0,0
-BaseCase_Shasta_Residential L2_uncontrolled_load,1,0,0,0,0,0,0,0,0
-BaseCase_Shasta_Residential MUD_uncontrolled_load,0,1,0,0,0,0,0,0,0
-BaseCase_Shasta_Public L2_uncontrolled_load,0,1,0,0,0,0,0,0,0
-BaseCase_Shasta_Work_uncontrolled_load,0,1,0,0,0,0,0,0,0
-BaseCase_Shasta_Fast_uncontrolled_load,0,0,1,0,0,0,0,0,0

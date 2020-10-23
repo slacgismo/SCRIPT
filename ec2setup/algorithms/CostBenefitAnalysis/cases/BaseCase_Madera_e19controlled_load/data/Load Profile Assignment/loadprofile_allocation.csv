@@ -1,7 +1,0 @@
-Load Profile,PGE Residential EV Rate,PGE Medium Commercial Rate,PGE Large Commercial Rate,SCE Residential EV Rate,SCE Medium Commercial Rate,SCE Large Commercial Rate,SCE Commercial EV Rate,SDGE Residential EV Rate,SDGE Commercial Rate
-BaseCase_Madera_Residential L1_e19controlled_load,1,0,0,0,0,0,0,0,0
-BaseCase_Madera_Residential L2_e19controlled_load,1,0,0,0,0,0,0,0,0
-BaseCase_Madera_Residential MUD_e19controlled_load,0,1,0,0,0,0,0,0,0
-BaseCase_Madera_Public L2_e19controlled_load,0,1,0,0,0,0,0,0,0
-BaseCase_Madera_Work_e19controlled_load,0,1,0,0,0,0,0,0,0
-BaseCase_Madera_Fast_e19controlled_load,0,0,1,0,0,0,0,0,0

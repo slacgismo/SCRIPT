@@ -1,7 +1,0 @@
-Load Profile, Charger Assignment
-BaseCase_Mariposa_Residential L1_uncontrolled_load,Residential L1
-BaseCase_Mariposa_Residential L2_uncontrolled_load,Residential L2
-BaseCase_Mariposa_Residential MUD_uncontrolled_load,Residential L2
-BaseCase_Mariposa_Public L2_uncontrolled_load,Public L2
-BaseCase_Mariposa_Work_uncontrolled_load,Workplace L2
-BaseCase_Mariposa_Fast_uncontrolled_load,DCFC
