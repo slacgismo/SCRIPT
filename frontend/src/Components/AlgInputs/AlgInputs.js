@@ -28,6 +28,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AlgInputs (props) {
+
+
     const visualizeResults = (resultArr) => {
         props.visualizeResults(processResults(resultArr));
     };
