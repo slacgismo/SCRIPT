@@ -4,14 +4,13 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
-import { dataCBA } from "../Api/AlgorithmData"; // TODO: use CBA result data
 import { withStyles } from "@material-ui/core/styles";
-import ResultCharts from "../Result/ResultCharts";
-import AlgInputsLoadForecast from "../AlgInputs/AlgInputsLoadForecast";
+import { ResultCharts } from "../Result/ResultCharts";
+import { serverUrl } from "../Api/server";
+import { processResults, preprocessData} from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -38,8 +37,6 @@ const styles = theme => ({
     },
 });
 
-let results = [];
-
 class AlgInputsCBA extends Component {
     constructor(props) {
         super(props);
@@ -49,163 +46,120 @@ class AlgInputsCBA extends Component {
             profileNames: [],
             profileData: [],
             profileName: "",
-            county: "",
-            resultsLoadForecast: [],
-            shouldRender: false,
+            loadForecastResults: [],
+            processedLoadForecastResults: [],
+            shouldRender: false
         };
     }
-    
+
     componentDidMount() {
-        axios("http://127.0.0.1:8000/api/config/load_forecast/")
+        axios("http://127.0.0.1:8000/api/config/load_forecast")
             .then(res => {
-                this.setState({ profileData: res.data });
                 const profiles = res.data;
                 const profileNames = [];
-                for (var i = 0; i < res.data.length; i++) {
-                    const profileNamesUnit = {id: "", name: ""};
-                    profileNamesUnit.id = profiles[i]["id"];
-                    profileNamesUnit.name = profiles[i]["config_name"];
-                    profileNames.push(profileNamesUnit);
+                if (profiles.length > 0) {
+                    for (var i = 0; i < profiles.length; i++) {
+                        const profileNamesUnit = {id: "", name: ""};
+                        profileNamesUnit.id = profiles[i]["id"];
+                        profileNamesUnit.name = profiles[i]["config_name"];
+                        profileNames.push(profileNamesUnit);
+                    }
+                    this.setState({ profileData: profiles, profileNames: profileNames });
                 }
-                console.log(profileNames);
-                this.setState({ profileNames });
-                console.log(this.state.profileNames);
-                this.setState({ profileName: document.getElementById("standard-profile").value});
-                console.log(this.state.profileName);
-                
-            })
-            .catch(console.log);
+            });
+        this.getLoadForecastData();
     }
+
+    getLoadForecastData = async() => {
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast", {
+            params: {
+                config: this.state.profileName
+            }
+        });
+        const dataLoadForecast = [];
+        for (var i = 0; i < res.data.length; i++) {
+            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
+            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
+            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
+            dataLoadForecastUnit.work_load = (res.data[i].work_load);
+            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
+            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
+            dataLoadForecastUnit.total_load = (res.data[i].total_load);
+            dataLoadForecast.push(dataLoadForecastUnit);
+        }
+        this.setState({ loadForecastResults: dataLoadForecast });
+    };
 
     handleClose = () => {
-        console.log(this);
-        this.setState({ openResult: false });
-        this.setState({ openUpload: false });
-    }
-
-    /* TODO show results of Load Forecast */
-    showResults = async () => {
-        // TODO: backend
-        // Get result of algorithm2 and visualize it
-        this.setState({ openResult: true });
-        this.setState({ shouldRender: true  });
-        
-        // results = await this.getResultLoadForecast(); 
-        // console.log(results);
-        // // this.setState({ resultsLoadForecast: results});
-        // for (var i = 0; i < this.state.profileData.length; i++) {
-        //     if (this.state.profileData[i].config_name == this.state.profileName) {
-        //         this.setState({ county: this.state.profileData[i].choice });
-        //     }
-        // }
-        // console.log(this.state.resultsLoadForecast);
-        // // console.log(this.state.profileName);
-        // // for (var i = 0; i < this.state.profileData.length; i++) {
-        // //     if (this.state.profileData[i].config_name == this.state.profileName) {
-        // //         AlgInputsLoadForecast.runAlgorithm(this.state.profileData[i].choice);
-                
-        // //     }
-        // // }
+        this.setState({ openResult: false, openUpload: false });
     };
 
-    getResultLoadForecast = () => {
-        this.setState({ openResult: true });
-        this.setState({ shouldRender: true });
-        
-        // console.log(this.state.county);
-        // const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_forecast?county=${ this.state.county }`);
-        const dataLoadForecast = [];
-        axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast").then(res => {
-            console.log(res.data);
-            
-            for (var i = 0; i < res.data.length; i++) {
-                const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-                dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
-                dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
-                dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
-                dataLoadForecastUnit.work_load = (res.data[i].work_load);
-                dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
-                dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
-                dataLoadForecastUnit.total_load = (res.data[i].total_load);
-                dataLoadForecast.push(dataLoadForecastUnit);
-            }
-    
-            for (var j = 0; j < this.state.profileData.length; j++) {
-                if (this.state.profileData[j].config_name == this.state.profileName) {
-                    this.setState({ county: this.state.profileData[j].choice });
-                }
-            }
-    
-            this.setState({ resultsLoadForecast: dataLoadForecast});
-            
-            console.log(dataLoadForecast);
+    setLoadForecastResults = () => {
+        const processedLoadForecastResults = processResults(this.state.loadForecastResults);
+        this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
+    };
 
+    update = (field, event) => {
+        this.setState({ [field]: event.currentTarget.value });
+    };
+
+    findProfile = async () => {
+        // check for corresponding CBA input table for current load forecast profile
+        const config_res = await axios.get("http://127.0.0.1:8000/api/config/" + this.props.category, {
+            params: {
+                lf_config: this.state.profileName
+            }
         });
 
-        return dataLoadForecast;
-        // return dataLoadForecast;
-    }
+        // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
+        if(!config_res.data.length){
+            const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
+            const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
+            const countyMatch = profileMatch.map(profile => profile["choice"]);
+            axios({
+                method: "post",
+                url: postUrl,
+                data: {load_profile: this.state.profileName, county: countyMatch},
+            });
+            this.props.visualizeResults(await this.getCBAResult());
+        }
+    };
 
-    // TODO: backend
-    getResult = async () => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/gas_consumption");
-        const dataCBA = {gasConsumption: []};
-        const dataCBASub = [];
-        console.log(res.data);
-        
-        for (var i = 0; i < res.data.length; i++) {
-            const dataCBAUnit = res.data[i];
-            dataCBAUnit.consumption = (res.data[i].consumption);  
+    getCBAResult = async () => {
+        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
+        const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
+        const dataCBA = {dataValues: []};
+        const dataCBASub = [];          
+        for (var i = 0; i < filteredRes.length; i++) {
+            const dataCBAUnit = filteredRes[i];
+            dataCBAUnit.values = (filteredRes[i].values); 
             dataCBASub.push(dataCBAUnit);
         }
-        dataCBA.gasConsumption = dataCBASub;
-        console.log(dataCBA);
-        return this.preprocessData(dataCBA);
+        dataCBA.dataValues = dataCBASub;
+        return preprocessData(dataCBA);
     };
 
-    preprocessData = async (allData) => {
-        const data = allData.gasConsumption;
-        const fields = Object.keys(data[0].consumption);
+    updateCharts = async () => { 
+        this.props.visualizeResults(await this.getCBAResult());
+    }
 
-        // Init result
-        const result = {};
-        for (const field of fields) {
-            result[field] = [];
+    updateProfileAndCharts = async () => {
+        this.findProfile();       
+        this.props.visualizeResults(await this.getCBAResult());
+    };
+
+    componentDidUpdate(prevProps, prevState) {
+        // if different dropdown menu category selected (e.g. gas consumption)
+        if (prevProps.category !== this.props.category) {
+            this.updateCharts();
         }
 
-        data.forEach(dataItem => {
-            const year = dataItem.year;
-            const allFields = dataItem.consumption;
-            for (const field of fields) {
-                // try {
-                result[field].push({
-                    year: year,
-                    data: parseFloat(allFields[field]),
-                });
-                // } catch (error) {
-                //     console.log("!!!!!!!!!!!");
-                //     console.log(allFields[field]);
-                // }
-            }
-        });
-
-        // Flatten result
-        const resultFlattened = [];
-        for (const field of fields) {
-            resultFlattened.push({
-                [field]: result[field],
-            });
+        // if different load forecast profile selected, change load forecast chart
+        if (prevState.profileName !== this.state.profileName) {
+                this.getLoadForecastData();
         }
-
-        console.log("preprocessed data:");
-        console.log(resultFlattened);
-
-        return resultFlattened;
-    };
-
-    runAlgorithm = async () => {
-        this.props.visualizeResults(await this.getResult());
-    };
+    }
 
     uploadFile = () => {
         this.setState({ openUpload: true});
@@ -215,7 +169,6 @@ class AlgInputsCBA extends Component {
 
     render() {
         const { classes } = this.props;
-        // this.setState({ resultsLoadForecast: this.getResultLoadForecast});
         return (
             <div>
                 <TextField
@@ -230,6 +183,7 @@ class AlgInputsCBA extends Component {
                     }}
                     helperText="Please select a profile"
                     margin="normal"
+                    onChange={ e => this.update("profileName", e)}
                 >
                     {
                         this.state.profileNames.map(option => (
@@ -239,29 +193,26 @@ class AlgInputsCBA extends Component {
                         ))
                     }
                 </TextField>
-                <Button variant="contained" className={classes.button} onClick={this.showResults}>
+                <Button variant="contained" className={classes.button} onClick={this.setLoadForecastResults}>
                     Review
                 </Button>
                 {/* <Button variant="contained" className={classes.button} onClick={this.uploadFile}>
                     Upload
                 </Button> */}
                 <p/>
-                <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.updateProfileAndCharts}>
                     Run
                 </Button>
 
                 { !this.state.shouldRender ? <></> : (
                 
                     <Dialog open={this.state.openResult} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle onClose={this.handleClose} id="form-dialog-title">Results of Load Forecast</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText> 
-                        /* TODO */
-                                <ResultCharts
-                                    results= { this.state.resultsLoadForecast }
-                                    algId={2}
-                                />
-                            </DialogContentText>
+                        <DialogTitle onClose={this.handleClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
+                        <DialogContent>    
+                            <ResultCharts
+                                results={ this.state.processedLoadForecastResults }
+                                algId={ 2 }
+                            />
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={this.handleClose} color="primary">

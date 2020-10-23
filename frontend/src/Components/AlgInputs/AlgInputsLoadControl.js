@@ -6,6 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { countyRes } from "../Api/CountyData";
 import { loadControlPromise } from "../Api/AlgorithmData";
 import { loadControlDefaultParams } from "../Api/algorithmDefaultParams";
+import { serverUrl } from "../Api/server";
 import axios from "axios";
 
 const styles = theme => ({
@@ -33,112 +34,46 @@ const styles = theme => ({
     },
 });
 
-// const counties = [
-//     {
-//         name: "Santa Clara",
-//         residents: "1",
-//     },
-//     {
-//         name: "Santa Cruz",
-//         residents: "2",
-//     },
-//     {
-//         name: "San Francisco",
-//         residents: "3",
-//     },
-//     {
-//         name: "San Diego",
-//         residents: "4",
-//     },
-// ];
-
-
-
 class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            counties: [],
+            counties: ["Alameda", "Contra Costa", "Marin", "Orange", "Sacramento", "San Francisco", "San Mateo", "Santa Clara", "Solano"],
             result: null,
-
-            // Alg params
             county: loadControlDefaultParams.county,
-            rate_energy_peak: loadControlDefaultParams.rate_energy_peak,
-            rate_energy_partpeak: loadControlDefaultParams.rate_demand_partpeak,
-            rate_energy_offpeak: loadControlDefaultParams.rate_energy_offpeak,
-            rate_demand_peak: loadControlDefaultParams.rate_demand_peak,
-            rate_demand_partpeak: loadControlDefaultParams.rate_demand_partpeak,
-            rate_demand_overall: loadControlDefaultParams.rate_demand_overall,
+            rate_structures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
+            rate_structure: "PGEe19",
         };
     }
 
-    componentDidMount() {
-        countyRes.then(res => {
-            this.setState({
-                counties: res.data,
-            });
-        });
-
-        loadControlPromise.then(res => {
-            this.setState({
-                result: [{
-                    controlled_load: res.data[0].controlled_load,
-                    uncontrolled_load: res.data[0].uncontrolled_load,
-                }]
-            });
-        });
-
-        // this.useDefaultParameters();
-    }
-
-    /* TODO change default parameters of Load Controll */
-    useDefaultParameters = () => {
-        // TODO: backend * 3
-        // Get default parameter set
-
-        Object.keys(loadControlDefaultParams).forEach(param => {
-            this.setState({
-                [param]: loadControlDefaultParams[param],
-            });
-        });
-
-        // this.setState({
-        //     county: loadControlDefaultParams.county,
-        //     rate_energy_peak: loadControlDefaultParams.rate_energy_peak,
-        //     rate_energy_partpeak: loadControlDefaultParams.rate_energy_partpeak,
-        //     rate_energy_offpeak: loadControlDefaultParams.rate_energy_offpeak,
-        //     rate_demand_peak: loadControlDefaultParams.rate_demand_peak,
-        //     rate_demand_partpeak: loadControlDefaultParams.rate_demand_partpeak,
-        //     rate_demand_overall: loadControlDefaultParams.rate_demand_overall,
-        // });
-    }
-
-    // // TODO: backend
-    async getResult() {
-        var county = document.getElementById("standart-county").value;
-        console.log(county);
-        const res = await axios.get(`http://127.0.0.1:8000/api/algorithm/load_controller/?county=${ county }`);
-        console.log(res.data);
-        const dataLoadControll = [];
-        for (var i = 0; i < res.data.length; i++) {
-            const  dataLoadControllUnit = {uncontrolled_load: "", controlled_load: ""};
-            dataLoadControllUnit.uncontrolled_load = (res.data[i].uncontrolled_load);
-            dataLoadControllUnit.controlled_load = (res.data[i].controlled_load);
-            dataLoadControll.push(dataLoadControllUnit);
-        }
-        console.log(dataLoadControll);
-        return dataLoadControll;
-    }
+    update = (field, event) => {
+        this.setState({ [field]: event.currentTarget.value });
+    };
 
     runAlgorithm = async () => {
-        this.props.visualizeResults(await this.getResult());
-    }
+        const postData = {
+            county: this.state.county,
+            rate_structure: this.state.rate_structure,
+        }
+        const postUrl = `${ serverUrl }/load_control_runner`;
 
+        axios({
+            method: "post",
+            url: postUrl,
+            data: postData,
+        })
+        .then((response) => {
+            const sca_data = [JSON.parse(response.data)]
+            this.props.visualizeResults(sca_data)
+
+        }, (error) => {
+            console.log(error);
+        });
+    }
 
     render() {
         const { classes } = this.props;
         return !this.state.counties ? <></> : (
-        // return (
             <>
                 <TextField
                     id="standart-county"
@@ -150,65 +85,45 @@ class AlgInputsLoadControl extends Component {
                             className: classes.menu,
                         },
                     }}
-                    helperText="Please select a county"  
+                    helperText="Please select a county"
                     margin="normal"
+                    value={ this.state.county }
+                    onChange={ e => this.update("county", e) }
                     // value={ this.state.county }
                 >
                     {
                         this.state.counties.map(option => (
-                            <option key={option.name} value={option.name}>
-                                {option.name}
+                            <option key={option} value={option}>
+                                {option}
                             </option>
                         ))
                     }
                 </TextField>
-                {/* <br />
-                <Button variant="contained" className={classes.button} onClick={this.useDefaultParameters}>
-                    Set parameters as default
-                </Button> */}
-                <br/>
+
                 <TextField
-                    id="standard-rate_energy_peak"
-                    label="rate_energy_peak"
-                    value={ this.state.rate_energy_peak }
+                    id="rate_structure"
+                    select
+                    value={ this.state.rate_structure }
                     className={classes.textField}
+                    helperText="rate_structure"
+                    SelectProps={{
+                        native: true,
+                        MenuProps: {
+                            className: classes.menu,
+                        },
+                    }}
                     margin="normal"
-                />
-                <TextField
-                    id="standard-rate_energy_partpeak"
-                    label="rate_energy_partpeak"
-                    value={ this.state.rate_energy_partpeak }
-                    className={classes.textField}
-                    margin="normal"
-                />
-                <TextField
-                    id="standard-rate_energy_offpeak"
-                    label="rate_energy_offpeak"
-                    value={ this.state.rate_energy_offpeak }
-                    className={classes.textField}
-                    margin="normal"
-                />
-                <TextField
-                    id="standard-rate_demand_peak"
-                    label="rate_demand_peak"
-                    value={ this.state.rate_demand_peak }
-                    className={classes.textField}
-                    margin="normal"
-                />
-                <TextField
-                    id="standard-rate_demand_partpeak"
-                    label="rate_demand_partpeak"
-                    value={ this.state.rate_demand_partpeak }
-                    className={classes.textField}
-                    margin="normal"
-                />
-                <TextField
-                    id="standard-rate_demand_overall"
-                    label="rate_demand_overall"
-                    value={ this.state.rate_demand_overall }
-                    className={classes.textField}
-                    margin="normal"
-                />
+                    onChange={ e => this.update("rate_structure", e) }
+                >
+                {
+                    this.state.rate_structures.map(option => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))
+                }
+
+                </TextField>
                 <br />
                 <Button
                     variant="contained"
@@ -221,7 +136,7 @@ class AlgInputsLoadControl extends Component {
             </>
         );
     }
-    
+
 }
 
 export default withStyles(styles, { withTheme: true})(AlgInputsLoadControl);

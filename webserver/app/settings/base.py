@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'script',
     'rest_framework',
-    'django_filters', 
+    'django_filters',
     'corsheaders',
 ]
 
@@ -85,8 +85,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'scriptdb',
-        'USER': 'script_admin',
-        'PASSWORD': 'script_passwd',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': 5432,
     }
@@ -137,4 +137,19 @@ STATIC_URL = '/static/'
 # https://github.com/carltongibson/django-filter
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
 }

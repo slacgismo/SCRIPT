@@ -33,9 +33,10 @@ start_time_scaler = 1.0 # matched to this ^ distribution, as some were fit to di
 energy_clip = 100  # max battery size to allow drawing from the energy distributions
 
 # Create and Edit Configuration
-config = OngoingConfig(num_evs, aggregation_level=aggregation_level, county=county_choice, fast_percent=fast_percent, 
-                               work_percent=work_percent, res_percent=res_percent, l1_percent=l1_percent, publicl2_percent=publicl2_percent,
-                               res_daily_use=res_daily_use, work_daily_use=work_daily_use, fast_daily_use=fast_daily_use, rent_percent=rent_percent)
+config = OngoingConfig(num_evs, aggregation_level=aggregation_level, county=county_choice, res_percent=res_percent,
+                                fast_percent=fast_percent, publicl2_percent=publicl2_percent, work_percent=work_percent,
+                                l1_percent=l1_percent, rent_percent=rent_percent,
+                                res_daily_use=res_daily_use, work_daily_use=work_daily_use, fast_daily_use=fast_daily_use)
 config.categories_dict['Rate'][5] = fast_charge_rate
 config.categories_dict['GMM Sub Path'][5] = chosen_fast_distribution
 config.categories_dict['Energy Clip'][5] = energy_clip
@@ -58,7 +59,7 @@ total_df = pd.DataFrame(data=total, columns=['Residential L1', 'Residential L2',
 
 # Plot Outcome
 def stacked_figure(xrange, part1, part2, part3, part4, part5, part6, full, legend_labels=['Res L1','Res L2','WP','Fast','Public','Fleet', 'Total'], num_parts=6, savestr=None, title=None):
-    
+
     plt.figure(figsize=(8,5))
     if num_parts > 0:
         plt.plot(xrange, part1, 'C0')
@@ -79,7 +80,7 @@ def stacked_figure(xrange, part1, part2, part3, part4, part5, part6, full, legen
         plt.plot(xrange, part1+part2+part3+part4+part5+part6, 'C5')
         plt.fill_between(xrange, part1+part2+part3+part4+part5, part1+part2+part3+part4+part5+part6, color='C5', alpha=0.5)
     plt.plot(xrange, full, 'k')
-        
+
     plt.xlabel('Hour of day')
     plt.ylabel('kW')
     plt.xlim([0, 23.75])
@@ -87,12 +88,12 @@ def stacked_figure(xrange, part1, part2, part3, part4, part5, part6, full, legen
     plt.title(title)
     plt.legend(labels=legend_labels)
     plt.tight_layout()
-    
+
     if savestr is not None:
         plt.savefig(savestr, bbox_inches='tight')
-    
+
     plt.show()
-    
+
     return plt
 
 titlestr = 'Example Run'
@@ -100,7 +101,7 @@ plot_save_str = None#'../sample_plot.png'
 labs = ['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Fast', 'Public L2', 'Total']
 plt = stacked_figure(0.25*np.arange(0, 96), total[:, 0], total[:, 1], total[:, 2], total[:, 3], total[:, 4], total[:, 5], total[:, 6], legend_labels=labs, savestr=plot_save_str, title=titlestr)
 
-# upload result to postgres 
+# upload result to postgres
 upload_to_postgres_client = UploadToPostgres(
     total[:, 0],
     total[:, 1],

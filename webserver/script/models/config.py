@@ -16,7 +16,7 @@ class LoadControllerConfig(models.Model):
         (7) rate_demand_overall
     """
 
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
+    county = models.ForeignKey(County, on_delete=models.CASCADE, db_column="county")
     rate_energy_peak = models.FloatField(validators=[validate_positive])
     rate_energy_partpeak = models.FloatField(validators=[validate_positive])
     rate_energy_offpeak = models.FloatField(validators=[validate_positive])
@@ -58,6 +58,17 @@ class LoadForecastConfig(models.Model):
     res_percent = models.FloatField()
     l1_percent = models.FloatField()
     public_l2_percent = models.FloatField()
+    res_daily_use = models.FloatField()
+    work_daily_use = models.FloatField()
+    fast_daily_use = models.FloatField()
+    rent_percent = models.FloatField()
+    res_l2_smooth = models.CharField(max_length=30)
+    week_day = models.CharField(max_length=30)
+    publicl2_daily_use = models.FloatField()
+    mixed_batteries = models.CharField(max_length=50)
+    timer_control = models.CharField(max_length=30)
+    work_control = models.CharField(max_length=30)
+
 
     class Meta:
         db_table = 'script_config_ev_load_forecast'
@@ -68,7 +79,18 @@ class LoadForecastConfig(models.Model):
                             'work_percent',
                             'res_percent',
                             'l1_percent',
-                            'public_l2_percent'),)
+                            'public_l2_percent',
+                            'res_daily_use',
+                            'work_daily_use',
+                            'fast_daily_use',
+                            'rent_percent',
+                            'res_l2_smooth',
+                            'week_day',
+                            'publicl2_daily_use',
+                            'mixed_batteries',
+                            'timer_control',
+                            'work_control',
+                            ),)
 
 
 class LoadProfileConfig(models.Model):
@@ -79,7 +101,7 @@ class LoadProfileConfig(models.Model):
         (4) day_type
     """
 
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
     poi = models.CharField(max_length=20, choices=POI.choices(), default=POI.UNKNOWN)
     year = models.IntegerField()
     day_type = models.CharField(max_length=20, choices=DayType.choices(), default=DayType.WEEKDAY)
@@ -98,7 +120,7 @@ class GasConsumptionConfig(models.Model):
         (2) year
     """
 
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
     year = models.IntegerField()
 
     class Meta:
@@ -113,7 +135,7 @@ class CostBenefitConfig(models.Model):
         (2) year
     """
 
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
     year = models.IntegerField()
 
     class Meta:
@@ -128,7 +150,7 @@ class NetPresentValueConfig(models.Model):
         (2) year
     """
 
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
     year = models.IntegerField()
 
     class Meta:
@@ -143,7 +165,7 @@ class EmissionConfig(models.Model):
         (2) year
     """
 
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE)
+    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
     year = models.IntegerField()
 
     class Meta:
