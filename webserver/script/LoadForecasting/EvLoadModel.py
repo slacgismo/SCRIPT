@@ -26,25 +26,37 @@ class EVLoadModel(object):
         self.discontinuity_dict = {}
 
         self.controlled_load_segments_dict = None
-        if self.config.sample_fast:
-            dim1 = self.config.num_time_steps
-        else:
-            dim1 = self.config.fast_num_time_steps
-        self.ev_segmented_load = np.zeros((dim1, self.num_segments))
-        self.controlled_segmented_load = np.zeros((dim1, self.num_segments))
-        self.ev_labeled_load = np.zeros((dim1, self.num_labels))
-        self.basic_load = np.zeros((dim1, ))
-        self.total_load = np.zeros((dim1, ))
-        self.nonEV_load = np.zeros((dim1, ))
-        self.controlled_load = np.zeros((dim1, ))
-        self.controlled_load_segment = np.zeros((dim1,))
 
-    def calculate_basic_load(self, verbose=True, energies_given=None):
+        if self.config.sample_fast:
+            self.ev_segmented_load = np.zeros((self.config.num_time_steps, self.num_segments))
+            self.controlled_segmented_load = np.zeros((self.config.num_time_steps, self.num_segments))
+            self.ev_labeled_load = np.zeros((self.config.num_time_steps, self.num_labels))
+            self.basic_load = np.zeros((self.config.num_time_steps, ))
+            self.total_load = np.zeros((self.config.num_time_steps, ))
+            self.nonEV_load = np.zeros((self.config.num_time_steps, ))
+            self.controlled_load = np.zeros((self.config.num_time_steps, ))
+            self.controlled_load_segment = np.zeros((self.config.num_time_steps,))
+
+        else:
+            self.ev_segmented_load = np.zeros((self.config.fast_num_time_steps, self.num_segments))
+            self.controlled_segmented_load = np.zeros((self.config.fast_num_time_steps, self.num_segments))
+            self.ev_labeled_load = np.zeros((self.config.fast_num_time_steps, self.num_labels))
+            self.basic_load = np.zeros((self.config.fast_num_time_steps, ))
+            self.total_load = np.zeros((self.config.fast_num_time_steps, ))
+            self.nonEV_load = np.zeros((self.config.fast_num_time_steps, ))
+            self.controlled_load = np.zeros((self.config.fast_num_time_steps,))
+            self.controlled_load_segment = np.zeros((self.config.fast_num_time_steps,))
+
+    def calculate_basic_load(self, verbose=True, energies_given=None, energy_scale=None):
+
+        if energy_scale is None:
+            energy_scale = [1.0] * len(self.config.categories_dict['Segment'])
 
         for segment_number in range(len(self.config.categories_dict['Segment'])):
-            num_vehicles = self.config.categories_dict['Vehicles'][segment_number]
             if verbose:
                 print('Calculating for segment: ', self.config.categories_dict['Segment'][segment_number])
+            num_vehicles = self.config.categories_dict['Vehicles'][segment_number]
+            if verbose:
                 print('Num vehicles:', num_vehicles)
 
             if num_vehicles > 0:
@@ -72,26 +84,34 @@ class EVLoadModel(object):
                     else:
                         response = self.config.s3client.get_object(Bucket=self.config.gmm_bucket, Key=key)
                         joint_gmm = pickle.loads(response['Body'].read())
-                    if self.config.reweight_gmms:
-                        joint_gmm = self.rebalance_gmm(joint_gmm, segment_number)
+                    joint_gmm = self.rebalance_gmm(joint_gmm, segment_number)
 
                     sample_output = joint_gmm.sample(num_vehicles)[0]
-
-                sample_output = sample_output[np.random.choice(np.shape(sample_output)[0], np.shape(sample_output)[0], replace=False), :]
-
-                start_times = (self.config.categories_dict['Start Time Scaler'][segment_number] * np.mod(
+                start_times_init = (self.config.categories_dict['Start Time Scaler'][segment_number] * np.mod(
                     sample_output[:, 0], 24 * 3600)).astype(int)
-                energies = np.clip(np.abs(sample_output[:, 1]), 0,
-                                   self.config.categories_dict['Energy Clip'][segment_number])
+                energies = np.abs(sample_output[:, 1])
+                energies = energy_scale[segment_number] * np.clip(energies, 0,
+                                                                  self.config.categories_dict['Energy Clip'][
+                                                                      segment_number])
+                energies = energies[np.random.choice(len(energies), len(energies), replace=False)]
+
+
+                self.starting_start_times = start_times_init
+                start_times_init[np.where(start_times_init < 0)] = start_times_init[np.where(start_times_init < 0)] + num_ts
+                start_times_init[np.where(start_times_init >= num_ts)] = start_times_init[
+                                                                         np.where(start_times_init >= num_ts)] - num_ts
+                start_times_init[np.where(start_times_init < 0)] = start_times_init[
+                                                                       np.where(start_times_init < 0)] + num_ts
+                start_times_init[np.where(start_times_init >= num_ts)] = start_times_init[
+                                                                             np.where(
+                                                                                 start_times_init >= num_ts)] - num_ts
+                start_times = np.clip(start_times_init.ravel(), 0, num_ts)
+                start_times = start_times[np.random.choice(len(start_times), len(start_times), replace=False)]
 
                 end_times, load = EVLoadModel.end_times_and_load(self, start_times, energies,
                                                                  self.config.categories_dict['Rate'][segment_number],
-                                                                 time_steps_per_hour=
-                                                                 self.config.categories_dict['Time Steps Per Hour'][
-                                                                     segment_number],
-                                                                 num_time_steps=
-                                                                 self.config.categories_dict['Num Time Steps'][
-                                                                     segment_number])
+                                                                 time_steps_per_hour=self.config.categories_dict['Time Steps Per Hour'][segment_number],
+                                                                 num_time_steps=self.config.categories_dict['Num Time Steps'][segment_number])
 
             else:
                 start_times = None
@@ -108,13 +128,15 @@ class EVLoadModel(object):
                                                                                           'Energies': energies,
                                                                                           'Load': load}
 
-        self.ev_segmented_load, self.basic_load, self.sampled_loads_dict, self.sampled_loads_dict['Total'] = self.sum_and_sample_load(load_segments_dict=self.load_segments)
+        self.sum_and_sample_load(load_segments_dict=self.load_segments)
+
 
     def sum_and_sample_load(self, overwrite=True, load_segments_dict=None, discontinuity_dict={}):
 
         if load_segments_dict is None:
             load_segments_dict = copy.deepcopy(self.load_segments)
         ev_segmented_load = np.zeros(np.shape(self.ev_segmented_load))
+
         sampled_loads_dict = {}
         for segment_number in range(len(self.config.categories_dict['Segment'])):
             load = load_segments_dict[self.config.categories_dict['Segment'][segment_number]]['Load']
@@ -125,7 +147,7 @@ class EVLoadModel(object):
                     ev_segmented_load_here = load[np.arange(0, self.config.fast_num_time_steps, int(
                         self.config.fast_time_steps_per_hour / self.config.time_steps_per_hour))]
             else:
-                if np.shape(load_segments_dict[self.config.categories_dict['Segment'][segment_number]]['Load'])[0] < 1440:
+                if self.config.categories_dict['Time Steps Per Hour'][segment_number] < 60:
                     if self.config.categories_dict['Segment'][segment_number] in discontinuity_dict.keys():
                         ev_segmented_load_here = self.extend_to_fast(load, discontinuity_dict[self.config.categories_dict['Segment'][segment_number]])
                     else:
@@ -137,7 +159,10 @@ class EVLoadModel(object):
             ev_segmented_load[:, segment_number] = ev_segmented_load_here
 
         if overwrite:
-            return ev_segmented_load, np.sum(self.ev_segmented_load, axis=1), copy.deepcopy(sampled_loads_dict), self.basic_load
+            self.ev_segmented_load = ev_segmented_load
+            self.basic_load = np.sum(self.ev_segmented_load, axis=1)
+            self.sampled_loads_dict = copy.deepcopy(sampled_loads_dict)
+            self.sampled_loads_dict['Total'] = self.basic_load
 
         else:
             return ev_segmented_load, np.sum(ev_segmented_load, axis=1), sampled_loads_dict
@@ -146,14 +171,13 @@ class EVLoadModel(object):
 
         if discontinuity_hour is None:
             xset1 = np.arange(0, self.config.fast_num_time_steps + 1,
-                              int(self.config.fast_time_steps_per_hour / 4))  # 1 min to 15 min intervals
+                              int(self.config.fast_time_steps_per_hour / self.config.time_steps_per_hour))
             xset2 = np.arange(0, self.config.fast_num_time_steps + 1)
             xset3 = np.arange(0, self.config.fast_num_time_steps)
             spl = splrep(xset1, np.append(load, load[0]))
             output = splev(xset2, spl)[xset3]
 
         else:
-
             slow_discontinuity_ind = int(discontinuity_hour * self.config.time_steps_per_hour)
             fast_discontinuity_ind = int(discontinuity_hour * self.config.fast_time_steps_per_hour)
             output = np.zeros((self.config.fast_num_time_steps, ))
@@ -197,7 +221,7 @@ class EVLoadModel(object):
         if other_labels is None:
             plt.legend(labels=self.config.categories_dict['Label'], fontsize=12, loc='upper left')
         else:
-            plt.legend(labels=other_labels, fontsize=12, loc=(0,1.05), ncol=3)
+            plt.legend(labels=other_labels, fontsize=14)
         plt.xlim([0, np.max(x)])
         if set_ylim is None:
             plt.ylim([0, 1.1 * np.max(scaling * mark)])
@@ -211,6 +235,7 @@ class EVLoadModel(object):
             plt.tight_layout()
             plt.savefig(save_str, bbox_inches='tight')
         plt.show()
+
 
     def end_times_and_load(self, start_times, energies, rate, time_steps_per_hour=None, num_time_steps=None):
 
@@ -252,7 +277,7 @@ class EVLoadModel(object):
 
         x = self.load_segments[segment]['Load'].copy()
         if x.shape[0] == self.config.fast_num_time_steps:
-            x = x[np.arange(0, self.config.fast_num_time_steps, int(self.config.fast_time_steps_per_hour / 4))]
+            x = x[np.arange(0, self.config.fast_num_time_steps, int(self.config.fast_time_steps_per_hour / self.config.time_steps_per_hour))]
         rescale_load, normalizing_coefficient = normalize(np.reshape(x, (1, -1)), norm='max', axis=1,
                                                           return_norm=True)
         self.controlled_load_segment = normalizing_coefficient * self.control_object.predict(rescale_load).ravel()
@@ -299,52 +324,5 @@ class EVLoadModel(object):
         self.controlled_segmented_load = segmented_load
         self.controlled_load = total_load
         self.sampled_controlled_loads_dict = sampled_load_dict
+        
 
-    def rebalance_gmm(self, joint_gmm, segment_number):
-
-        new_weights = self.config.new_gmm_weights[segment_number]
-
-        all_inds = np.arange(0, np.shape(joint_gmm.weights_)[0])
-        total_rem = 1
-        for key, val in new_weights.items():
-            joint_gmm.weights_[key] = val
-            total_rem -= val
-        other_keys = np.delete(all_inds, list(new_weights.keys()))
-        joint_gmm.weights_[other_keys] = joint_gmm.weights_[other_keys] * total_rem / sum(joint_gmm.weights_[other_keys])
-        return joint_gmm
-
-    def special_timers(self, segment='Residential L2', percents=None, start_hours=None):
-
-        if percents is None:
-            percents = [0.1, 0.1]; start_hours = [22, 23]
-        segment_number = np.where(np.array(self.config.categories_dict['Segment']) == segment)[0][0]
-
-        num_starts = self.load_segments[segment]['Start Times'].shape[0]
-
-        all_inds = np.arange(0, num_starts)
-        new_start_times = np.copy(self.load_segments[segment]['Start Times'])
-        for seg in range(len(percents)):
-            which_starts = np.random.choice(all_inds, int(percents[seg]*num_starts))
-            new_start_times[which_starts] = int(
-                start_hours[seg] * self.config.categories_dict['Time Steps Per Hour'][segment_number])
-            all_inds = np.copy(np.delete(all_inds, which_starts))
-
-        end_times, load = EVLoadModel.end_times_and_load(self, new_start_times, self.load_segments[segment]['Energies'],
-                                                         self.config.categories_dict['Rate'][segment_number],
-                                                         time_steps_per_hour=
-                                                         self.config.categories_dict['Time Steps Per Hour'][
-                                                             segment_number],
-                                                         num_time_steps=
-                                                         self.config.categories_dict['Num Time Steps'][
-                                                             segment_number])
-
-        if self.controlled_load_segments_dict is None:
-            self.controlled_load_segments_dict = copy.deepcopy(self.load_segments)
-        self.controlled_load_segments_dict[segment]['Load'] = load
-        self.controlled_load_segments_dict[segment]['Start Times'] = new_start_times
-        self.controlled_load_segments_dict[segment]['End Times'] = end_times
-        segmented_load, total_load, sampled_load_dict = self.sum_and_sample_load(overwrite=False,
-                                                                                 load_segments_dict=self.controlled_load_segments_dict)
-        self.controlled_segmented_load = segmented_load
-        self.controlled_load = total_load
-        self.sampled_controlled_loads_dict = sampled_load_dict

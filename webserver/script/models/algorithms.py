@@ -49,6 +49,7 @@ class LoadForecast(models.Model):
     """
 
     config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="config")
+    controlled = models.BooleanField()
     residential_l1_load = JSONField()
     residential_l2_load = JSONField()
     residential_mud_load = JSONField()
@@ -59,7 +60,7 @@ class LoadForecast(models.Model):
 
     class Meta:
         db_table = 'script_algorithm_ev_load_forecast'
-        unique_together = (('config',),)
+        unique_together = (('config', 'controlled',),)
 
 
 class LoadProfile(models.Model):
@@ -198,7 +199,7 @@ class CostBenefit(models.Model):
 
 class NetPresentValue(models.Model):
     """Algorithm: Cost Benefit Analysis of Net Present Value
-            
+
         inputs:
             (1) config of NetPresentValueConfig
         outputs:
@@ -283,4 +284,3 @@ class Emission(models.Model):
     class Meta:
         db_table = 'script_algorithm_cba_emission'
         unique_together = (('config',),)
-  
