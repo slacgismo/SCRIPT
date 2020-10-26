@@ -35,13 +35,17 @@ brew services start postgresql
 # create the needed environemnt
 conda create -n venv_script python=3.7
 conda activate venv_script
+
 # install the backend dependencies
 cd webserver
 pip install -r requirements.txt
+
 # other parts of the project requires other dependencies....
 # instead of going through them and figuring out that you need those dependencies
 # when your code breaks, just install them now:
-pip install celery pandas cvxpy sklearn
+pip install celery==4.4.7
+pip install pandas cvxpy sklearn matplotlib s3fs flower redis xlrd
+
 # install the frontend dependencies
 cd ../frontend
 yarn install
@@ -62,7 +66,18 @@ Running the project:
 cd webserver
 # project assumes localhost:8000 - which should be the default
 python manage.py runserver --settings=app.settings.base
-cd ../frontend
+
+# run redis in another tab
+redis-server
+
+# run celery in another tab
+celery -A app worker --loglevel=INFO
+
+# run flower in another tab
+flower -A app --port=5555
+
+# run frontend in another tab
+cd ../../frontend
 yarn start 
 ```
 

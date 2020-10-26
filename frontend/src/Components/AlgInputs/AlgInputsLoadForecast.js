@@ -377,13 +377,13 @@ class AlgInputsLoadForecast extends Component {
                         margin="normal"
                         onChange={ e => this.update("work_control", e) }
                     >
-                    {
-                        this.state.work_controls.map(option => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))
-                    }
+                        {
+                            this.state.work_controls.map(option => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))
+                        }
 
                     </TextField>
                     <TextField

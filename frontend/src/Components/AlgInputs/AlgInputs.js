@@ -28,6 +28,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AlgInputs (props) {
+
+
     const visualizeResults = (resultArr) => {
         props.visualizeResults(processResults(resultArr));
     };
@@ -42,6 +44,7 @@ export default function AlgInputs (props) {
                 <AlgInputCustomized
                     category = { props.category }
                     visualizeResults={ (result) => visualizeResults(result) }
+                    loadingResults={ (isLoading) => props.loadingResults(isLoading)}
                 />
             </form>    
         </div>
