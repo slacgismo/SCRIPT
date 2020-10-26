@@ -303,12 +303,12 @@ class AlgInputsLoadForecast extends Component {
                         onChange={ e => this.update("work_percent", e) }
                     />
                     <TextField
-                    id="standard-rent_percent"
-                    label="Rent"
-                    value={ this.state.rent_percent }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("rent_percent", e) }
+                        id="standard-rent_percent"
+                        label="Rent"
+                        value={ this.state.rent_percent }
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={ e => this.update("rent_percent", e) }
                     />
                     <TextField
                         id="standard-res_percent"
@@ -421,13 +421,13 @@ class AlgInputsLoadForecast extends Component {
                         margin="normal"
                         onChange={ e => this.update("work_control", e) }
                     >
-                    {
-                        this.state.work_controls.map(option => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))
-                    }
+                        {
+                            this.state.work_controls.map(option => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))
+                        }
 
                     </TextField>
                 </fieldset>

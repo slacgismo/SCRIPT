@@ -1,27 +1,31 @@
 import React, {Component} from "react";
-import PropTypes from "prop-types";
 
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
 
 import AlgInputs from "../AlgInputs/AlgInputs";
+import ProgressBar from "../ProgressBar/ProgressBar";
 import ResultCharts from "../Result/ResultCharts";
-import { dataLoadControll, dataLoadForecast } from "../Api/AlgorithmData";
-import { makeStyles } from "@material-ui/core/styles";
 
-import TextField from "@material-ui/core/TextField";
 
 class AlgorithmPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
             results: [],
+            loading: false
         };
+    }
+
+    loadingResults(isLoading) {
+        this.setState({
+            loading: isLoading
+        });
     }
 
     visualizeResults(results) {
         this.setState({
-            results: results,
+            results: results
         });
     }
 
@@ -38,21 +42,27 @@ class AlgorithmPage extends Component {
                                         category={ this.props.categoryProp }
                                         title={ this.props.title }
                                         visualizeResults={ this.visualizeResults.bind(this) }
-                                        data={ this.props.data }
+                                        loadingResults={ this.loadingResults.bind(this) }
                                         algInputs={ this.props.algInputs }
                                     />
                                 }
                             />
                             <br/>
+                            {   this.state.loading === true &&
+                                <Content
+                                    text={"Loading..."}
+                                    compo={ <ProgressBar/> }
+                                />
+                            }
+                            <br/>
                             {
-                                
                                 this.state.results.length > 0 &&
+                                this.state.loading === false &&
                                 <Content
                                     text={`${ this.props.title } Results`}
                                     // 
                                     textField = {this.props.compo}
-                                    compo={
-                                        
+                                    compo={              
                                         <ResultCharts
                                             results={ this.state.results }
                                             algId={2}

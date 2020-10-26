@@ -1,6 +1,5 @@
 import React from "react";
 import AlgorithmPage from "./AlgorithmPage";
-import TextField from "@material-ui/core/TextField";
 import AlgInputsCBA from "../AlgInputs/AlgInputsCBA";
 import { makeStyles } from "@material-ui/core/styles";
 import Select from "@material-ui/core/Select";
@@ -8,7 +7,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
-// import { dataLoadControll } from "../Api/AlgorithmData";
 const useStyles = makeStyles(theme => ({
     formControl: {
         margin: theme.spacing(1),
@@ -48,12 +46,10 @@ function AlgorithmPageLoadControll(props) {
                         <MenuItem value={"cost_benefit"}>Cost benefit</MenuItem>
                         <MenuItem value={"net_present_value"}>Net present value</MenuItem>
                         <MenuItem value={"emission"}>Emission</MenuItem>
-
                     </Select>
                     <FormHelperText>Choose a category</FormHelperText>
                 </FormControl>
             }
-            // data={ dataLoadControll }
             title={ "Cost Benefit Analysis" }
             algInputs={ AlgInputsCBA }
         />

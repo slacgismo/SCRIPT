@@ -6,6 +6,8 @@ from rest_framework.decorators import detail_route
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
+import json
+
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
 from script.models.config import LoadControllerConfig, LoadForecastConfig, LoadProfileConfig, GasConsumptionConfig, CostBenefitConfig, NetPresentValueConfig, EmissionConfig
@@ -14,16 +16,9 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
-from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
-from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
-import json
-
-#for running CBA tool
-import sys
-sys.path.append("script/CostBenefitAnalysis/python_code/")
-from model_class import ModelInstance
+from script.tasks import run_cba_tool
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -36,10 +31,9 @@ class LoadControlRunner(APIView):
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
         # TODO: requires an updated version of CBA Tool 
-        split_file(county = request.data['county'])
-        ModelInstance()
-        UploadToPostgres(load_profile = request.data['load_profile'])
-        return Response("Cost Benefit Analysis run succeeded")
+        task = run_cba_tool.delay(request.data['county'], request.data['load_profile'])
+        cba_response = {"task_id": task.id, "status": task.status}
+        return Response(cba_response)
 
 class LoadForecastRunner(APIView):
     def post(self, request, format=None):
@@ -68,7 +62,6 @@ class LoadForecastRunner(APIView):
             request.data["config_name"]
         )
         return Response("Load Forecast run succeeded")
-
 
 class CountyViewSet(viewsets.ModelViewSet):
     queryset = County.objects.all()
