@@ -5,7 +5,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogContentText from "@material-ui/core/DialogContentText";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
@@ -98,7 +98,7 @@ class AlgInputsCBA extends Component {
     };
   
     handleAlertClose = () => {
-      this.setState({ openAlert: false});
+        this.setState({ openAlert: false});
     };
 
     handleClose = () => {
