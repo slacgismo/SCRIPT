@@ -28,7 +28,9 @@ export const loadForecastDefaultParams = {
     res_l2_smooth: true,
     week_day: true,
     publicl2_daily_use: 0.33,
-    mixed_batteries: "None",
+    small_batt: 0,
+    big_batt: 0.7,
+    all_batt: 0.3,
     timer_control: "None",
     work_control: "minpeak",
 };

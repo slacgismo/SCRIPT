@@ -63,7 +63,9 @@ class AlgInputsLoadForecast extends Component {
             res_l2_smooth: loadForecastDefaultParams.res_l2_smooth,
             week_day: loadForecastDefaultParams.week_day,
             publicl2_daily_use: loadForecastDefaultParams.publicl2_daily_use,
-            mixed_batteries: loadForecastDefaultParams.mixed_batteries,
+            small_batt: loadForecastDefaultParams.small_batt,
+            big_batt: loadForecastDefaultParams.big_batt,
+            all_batt: loadForecastDefaultParams.all_batt,
             timer_control: loadForecastDefaultParams.timer_control,
             work_control: loadForecastDefaultParams.work_control,
             work_controls: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
@@ -144,7 +146,9 @@ class AlgInputsLoadForecast extends Component {
                 res_l2_smooth: this.state.res_l2_smooth,
                 week_day: this.state.week_day,
                 publicl2_daily_use: parseFloat(this.state.publicl2_daily_use),
-                mixed_batteries: this.state.mixed_batteries,
+                small_batt: parseFloat(this.state.small_batt),
+                big_batt: parseFloat(this.state.big_batt),
+                all_batt: parseFloat(this.state.all_batt),
                 timer_control: this.state.timer_control,
                 work_control: this.state.work_control,
             };
@@ -184,13 +188,12 @@ class AlgInputsLoadForecast extends Component {
     advancedSettings = (e) => {
         e.preventDefault()
         this.setState({ advanced_settings: !this.state.advanced_settings})
-    }
+    };
 
 
     render() {
         const { classes } = this.props;
         const { advanced_settings } = this.state;
-        debugger;
         const countiesTextField =
             <TextField
                 id="standard-county"
@@ -260,12 +263,28 @@ class AlgInputsLoadForecast extends Component {
                     <fieldset class="field_set">
                         <legend>Battery Capacity (must add up to 1)</legend>
                         <TextField
-                            id="standard-mixed_batteries"
-                            label="Battery Mix"
-                            value={ this.state.mixed_batteries }
+                            id="standard-small_batteries"
+                            label="Small"
+                            value={ this.state.small_batt }
                             className={classes.textField}
                             margin="normal"
-                            onChange={ e => this.update("mixed_batteries", e) }
+                            onChange={ e => this.update("small_batt", e) }
+                        />
+                        <TextField
+                            id="standard-big_batteries"
+                            label="Big"
+                            value={ this.state.big_batt }
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={ e => this.update("big_batt", e) }
+                        />
+                        <TextField
+                            id="standard-small_batteries"
+                            label="All"
+                            value={ this.state.small_batt }
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={ e => this.update("all_batt", e) }
                         />
                     </fieldset>
                 </fieldset>
@@ -392,7 +411,7 @@ class AlgInputsLoadForecast extends Component {
                 </fieldset>
                 <br/>
                 <br/>
-                <button onClick={this.advancedSettings}>Advanced Settings</button>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.advancedSettings}>Advanced Settings</Button>
                 {   advanced_settings
                     ?
                         <fieldset class="field_set">

@@ -35,7 +35,7 @@ class LoadControlRunner(APIView):
 
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
-        # TODO: requires an updated version of CBA Tool 
+        # TODO: requires an updated version of CBA Tool
         split_file(county = request.data['county'])
         ModelInstance()
         UploadToPostgres(load_profile = request.data['load_profile'])
@@ -46,27 +46,32 @@ class LoadForecastRunner(APIView):
         for key, item in request.data.items():
             if item in ["None", "none", "NONE"]:
                 request.data[key] = None
-        lf_runner(
-            request.data["num_evs"],
-            request.data["aggregation_level"],
-            request.data["county"],
-            request.data["fast_percent"],
-            request.data["work_percent"],
-            request.data["res_percent"],
-            request.data["l1_percent"],
-            request.data["public_l2_percent"],
-            request.data["res_daily_use"],
-            request.data["work_daily_use"],
-            request.data["fast_daily_use"],
-            request.data["rent_percent"],
-            request.data["res_l2_smooth"],
-            request.data["week_day"],
-            request.data["publicl2_daily_use"],
-            request.data["mixed_batteries"],
-            request.data["timer_control"],
-            request.data["work_control"],
-            request.data["config_name"]
-        )
+
+        lf_argv = {
+            "total_num_evs": request.data["num_evs"],
+            "aggregation_level": request.data["aggregation_level"],
+            "county": request.data["county"],
+            "fast_percent": request.data["fast_percent"],
+            "work_percent": request.data["work_percent"],
+            "res_percent": request.data["res_percent"],
+            "l1_percent": request.data["l1_percent"],
+            "publicl2_percent": request.data["public_l2_percent"],
+            "res_daily_use": request.data["res_daily_use"],
+            "work_daily_use": request.data["work_daily_use"],
+            "fast_daily_use": request.data["fast_daily_use"],
+            "rent_percent": request.data["rent_percent"],
+            "res_l2_smooth": request.data["res_l2_smooth"],
+            "week_day": request.data["week_day"],
+            "publicl2_daily_use": request.data["publicl2_daily_use"],
+            "small_batt": request.data["small_batt"],
+            "big_batt": request.data["big_batt"],
+            "all_batt": request.data["all_batt"],
+            "timer_control": request.data["timer_control"],
+            "work_control": request.data["work_control"],
+            "config_name": request.data["config_name"]
+        }
+
+        lf_runner(lf_argv)
         return Response("Load Forecast run succeeded")
 
 
