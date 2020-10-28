@@ -15,6 +15,7 @@ class EVLoadModel(object):
     def __init__(self, config):
 
         self.config = config
+
         self.num_segments = len(config.categories_dict['Segment'])
         self.labels = list(set(self.config.categories_dict['Label']))
         self.num_labels = len(self.labels)
@@ -108,13 +109,14 @@ class EVLoadModel(object):
                                                                                           'Energies': energies,
                                                                                           'Load': load}
 
-        self.ev_segmented_load, self.basic_load, self.sampled_loads_dict, self.sampled_loads_dict['Total'] = self.sum_and_sample_load(load_segments_dict=self.load_segments)
+        self.sum_and_sample_load(load_segments_dict=self.load_segments)
 
     def sum_and_sample_load(self, overwrite=True, load_segments_dict=None, discontinuity_dict={}):
 
         if load_segments_dict is None:
             load_segments_dict = copy.deepcopy(self.load_segments)
         ev_segmented_load = np.zeros(np.shape(self.ev_segmented_load))
+
         sampled_loads_dict = {}
         for segment_number in range(len(self.config.categories_dict['Segment'])):
             load = load_segments_dict[self.config.categories_dict['Segment'][segment_number]]['Load']
@@ -137,7 +139,10 @@ class EVLoadModel(object):
             ev_segmented_load[:, segment_number] = ev_segmented_load_here
 
         if overwrite:
-            return ev_segmented_load, np.sum(self.ev_segmented_load, axis=1), copy.deepcopy(sampled_loads_dict), self.basic_load
+            self.ev_segmented_load = ev_segmented_load
+            self.basic_load = np.sum(self.ev_segmented_load, axis=1)
+            self.sampled_loads_dict = copy.deepcopy(sampled_loads_dict)
+            self.sampled_loads_dict['Total'] = self.basic_load
 
         else:
             return ev_segmented_load, np.sum(ev_segmented_load, axis=1), sampled_loads_dict
@@ -240,7 +245,8 @@ class EVLoadModel(object):
             idx = int(inds2[i])
             load[np.arange(int(start_times[idx]), end_times[idx])] += rate * np.ones((lengths[idx],))
         load[0] += np.sum(extra_charges[inds3] * time_steps_per_hour)
-        load[end_times[inds4]] += extra_charges[inds4] * time_steps_per_hour
+        for i in range(len(inds4)):
+            load[end_times[int(inds4[i])]] += extra_charges[int(inds4[i])] * time_steps_per_hour
 
         return end_times, load
 
@@ -251,7 +257,7 @@ class EVLoadModel(object):
         self.control_object = pickle.loads(response['Body'].read())
 
         x = self.load_segments[segment]['Load'].copy()
-        if x.shape[0] == self.config.fast_num_time_steps:
+        if x.shape[0] == self.config.fast_num_time_steps:  # must be 96 since thats how the model was trained
             x = x[np.arange(0, self.config.fast_num_time_steps, int(self.config.fast_time_steps_per_hour / 4))]
         rescale_load, normalizing_coefficient = normalize(np.reshape(x, (1, -1)), norm='max', axis=1,
                                                           return_norm=True)
@@ -315,6 +321,7 @@ class EVLoadModel(object):
 
     def special_timers(self, segment='Residential L2', percents=None, start_hours=None):
 
+        # for multiple timers with fraction of drivers each
         if percents is None:
             percents = [0.1, 0.1]; start_hours = [22, 23]
         segment_number = np.where(np.array(self.config.categories_dict['Segment']) == segment)[0][0]

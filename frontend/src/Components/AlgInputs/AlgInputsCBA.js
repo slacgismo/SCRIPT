@@ -5,12 +5,13 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import {DropzoneArea} from "material-ui-dropzone";
 import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import { ResultCharts } from "../Result/ResultCharts";
 import { serverUrl } from "../Api/server";
-import { processResults, preprocessData} from "../Helpers/helpers";
+import { processResults, preprocessData, checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -48,7 +49,8 @@ class AlgInputsCBA extends Component {
             profileName: "",
             loadForecastResults: [],
             processedLoadForecastResults: [],
-            shouldRender: false
+            shouldRender: false,
+            openAlert: false
         };
     }
 
@@ -91,6 +93,14 @@ class AlgInputsCBA extends Component {
         this.setState({ loadForecastResults: dataLoadForecast });
     };
 
+    handleAlertOpen = () => {
+        this.setState({ openAlert: true});
+    };
+  
+    handleAlertClose = () => {
+        this.setState({ openAlert: false});
+    };
+
     handleClose = () => {
         this.setState({ openResult: false, openUpload: false });
     };
@@ -111,18 +121,33 @@ class AlgInputsCBA extends Component {
                 lf_config: this.state.profileName
             }
         });
-
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
         if(!config_res.data.length){
-            const postUrl = `${ serverUrl }/cost_benefit_analysis_runner`;
+            // starts progress bar to show loading to user
+            this.props.loadingResults(true);
+            // data inputs to run the cba tool
             const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
             const countyMatch = profileMatch.map(profile => profile["choice"]);
-            axios({
+            // runs cba task with celery on backend
+            const cba_res = await axios({
+                url: `${ serverUrl }/cost_benefit_analysis_runner`,
                 method: "post",
-                url: postUrl,
-                data: {load_profile: this.state.profileName, county: countyMatch},
+                data: {load_profile: this.state.profileName, county: countyMatch}
+            
             });
-            this.props.visualizeResults(await this.getCBAResult());
+            // celery-flower monitoring to check task status on cba tool
+            const task_id = cba_res.data.task_id;
+            // celery-flower monitoring to check task status on cba tool
+            let timeout;
+            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 100, async () => {
+                this.props.loadingResults(false);
+                this.props.visualizeResults(await this.getCBAResult());
+            });
+            // if cba_tool task failed, open alert
+            if (cba_status === "FAILURE") {
+                this.props.loadingResults(false);
+                this.handleAlertOpen();
+            }
         }
     };
 
@@ -149,6 +174,11 @@ class AlgInputsCBA extends Component {
         this.props.visualizeResults(await this.getCBAResult());
     };
 
+    loadedResultsandCharts = async() => {
+        this.props.loadingResults(false);
+        this.props.visualizeResults(await this.getCBAResult());
+    }
+
     componentDidUpdate(prevProps, prevState) {
         // if different dropdown menu category selected (e.g. gas consumption)
         if (prevProps.category !== this.props.category) {
@@ -157,7 +187,7 @@ class AlgInputsCBA extends Component {
 
         // if different load forecast profile selected, change load forecast chart
         if (prevState.profileName !== this.state.profileName) {
-                this.getLoadForecastData();
+            this.getLoadForecastData();
         }
     }
 
@@ -171,6 +201,25 @@ class AlgInputsCBA extends Component {
         const { classes } = this.props;
         return (
             <div>
+                <Dialog
+                    open={this.state.openAlert}
+                    onClose={this.handleAlertClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Cost Benefit Analysis Failed"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            The cost benefit analysis failed to run with the given load forecast profile. 
+                            Please check your load forecast profile inputs, and try again.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleAlertClose} color="primary" autoFocus>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <TextField
                     id="standard-profile"
                     select

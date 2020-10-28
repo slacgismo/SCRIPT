@@ -8,10 +8,10 @@ class FinalReport(object):
     """Simple case with residential, MUD, workplace, public L2, public fast charging."""
     def __init__(self, total_num_evs, aggregation_level='state', county=None, res_percent=0.5,
                  fast_percent=0.18, publicl2_percent=0.02,
-                 work_percent=0.3, rent_percent=None,
+                 work_percent=0.3, rent_percent=0,
                  l1_percent=0, res_l2_smooth=False, week_day=True,
                  res_daily_use=1.0, work_daily_use=1.0, fast_daily_use=0.3, publicl2_daily_use=1.0,
-                 mixed_batteries=None, time_steps=1440):
+                 mixed_batteries=None, time_steps=1440, geo=None):
 
         if mixed_batteries is None:
             self.mixed_distributions = False
@@ -27,7 +27,7 @@ class FinalReport(object):
         self.reweight_gmms = False
 
         self.control_bucket = 'script.forecast.inputsoutputs'
-        self.control_folder_path = 'Control_Objects/AllCounties_250cars_10agg'
+        self.control_folder_path = 'Control_Objects/AllCounties_250cars_noagg_tuned'
 
         self.aggregation_level = aggregation_level
         if self.aggregation_level == 'state':
@@ -36,15 +36,20 @@ class FinalReport(object):
             if county is None:
                 print('Error! County chosen as aggregation level but no county given.')
             else:
-                geo_distribution = pd.read_csv(
-                    's3://script.forecast.inputsoutputs/new_distribution_of_lightduty_evs_by_county.csv')
+                if geo is None:
+                    geo_distribution = pd.read_csv(
+                        's3://script.forecast.inputsoutputs/new_distribution_of_lightduty_evs_by_county.csv')
+                else:
+                    geo_distribution = geo.copy(deep=True)
                 geo_distribution['Fraction'] = geo_distribution['EVs'].values / geo_distribution['EVs'].sum()
                 county_index = geo_distribution[geo_distribution['County'] == county].index[0]
                 self.num_ev_owners = int(geo_distribution.loc[county_index, 'Fraction'] * total_num_evs)
-        self.num_res = int(res_daily_use * res_percent * self.num_ev_owners)
+
         self.num_fast = int(fast_daily_use * fast_percent * self.num_ev_owners)
         self.num_publicl2 = int(publicl2_daily_use * publicl2_percent * self.num_ev_owners)
         self.num_work = int(work_daily_use * work_percent * self.num_ev_owners)
+
+        self.num_res = int(res_daily_use * res_percent * self.num_ev_owners)
         self.num_mud = int(rent_percent * self.num_res)
         self.num_res_l1 = int(l1_percent * (self.num_res - self.num_mud))
         self.num_res_l2 = int(self.num_res - self.num_mud - self.num_res_l1)
@@ -99,3 +104,4 @@ class FinalReport(object):
 
         if res_l2_smooth:
             self.categories_dict['GMM Sub Path'][1] = self.categories_dict['GMM Sub Path'][0]
+

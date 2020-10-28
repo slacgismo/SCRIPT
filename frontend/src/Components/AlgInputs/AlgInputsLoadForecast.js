@@ -45,27 +45,30 @@ class AlgInputsLoadForecast extends Component {
         this.state = {
             open: false,
             counties: [],
+            advancedSettings: false,
             // Alg params
-            config_name: loadForecastDefaultParams.config_name,
-            aggregation_level: loadForecastDefaultParams.aggregation_level,
-            num_evs: loadForecastDefaultParams.num_evs,
-            county_choice: loadForecastDefaultParams.county_choice,
-            fast_percent: loadForecastDefaultParams.fast_percent,
-            work_percent: loadForecastDefaultParams.work_percent,
-            res_percent: loadForecastDefaultParams.res_percent,
-            l1_percent: loadForecastDefaultParams.l1_percent,
-            public_l2_percent: loadForecastDefaultParams.public_l2_percent,
-            res_daily_use: loadForecastDefaultParams.res_daily_use,
-            work_daily_use: loadForecastDefaultParams.work_daily_use,
-            fast_daily_use: loadForecastDefaultParams.fast_daily_use,
-            rent_percent: loadForecastDefaultParams.rent_percent,
-            res_l2_smooth: loadForecastDefaultParams.res_l2_smooth,
-            week_day: loadForecastDefaultParams.week_day,
-            publicl2_daily_use: loadForecastDefaultParams.publicl2_daily_use,
-            mixed_batteries: loadForecastDefaultParams.mixed_batteries,
-            timer_control: loadForecastDefaultParams.timer_control,
-            work_control: loadForecastDefaultParams.work_control,
-            work_controls: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
+            configName: loadForecastDefaultParams.configName,
+            aggregationLevel: loadForecastDefaultParams.aggregationLevel,
+            numEvs: loadForecastDefaultParams.numEvs,
+            countyChoice: loadForecastDefaultParams.countyChoice,
+            fastPercent: loadForecastDefaultParams.fastPercent,
+            workPercent: loadForecastDefaultParams.workPercent,
+            resPercent: loadForecastDefaultParams.resPercent,
+            l1Percent: loadForecastDefaultParams.l1Percent,
+            publicL2Percent: loadForecastDefaultParams.publicL2Percent,
+            resDailyUse: loadForecastDefaultParams.resDailyUse,
+            workDailyUse: loadForecastDefaultParams.workDailyUse,
+            fastDailyUse: loadForecastDefaultParams.fastDailyUse,
+            rentPercent: loadForecastDefaultParams.rentPercent,
+            resL2Smooth: loadForecastDefaultParams.resL2Smooth,
+            weekDay: loadForecastDefaultParams.weekDay,
+            publicL2DailyUse: loadForecastDefaultParams.publicL2DailyUse,
+            smallBatt: loadForecastDefaultParams.smallBatt,
+            bigBatt: loadForecastDefaultParams.bigBatt,
+            allBatt: loadForecastDefaultParams.allBatt,
+            timerControl: loadForecastDefaultParams.timerControl,
+            workControl: loadForecastDefaultParams.workControl,
+            workControls: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
         };
     }
 
@@ -101,61 +104,9 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ [field]: event.currentTarget.value });
     };
 
-    saveResults = async() => {
-        // check if current load forecast profile already exists before saving
-        const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.config_name}`);
-
-        // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
-        if(config_res.data.length === 0){
-            // change var name
-            const postData = {
-                config_name: this.state.config_name,
-                aggregation_level: this.state.aggregation_level,
-                num_evs: parseInt(this.state.num_evs),
-                county: this.state.county_choice,
-                fast_percent: parseFloat(this.state.fast_percent),
-                work_percent: parseFloat(this.state.work_percent),
-                res_percent: parseFloat(this.state.res_percent),
-                l1_percent: parseFloat(this.state.l1_percent),
-                public_l2_percent: parseFloat(this.state.public_l2_percent),
-                res_daily_use: parseFloat(this.state.res_daily_use),
-                work_daily_use: parseFloat(this.state.work_daily_use),
-                fast_daily_use: parseFloat(this.state.fast_daily_use),
-                rent_percent: parseFloat(this.state.rent_percent),
-                res_l2_smooth: this.state.res_l2_smooth,
-                week_day: this.state.week_day,
-                publicl2_daily_use: parseFloat(this.state.publicl2_daily_use),
-                mixed_batteries: this.state.mixed_batteries,
-                timer_control: this.state.timer_control,
-                work_control: this.state.work_control,
-            };
-
-            const postUrl = `${ serverUrl }/load_forecast_runner`;
-
-            axios({
-                method: "post",
-                url: postUrl,
-                data: postData,
-            })
-                .then((response) => {
-                    console.log(response);
-                }, (error) => {
-                    console.log(error);
-                });
-            this.setState({ open: false });
-        }
-    };
-
-    getResult = async (county) => {
-
-        if(document.getElementById("standard-county") === null) {
-            county = null;
-        }
-        else {
-            county = this.state.county_choice;
-        }
-
-        const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?county=${ county }`);
+    getResult = async () => {
+        // receives 2 lists (uncontrolled, controlled) when form is saved
+        const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?config=${this.state.configName}`);
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {
             const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
@@ -171,6 +122,53 @@ class AlgInputsLoadForecast extends Component {
         return dataLoadForecast;
     };
 
+    saveResults = async() => {
+        // check if current load forecast profile already exists before saving
+        const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.configName}`);
+        // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
+        if(config_res.data.length === 0){
+            // change var name
+            const postData = {
+                configName: this.state.configName,
+                aggregationLevel: this.state.aggregationLevel,
+                numEvs: parseInt(this.state.numEvs),
+                county: this.state.countyChoice,
+                fastPercent: parseFloat(this.state.fastPercent),
+                workPercent: parseFloat(this.state.workPercent),
+                resPercent: parseFloat(this.state.resPercent),
+                l1Percent: parseFloat(this.state.l1Percent),
+                publicL2Percent: parseFloat(this.state.publicL2Percent),
+                resDailyUse: parseFloat(this.state.resDailyUse),
+                workDailyUse: parseFloat(this.state.workDailyUse),
+                fastDailyUse: parseFloat(this.state.fastDailyUse),
+                rentPercent: parseFloat(this.state.rentPercent),
+                resL2Smooth: this.state.resL2Smooth,
+                weekDay: this.state.weekDay,
+                publicL2DailyUse: parseFloat(this.state.publicL2DailyUse),
+                smallBatt: parseFloat(this.state.smallBatt),
+                bigBatt: parseFloat(this.state.bigBatt),
+                allBatt: parseFloat(this.state.allBatt),
+                timerControl: this.state.timerControl,
+                workControl: this.state.workControl,
+            };
+
+            const postUrl = `${ serverUrl }/load_forecast_runner`;
+
+            axios({
+                method: "post",
+                url: postUrl,
+                data: postData,
+            })
+                .then(async (response) => {
+                    console.log(response);
+                    this.props.visualizeResults(await this.getResult());
+                }, (error) => {
+                    console.log(error);
+                });
+            this.setState({ open: false });
+        }
+    };
+
     useDefaultParameters = () => {
         // TODO: backend * 3
         // Get default parameter set
@@ -182,15 +180,19 @@ class AlgInputsLoadForecast extends Component {
         });
     }
 
-    runAlgorithm = async (county) => {
+    runAlgorithm = () => {
         this.setState({ open: true });
-        this.props.visualizeResults(await this.getResult(county));
+    };
+
+    advancedSettings = (e) => {
+        e.preventDefault()
+        this.setState({ advancedSettings: !this.state.advancedSettings})
     };
 
 
     render() {
         const { classes } = this.props;
-
+        const { advancedSettings } = this.state;
         const countiesTextField =
             <TextField
                 id="standard-county"
@@ -204,8 +206,8 @@ class AlgInputsLoadForecast extends Component {
                     },
                 }}
                 margin="normal"
-                value={ this.state.county_choice }
-                onChange={ e => this.update("county_choice", e) }
+                value={ this.state.countyChoice }
+                onChange={ e => this.update("countyChoice", e) }
             >
                 {
                     this.state.counties.map(option => (
@@ -216,13 +218,14 @@ class AlgInputsLoadForecast extends Component {
                 }
             </TextField>;
 
-        const countyNames = this.state.aggregation_level === "county" ? countiesTextField : null;
+        const countyNames = this.state.aggregationLevel === "county" ? countiesTextField : null;
 
         return (
             <>
                 <fieldset class="field_set">
+                    <legend>General Settings</legend>
                     <TextField
-                        id="standard-aggregation_level"
+                        id="standard-aggregationLevel"
                         select
                         className={classes.textField}
                         SelectProps={{
@@ -233,8 +236,8 @@ class AlgInputsLoadForecast extends Component {
                         }}
                         label="Please select an aggregation level"
                         margin="normal"
-                        value={ this.state.aggregation_level }
-                        onChange={ e => this.update("aggregation_level", e) }
+                        value={ this.state.aggregationLevel }
+                        onChange={ e => this.update("aggregationLevel", e) }
                     >
                         <option key="county" value="county">
                                 County
@@ -247,43 +250,42 @@ class AlgInputsLoadForecast extends Component {
                     { countyNames }
 
                     <TextField
-                        id="standard-num_evs"
-                        label="Total number of EVs"
-                        value={ this.state.num_evs }
+                        id="standard-numEvs"
+                        label="EVs in the State"
+                        value={ this.state.numEvs }
                         className={classes.textField}
                         margin="normal"
-                        onChange={ e => this.update("num_evs", e) }
+                        onChange={ e => this.update("numEvs", e) }
                     />
-                    <TextField
-                        id="standard-res_l2_smooth"
-                        select
-                        value={ this.state.res_l2_smooth }
-                        className={classes.textField}
-                        label="Residential Smooth"
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        margin="normal"
-                        onChange={ e => this.update("res_l2_smooth", e) }
-                    >
-                        <option key="true" value="true">
-                            True
-                        </option>
-                        <option key="false" value="false">
-                            False
-                        </option>
-                    </TextField>
-                    <TextField
-                        id="standard-mixed_batteries"
-                        label="Battery Mix"
-                        value={ this.state.mixed_batteries }
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={ e => this.update("mixed_batteries", e) }
-                    />
+                    <br/>
+                    <br/>
+                    <fieldset class="field_set">
+                        <legend>Battery Capacity (must add up to 1)</legend>
+                        <TextField
+                            id="standard-smallBatteries"
+                            label="Small"
+                            value={ this.state.smallBatt }
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={ e => this.update("smallBatt", e) }
+                        />
+                        <TextField
+                            id="standard-bigBatteries"
+                            label="Big"
+                            value={ this.state.bigBatt }
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={ e => this.update("bigBatt", e) }
+                        />
+                        <TextField
+                            id="standard-allBatteries"
+                            label="All"
+                            value={ this.state.allBatt }
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={ e => this.update("allBatt", e) }
+                        />
+                    </fieldset>
                 </fieldset>
                 <br/>
                 <br/>
@@ -294,72 +296,109 @@ class AlgInputsLoadForecast extends Component {
                 <fieldset class="field_set">
                     <legend>Charging Types Percentage</legend>
                     <TextField
-                        id="standard-fast_percent"
+                        id="standard-fastPercent"
                         label="Fast"
-                        value={ this.state.fast_percent }
+                        value={ this.state.fastPercent }
                         className={classes.textField}
                         margin="normal"
-                        onChange={ e => this.update("fast_percent", e) }
+                        onChange={ e => this.update("fastPercent", e) }
                     />
                     <TextField
-                        id="standard-work_percent"
+                        id="standard-workPercent"
                         label="Workplace"
-                        value={ this.state.work_percent }
+                        value={ this.state.workPercent }
                         className={classes.textField}
                         margin="normal"
-                        onChange={ e => this.update("work_percent", e) }
+                        onChange={ e => this.update("workPercent", e) }
                     />
                     <TextField
-                    id="standard-rent_percent"
-                    label="Rent"
-                    value={ this.state.rent_percent }
-                    className={classes.textField}
-                    margin="normal"
-                    onChange={ e => this.update("rent_percent", e) }
-                    />
-                    <TextField
-                        id="standard-res_percent"
-                        label="Residential Level 2"
-                        value={ this.state.res_percent }
+                        id="standard-publicL2Percent"
+                        label="Public"
+                        value={ this.state.publicL2Percent }
                         className={classes.textField}
                         margin="normal"
-                        onChange={ e => this.update("res_percent", e) }
+                        onChange={ e => this.update("publicL2Percent", e) }
                     />
-                    <TextField
-                        id="standard-l1_percent"
-                        label="Level 1"
-                        value={ this.state.l1_percent }
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={ e => this.update("l1_percent", e) }
-                    />
-                    <TextField
-                        id="standard-public_l2_percent"
-                        label="Public Level 2"
-                        value={ this.state.public_l2_percent }
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={ e => this.update("public_l2_percent", e) }
-                    />
+                    <br/>
+                    <br/>
+                    <fieldset class="field_set">
+                        <legend>Residential (must add up to 1)</legend>
+                        <TextField
+                            id="standard-l1Percent"
+                            label="Level 1"
+                            value={ this.state.l1Percent }
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={ e => this.update("l1Percent", e) }
+                        />
+                        <TextField
+                            id="standard-resPercent"
+                            label="Level 2"
+                            value={ this.state.resPercent }
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={ e => this.update("resPercent", e) }
+                        />
+                        <TextField
+                            id="standard-rentPercent"
+                            label="MUD"
+                            value={ this.state.rentPercent }
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={ e => this.update("rentPercent", e) }
+                        />
+                    </fieldset>
                 </fieldset>
                 <br/>
                 <br/>
                 <fieldset class="field_set">
-                    <legend>Charging Segment Daily Usage Percentage</legend>
+                    <legend>Control</legend>
                     <TextField
-                        id="standard-week_day"
-                        select
-                        value={ this.state.week_day }
+                        id="standard-timerControl"
+                        label="Residential Timer"
+                        value={ this.state.timerControl }
                         className={classes.textField}
                         margin="normal"
-                        label="Week Day"
+                        onChange={ e => this.update("timerControl", e) }
+                    />
+                    <TextField
+                        id="standard-workControl"
+                        select
+                        value={ this.state.workControl }
+                        className={classes.textField}
+                        label="Workplace"
                         SelectProps={{
                             native: true,
                             MenuProps: {
                                 className: classes.menu,
                             },
                         }}
-                        onChange={ e => this.update("week_day", e) }
+                        margin="normal"
+                        onChange={ e => this.update("workControl", e) }
+                    >
+                        {
+                            this.state.workControls.map(option => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))
+                        }
+
+                    </TextField>
+                    <TextField
+                        id="standard-resL2Smooth"
+                        select
+                        value={ this.state.resL2Smooth }
+                        className={classes.textField}
+                        label="Residential Smooth"
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        margin="normal"
+                        onChange={ e => this.update("resL2Smooth", e) }
                     >
                         <option key="true" value="true">
                             True
@@ -368,76 +407,71 @@ class AlgInputsLoadForecast extends Component {
                             False
                         </option>
                     </TextField>
-                    <TextField
-                        id="standard-res_daily_use"
-                        label="Residential"
-                        value={ this.state.res_daily_use }
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={ e => this.update("res_daily_use", e) }
-                    />
-                    <TextField
-                        id="standard-work_daily_use"
-                        label="Workplace"
-                        value={ this.state.work_daily_use }
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={ e => this.update("work_daily_use", e) }
-                    />
-                    <TextField
-                        id="standard-fast_daily_use"
-                        label="Fast"
-                        value={ this.state.fast_daily_use }
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={ e => this.update("fast_daily_use", e) }
-                    />
-                    <TextField
-                        id="standard-publicl2_daily_use"
-                        label="Public Level 2"
-                        value={ this.state.publicl2_daily_use }
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={ e => this.update("publicl2_daily_use", e) }
-                    />
                 </fieldset>
                 <br/>
                 <br/>
-                <fieldset class="field_set">
-                    <legend>Control</legend>
-                    <TextField
-                        id="standard-timer_control"
-                        label="Residential Timer"
-                        value={ this.state.timer_control }
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={ e => this.update("timer_control", e) }
-                    />
-                    <TextField
-                        id="standard-work_control"
-                        select
-                        value={ this.state.work_control }
-                        className={classes.textField}
-                        label="Workplace"
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        margin="normal"
-                        onChange={ e => this.update("work_control", e) }
-                    >
-                    {
-                        this.state.work_controls.map(option => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))
-                    }
-
-                    </TextField>
-                </fieldset>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.advancedSettings}>Advanced Settings</Button>
+                {   advancedSettings
+                    ?
+                        <fieldset class="field_set">
+                            <legend>Advanced Settings</legend>
+                            <TextField
+                                id="standard-weekDay"
+                                select
+                                value={ this.state.weekDay }
+                                className={classes.textField}
+                                margin="normal"
+                                label="Day Type"
+                                SelectProps={{
+                                    native: true,
+                                    MenuProps: {
+                                        className: classes.menu,
+                                    },
+                                }}
+                                onChange={ e => this.update("weekDay", e) }
+                            >
+                                <option key="true" value="true">
+                                    Week Day
+                                </option>
+                                <option key="false" value="false">
+                                    Week End
+                                </option>
+                            </TextField>
+                            <TextField
+                                id="standard-resDailyUse"
+                                label="Residential"
+                                value={ this.state.resDailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("resDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-workDailyUse"
+                                label="Workplace"
+                                value={ this.state.workDailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("workDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-fastDailyUse"
+                                label="Fast"
+                                value={ this.state.fastDailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("fastDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-publicL2DailyUse"
+                                label="Public Level 2"
+                                value={ this.state.publicL2DailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("publicL2DailyUse", e) }
+                            />
+                        </fieldset>
+                    : null
+                }
                 <br/>
                 <p/>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.runAlgorithm}>
@@ -454,8 +488,8 @@ class AlgInputsLoadForecast extends Component {
                             margin="dense"
                             id="profile_name"
                             label="Profile Name"
-                            value={ this.state.config_name }
-                            onChange={ e => this.update("config_name", e) }
+                            value={ this.state.configName }
+                            onChange={ e => this.update("configName", e) }
                             fullWidth
                         />
                     </DialogContent>

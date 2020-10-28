@@ -5,7 +5,6 @@ import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import { countyRes } from "../Api/CountyData";
 import { loadControlPromise } from "../Api/AlgorithmData";
-import { loadControlDefaultParams } from "../Api/algorithmDefaultParams";
 import { serverUrl } from "../Api/server";
 import axios from "axios";
 
@@ -38,11 +37,11 @@ class AlgInputsLoadControl extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            counties: ["Alameda", "Contra Costa", "Marin", "Orange", "Sacramento", "San Francisco", "San Mateo", "Santa Clara", "Solano"],
+            counties: ["All Counties", "Alameda", "Contra Costa", "Marin", "Orange", "Sacramento", "San Francisco", "San Mateo", "Santa Clara", "Solano"],
             result: null,
-            county: loadControlDefaultParams.county,
-            rate_structures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
-            rate_structure: "PGEe19",
+            county: 'Santa Clara',
+            rateStructures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
+            rateStructure: "PGEe19",
         };
     }
 
@@ -53,8 +52,8 @@ class AlgInputsLoadControl extends Component {
     runAlgorithm = async () => {
         const postData = {
             county: this.state.county,
-            rate_structure: this.state.rate_structure,
-        }
+            rateStructure: this.state.rateStructure,
+        };
         const postUrl = `${ serverUrl }/load_control_runner`;
 
         axios({
@@ -62,13 +61,13 @@ class AlgInputsLoadControl extends Component {
             url: postUrl,
             data: postData,
         })
-        .then((response) => {
-            const sca_data = [JSON.parse(response.data)]
-            this.props.visualizeResults(sca_data)
+            .then((response) => {
+                const sca_data = [JSON.parse(response.data)];
+                this.props.visualizeResults(sca_data);
 
-        }, (error) => {
-            console.log(error);
-        });
+            }, (error) => {
+                console.log(error);
+            });
     }
 
     render() {
@@ -101,11 +100,11 @@ class AlgInputsLoadControl extends Component {
                 </TextField>
 
                 <TextField
-                    id="rate_structure"
+                    id="rateStructure"
                     select
-                    value={ this.state.rate_structure }
+                    value={ this.state.rateStructure }
                     className={classes.textField}
-                    helperText="rate_structure"
+                    helperText="rateStructure"
                     SelectProps={{
                         native: true,
                         MenuProps: {
@@ -113,15 +112,15 @@ class AlgInputsLoadControl extends Component {
                         },
                     }}
                     margin="normal"
-                    onChange={ e => this.update("rate_structure", e) }
+                    onChange={ e => this.update("rateStructure", e) }
                 >
-                {
-                    this.state.rate_structures.map(option => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))
-                }
+                    {
+                        this.state.rateStructures.map(option => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))
+                    }
 
                 </TextField>
                 <br />

@@ -6,6 +6,8 @@ from rest_framework.decorators import detail_route
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
+import json
+
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
 from script.models.config import LoadControllerConfig, LoadForecastConfig, LoadProfileConfig, GasConsumptionConfig, CostBenefitConfig, NetPresentValueConfig, EmissionConfig
@@ -14,16 +16,9 @@ from script.serializers import LoadControllerConfigSerializer, LoadForecastConfi
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
-from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
-from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
-import json
-
-#for running CBA tool
-import sys
-sys.path.append("script/CostBenefitAnalysis/python_code/")
-from model_class import ModelInstance
+from script.tasks import run_cba_tool
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -35,40 +30,43 @@ class LoadControlRunner(APIView):
 
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
-        # TODO: requires an updated version of CBA Tool 
-        split_file(county = request.data['county'])
-        ModelInstance('BaseCase_' + request.data['county'][0] + '_uncontrolled_load')
-        UploadToPostgres(load_profile = request.data['load_profile'], county = request.data['county'][0])
-        return Response("Cost Benefit Analysis run succeeded")
+        # TODO: requires an updated version of CBA Tool
+        task = run_cba_tool.delay(request.data['county'], request.data['load_profile'])
+        cba_response = {"task_id": task.id, "status": task.status}
+        return Response(cba_response)
 
 class LoadForecastRunner(APIView):
     def post(self, request, format=None):
         for key, item in request.data.items():
             if item in ["None", "none", "NONE"]:
                 request.data[key] = None
-        lf_runner(
-            request.data["num_evs"],
-            request.data["aggregation_level"],
-            request.data["county"],
-            request.data["fast_percent"],
-            request.data["work_percent"],
-            request.data["res_percent"],
-            request.data["l1_percent"],
-            request.data["public_l2_percent"],
-            request.data["res_daily_use"],
-            request.data["work_daily_use"],
-            request.data["fast_daily_use"],
-            request.data["rent_percent"],
-            request.data["res_l2_smooth"],
-            request.data["week_day"],
-            request.data["publicl2_daily_use"],
-            request.data["mixed_batteries"],
-            request.data["timer_control"],
-            request.data["work_control"],
-            request.data["config_name"]
-        )
-        return Response("Load Forecast run succeeded")
 
+        lf_argv = {
+            "total_num_evs": request.data["numEvs"],
+            "aggregation_level": request.data["aggregationLevel"],
+            "county": request.data["county"],
+            "fast_percent": request.data["fastPercent"],
+            "work_percent": request.data["workPercent"],
+            "res_percent": request.data["resPercent"],
+            "l1_percent": request.data["l1Percent"],
+            "publicl2_percent": request.data["publicL2Percent"],
+            "res_daily_use": request.data["resDailyUse"],
+            "work_daily_use": request.data["workDailyUse"],
+            "fast_daily_use": request.data["fastDailyUse"],
+            "rent_percent": request.data["rentPercent"],
+            "res_l2_smooth": request.data["resL2Smooth"],
+            "week_day": request.data["weekDay"],
+            "publicl2_daily_use": request.data["publicL2DailyUse"],
+            "small_batt": request.data["smallBatt"],
+            "big_batt": request.data["bigBatt"],
+            "all_batt": request.data["allBatt"],
+            "timer_control": request.data["timerControl"],
+            "work_control": request.data["workControl"],
+            "config_name": request.data["configName"]
+        }
+
+        lf_runner(lf_argv)
+        return Response("Load Forecast run succeeded")
 
 class CountyViewSet(viewsets.ModelViewSet):
     queryset = County.objects.all()
