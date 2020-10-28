@@ -31,9 +31,9 @@ class ModelInstance(object):
 
         ### CALCULATE TIMESTEP INPUTS ###
 
+        self.inputs.vehicle_lifetime
         self.model_years = list(range(self.inputs.start_year, self.inputs.end_year + self.inputs.vehicle_lifetime))
         self.inputs.timesteps, self.inputs.weekday_weekend_count = self.inputs.process_timesteps(self.model_years)
-
 
         ### CALCULATE TAX CREDITS ###
 

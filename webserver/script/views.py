@@ -37,8 +37,8 @@ class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
         # TODO: requires an updated version of CBA Tool 
         split_file(county = request.data['county'])
-        ModelInstance()
-        UploadToPostgres(load_profile = request.data['load_profile'])
+        ModelInstance('BaseCase_' + request.data['county'][0] + '_uncontrolled_load')
+        UploadToPostgres(load_profile = request.data['load_profile'], county = request.data['county'][0])
         return Response("Cost Benefit Analysis run succeeded")
 
 class LoadForecastRunner(APIView):

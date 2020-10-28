@@ -9,7 +9,8 @@ from django.conf import settings
 class UploadToPostgres():
     def __init__(
         self,
-        load_profile
+        load_profile,
+        county
     ):
 
         with open(settings.BASE_DIR + '/postgres_info.json') as json_file:
@@ -34,8 +35,9 @@ class UploadToPostgres():
         self.load_profile_result_dict = {}
         self.load_profile_start_year = 0
         self.load_profile = load_profile
+        self.county = county
 
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/aggregate_loadprofile.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/aggregate_loadprofile.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.load_profile_result_dict['All'] = {}
             for row in csv_reader:
@@ -50,7 +52,7 @@ class UploadToPostgres():
                 for i in range(2, len(row)):
                     self.load_profile_result_dict['All'][row[0]][row[1]].append(row[i])
 
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/AllDCFC_loadprofile.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/AllDCFC_loadprofile.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.load_profile_result_dict['DC Fast Charger'] = {}
             for row in csv_reader:
@@ -61,7 +63,7 @@ class UploadToPostgres():
                 for i in range(2, len(row)):
                     self.load_profile_result_dict['DC Fast Charger'][row[0]][row[1]].append(row[i])
         
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/AllPublicL2_loadprofile.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/AllPublicL2_loadprofile.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.load_profile_result_dict['Public L2'] = {}
             for row in csv_reader:
@@ -71,7 +73,7 @@ class UploadToPostgres():
                 for i in range(2, len(row)):
                     self.load_profile_result_dict['Public L2'][row[0]][row[1]].append(row[i])
         
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/AllResidential_loadprofile.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/AllResidential_loadprofile.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.load_profile_result_dict['Residential'] = {}
             for row in csv_reader:
@@ -81,7 +83,7 @@ class UploadToPostgres():
                 for i in range(2, len(row)):
                     self.load_profile_result_dict['Residential'][row[0]][row[1]].append(row[i])
 
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/AllWorkplace_loadprofile.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/AllWorkplace_loadprofile.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.load_profile_result_dict['Workplace'] = {}
             for row in csv_reader:
@@ -95,7 +97,7 @@ class UploadToPostgres():
         self.gas_consumption_year_len = 0
         self.gas_consumption_result_dict = {}
 
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/annual_gas_consumption.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/annual_gas_consumption.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 self.gas_consumption_year_len = len(row) - 1
@@ -107,9 +109,10 @@ class UploadToPostgres():
         self.cost_benefit_year_len = 0
         self.cost_benefit_result_dict = {}
 
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/annual_results.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/annual_results.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
+                print(row)
                 self.cost_benefit_year_len = len(row) - 1
                 self.cost_benefit_result_dict[row[0]] = []
                 for i in range(1, len(row)):
@@ -124,7 +127,7 @@ class UploadToPostgres():
         self.emission_year_len = 0
         self.emission_result_dict = {}
 
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/Emissions.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/Emissions.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 self.emission_year_len = len(row) - 1
@@ -135,7 +138,7 @@ class UploadToPostgres():
         # npv result related
         self.npv_result_dict = {}
 
-        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/results/npv_results.csv') as csv_file:
+        with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/npv_results.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:

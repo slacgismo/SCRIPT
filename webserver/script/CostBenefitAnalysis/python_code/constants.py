@@ -48,6 +48,6 @@ demand_charge_weighting = {
     22: 0.03128368,
     23: 0.029082743}
 
-directory_list = ['CASE_DIR', 'DATA_DIR', 'CONFIG_DIR', 'RATES_DIR', 'LOADPROFILE_DIR', 'TESTFILE_DIR', 'RESULTS_DIR']
+directory_list = ['LOCAL_CASE_DIR','RESULTS_DIR']
 
 MMBTU_per_gal = 120476

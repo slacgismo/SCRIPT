@@ -17,6 +17,8 @@ import datetime
 import sys
 import helpers
 import pandas as pd
+import numpy as np
+from s3fs.core import S3FileSystem
 from pathlib import Path
 
 class MODEL_INPUTS(object):
@@ -151,42 +153,36 @@ class MODEL_INPUTS(object):
         :return: Each attribute in the config CSV is added as an attribute to the MODEL_INPUTS instance.
         """
         config_dir = self.CONFIG_DIR + r'/{0}.csv'.format(config_name)
-        with open(config_dir) as config_file:
-            config_data = csv.reader(config_file)
-            first_row = True
+        config_data = pd.read_csv(config_dir, sep="\n", header=None, skiprows=1)
 
-            for row in config_data:
-                if first_row:
-                    first_row = False
-                    pass
+        for row in config_data.iterrows():
+            row = row[1].str.split(",").tolist()
+            attribute = row[0][0]
+            attribute_type = type(getattr(self, attribute))
+
+            if attribute_type is float:
+                value = float(row[0][1])
+            elif attribute_type is int:
+                value = int(row[0][1])
+            elif attribute_type is str:
+                value = row[0][1]
+            elif attribute_type is bool:
+                if row[0][1].upper() == "TRUE":
+                    value = True
+                elif row[0][1].upper() == "FALSE":
+                    value = False
                 else:
-                    attribute = row[0]
-                    attribute_type = type(getattr(self, attribute))
-                    # print '%s being inspected' % attribute
+                    print('problematic attribute: %s' % attribute)
+                    print('attribute type: %s' % attribute_type)
+                    print('value: %s' % row[0][1])
+            else:
+                print(attribute, attribute_type)
+                print('%s attribute type not assigned.' % attribute)
+                print('value: %s' % row[0][1])
+                exit()
 
-                    if attribute_type is float:
-                        value = float(row[1])
-                    elif attribute_type is int:
-                        value = int(row[1])
-                    elif attribute_type is str:
-                        value = row[1]
-                    elif attribute_type is bool:
-                        if row[1].upper() == "TRUE":
-                            value = True
-                        elif row[1].upper() == "FALSE":
-                            value = False
-                        else:
-                            print('problematic attribute: %s' % attribute)
-                            print('attribute type: %s' % attribute_type)
-                            print('value: %s' % row[1])
-                    else:
-                        print(attribute, attribute_type)
-                        print('%s attribute type not assigned.' % attribute)
-                        print('value: %s' % row[1])
-                        exit()
-
-                    setattr(self, attribute, value)
-                    # print '\tset as %s' % type(value)
+            setattr(self, attribute, value)
+            # print '\tset as %s' % type(value)
 
     def read_loadprofile_allocation(self, allocation_name):
         """
@@ -196,29 +192,30 @@ class MODEL_INPUTS(object):
         :return: MODEL_INPUTS.loadprofile_to_rate and MODEL_INPUTS.loadprofile_names are defined in this function.
         """
 
-        allocation_dir = self.DATA_DIR + "\Load Profile Assignment" + r'/{0}.csv'.format(allocation_name)
-        with open(allocation_dir) as allocation_file:
-            allocation_data = csv.reader(allocation_file)
-            first_row = True
+        allocation_dir = self.DATA_DIR + "/Load Profile Assignment" + r'/{0}.csv'.format(allocation_name)
 
-            for row in allocation_data:
-                if first_row:
-                    rate_names = row[1:]
-                    first_row = False
-                    pass
-                else:
-                    loadprofile_name = row[0]
+        allocation_data = pd.read_csv(allocation_dir, header=None, index_col=False)
+        first_row = True
 
-                    for j in range(len(rate_names)):
-                        rate_name = rate_names[j]
-                        value = float(row[j+1])
+        for row in allocation_data.iterrows():
+            row = row[1].str.split(",").tolist()
+            if first_row:
+                rate_names = row[1:]
+                first_row = False
+
+            else:
+                loadprofile_name = row[0][0]
+
+                for j in range(len(rate_names)):
+                    rate_name = rate_names[j][0]
+                    value = float(row[j+1][0])
 
 
-                        if value != 0:
-                            try:
-                                self.loadprofile_to_rate[loadprofile_name][rate_name] = value
-                            except KeyError:
-                                self.loadprofile_to_rate[loadprofile_name] = {rate_name: value}
+                    if value != 0:
+                        try:
+                            self.loadprofile_to_rate[loadprofile_name][rate_name] = value
+                        except KeyError:
+                            self.loadprofile_to_rate[loadprofile_name] = {rate_name: value}
 
         # Make sure allocation sums to 1
         for loadprofile_name in list(self.loadprofile_to_rate.keys()):
@@ -233,39 +230,34 @@ class MODEL_INPUTS(object):
 
         self.loadprofile_names = list(self.loadprofile_to_rate.keys())
 
-
     def get_charger_assignments(self, filename):
 
-        chargerassignment_dir = self.DATA_DIR + "\Load Profile Assignment" + r'/{0}.csv'.format(filename)
-        with open(chargerassignment_dir) as chargerassignment_file:
-            chargerassignment_data = csv.reader(chargerassignment_file)
-            first_row = True
+        chargerassignment_dir = self.DATA_DIR + "/Load Profile Assignment" + r'/{0}.csv'.format(filename)
+        chargerassignment_data = pd.read_csv(chargerassignment_dir, sep="\n" , header=None, skiprows=1)
 
-            for row in chargerassignment_data:
-                if first_row:
-                    first_row = False
-                    pass
-                else:
-                    loadprofile_name = row[0]
-                    charger_name = row[1]
-                    self.loadprofile_to_charger[loadprofile_name] = charger_name
+        for row in chargerassignment_data.iterrows():
+            row = row[1].str.split(",").tolist()
+            
+            loadprofile_name = row[0][0]
+            charger_name = row[0][1]
+            self.loadprofile_to_charger[loadprofile_name] = charger_name
 
     def get_directories(self, case_name):
         """
         Build all of the directories required for a model run.
         """
-
         self.PYTHON_DIR = str(Path(__file__).parent.parent.resolve())
         self.MODEL_DIR = 's3://script.control.tool'
-        self.CASE_DIR = self.MODEL_DIR + r'/cases' + case_name
+        self.CASE_DIR = self.MODEL_DIR + r'/cases/' + case_name
         self.DATA_DIR = self.CASE_DIR + r'/data'
         self.CONFIG_DIR = self.DATA_DIR + r'/configs'
-        self.RATES_DIR = self.MODEL_DIR + r'/rates'
-        self.LOADPROFILE_DIR = self.MODEL_DIR + r'/EV_Loads/load_profiles'
+        self.RATES_DIR = self.PYTHON_DIR + r'/rates'
+        self.LOADPROFILE_DIR = self.PYTHON_DIR + r'/EV_Loads/load_profiles'
         self.TESTFILE_DIR = self.CASE_DIR + r'/test_files'
-        self.RESULTS_DIR = self.PYTHON_DIR + r'/cases' + case_name + r'/results'
+        self.LOCAL_CASE_DIR = self.PYTHON_DIR + r'/cases/' + case_name
+        self.RESULTS_DIR = self.LOCAL_CASE_DIR + r'/results'
 
-        # Create directories if they don't already exist
+        # Create case and case results directories if don't already exist
         for directory in constants.directory_list:
             helpers.make_dir_if_not_exist(getattr(self, directory))
 
@@ -274,7 +266,6 @@ class MODEL_INPUTS(object):
         Creates a rate object from the rate_name data file.
         """
         rate_dir = self.RATES_DIR + r'/{0}.csv'.format(rate_name)
-
         with open(rate_dir) as rate_file:
             rate_data = csv.reader(rate_file)
             rate = rate_class.Rate(rate_data, model_years, rate_escalator)
@@ -286,7 +277,6 @@ class MODEL_INPUTS(object):
         Creates a rate object from the rate_name data file.
         """
         rate_escalator_df = pd.read_csv(self.RATES_DIR + r'/Rate Escalators.csv').set_index("Year")
-
 
         return rate_escalator_df
 
@@ -301,14 +291,12 @@ class MODEL_INPUTS(object):
         vehicles = vehicles_class.Vehicles()
 
         annual_dir = self.DATA_DIR + '/Annual Values' + r'/{0}.csv'.format(annual_filename)
-        with open(annual_dir) as annual_file:
-            annual_data = csv.reader(annual_file)
-            vehicles.process_annual_data(annual_data)
+        annual_data = pd.read_csv(annual_dir, sep="\n", header=None, skiprows=1)
+        vehicles.process_annual_data(annual_data)
 
         gasprice_dir = self.DATA_DIR +  "/Annual Values" + r'/gas_prices.csv'
-        with open(gasprice_dir) as gasprice_file:
-            gasprice_data = csv.reader(gasprice_file)
-            vehicles.process_gasprices(gasprice_data)
+        gasprice_data = pd.read_csv(gasprice_dir, sep="\n", header=None, skiprows=1)
+        vehicles.process_gasprices(gasprice_data)
 
         return vehicles
 
@@ -322,9 +310,8 @@ class MODEL_INPUTS(object):
         """
         load_profile = loadprofile_class.LoadProfile(loadprofile_name)
         loadprofile_dir = self.LOADPROFILE_DIR + r'/{0}.csv'.format(loadprofile_name)
-        with open(loadprofile_dir) as loadprofile_file:
-            loadprofile_data = csv.reader(loadprofile_file)
-            load_profile.process_data(loadprofile_data, scalar=scalar)
+        loadprofile_data = pd.read_csv(loadprofile_dir, sep="\n", header=None)
+        load_profile.process_data(loadprofile_data, scalar=scalar)
 
         return load_profile
 
@@ -337,28 +324,29 @@ class MODEL_INPUTS(object):
         """
 
         energy_mc_dir = self.DATA_DIR + "/Marginal Costs" + r'/{0}.csv'.format(energy_mc_name)
-        with open(energy_mc_dir) as loadprofile_file:
-            energy_mc_data = csv.reader(loadprofile_file)
-            # process open file
-            first_row = True
-            years = []
+        energy_mc_data = pd.read_csv(energy_mc_dir, sep="\n", header=None)
+        years = []
+        # process open file
+        first_row = True
 
-            for row in energy_mc_data:
 
-                if first_row:
-                    for element in row[1:]:
-                        year = int(element)
-                        years.append(year)
-                    first_row = False
-                    energy_mc = {year: {} for year in years}
+        for row in energy_mc_data.iterrows():
+            row = row[1].str.split(",").tolist()
 
-                else:
-                    index = int(row[0])
+            if first_row:
+                for element in row[0][1:]:
+                    year = int(element)
+                    years.append(year)
+                first_row = False
+                energy_mc = {year: {} for year in years}
 
-                    for i in range(len(row) - 1):
-                        year = years[i]
-                        value = float(row[i + 1])
-                        energy_mc[year][index] = value
+            else:
+                index = int(row[0][0])
+
+                for i in range(len(row[0]) - 1):
+                    year = years[i]
+                    value = float(row[0][i + 1])
+                    energy_mc[year][index] = value
 
         return energy_mc
 
@@ -371,29 +359,29 @@ class MODEL_INPUTS(object):
         :return:
         """
 
-        emissions_dir = self.DATA_DIR + "/Emissions" + r'{0}.csv'.format(emissions_name)
-        with open(emissions_dir) as loadprofile_file:
-            emissions_data = csv.reader(loadprofile_file)
-            # process open file
-            first_row = True
-            years = []
+        emissions_dir = self.DATA_DIR + "/Emissions" + r'/{0}.csv'.format(emissions_name)
+        emissions_data = pd.read_csv(emissions_dir, sep="\n", header=None)
+        # process open file
+        first_row = True
+        years = []
 
-            for row in emissions_data:
+        for row in emissions_data.iterrows():
+            row = row[1].str.split(",").tolist()
 
-                if first_row:
-                    for element in row[1:]:
-                        year = int(element)
-                        years.append(year)
-                    first_row = False
-                    emissions = {year: {} for year in years}
+            if first_row:
+                for element in row[0][1:]:
+                    year = int(element)
+                    years.append(year)
+                first_row = False
+                emissions = {year: {} for year in years}
 
-                else:
-                    index = int(row[0])
+            else:
+                index = int(row[0][0])
 
-                    for i in range(len(row) - 1):
-                        year = years[i]
-                        value = float(row[i + 1])
-                        emissions[year][index] = value
+                for i in range(len(row[0]) - 1):
+                    year = years[i]
+                    value = float(row[0][i + 1])
+                    emissions[year][index] = value
 
         return emissions
 
@@ -406,30 +394,31 @@ class MODEL_INPUTS(object):
         """
 
         capacity_mc_dir = self.DATA_DIR + "/Marginal Costs" + r'/{0}.csv'.format(capacity_mc_name)
-        with open(capacity_mc_dir) as loadprofile_file:
-            capacity_mc_data = csv.reader(loadprofile_file)
-            # process open file
-            first_row = True
-            years = []
+        capacity_mc_data = pd.read_csv(capacity_mc_dir, sep="\n", header=None)
+        # process open file
+        first_row = True
+        years = []
 
-            for row in capacity_mc_data:
+        for row in capacity_mc_data.iterrows():
+            row = row[1].str.split(",").tolist()
 
-                if first_row:
-                    for element in row[1:]:
-                        year = int(element)
-                        years.append(year)
-                    first_row = False
-                    capacity_mc = {year: {} for year in years}
+            if first_row:
+                for element in row[0][1:]:
+                    year = int(element)
+                    years.append(year)
+                first_row = False
+                capacity_mc = {year: {} for year in years}
 
-                else:
-                    index = int(row[0])
+            else:
+                index = int(row[0][0])
 
-                    for i in range(len(row) - 1):
-                        year = years[i]
-                        value = float(row[i + 1])
-                        capacity_mc[year][index] = value
+                for i in range(len(row[0]) - 1):
+                    year = years[i]
+                    value = float(row[0][i + 1])
+                    capacity_mc[year][index] = value
 
         return capacity_mc
+
 
     def process_building_load(self, building_load_name):
         """
@@ -439,28 +428,28 @@ class MODEL_INPUTS(object):
         :return:
         """
 
-        building_load = self.DATA_DIR + "/Building Loads" + r'/{0}.csv'.format(building_load_name)
-        with open(building_load) as building_load_file:
-            building_load_data = csv.reader(building_load_file)
-            # process open file
-            first_row = True
-            years = []
+        building_load = self.DATA_DIR + '/Building Loads' + r'/{0}.csv'.format(building_load_name)
+        building_load_data = pd.read_csv(building_load, sep='\n', header=None)
+        # process open file
+        first_row = True
+        years = []
 
-            for row in building_load_data:
+        for row in building_load_data.iterrows():
+            row = row[1].str.split(",").tolist()
 
-                if first_row:
-                    for element in row[1:]:
-                        year = int(element)
-                        years.append(year)
-                    first_row = False
-                    building_load_dict = {year: {} for year in years}
+            if first_row:
+                for element in row[0][1:]:
+                    year = int(element)
+                    years.append(year)
+                first_row = False
+                building_load_dict = {year: {} for year in years}
 
-                else:
-                    index = int(row[0])
-                    for i in range(len(row) - 1):
-                        year = years[i]
-                        value = float(row[i + 1])
-                        building_load_dict[year][index] = value
+            else:
+                index = int(row[0][0])
+                for i in range(len(row[0]) - 1):
+                    year = years[i]
+                    value = float(row[0][i + 1])
+                    building_load_dict[year][index] = value
 
         return building_load_dict
 
@@ -486,36 +475,31 @@ class MODEL_INPUTS(object):
                                     for month in range(1,13)}
                                  for year in model_years}
 
-        with open(timesteps_dir) as timesteps_file:
-            timesteps_data = csv.reader(timesteps_file)
-            first_row = True
+        timesteps_data = pd.read_csv(timesteps_dir, sep="\n", header=None, skiprows=1)
 
-            for row in timesteps_data:
-                if first_row:
-                    first_row = False
-                    pass
+        for row in timesteps_data.iterrows():
+            row = row[1].str.split(",").tolist()
+            index = int(row[0][0])
+
+            for year in model_years:
+                month = int(row[0][1])
+                dayofmonth = int(row[0][2])
+                hourofday = int(row[0][3])
+
+
+                calendar_date = datetime.date(year, month, dayofmonth)
+                day_of_week = calendar_date.isoweekday()
+                is_weekday = day_of_week <= 5
+
+                timesteps[index][year] = {'month': month,
+                                            'dayofmonth': dayofmonth,
+                                            'hourofday': hourofday,
+                                            'is_weekday': is_weekday}
+
+                if is_weekday:
+                    weekday_weekend_count[year][month]['weekdays'] += 1
                 else:
-                    index = int(row[0])
-
-                    for year in model_years:
-                        month = int(row[1])
-                        dayofmonth = int(row[2])
-                        hourofday = int(row[3])
-
-
-                        calendar_date = datetime.date(year, month, dayofmonth)
-                        day_of_week = calendar_date.isoweekday()
-                        is_weekday = day_of_week <= 5
-
-                        timesteps[index][year] = {'month': month,
-                                                  'dayofmonth': dayofmonth,
-                                                  'hourofday': hourofday,
-                                                  'is_weekday': is_weekday}
-
-                        if is_weekday:
-                            weekday_weekend_count[year][month]['weekdays'] += 1
-                        else:
-                            weekday_weekend_count[year][month]['weekends'] += 1
+                    weekday_weekend_count[year][month]['weekends'] += 1
 
         for year in model_years:
             for month in range(1,13):
@@ -532,10 +516,9 @@ class MODEL_INPUTS(object):
 
         charger_dir = self.DATA_DIR + "/Annual Values" + r'/{0}.csv'.format(chargerfile_name)
 
-        with open(charger_dir) as charger_file:
-            charger_data = csv.reader(charger_file)
-            chargers = chargers_class.Chargers(charger_data=charger_data,
-                                               public_dcfc_proportion=self.public_dcfc_proportion)
+        charger_data = pd.read_csv(charger_dir, sep="\n", header=None, skiprows=1)
+        chargers = chargers_class.Chargers(charger_data=charger_data,
+                                            public_dcfc_proportion=self.public_dcfc_proportion)
 
         return chargers
 
@@ -545,16 +528,17 @@ class MODEL_INPUTS(object):
         TODO
         """
         workplace_dir = self.DATA_DIR + r'/static_workplace_chargers.csv'
+        workplace_data = pd.read_csv(workplace_file, sep="\n", header=None)
+        first_row = True
 
-        with open(workplace_dir) as workplace_file:
-            workplace_data = csv.reader(workplace_file)
-            first_row = True
+        for row in workplace_data.iterrows():
+            row = row[1].str.split(",").tolist()
+            if first_row:
+                self.include_static_workplace = True if row[0][1] in ['True', 'TRUE'] else False
+                first_row = False
 
-            for row in workplace_data:
-                if first_row:
-                    self.include_static_workplace = True if row[1] in ['True', 'TRUE'] else False
-                    first_row = False
-                else:
-                    year = int(row[0])
-                    value = float(row[1])
-                    self.static_workplace_chargers[year] = value
+            else:
+                row = row.split("\n")
+                year = int(row[0][0])
+                value = float(row[0][1])
+                self.static_workplace_chargers[year] = value

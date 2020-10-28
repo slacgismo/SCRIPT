@@ -56,16 +56,11 @@ class Chargers(object):
 
         first_row = True
 
-        for row in charger_data:
-
-            if first_row:
-                first_row = False
-                pass
-
-            else:
-                year = int(row[0])
-                ports = float(row[1])
-                self.port_population[year] = ports
+        for row in charger_data.iterrows():
+            row = row[1].str.split(",").tolist()
+            year = int(row[0][0])
+            ports = float(row[0][1])
+            self.port_population[year] = ports
 
 
     def get_res_sales(self, vehicles, start_year, end_year):
@@ -474,36 +469,3 @@ class Chargers(object):
         import tabulate
         print(charger_string)
         print(tabulate.tabulate(tabular_data, headers=['year', 'pop', 'sales', 'cost']))
-
-
-    # def calc_additional_workplace_chargers(self, model_years, end_year, work_peak_flex, vehicle_lifetime):
-    #
-    #     for year in model_years:
-    #
-    #         workplace_flexible_peak = max(work_peak_flex[year].values())
-    #         chargers_needed = (workplace_flexible_peak / 14.4) * 1000.
-    #         additional_chargers_needed = max(0., chargers_needed - self.workplace_evses[year])
-    #         self.additional_workplace_needed[year] = additional_chargers_needed
-    #
-    #         if year == min(model_years):
-    #             self.additional_workplace_newsales[year] = self.additional_workplace_needed[year]
-    #             self.additional_workplace_replacements[year] = 0
-    #             self.additional_workplace_sales[year] = self.additional_workplace_newsales[year]
-    #
-    #         elif year <= end_year:
-    #             self.additional_workplace_newsales[year] = \
-    #                 self.additional_workplace_needed[year] - self.additional_workplace_needed[year-1]
-    #
-    #             try:
-    #                 self.additional_workplace_replacements[year] = \
-    #                     self.additional_workplace_sales[year-vehicle_lifetime]
-    #             except KeyError:
-    #                 self.additional_workplace_replacements[year] = 0
-    #
-    #             self.additional_workplace_sales[year] = \
-    #                 self.additional_workplace_newsales[year] + self.additional_workplace_replacements[year]
-    #
-    #         else:
-    #             self.additional_workplace_newsales[year] = 0
-    #             self.additional_workplace_replacements[year] = 0
-    #             self.additional_workplace_sales[year] = 0

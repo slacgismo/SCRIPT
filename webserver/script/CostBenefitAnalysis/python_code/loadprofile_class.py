@@ -60,22 +60,23 @@ class LoadProfile(object):
         years = []
         count = 0
 
-        for row in data:
+        for row in data.iterrows():
+            row = row[1].str.split(",").tolist()
 
             if first_row:
-                for element in row[1:]:
+                for element in row[0][1:]:
                     year_str = element.replace('MW_', '')
                     year = int(year_str)
                     years.append(year)
-                first_row = False
                 self.annual_load = {year: {} for year in years}
+                first_row = False
 
             else:
-                index = int(row[0])
+                index = int(row[0][0])
 
-                for i in range(len(row)-1):
+                for i in range(len(row[0])-1):
                     year = years[i]
-                    value = float(row[i+1])
+                    value = float(row[0][i+1])
                     self.annual_load[year][index] = value * scalar
 
 
@@ -125,13 +126,10 @@ class LoadProfile(object):
 
             try:
                 peak_timestep = helpers.get_max_index(self.annual_load[year])
-
                 month = timesteps[peak_timestep][year]['month']
                 dayofmonth = timesteps[peak_timestep][year]['dayofmonth']
-
                 peak_timesteps = sorted([i for i in list(timesteps.keys()) if timesteps[i][year]['month'] == month
                     and timesteps[i][year]['dayofmonth'] == dayofmonth])
-
                 self.peak_shape[year] = {i: self.annual_load[year][peak_timesteps[i]] for i in range(24)}
                 self.peak_isweekday[year] = timesteps[peak_timesteps[0]][year]['is_weekday']
 

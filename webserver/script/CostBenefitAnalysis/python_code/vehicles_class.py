@@ -61,50 +61,39 @@ class Vehicles(object):
         self.phev_replacements, self.phev_new_sales, self.phev_sales = ({}, {}, {})
 
     def process_annual_data(self, annual_data):
-        first_row = True
+        for row in annual_data.iterrows():
+            row = row[1].str.split(",").tolist()
 
-        for row in annual_data:
+            year = int(row[0][0])
+            total_population = float(row[0][1])
+            bev_population = float(row[0][2])
+            phev_population = float(row[0][3])
+            new_vmt = float(row[0][4])
+            bev_vmt = float(row[0][5])
+            phev_vmt = float(row[0][6])
+            bev_inc_price = float(row[0][7])
+            phev_inc_price = float(row[0][8])
+            new_mpg = float(row[0][9])
 
-            if first_row:
-                first_row = False
-                pass
-            else:
-                year = int(row[0])
-                total_population = float(row[1])
-                bev_population = float(row[2])
-                phev_population = float(row[3])
-                new_vmt = float(row[4])
-                bev_vmt = float(row[5])
-                phev_vmt = float(row[6])
-                bev_inc_price = float(row[7])
-                phev_inc_price = float(row[8])
-                new_mpg = float(row[9])
+            self.total_population[year] = total_population
+            self.bev_inc_prices[year] = bev_inc_price
+            self.phev_inc_prices[year] = phev_inc_price
+            self.new_mpg[year] = new_mpg
+            self.new_vmt[year] = new_vmt
 
-                self.total_population[year] = total_population
-                self.bev_inc_prices[year] = bev_inc_price
-                self.phev_inc_prices[year] = phev_inc_price
-                self.new_mpg[year] = new_mpg
-                self.new_vmt[year] = new_vmt
-
-                self.bev_population[year] = bev_population
-                self.phev_population[year] = phev_population
-                self.population[year] = bev_population + phev_population
-                self.bev_vmt[year] = bev_vmt
-                self.phev_vmt[year] = phev_vmt
+            self.bev_population[year] = bev_population
+            self.phev_population[year] = phev_population
+            self.population[year] = bev_population + phev_population
+            self.bev_vmt[year] = bev_vmt
+            self.phev_vmt[year] = phev_vmt
 
 
     def process_gasprices(self, gasprice_data):
-        first_row = True
-
-        for row in gasprice_data:
-
-            if first_row:
-                first_row = False
-                pass
-            else:
-                year = int(row[0])
-                gas_price = float(row[1])
-                self.gas_prices[year] = gas_price
+        for row in gasprice_data.iterrows():
+            row = row[1].str.split(",").tolist()
+            year = int(row[0][0])
+            gas_price = float(row[0][1])
+            self.gas_prices[year] = gas_price
 
     def create_adoption_data(self, adoption_start, adoption_end, vehicle_lifetime):
 
