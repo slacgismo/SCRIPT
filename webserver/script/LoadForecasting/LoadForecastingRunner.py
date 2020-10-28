@@ -1,4 +1,4 @@
-from script.LoadForecasting.evloadmodel import EVLoadModel
+from script.LoadForecasting.EvLoadModel import EVLoadModel
 from script.LoadForecasting.configurations import FinalReport
 import numpy as np
 import pandas as pd
