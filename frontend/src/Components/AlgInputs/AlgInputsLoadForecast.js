@@ -46,6 +46,9 @@ class AlgInputsLoadForecast extends Component {
             open: false,
             counties: [],
             advancedSettings: false,
+            openAlert: false,
+            alertDuplicateProfileName: false,
+            alertDuplicateDbEntry: false,
             // Alg params
             configName: loadForecastDefaultParams.configName,
             aggregationLevel: loadForecastDefaultParams.aggregationLevel,
@@ -92,8 +95,6 @@ class AlgInputsLoadForecast extends Component {
                 result: result,
             });
         });
-
-        // this.useDefaultParameters();
     }
 
     handleClose = () => {
@@ -163,9 +164,14 @@ class AlgInputsLoadForecast extends Component {
                     console.log(response);
                     this.props.visualizeResults(await this.getResult());
                 }, (error) => {
+                    this.setState({ alertDuplicateDbEntry: true})
                     console.log(error);
+
                 });
             this.setState({ open: false });
+        }
+        else {
+            this.setState({ alertDuplicateProfileName: true})
         }
     };
 
@@ -181,12 +187,27 @@ class AlgInputsLoadForecast extends Component {
     }
 
     runAlgorithm = () => {
-        this.setState({ open: true });
+        // check if values add up to 1 for residential and battery capacity
+        let batteryMix = (parseFloat(this.state.smallBatt) + parseFloat(this.state.bigBatt) + parseFloat(this.state.allBatt));
+        let residential = (parseFloat(this.state.l1Percent) + parseFloat(this.state.resPercent) + parseFloat(this.state.rentPercent));
+        batteryMix = batteryMix.toFixed(1);
+        residential = residential.toFixed(1);
+        if (residential === "1.0" && batteryMix === "1.0") {
+            this.setState({ open: true });
+        } else {
+            this.setState({ openAlert: true});
+        }
     };
 
     advancedSettings = (e) => {
         e.preventDefault()
         this.setState({ advancedSettings: !this.state.advancedSettings})
+    };
+
+    handleAlertClose = () => {
+        this.setState({ openAlert: false });
+        this.setState({ alertDuplicateProfileName: false });
+        this.setState({ alertDuplicateDbEntry: false });
     };
 
 
@@ -222,6 +243,60 @@ class AlgInputsLoadForecast extends Component {
 
         return (
             <>
+                <Dialog
+                    open={this.state.openAlert}
+                    onClose={this.handleAlertClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Input Error"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Battery Capacity and Residential fields must add up to 1
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleAlertClose} color="primary" autoFocus>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog
+                    open={this.state.alertDuplicateProfileName}
+                    onClose={this.handleAlertClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Input Error"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Profile name already exists
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleAlertClose} color="primary" autoFocus>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog
+                    open={this.state.alertDuplicateDbEntry}
+                    onClose={this.handleAlertClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Input Error"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Set of values already exist
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleAlertClose} color="primary" autoFocus>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <fieldset class="field_set">
                     <legend>General Settings</legend>
                     <TextField
@@ -383,7 +458,6 @@ class AlgInputsLoadForecast extends Component {
                                 </option>
                             ))
                         }
-
                     </TextField>
                     <TextField
                         id="standard-resL2Smooth"
@@ -437,38 +511,43 @@ class AlgInputsLoadForecast extends Component {
                                     Week End
                                 </option>
                             </TextField>
-                            <TextField
-                                id="standard-resDailyUse"
-                                label="Residential"
-                                value={ this.state.resDailyUse }
-                                className={classes.textField}
-                                margin="normal"
-                                onChange={ e => this.update("resDailyUse", e) }
-                            />
-                            <TextField
-                                id="standard-workDailyUse"
-                                label="Workplace"
-                                value={ this.state.workDailyUse }
-                                className={classes.textField}
-                                margin="normal"
-                                onChange={ e => this.update("workDailyUse", e) }
-                            />
-                            <TextField
-                                id="standard-fastDailyUse"
-                                label="Fast"
-                                value={ this.state.fastDailyUse }
-                                className={classes.textField}
-                                margin="normal"
-                                onChange={ e => this.update("fastDailyUse", e) }
-                            />
-                            <TextField
-                                id="standard-publicL2DailyUse"
-                                label="Public Level 2"
-                                value={ this.state.publicL2DailyUse }
-                                className={classes.textField}
-                                margin="normal"
-                                onChange={ e => this.update("publicL2DailyUse", e) }
-                            />
+                            <br/>
+                            <br/>
+                            <fieldset class="field_set">
+                                <legend>Daily Usage Percentage</legend>
+                                <TextField
+                                    id="standard-resDailyUse"
+                                    label="Residential"
+                                    value={ this.state.resDailyUse }
+                                    className={classes.textField}
+                                    margin="normal"
+                                    onChange={ e => this.update("resDailyUse", e) }
+                                />
+                                <TextField
+                                    id="standard-workDailyUse"
+                                    label="Workplace"
+                                    value={ this.state.workDailyUse }
+                                    className={classes.textField}
+                                    margin="normal"
+                                    onChange={ e => this.update("workDailyUse", e) }
+                                />
+                                <TextField
+                                    id="standard-fastDailyUse"
+                                    label="Fast"
+                                    value={ this.state.fastDailyUse }
+                                    className={classes.textField}
+                                    margin="normal"
+                                    onChange={ e => this.update("fastDailyUse", e) }
+                                />
+                                <TextField
+                                    id="standard-publicL2DailyUse"
+                                    label="Public Level 2"
+                                    value={ this.state.publicL2DailyUse }
+                                    className={classes.textField}
+                                    margin="normal"
+                                    onChange={ e => this.update("publicL2DailyUse", e) }
+                                />
+                            </fieldset>
                         </fieldset>
                     : null
                 }
