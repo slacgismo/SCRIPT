@@ -13,6 +13,8 @@ import { countyRes } from "../Api/CountyData";
 import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
 import { serverUrl } from "../Api/server";
 import "./AlgInputs.css";
+import { checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
+
 
 const styles = theme => ({
     container: {
@@ -127,6 +129,10 @@ class AlgInputsLoadForecast extends Component {
         const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.configName}`);
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
         if(config_res.data.length === 0){
+            // starts progress bar to show loading to user
+            this.setState({ open: false });
+            this.props.loadingResults(true);
+
             // change var name
             const postData = {
                 configName: this.state.configName,
@@ -152,20 +158,23 @@ class AlgInputsLoadForecast extends Component {
                 workControl: this.state.workControl,
             };
 
-            const postUrl = `${ serverUrl }/load_forecast_runner`;
-
-            axios({
+            const lf_res = await axios({
+                url: `${ serverUrl }/load_forecast_runner`,
                 method: "post",
-                url: postUrl,
-                data: postData,
-            })
-                .then(async (response) => {
-                    console.log(response);
-                    this.props.visualizeResults(await this.getResult());
-                }, (error) => {
-                    console.log(error);
-                });
-            this.setState({ open: false });
+                data: postData
+            });
+            // celery-flower monitoring to check task status on cba tool
+            const task_id = lf_res.data.task_id;
+            let timeout;
+            const lf_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, async () => {
+                this.props.loadingResults(false);
+                this.props.visualizeResults(await this.getResult());
+            });
+            // if lf task failed, open alert
+            if (lf_status === "FAILURE") {
+                this.props.loadingResults(false);
+                this.handleAlertOpen();
+            }
         }
     };
 
