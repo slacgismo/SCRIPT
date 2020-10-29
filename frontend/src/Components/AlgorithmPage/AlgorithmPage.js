@@ -41,6 +41,7 @@ class AlgorithmPage extends Component {
                                     <AlgInputs
                                         category={ this.props.categoryProp }
                                         title={ this.props.title }
+                                        subtitle
                                         visualizeResults={ this.visualizeResults.bind(this) }
                                         loadingResults={ this.loadingResults.bind(this) }
                                         algInputs={ this.props.algInputs }

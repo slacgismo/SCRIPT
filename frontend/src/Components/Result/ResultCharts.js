@@ -16,6 +16,7 @@ export function ResultCharts(props) {
         <ResultChart
             key={ i }
             results={ result }
+            subtitle={}
             algId={ props.algId }
             graphWidth={ 400 }
             graphHeight={ 300 }

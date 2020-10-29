@@ -44,11 +44,15 @@ class ResultChart extends React.Component {
             "#911955",
         ];
         const { results } = this.props;
+        console.log("THESE PROPS")
+        console.log(this.props)
+        console.log(this.props.results)
+        console.log()
         const newItems = [];
         const newData = [];
         Object.keys(results).forEach((attr, i) => {
             newItems.push({
-                title: results[attr].yAxis,
+                title: results[attr].legendLabel,
                 color: colors[i],
             });
             newData.push({
@@ -62,8 +66,7 @@ class ResultChart extends React.Component {
             <div className="chart-grid">
                 {
                     /* title of chart */
-                    this.props.legendPosition === "none" &&
-                    <h5 className='chartTitle'>{ Object.keys(results)[0] }</h5>
+                    <h5 className='chartTitle'>{ this.props.results[Object.keys(this.props.results)[0]].yAxis }</h5>
                 }
 
                 {/* X Axis Label */}
