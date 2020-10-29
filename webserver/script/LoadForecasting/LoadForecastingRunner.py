@@ -38,12 +38,18 @@ def lf_runner(argv):
     parent_path = path.parent
 
     # save uncontrolled model before control is applied
+    if argv['aggregation_level'] == 'state':
+        county = "All California"
+    else:
+        county = argv['county']
+    
     if argv['week_day']:
         week_choice = 'weekday'
-        pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_' + week_choice + '_' + argv['county'] + '_county_uncontrolled_load.csv') 
+        pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_' + week_choice + '_' + county + '_county_uncontrolled_load.csv') 
+
     else:
         week_choice = 'weekend'
-        pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/BaseCase_2025_' + week_choice + '_' + argv['county'] + '_county_uncontrolled_load.csv')
+        pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/BaseCase_2025_' + week_choice + '_' + county + '_county_uncontrolled_load.csv')
     
     # apply control, controlled data prep before db
     model.apply_control(control_rule=argv['work_control'], segment='Work')
@@ -59,9 +65,9 @@ def lf_runner(argv):
 
     # save controlled model
     if argv['week_day']:
-        pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_'+ week_choice + '_' + argv['county'] + '_county_e19controlled_load.csv')
+        pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_'+ week_choice + '_' + county + '_county_e19controlled_load.csv')
     else:
-        pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/BaseCase_2025_'+ week_choice + '_' + argv['county'] + '_county_e19controlled_load.csv')
+        pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/BaseCase_2025_'+ week_choice + '_' + county + '_county_e19controlled_load.csv')
 
     upload_to_postgres_client = UploadToPostgres(
         total[:, 0],

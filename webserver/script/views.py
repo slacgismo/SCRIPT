@@ -30,7 +30,6 @@ class LoadControlRunner(APIView):
 
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
-        # TODO: requires an updated version of CBA Tool
         task = run_cba_tool.delay(request.data['county'], request.data['load_profile'])
         cba_response = {"task_id": task.id, "status": task.status}
         return Response(cba_response)
