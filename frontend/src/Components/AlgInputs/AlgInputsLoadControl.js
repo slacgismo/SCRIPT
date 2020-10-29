@@ -41,7 +41,7 @@ class AlgInputsLoadControl extends Component {
             result: null,
             county: "Santa Clara",
             rateStructures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
-            rate_structure: "PGEe19",
+            rateStructure: "PGEe19",
         };
     }
 
@@ -52,7 +52,7 @@ class AlgInputsLoadControl extends Component {
     runAlgorithm = async () => {
         const postData = {
             county: this.state.county,
-            rate_structure: this.state.rate_structure,
+            rate_structure: this.state.rateStructure,
         };
         const postUrl = `${ serverUrl }/load_control_runner`;
 
