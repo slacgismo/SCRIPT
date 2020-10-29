@@ -52,7 +52,7 @@ class AlgInputsLoadControl extends Component {
     runAlgorithm = async () => {
         const postData = {
             county: this.state.county,
-            rate_structure: this.state.rateStructure,
+            rateStructure: this.state.rateStructure,
         };
         const postUrl = `${ serverUrl }/load_control_runner`;
 

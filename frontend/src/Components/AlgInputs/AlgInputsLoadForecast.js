@@ -161,11 +161,9 @@ class AlgInputsLoadForecast extends Component {
                 data: postData,
             })
                 .then(async (response) => {
-                    console.log(response);
                     this.props.visualizeResults(await this.getResult());
                 }, (error) => {
                     this.setState({ alertDuplicateDbEntry: true})
-                    console.log(error);
 
                 });
             this.setState({ open: false });
