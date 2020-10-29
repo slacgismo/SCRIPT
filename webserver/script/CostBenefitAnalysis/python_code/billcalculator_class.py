@@ -188,8 +188,5 @@ class BillCalculator(object):
                                 + weekend_energy_charge \
                                 + total_monthly_max_charge \
                                 + fixed_monthly_charges + fixed_daily_charges
-                                # + total_onpeak_max_charge \
-                                # + total_partpeak_max_charge1 \
-                                # + total_partpeak_max_charge2 \
 
 

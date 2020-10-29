@@ -45,10 +45,6 @@ class Chargers(object):
         self.workplace_l2_cost = {}
         self.dcfc_cost = {}
 
-        # self.additional_workplace_needed = {}
-        # self.additional_workplace_newsales = {}
-        # self.additional_workplace_replacements = {}
-        # self.additional_workplace_sales = {}
         self.get_port_population(charger_data)
 
 
@@ -160,7 +156,6 @@ class Chargers(object):
                 if include_static:
 
                     self.workplace_evses[year] += self.static_workplace_chargers[year]
-                    # self.workplace_evses[year] += 0
 
             except KeyError:
                 self.workplace_evses[year] = 0
@@ -169,7 +164,6 @@ class Chargers(object):
         for year in range(start_year, end_year+1):
             if include_static:
                 try:
-                    # self.public_l2_evses[year] = self.l2_evses[year] - self.static_workplace_chargers[year]
                     self.static_workplace_proportion[year] = old_div(self.static_workplace_chargers[year], self.l2_evses[year])
                     self.public_l2_evses[year] = self.l2_evses[year] * (1 - self.static_workplace_proportion[year])
                 except:
