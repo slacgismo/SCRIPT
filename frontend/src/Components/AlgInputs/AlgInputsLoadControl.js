@@ -39,7 +39,7 @@ class AlgInputsLoadControl extends Component {
         this.state = {
             counties: ["All Counties", "Alameda", "Contra Costa", "Marin", "Orange", "Sacramento", "San Francisco", "San Mateo", "Santa Clara", "Solano"],
             result: null,
-            county: 'Santa Clara',
+            county: "Santa Clara",
             rateStructures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
             rateStructure: "PGEe19",
         };
@@ -104,7 +104,7 @@ class AlgInputsLoadControl extends Component {
                     select
                     value={ this.state.rateStructure }
                     className={classes.textField}
-                    helperText="rateStructure"
+                    helperText="Rate Structure"
                     SelectProps={{
                         native: true,
                         MenuProps: {

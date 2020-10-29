@@ -23,7 +23,7 @@ from script.tasks import run_cba_tool
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
         ''' currently only runs with default data '''
-        item_controlled = request.data["county"] + "_controlled_" + request.data["rate_structure"] + "_200_outputs.npy"
+        item_controlled = request.data["county"] + "_controlled_" + request.data["rateStructure"] + "_200_outputs.npy"
         item_uncontrolled = request.data["county"] + "_uncontrolled_200_inputs.npy"
         sca_response = {"controlled_load" : getScaData(item_controlled), "uncontrolled_load" : getScaData(item_uncontrolled)}
         return Response(json.dumps(sca_response))
