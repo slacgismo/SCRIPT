@@ -139,7 +139,7 @@ class AlgInputsCBA extends Component {
             const task_id = cba_res.data.task_id;
             // celery-flower monitoring to check task status on cba tool
             let timeout;
-            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 100, async () => {
+            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, async () => {
                 this.props.loadingResults(false);
                 this.props.visualizeResults(await this.getCBAResult());
             });
@@ -155,10 +155,10 @@ class AlgInputsCBA extends Component {
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
         const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
         const dataCBA = {dataValues: []};
-        const dataCBASub = [];          
+        const dataCBASub = [];
         for (var i = 0; i < filteredRes.length; i++) {
             const dataCBAUnit = filteredRes[i];
-            dataCBAUnit.values = (filteredRes[i].values); 
+            dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
             dataCBASub.push(dataCBAUnit);
         }
         dataCBA.dataValues = dataCBASub;
@@ -182,6 +182,10 @@ class AlgInputsCBA extends Component {
     componentDidUpdate(prevProps, prevState) {
         // if different dropdown menu category selected (e.g. gas consumption)
         if (prevProps.category !== this.props.category) {
+            this.updateCharts();
+        }
+
+        if (prevProps.controlType !== this.props.controlType) {
             this.updateCharts();
         }
 

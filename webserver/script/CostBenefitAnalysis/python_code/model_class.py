@@ -147,7 +147,8 @@ class ModelInstance(object):
 
         aggregate_load = {}
         self.peak_demand_5to9_pm = {}
-        typenames = ['avg_weekday', 'avg_weekend', 'peak_shape']
+        # typenames = ['avg_weekday', 'avg_weekend', 'peak_shape']
+        typenames = ['avg_weekday']
         for year in self.model_years:
             aggregate_load[year] = {}
             self.peak_demand_5to9_pm[year] = 0
@@ -176,10 +177,10 @@ class ModelInstance(object):
             [self.workplace_loadprofile, self.res_loadprofile, self.publicl2_loadprofile, self.dcfc_loadprofile]:
             data = [['Type', 'Hour'] + self.model_years]
             aggregate_data = [['Type', 'Hour'] + self.model_years]
-
-            for typename, dictionary in [('avg_weekday', loadprofile.avg_weekday),
-                                         ('avg_weekend', loadprofile.avg_weekend),
-                                         ('peak_shape', loadprofile.peak_shape)]:
+            # for typename, dictionary in [('avg_weekday', loadprofile.avg_weekday),
+            #                              ('avg_weekend', loadprofile.avg_weekend),
+            #                              ('peak_shape', loadprofile.peak_shape)]:
+            for typename, dictionary in [('avg_weekday', loadprofile.avg_weekday)]:
                 for hour in range(24):
                     newrow = [typename, hour] + [dictionary[year][hour] for year in self.model_years]
                     data.append(newrow)
@@ -441,8 +442,6 @@ class ModelInstance(object):
                         self.work_revenue[year] += bill_calculator.annual_bill[year]
                     else:
                         self.work_revenue[year] = bill_calculator.annual_bill[year]
-
-                    # print year, bill_calculator.weekday_energy_bill[year] + bill_calculator.weekend_energy_bill[year]
 
                 if charger_name == 'Public L2':
                     if year in list(self.publicl2_revenue.keys()):
