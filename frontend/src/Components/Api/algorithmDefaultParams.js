@@ -6,15 +6,13 @@ export const loadForecastDefaultParams = {
     countyChoice: "Santa Clara",
     fastPercent: 0.1,
     workPercent: 0.2,
-    resPercent: 0.7,
+    resPercent: 0.2,
     l1Percent: 0.5,
     publicL2Percent: 0.0,
-
     resDailyUse: 1.0,
     workDailyUse: 1.0,
     fastDailyUse: 0.5,
-    rentPercent: 0.4,
-
+    rentPercent: 0.3,
     resL2Smooth: true,
     weekDay: true,
     publicL2DailyUse: 0.33,
