@@ -137,17 +137,16 @@ class AlgInputsCBA extends Component {
             });
             // celery-flower monitoring to check task status on cba tool
             const task_id = cba_res.data.task_id;
-            // celery-flower monitoring to check task status on cba tool
             let timeout;
-            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 100, async () => {
-                this.props.loadingResults(false);
-                this.props.visualizeResults(await this.getCBAResult());
+            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 100, async (status) => {
+                if (status === "SUCCESS") {
+                    this.props.loadingResults(false);
+                    this.props.visualizeResults(await this.getCBAResult());
+                } else {
+                    this.props.loadingResults(false);
+                    this.handleAlertOpen();
+                }
             });
-            // if cba_tool task failed, open alert
-            if (cba_status === "FAILURE") {
-                this.props.loadingResults(false);
-                this.handleAlertOpen();
-            }
         }
     };
 

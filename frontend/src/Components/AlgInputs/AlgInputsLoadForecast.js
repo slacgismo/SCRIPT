@@ -130,10 +130,6 @@ class AlgInputsLoadForecast extends Component {
         const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.configName}`);
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
         if(config_res.data.length === 0){
-            // starts progress bar to show loading to user
-            this.setState({ open: false });
-            this.props.loadingResults(true);
-
             // change var name
             const postData = {
                 configName: this.state.configName,
@@ -158,27 +154,28 @@ class AlgInputsLoadForecast extends Component {
                 timerControl: this.state.timerControl,
                 workControl: this.state.workControl,
             };
+            this.setState({ open: false });
+            this.props.loadingResults(true);
 
             const lf_res = await axios({
                 url: `${ serverUrl }/load_forecast_runner`,
                 method: "post",
                 data: postData
             });
-            // celery-flower monitoring to check task status on cba tool
+
             const task_id = lf_res.data.task_id;
             let timeout;
-            const lf_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, async () => {
-                this.props.loadingResults(false);
-                this.props.visualizeResults(await this.getResult());
+            const lf_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, async (status) => {
+                if(status === "SUCCESS") {
+                    this.props.loadingResults(false);
+                    this.props.visualizeResults(await this.getResult());
+                } else {
+                    this.props.loadingResults(false);
+                    this.setState({ alertDuplicateDbEntry: true});
+                }
             });
-            // if lf task failed, open alert
-            if (lf_status === "FAILURE") {
-                this.props.loadingResults(false);
-                this.setState({ alertDuplicateDbEntry: true});
-            }
-        }
-        else {
-            this.setState({ alertDuplicateProfileName: true})
+        } else {
+            this.setState({ alertDuplicateProfileName: true});
         }
     };
 
