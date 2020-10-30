@@ -2,7 +2,7 @@
 import axios from "axios";
 import continuousColorLegend from "react-vis/dist/legends/continuous-color-legend";
 
-export function processResults(resultArr, labelArr) {
+export function processResults(resultArr) {
     const data_to_visualize_all = [];
     let isTimeSeries = false;
 
@@ -17,8 +17,6 @@ export function processResults(resultArr, labelArr) {
     }
 
     for (const result of resultArr) {
-        console.log("FIRST RESULT")
-        console.log(result)
         const data_to_visualize = {};
 
         for (const field of Object.keys(result)) {
