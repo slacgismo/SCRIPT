@@ -56,26 +56,27 @@ class LoadProfile(object):
 
         scalar can be used to scale the load profile down to model partitioned load profiles.
         """
-
         first_row = True
         years = []
+        count = 0
 
-        for row in data:
+        for row in data.iterrows():
+            row = row[1].str.split(",").tolist()
 
             if first_row:
-                for element in row[1:]:
+                for element in row[0][1:]:
                     year_str = element.replace('MW_', '')
                     year = int(year_str)
                     years.append(year)
-                first_row = False
                 self.annual_load = {year: {} for year in years}
+                first_row = False
 
             else:
-                index = int(row[0])
+                index = int(row[0][0])
 
-                for i in range(len(row)-1):
+                for i in range(len(row[0])-1):
                     year = years[i]
-                    value = float(row[i+1])
+                    value = float(row[0][i+1])
                     self.annual_load[year][index] = value * scalar
 
 
@@ -116,7 +117,8 @@ class LoadProfile(object):
                 self.avg_weekend[year] = {i: old_div(weekend_sum[i], weekend_count[i]) for i in range(24)}
 
             except KeyError:
-                continue
+                self.avg_weekday[year] = {i: 0 for i in range(24)}
+                self.avg_weekend[year] = {i: 0 for i in range(24)}
 
     def get_peak_day(self, timesteps, model_years):
 
@@ -124,18 +126,16 @@ class LoadProfile(object):
 
             try:
                 peak_timestep = helpers.get_max_index(self.annual_load[year])
-
                 month = timesteps[peak_timestep][year]['month']
                 dayofmonth = timesteps[peak_timestep][year]['dayofmonth']
-
                 peak_timesteps = sorted([i for i in list(timesteps.keys()) if timesteps[i][year]['month'] == month
                     and timesteps[i][year]['dayofmonth'] == dayofmonth])
-
                 self.peak_shape[year] = {i: self.annual_load[year][peak_timesteps[i]] for i in range(24)}
                 self.peak_isweekday[year] = timesteps[peak_timesteps[0]][year]['is_weekday']
 
             except KeyError:
-                continue
+                self.peak_shape[year] = {i: 0 for i in range(24)}
+                self.peak_isweekday[year] = timesteps[peak_timesteps[0]][year]['is_weekday']
 
 
     def expand_loadprofiles(self, model_years, vehicles):
@@ -215,6 +215,7 @@ def generate_annual_stream_from_load(load_profile, energy_marginal_cost, capacit
     total_mc = {}
     energy_supply_cost = {}
     energy_cost = {}
+    ghg_cost = {}
     capacity_cost = {}
     distribution_cost = {}
     transmission_cost = {}
@@ -229,6 +230,7 @@ def generate_annual_stream_from_load(load_profile, energy_marginal_cost, capacit
         total_mc[year] = {}
         energy_supply_cost[year] = 0
         energy_cost[year] = 0
+        ghg_cost[year] = 0
         capacity_cost[year] = 0
         distribution_cost[year] = 0
         transmission_cost[year] = 0
@@ -243,6 +245,7 @@ def generate_annual_stream_from_load(load_profile, energy_marginal_cost, capacit
             total_mc[year][hour] = energy_marginal_cost[year][hour] + capacity_marginal_cost[year][hour]
             energy_supply_cost[year] += total_mc[year][hour] * load_profile[year][hour]
             energy_cost[year] += load_profile[year][hour] * energy_marginal_cost[year][hour]
+            # ghg_cost[year] += load_profile[year][hour] * ghg_marginal_cost[year][hour]
             capacity_cost[year] += load_profile[year][hour] * capacity_marginal_cost[year][hour]
             distribution_cost[year] += load_profile[year][hour] * distribution_marginal_cost[year][hour]
 
@@ -253,6 +256,6 @@ def generate_annual_stream_from_load(load_profile, energy_marginal_cost, capacit
             SOX_emissions_dict[year] += load_profile[year][hour] * SOX_emissions[year][hour]
             VOC_emissions_dict[year] += load_profile[year][hour] * VOC_emissions[year][hour]
 
-    return energy_supply_cost, distribution_cost, transmission_cost, energy_cost, capacity_cost,\
+    return energy_supply_cost, distribution_cost, transmission_cost, energy_cost, ghg_cost,  capacity_cost,\
            CO2_emissions_dict, NOX_emissions_dict, PM10_emissions_dict,\
            SOX_emissions_dict, VOC_emissions_dict

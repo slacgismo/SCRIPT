@@ -1,6 +1,5 @@
 // Helper functions
 import axios from "axios";
-import continuousColorLegend from "react-vis/dist/legends/continuous-color-legend";
 
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
@@ -29,8 +28,8 @@ export function processResults(resultArr) {
             ));
             data_to_visualize[field] = {
                 legendLabel: `${field}`.replace(/_/g, " "),
-                unit: "Power (kW)",
                 xAxis: isTimeSeries ? "Time" : "Year",
+                unit: "Power (kW)",
                 data: dataFormatted,
             };
         }

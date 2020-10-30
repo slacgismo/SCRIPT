@@ -1,8 +1,0 @@
-Load Profile,Residential Flat Rate,Residential TOU Rate 1,Residential TOU Rate 2,Residential EV TOU Rate,Workplace Building Rate,Public Building Rate
-Residential TOU Charging Load 1,0,1,0,0,0,0
-Residential Flat Rate Charging Load,1,0,0,0,0,0
-Residential TOU Charging Load 2,0,0,1,0,0,0
-Residential EV TOU Charging Load,0,0,0,1,0,0
-Public Charging Load,0,0,0,0,0,1
-Workplace Charging Load,0,0,0,0,1,0
-DCFC Charging Load,0,0,0,0,1,0

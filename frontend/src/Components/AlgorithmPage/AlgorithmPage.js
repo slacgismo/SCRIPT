@@ -47,6 +47,7 @@ class AlgorithmPage extends Component {
                                 compo={
                                     <AlgInputs
                                         category={ this.props.categoryProp }
+                                        controlType = { this.props.controlType }
                                         title={ this.props.title }
                                         visualizeResults={ this.visualizeResults.bind(this) }
                                         setChartTitles={ this.setChartTitles.bind(this) }
@@ -68,7 +69,6 @@ class AlgorithmPage extends Component {
                                 this.state.loading === false &&
                                 <Content
                                     text={`${ this.props.title } Results`}
-                                    // 
                                     textField = {this.props.compo}
                                     compo={              
                                         <ResultCharts

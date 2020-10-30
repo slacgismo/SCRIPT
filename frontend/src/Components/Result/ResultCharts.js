@@ -11,7 +11,7 @@ export function ResultCharts(props) {
     
     // If no results, no legend is needed.
     const legendPosition = !props.results.length ? "none" : "right";
-    const chartTitles = props.chartTitles ? props.chartTitles : [];
+
     const resultCharts = props.results.map((result, i) => (
         <ResultChart
             key={ i }
@@ -20,7 +20,7 @@ export function ResultCharts(props) {
             graphWidth={ 400 }
             graphHeight={ 300 }
             legendPosition={ legendPosition }
-            chartTitle={ chartTitles } 
+            chartTitle={ props.chartTitles[i] } 
         />
     ));
     

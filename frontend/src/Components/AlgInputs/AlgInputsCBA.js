@@ -50,7 +50,8 @@ class AlgInputsCBA extends Component {
             loadForecastResults: [],
             processedLoadForecastResults: [],
             shouldRender: false,
-            openAlert: false
+            openAlert: false,
+            chartTitles: []
         };
     }
 
@@ -68,8 +69,8 @@ class AlgInputsCBA extends Component {
                     }
                     this.setState({ profileData: profiles, profileNames: profileNames });
                 }
-            });
-        this.getLoadForecastData();
+            this.getLoadForecastData();
+        })
     }
 
     getLoadForecastData = async() => {
@@ -107,13 +108,14 @@ class AlgInputsCBA extends Component {
 
     setLoadForecastResults = () => {
         const processedLoadForecastResults = processResults(this.state.loadForecastResults);
-        this.props.setChartTitles([`${this.state.configName}: Uncontrolled`, `${this.state.configName}: ${this.state.workControl} Controlled`]);
+        this.setState({ chartTitles: [`${this.state.profileName}: Uncontrolled`, `${this.state.profileName}: Controlled`] });
         this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
     };
 
     update = (field, event) => {
         this.setState({ [field]: event.currentTarget.value });
     };
+
 
     findProfile = async () => {
         // check for corresponding CBA input table for current load forecast profile
@@ -159,7 +161,7 @@ class AlgInputsCBA extends Component {
         const dataCBASub = [];
         for (var i = 0; i < filteredRes.length; i++) {
             const dataCBAUnit = filteredRes[i];
-            dataCBAUnit.values = (filteredRes[i].values);
+            dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
             dataCBASub.push(dataCBAUnit);
         }
         dataCBA.dataValues = dataCBASub;
@@ -186,6 +188,10 @@ class AlgInputsCBA extends Component {
             this.updateCharts();
         }
 
+        if (prevProps.controlType !== this.props.controlType) {
+            this.updateCharts();
+        }
+
         // if different load forecast profile selected, change load forecast chart
         if (prevState.profileName !== this.state.profileName) {
             this.getLoadForecastData();
@@ -200,6 +206,7 @@ class AlgInputsCBA extends Component {
 
     render() {
         const { classes } = this.props;
+        console.log(this.state.chartTitles)
         return (
             <div>
                 <Dialog
