@@ -23,15 +23,14 @@ from script.tasks import run_cba_tool
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
         ''' currently only runs with default data '''
-        item_controlled = request.data["county"] + "_controlled_" + request.data["rate_structure"] + "_200_outputs.npy"
+        item_controlled = request.data["county"] + "_controlled_" + request.data["rateStructure"] + "_200_outputs.npy"
         item_uncontrolled = request.data["county"] + "_uncontrolled_200_inputs.npy"
         sca_response = {"controlled_load" : getScaData(item_controlled), "uncontrolled_load" : getScaData(item_uncontrolled)}
         return Response(json.dumps(sca_response))
 
 class CostBenefitAnalysisRunner(APIView):
     def post(self, request, format=None):
-        # TODO: requires an updated version of CBA Tool
-        task = run_cba_tool.delay(request.data['county'], request.data['load_profile'])
+        task = run_cba_tool.delay(request.data["county"], request.data["load_profile"])
         cba_response = {"task_id": task.id, "status": task.status}
         return Response(cba_response)
 
