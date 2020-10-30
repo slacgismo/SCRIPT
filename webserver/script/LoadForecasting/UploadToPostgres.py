@@ -1,7 +1,10 @@
-import boto3
 import json
+import boto3
+import datetime
 import psycopg2
 from django.conf import settings
+from script.models.algorithms import LoadForecast
+from script.models.config import LoadForecastConfig
 
 
 class UploadToPostgres():
@@ -160,6 +163,14 @@ class UploadToPostgres():
         work_control
     ):
 
+        db_length = LoadForecastConfig.objects.count()
+
+        if (db_length >= 4):
+            oldest_profile = LoadForecastConfig.objects.order_by('created_at')[0]
+            oldest_profile.loadforecast_set.all().delete()
+            oldest_profile.delete()
+
+
         conn = psycopg2.connect(
             host=self.db_host,
             dbname=self.postgres_db,
@@ -174,13 +185,14 @@ class UploadToPostgres():
             " (config_name, aggregation_level, num_evs, choice," + \
             " fast_percent, work_percent, res_percent, l1_percent, public_l2_percent," + \
             " res_daily_use, work_daily_use, fast_daily_use, rent_percent, res_l2_smooth," + \
-            " week_day, publicl2_daily_use, mixed_batteries, timer_control, work_control)" + \
-            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            " week_day, publicl2_daily_use, mixed_batteries, timer_control, work_control, created_at)" + \
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 str(config_name), str(aggregation_level), str(int(num_evs)), str(county_choice), str(fast_percent), \
                 str(work_percent), str(res_percent), str(l1_percent), str(publicl2_percent), str(res_daily_use), \
                 str(work_daily_use), str(fast_daily_use), str(rent_percent), str(res_l2_smooth), str(week_day), \
-                str(publicl2_daily_use), str(mixed_batteries), str(timer_control), str(work_control)
+                str(publicl2_daily_use), str(mixed_batteries), str(timer_control), str(work_control), \
+                datetime.datetime.now()
             )
         )
 
@@ -243,6 +255,8 @@ class UploadToPostgres():
                 json.dumps(work_load_list_controlled), json.dumps(public_l2_load_list_controlled), json.dumps(total_load_list_controlled)
             )
         )
+
+
         # Make the changes to the database persistent
         conn.commit()
 
