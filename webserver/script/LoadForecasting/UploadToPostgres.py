@@ -165,12 +165,10 @@ class UploadToPostgres():
 
         # replaces the oldest profile when profile count = 4
         profile_count = LoadForecastConfig.objects.count()
-
         if (profile_count >= 4):
             oldest_profile = LoadForecastConfig.objects.order_by('created_at')[0]
             oldest_profile.loadforecast_set.all().delete()
             oldest_profile.delete()
-
 
         conn = psycopg2.connect(
             host=self.db_host,
@@ -179,7 +177,6 @@ class UploadToPostgres():
             password=self.postgres_password,
             port='5432'
         )
-
         cur = conn.cursor()
 
         cur.execute("INSERT INTO " + self.config_table_name + \
@@ -214,7 +211,6 @@ class UploadToPostgres():
             self.total_load_uncontrolled,
             )
 
-
         cur.execute("INSERT INTO " + self.table_name + \
             " (config, controlled, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
             " work_load, public_l2_load, total_load)" + \
@@ -244,7 +240,6 @@ class UploadToPostgres():
             self.total_load_controlled,
             )
 
-
         cur.execute("INSERT INTO " + self.table_name + \
             " (config, controlled, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
             " work_load, public_l2_load, total_load)" + \
@@ -256,7 +251,6 @@ class UploadToPostgres():
                 json.dumps(work_load_list_controlled), json.dumps(public_l2_load_list_controlled), json.dumps(total_load_list_controlled)
             )
         )
-
 
         # Make the changes to the database persistent
         conn.commit()
