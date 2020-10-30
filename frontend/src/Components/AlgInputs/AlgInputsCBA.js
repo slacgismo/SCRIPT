@@ -193,7 +193,7 @@ class AlgInputsCBA extends Component {
         if (prevState.profileName !== this.state.profileName) {
             this.getLoadForecastData();
         }
-    };
+    }
 
     uploadFile = () => {
         this.setState({ openUpload: true});

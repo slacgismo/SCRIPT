@@ -1,6 +1,5 @@
 // Helper functions
 import axios from "axios";
-import continuousSizeLegend from "react-vis/dist/legends/continuous-size-legend";
 
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
@@ -87,4 +86,4 @@ export async function exponentialBackoff (checkStatus, task_id, timeout, max, de
             return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, successCallback, failureCallback);
         }, delay);
     }
-};
+}
