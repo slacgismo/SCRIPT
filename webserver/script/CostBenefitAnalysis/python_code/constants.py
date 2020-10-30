@@ -10,12 +10,14 @@ inflation = 0.022
 
 charger_name_to_population_attr = {
     'Residential L2': 'res_evses',
+    'Residential L1': 'res_evses',
     'Public L2': 'public_l2_evses',
     'DCFC': 'dcfc_evses',
     'Workplace L2': 'workplace_evses'
 }
 
 charger_name_conversion = {'Residential L2': 'Res',
+                           'Residential L1': 'Res',
                            'Workplace L2': 'Work',
                            'Public L2': 'L2',
                            'DCFC': 'DC'}
@@ -46,6 +48,6 @@ demand_charge_weighting = {
     22: 0.03128368,
     23: 0.029082743}
 
-directory_list = ['CASE_DIR', 'DATA_DIR', 'CONFIG_DIR', 'RATES_DIR', 'LOADPROFILE_DIR', 'TESTFILE_DIR', 'RESULTS_DIR']
+directory_list = ['LOCAL_CASE_DIR','RESULTS_DIR']
 
 MMBTU_per_gal = 120476

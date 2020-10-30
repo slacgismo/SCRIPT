@@ -45,11 +45,6 @@ class Chargers(object):
         self.workplace_l2_cost = {}
         self.dcfc_cost = {}
 
-        # self.additional_workplace_needed = {}
-        # self.additional_workplace_newsales = {}
-        # self.additional_workplace_replacements = {}
-        # self.additional_workplace_sales = {}
-
         self.get_port_population(charger_data)
 
 
@@ -57,16 +52,11 @@ class Chargers(object):
 
         first_row = True
 
-        for row in charger_data:
-
-            if first_row:
-                first_row = False
-                pass
-
-            else:
-                year = int(row[0])
-                ports = float(row[1])
-                self.port_population[year] = ports
+        for row in charger_data.iterrows():
+            row = row[1].str.split(",").tolist()
+            year = int(row[0][0])
+            ports = float(row[0][1])
+            self.port_population[year] = ports
 
 
     def get_res_sales(self, vehicles, start_year, end_year):
@@ -166,7 +156,6 @@ class Chargers(object):
                 if include_static:
 
                     self.workplace_evses[year] += self.static_workplace_chargers[year]
-                    # self.workplace_evses[year] += 0
 
             except KeyError:
                 self.workplace_evses[year] = 0
@@ -175,7 +164,6 @@ class Chargers(object):
         for year in range(start_year, end_year+1):
             if include_static:
                 try:
-                    # self.public_l2_evses[year] = self.l2_evses[year] - self.static_workplace_chargers[year]
                     self.static_workplace_proportion[year] = old_div(self.static_workplace_chargers[year], self.l2_evses[year])
                     self.public_l2_evses[year] = self.l2_evses[year] * (1 - self.static_workplace_proportion[year])
                 except:
@@ -219,6 +207,50 @@ class Chargers(object):
             self.dcfc_new_sales[year] = new_sales
             self.dcfc_replacements[year] = replacements
 
+    def get_pro_lite_public_l2_sales(self, start_year, end_year, vehicle_lifetime, vehicle_sales, public_EVSE_ratio):
+
+        for year in range(start_year, end_year+1):
+
+            if year == start_year:
+                try:
+                    new_sales = vehicle_sales[year] / public_EVSE_ratio
+                except ZeroDivisionError:
+                    new_sales = 0
+
+            else:
+                new_sales = self.public_l2_evses[year] - self.public_l2_evses[year-1]
+
+            try:
+                replacements = self.public_l2_sales[year - vehicle_lifetime]
+            except KeyError:
+                replacements = 0.0
+
+            self.public_l2_sales[year] = new_sales + replacements
+            self.public_l2_new_sales[year] = new_sales
+            self.public_l2_replacements[year] = replacements
+
+    def get_pro_lite_dcfc_sales(self, start_year, end_year, vehicle_lifetime, vehicle_sales, DCFC_EVSE_ratio):
+
+        for year in range(start_year, end_year+1):
+
+            if year == start_year:
+                try:
+                    new_sales = vehicle_sales[year] / DCFC_EVSE_ratio
+                except ZeroDivisionError:
+                    new_sales = 0
+            else:
+                new_sales = self.dcfc_evses[year] - self.dcfc_evses[year-1]
+
+            try:
+                replacements = self.dcfc_sales[year - vehicle_lifetime]
+            except KeyError:
+                replacements = 0.0
+
+            self.dcfc_sales[year] = new_sales + replacements
+            self.dcfc_new_sales[year] = new_sales
+            self.dcfc_replacements[year] = replacements
+
+
     def print_populations(self, years):
 
         for year in years:
@@ -240,9 +272,18 @@ class Chargers(object):
                 self.res_evse_sales[year] = 0
 
         for year in model_years:
-            self.public_l2_evses[year] = old_div(vehicles.population[year], public_ratio)
-            self.workplace_evses[year] = old_div(vehicles.population[year], work_ratio)
-            self.dcfc_evses[year] = old_div(vehicles.population[year], dcfc_ratio)
+            try:
+                self.public_l2_evses[year] = old_div(vehicles.population[year], public_ratio)
+            except ZeroDivisionError:
+                self.public_l2_evses[year] = 0
+            try:
+                self.workplace_evses[year] = old_div(vehicles.population[year], work_ratio)
+            except ZeroDivisionError:
+                self.workplace_evses[year] = 0
+            try:
+                self.dcfc_evses[year] = old_div(vehicles.population[year], dcfc_ratio)
+            except ZeroDivisionError:
+                self.dcfc_evses[year] = 0
 
         # Get new sales and replacements
 
@@ -278,43 +319,61 @@ class Chargers(object):
             self.workplace_evse_new_sales[year] = new_sales
             self.workplace_evse_replacements[year] = replacements
 
+    def get_pro_lite_workplace_l2_sales(self, start_year, end_year, vehicle_lifetime, vehicle_sales, work_EVSE_ratio):
+
+        for year in range(start_year, end_year+1):
+
+            if year == start_year:
+                try:
+                    new_sales = vehicle_sales[year] / work_EVSE_ratio
+                except ZeroDivisionError:
+                    new_sales = 0
+            else:
+                new_sales = self.workplace_evses[year] - self.workplace_evses[year-1]
+
+            try:
+                replacements = self.workplace_evse_sales[year - vehicle_lifetime]
+            except KeyError:
+                replacements = 0.0
+
+            self.workplace_evse_sales[year] = new_sales + replacements
+            self.workplace_evse_new_sales[year] = new_sales
+            self.workplace_evse_replacements[year] = replacements
+
     def get_base_cost(self,
                         model_years,
                         homel2_startprice,
-                        homel2_startyear,
                         homel2_reduction,
                         workl2_startprice,
-                        workl2_startyear,
                         workl2_reduction,
                         publicl2_startprice,
-                        publicl2_startyear,
                         publicl2_reduction,
                         dcfc_startprice,
-                        dcfc_startyear,
                         dcfc_reduction):
+
+        start_year = min(model_years)
 
         for year in model_years:
 
             try:
                 homel2_sales = self.res_evse_sales[year]
 
-                homel2_price = homel2_startprice * (1-homel2_reduction) ** (year - homel2_startyear)
+                homel2_price = homel2_startprice * (1-homel2_reduction) ** (year - start_year)
                 homel2_cost = homel2_sales * homel2_price
                 self.res_cost[year] = homel2_cost
 
                 workl2_sales = self.workplace_evse_sales[year]
-                workl2_price = workl2_startprice * (1-workl2_reduction) ** (year - workl2_startyear)
+                workl2_price = workl2_startprice * (1-workl2_reduction) ** (year - start_year)
                 workl2_cost = workl2_sales * workl2_price
                 self.workplace_l2_cost[year] = workl2_cost
 
                 publicl2_sales = self.public_l2_sales[year]
-                publicl2_price = publicl2_startprice * (1-publicl2_reduction) ** (year - publicl2_startyear)
+                publicl2_price = publicl2_startprice * (1-publicl2_reduction) ** (year - start_year)
                 publicl2_cost = publicl2_sales * publicl2_price
                 self.public_l2_cost[year] = publicl2_cost
 
-
                 dcfc_sales = self.dcfc_sales[year]
-                dcfc_price = dcfc_startprice * (1-dcfc_reduction) ** (year - dcfc_startyear)
+                dcfc_price = dcfc_startprice * (1-dcfc_reduction) ** (year - start_year)
                 dcfc_cost = dcfc_sales * dcfc_price
                 self.dcfc_cost[year] = dcfc_cost
 
@@ -324,35 +383,36 @@ class Chargers(object):
                 self.public_l2_cost[year] = 0.
                 self.dcfc_cost[year] = 0
 
-    def get_base_cost_with_replacement(self, model_years, start_year, homel2_makeready, homel2_evse_cost,
+    def get_base_cost_with_replacement(self, model_years, homel2_makeready, homel2_evse_cost,
                                        homel2_reduction, workl2_makeready, workl2_evse_cost,
                                        workl2_reduction, publicl2_makeready, publicl2_evse_cost,
                                        publicl2_reduction, dcfc_makeready, dcfc_evse_cost, dcfc_cluster_size,
-                                       dcfc_reduction):
+                                       dcfc_reduction, inflation_rate):
 
+        start_year = min(model_years)
         for year in model_years:
 
             try:
 
-                homel2_evse_price = homel2_evse_cost * (1-homel2_reduction) ** (year - start_year)
+                homel2_evse_price = homel2_evse_cost * (1-homel2_reduction + inflation_rate) ** (year - start_year)
                 homel2_cost = self.res_evse_new_sales[year] * (homel2_makeready + homel2_evse_price) + \
                               self.res_evse_replacements[year] * homel2_evse_price
 
                 self.res_cost[year] = homel2_cost
 
-                workl2_evse_price = workl2_evse_cost * (1-workl2_reduction) ** (year - start_year)
+                workl2_evse_price = workl2_evse_cost * (1-workl2_reduction + inflation_rate) ** (year - start_year)
                 workl2_cost = self.workplace_evse_new_sales[year] * (workl2_makeready + workl2_evse_price) + \
                               self.workplace_evse_replacements[year] * workl2_evse_price
 
                 self.workplace_l2_cost[year] = workl2_cost
 
-                publicl2_evse_price = publicl2_evse_cost * (1-publicl2_reduction) ** (year - start_year)
+                publicl2_evse_price = publicl2_evse_cost * (1-publicl2_reduction + inflation_rate) ** (year - start_year)
                 publicl2_cost = self.public_l2_new_sales[year] * (publicl2_makeready + publicl2_evse_price) + \
                               self.public_l2_replacements[year] * publicl2_evse_price
 
                 self.public_l2_cost[year] = publicl2_cost
 
-                dcfc_evse_price = dcfc_evse_cost * (1 - dcfc_reduction) ** (year - start_year)
+                dcfc_evse_price = dcfc_evse_cost * (1 - dcfc_reduction + inflation_rate) ** (year - start_year)
                 dcfc_cost = self.dcfc_new_sales[year] * (old_div(dcfc_makeready,dcfc_cluster_size)+ dcfc_evse_price) + \
                                 self.dcfc_replacements[year] * dcfc_evse_price
                 self.dcfc_cost[year] = dcfc_cost
@@ -403,36 +463,3 @@ class Chargers(object):
         import tabulate
         print(charger_string)
         print(tabulate.tabulate(tabular_data, headers=['year', 'pop', 'sales', 'cost']))
-
-
-    # def calc_additional_workplace_chargers(self, model_years, end_year, work_peak_flex, vehicle_lifetime):
-    #
-    #     for year in model_years:
-    #
-    #         workplace_flexible_peak = max(work_peak_flex[year].values())
-    #         chargers_needed = (workplace_flexible_peak / 14.4) * 1000.
-    #         additional_chargers_needed = max(0., chargers_needed - self.workplace_evses[year])
-    #         self.additional_workplace_needed[year] = additional_chargers_needed
-    #
-    #         if year == min(model_years):
-    #             self.additional_workplace_newsales[year] = self.additional_workplace_needed[year]
-    #             self.additional_workplace_replacements[year] = 0
-    #             self.additional_workplace_sales[year] = self.additional_workplace_newsales[year]
-    #
-    #         elif year <= end_year:
-    #             self.additional_workplace_newsales[year] = \
-    #                 self.additional_workplace_needed[year] - self.additional_workplace_needed[year-1]
-    #
-    #             try:
-    #                 self.additional_workplace_replacements[year] = \
-    #                     self.additional_workplace_sales[year-vehicle_lifetime]
-    #             except KeyError:
-    #                 self.additional_workplace_replacements[year] = 0
-    #
-    #             self.additional_workplace_sales[year] = \
-    #                 self.additional_workplace_newsales[year] + self.additional_workplace_replacements[year]
-    #
-    #         else:
-    #             self.additional_workplace_newsales[year] = 0
-    #             self.additional_workplace_replacements[year] = 0
-    #             self.additional_workplace_sales[year] = 0

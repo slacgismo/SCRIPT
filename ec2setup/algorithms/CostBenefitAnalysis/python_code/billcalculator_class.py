@@ -29,7 +29,6 @@ class BillCalculator(object):
         self.fixed_monthly_bill = {}
         self.fixed_daily_bill = {}
 
-
     def calculate_bill(self, model_years, weekday_weekend_count,workplace_peak_hour, dcfc_peak_hour,
                                            publicl2_peak_hour, charger_name):
 
@@ -44,17 +43,18 @@ class BillCalculator(object):
 
             # Weekday volumetric charge
             avg_weekday_charge = {month:
-                                      {i: avg_weekday_kw[i] * self.rate.energy_charges[year][(month, i, 'workday')]
+                                      {i: avg_weekday_kw[i] * self.rate.energy_charges[year][(month, i + 1, 'workday')]
                                        for i in range(24)}
                                   for month in range(1,13)}
             weekday_charges = \
-                {month: sum(avg_weekday_charge[month].values()) * weekday_weekend_count[year][month] ['weekdays']
+                {month: sum(avg_weekday_charge[month].values()) * weekday_weekend_count[year][month]['weekdays']
                  for month in range(1,13)}
+
             weekday_energy_charge = sum(weekday_charges.values())
 
             # Weekend volumetric charge
             avg_weekend_charge = {month:
-                                      {i: avg_weekend_kw[i] * self.rate.energy_charges[year][(month, i, 'non-workday')]
+                                      {i: avg_weekend_kw[i] * self.rate.energy_charges[year][(month, i + 1, 'non-workday')]
                                        for i in range(24)}
                                   for month in range(1,13)}
             weekend_charges = \
@@ -64,7 +64,7 @@ class BillCalculator(object):
 
             # Monthly max demand charge
 
-            if charger_name == 'Residential L2':
+            if charger_name == 'Residential L2' or 'Residential L1':
                 peak = max(peak_shape_kw.values())
             elif charger_name == 'Public L2':
                 peak = peak_shape_kw[publicl2_peak_hour[year]]
@@ -74,7 +74,7 @@ class BillCalculator(object):
                 peak = peak_shape_kw[dcfc_peak_hour[year]]
 
             peak_isweekday = self.loadprofile.peak_isweekday[year]
-            peak_i = helpers.get_max_index(peak_shape_kw)
+            peak_i = helpers.get_max_index(peak_shape_kw) + 1
 
             if peak_isweekday:
                 daytype = 'workday'
@@ -88,7 +88,7 @@ class BillCalculator(object):
 
             # On-Peak demand charge
             monthly_onpeak_max = {month: 0 for month in range(1,13)}
-            monthly_onpeak_hour = {month: 0 for month in range(1,13)}
+            monthly_onpeak_hour = {month: 1 for month in range(1,13)}
             monthly_onpeak_daytype = {month: 'workday' for month in range(1,13)}
             monthly_onpeak_charges = {month: 0 for month in range(1,13)}
 
@@ -98,7 +98,7 @@ class BillCalculator(object):
                     if (i, peak_isweekday) in self.rate.demand_charge_periods[('peak_max', month)]:
                         if load_kw > monthly_onpeak_max[month]:
                             monthly_onpeak_max[month] = load_kw
-                            monthly_onpeak_hour[month] = i
+                            monthly_onpeak_hour[month] = i + 1
                             monthly_onpeak_daytype[month] = 'workday' if peak_isweekday else 'non-workday'
 
             for month in range(1,13):
@@ -114,7 +114,7 @@ class BillCalculator(object):
 
             # Partial Peak demand charge #1
             monthly_partpeak_max1 = {month: 0 for month in range(1,13)}
-            monthly_partpeak_hour1 = {month: 0 for month in range(1,13)}
+            monthly_partpeak_hour1 = {month: 1 for month in range(1,13)}
             monthly_partpeak_daytype1 = {month: 'workday' for month in range(1,13)}
             monthly_partpeak_charges1 = {month: 0 for month in range(1,13)}
 
@@ -124,7 +124,7 @@ class BillCalculator(object):
                     if (i, peak_isweekday) in self.rate.demand_charge_periods[('partpeak_max1', month)]:
                         if load_kw > monthly_partpeak_max1[month]:
                             monthly_partpeak_max1[month] = load_kw
-                            monthly_partpeak_hour1[month] = i
+                            monthly_partpeak_hour1[month] = i + 1
                             monthly_partpeak_daytype1[month] = 'workday' if peak_isweekday else 'non-workday'
 
             for month in range(1,13):
@@ -140,7 +140,7 @@ class BillCalculator(object):
 
             # Partial Peak demand charge #2
             monthly_partpeak_max2 = {month: 0 for month in range(1, 13)}
-            monthly_partpeak_hour2 = {month: 0 for month in range(1, 13)}
+            monthly_partpeak_hour2 = {month: 1 for month in range(1, 13)}
             monthly_partpeak_daytype2 = {month: 'workday' for month in range(1, 13)}
             monthly_partpeak_charges2 = {month: 0 for month in range(1, 13)}
 
@@ -150,7 +150,7 @@ class BillCalculator(object):
                     if (i, peak_isweekday) in self.rate.demand_charge_periods[('partpeak_max2', month)]:
                         if load_kw > monthly_partpeak_max2[month]:
                             monthly_partpeak_max2[month] = load_kw
-                            monthly_partpeak_hour2[month] = i
+                            monthly_partpeak_hour2[month] = i + 1
                             monthly_partpeak_daytype2[month] = 'workday' if peak_isweekday else 'non-workday'
 
             for month in range(1, 13):
@@ -187,7 +187,9 @@ class BillCalculator(object):
             self.annual_bill[year] = weekday_energy_charge \
                                 + weekend_energy_charge \
                                 + total_monthly_max_charge \
-                                + total_onpeak_max_charge \
-                                + total_partpeak_max_charge1 \
-                                + total_partpeak_max_charge2 \
                                 + fixed_monthly_charges + fixed_daily_charges
+                                # + total_onpeak_max_charge \
+                                # + total_partpeak_max_charge1 \
+                                # + total_partpeak_max_charge2 \
+
+

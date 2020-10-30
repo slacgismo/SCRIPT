@@ -15,23 +15,25 @@ import simple_TandD
 import time
 import constants
 from collections import Counter
+import pandas as pd
 import numpy as np
 
 class ModelInstance(object):
 
-    def __init__(self):
+    def __init__(self, case_name):
 
         start = time.time()
         print('Loading Inputs')
 
         # Load external inputs for model run
-        self.inputs = file_in.MODEL_INPUTS()
+        self.inputs = file_in.MODEL_INPUTS(case_name)
+
 
         ### CALCULATE TIMESTEP INPUTS ###
 
+        self.inputs.vehicle_lifetime
         self.model_years = list(range(self.inputs.start_year, self.inputs.end_year + self.inputs.vehicle_lifetime))
         self.inputs.timesteps, self.inputs.weekday_weekend_count = self.inputs.process_timesteps(self.model_years)
-
 
         ### CALCULATE TAX CREDITS ###
 
@@ -54,7 +56,11 @@ class ModelInstance(object):
                 if key not in list_of_rate_names:
                     list_of_rate_names.append(key)
 
-        self.rates = {name: self.inputs.create_rate(name, self.model_years) for name in list_of_rate_names}
+        # Read in rate escalators file:
+        rate_escalators = self.inputs.read_rate_escalators()
+
+        self.rates = {name: self.inputs.create_rate(
+            name, self.model_years, rate_escalators[name]) for name in list_of_rate_names}
 
         # Determine what portion of workplace load falls under each rate
         self.proportions_by_loadprofile_and_rate = self.get_loadprofile_and_rate_proportions()
@@ -63,7 +69,8 @@ class ModelInstance(object):
         # Vehicle processing
         self.vehicles = self.inputs.create_vehicles(self.inputs.vehicles_file)
 
-        self.vehicles.create_adoption_data(self.inputs.vehicle_lifetime)
+        self.vehicles.create_adoption_data(self.inputs.first_adoption_year,
+                                           self.inputs.end_year, self.inputs.vehicle_lifetime)
 
         self.vehicles.get_capital_cost(self.model_years)
 
@@ -73,18 +80,17 @@ class ModelInstance(object):
                                      self.inputs.credit_to_replacements)
 
         self.vehicles.get_oandm_savings(self.model_years, self.inputs.bev_annual_oandm_savings,
-                                        self.inputs.phev_annual_oandm_savings)
+                                        self.inputs.phev_annual_oandm_savings, self.inputs.inflation_rate)
 
         self.vehicles.get_gasoline_savings(self.model_years, self.inputs.metrictons_CO2_per_gallon,
                                            self.inputs.NOX_per_gallon, self.inputs.PM_10_per_gallon,
                                            self.inputs.SO2_per_gallon, self.inputs.VOC_per_gallon)
 
         self.vehicles.get_gasoline_consumption(self.model_years,
-                                           self.inputs.annual_gasoline,
+                                           self.inputs.gallons_per_ice,
                                            self.inputs.gallons_per_ice_year, self.inputs.metrictons_CO2_per_gallon,
-                                               self.inputs.end_year, self.vehicles.new_vmt, self.vehicles.phev10_vmt,
-                                               self.vehicles.phev20_vmt, self.vehicles.phev40_vmt,
-                                               self.vehicles.bev100_vmt)
+                                               self.inputs.end_year, self.vehicles.new_vmt, self.vehicles.phev_vmt,
+                                               self.vehicles.bev_vmt)
 
         # Partition laod profiles by rate and charger
         self.load_profiles_by_rate_and_charger = {}
@@ -92,6 +98,7 @@ class ModelInstance(object):
             for rate_name in list(self.inputs.loadprofile_to_rate[loadprofile_name].keys()):
 
                 proportion_under_rate = self.inputs.loadprofile_to_rate[loadprofile_name][rate_name]
+
                 loadprofile = self.inputs.process_loadprofile(loadprofile_name, scalar=proportion_under_rate)
                 loadprofile.get_day_shapes(self.inputs.timesteps, self.model_years)
                 loadprofile.expand_loadprofiles(
@@ -111,9 +118,7 @@ class ModelInstance(object):
         for year in self.model_years:
             self.aggregate_load[year] = {}
 
-        for loadprofile_name in self.inputs.loadprofile_names:
-
-            loadprofile = self.inputs.process_loadprofile(loadprofile_name, scalar=proportion_under_rate)
+        for loadprofile in self.load_profiles_by_rate_and_charger.values():
 
             for year in self.model_years:
                 for hour in hours:
@@ -123,14 +128,15 @@ class ModelInstance(object):
                         self.aggregate_load[year][hour] = loadprofile.annual_load[year][hour] * 1000
 
         self.energy_mc = self.inputs.process_energy_marginal_costs('energy_mc')
+        # self.ghg_mc = self.inputs.process_energy_marginal_costs('ghg_mc')
         self.generation_mc = self.inputs.process_capacity_marginal_costs('generation_mc')
         self.distribution_mc = self.inputs.process_energy_marginal_costs('distribution_mc')
         self.transmission_mc = self.inputs.process_energy_marginal_costs('transmission_mc')
-        self.CO2_emissions = self.inputs.process_energy_marginal_costs('CO2_emissions')
-        self.NOX_emissions = self.inputs.process_energy_marginal_costs('NOX_emissions')
-        self.PM10_emissions = self.inputs.process_energy_marginal_costs('PM10_emissions')
-        self.SO2_emissions = self.inputs.process_energy_marginal_costs('SO2_emissions')
-        self.VOC_emissions = self.inputs.process_energy_marginal_costs('VOC_emissions')
+        self.CO2_emissions = self.inputs.process_emissions('CO2_emissions')
+        self.NOX_emissions = self.inputs.process_emissions('NOX_emissions')
+        self.PM10_emissions = self.inputs.process_emissions('PM10_emissions')
+        self.SO2_emissions = self.inputs.process_emissions('SO2_emissions')
+        self.VOC_emissions = self.inputs.process_emissions('VOC_emissions')
 
         # Aggregate load profiles by charger type
         self.workplace_loadprofile = None
@@ -138,9 +144,11 @@ class ModelInstance(object):
         self.publicl2_loadprofile = None
         self.dcfc_loadprofile = None
         self.aggregate_loads_by_charger()
+
         aggregate_load = {}
         self.peak_demand_5to9_pm = {}
-        typenames = ['avg_weekday', 'avg_weekend', 'peak_shape']
+        # typenames = ['avg_weekday', 'avg_weekend', 'peak_shape']
+        typenames = ['avg_weekday']
         for year in self.model_years:
             aggregate_load[year] = {}
             self.peak_demand_5to9_pm[year] = 0
@@ -149,9 +157,10 @@ class ModelInstance(object):
                 for type in typenames:
                     aggregate_load[year][hour][type] = 0
 
-        self.annual_energy_supply_cost_dict, self.distribution_dict, self.transmission_dict, self.energy_dict, self.capacity_dict, self.CO2_emissions_dict, \
+        self.annual_energy_supply_cost_dict, self.distribution_dict, self.transmission_dict, self.energy_dict, self.ghg_dict,\
+        self.capacity_dict, self.CO2_emissions_dict, \
         self.NOX_emissions_dict, self.PM10_emissions_dict, self.SO2_emissions_dict, \
-        self.VOC_emissions_dict = ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+        self.VOC_emissions_dict = ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
 
         for year in self.model_years:
 
@@ -163,15 +172,15 @@ class ModelInstance(object):
             self.SO2_emissions_dict[year] = 0
             self.VOC_emissions_dict[year] = 0
 
+
         for loadprofile in \
             [self.workplace_loadprofile, self.res_loadprofile, self.publicl2_loadprofile, self.dcfc_loadprofile]:
             data = [['Type', 'Hour'] + self.model_years]
             aggregate_data = [['Type', 'Hour'] + self.model_years]
-
-
-            for typename, dictionary in [('avg_weekday', loadprofile.avg_weekday),
-                                         ('avg_weekend', loadprofile.avg_weekend),
-                                         ('peak_shape', loadprofile.peak_shape)]:
+            # for typename, dictionary in [('avg_weekday', loadprofile.avg_weekday),
+            #                              ('avg_weekend', loadprofile.avg_weekend),
+            #                              ('peak_shape', loadprofile.peak_shape)]:
+            for typename, dictionary in [('avg_weekday', loadprofile.avg_weekday)]:
                 for hour in range(24):
                     newrow = [typename, hour] + [dictionary[year][hour] for year in self.model_years]
                     data.append(newrow)
@@ -190,7 +199,7 @@ class ModelInstance(object):
         file_out.export_loadprofiles(self, aggregate_data, 'aggregate')
 
         # Create annual energy supply cost dict if Marginal Costs Exist
-        annual_energy_supply_cost_dict, distribution_dict, transmission_dict, energy_dict, capacity_dict, CO2_emissions_dict,\
+        annual_energy_supply_cost_dict, distribution_dict, transmission_dict, energy_dict, ghg_dict, capacity_dict, CO2_emissions_dict,\
         NOX_emissions_dict, PM10_emissions_dict, SO2_emissions_dict,\
         VOC_emissions_dict = loadprofile_class.generate_annual_stream_from_load(
             self.aggregate_load, self.energy_mc, self.generation_mc, self.distribution_mc, self.transmission_mc,
@@ -203,6 +212,9 @@ class ModelInstance(object):
 
         self.energy_dict = dict(Counter(self.energy_dict) +
                                       Counter(energy_dict))
+
+        self.ghg_dict = dict(Counter(self.ghg_dict) +
+                                      Counter(ghg_dict))
 
         self.capacity_dict = dict(Counter(self.capacity_dict) +
                                       Counter(capacity_dict))
@@ -235,23 +247,30 @@ class ModelInstance(object):
             self.chargers.get_populations_from_pro_lite(self.inputs.work_EVSE_ratio, self.inputs.public_l2_EVSE_ratio,
                                                         self.inputs.dcfc_EVSE_ratio, years, self.vehicles)
 
-            self.chargers.get_workplace_l2_sales(start_year=min(self.vehicles.adoption_years),
+
+            self.chargers.get_pro_lite_workplace_l2_sales(start_year=min(self.vehicles.adoption_years),
                                                  end_year=self.inputs.end_year,
-                                                 vehicle_lifetime=self.inputs.vehicle_lifetime)
+                                                 vehicle_lifetime=self.inputs.vehicle_lifetime,
+                                                 vehicle_sales=self.vehicles.sales,
+                                                 work_EVSE_ratio=self.inputs.work_EVSE_ratio)
 
-            self.chargers.get_public_l2_sales(start_year=min(self.vehicles.adoption_years),
+            self.chargers.get_pro_lite_public_l2_sales(start_year=min(self.vehicles.adoption_years),
                                               end_year=self.inputs.end_year,
-                                              vehicle_lifetime=self.inputs.vehicle_lifetime)
-            self.chargers.get_dcfc_sales(start_year=min(self.vehicles.adoption_years),
-                                              end_year=self.inputs.end_year,
-                                              vehicle_lifetime=self.inputs.vehicle_lifetime)
+                                              vehicle_lifetime=self.inputs.vehicle_lifetime,
+                                              vehicle_sales=self.vehicles.sales,
+                                              public_EVSE_ratio=self.inputs.public_l2_EVSE_ratio)
+            self.chargers.get_pro_lite_dcfc_sales(start_year=min(self.vehicles.adoption_years),
+                                         end_year=self.inputs.end_year,
+                                         vehicle_lifetime=self.inputs.vehicle_lifetime,
+                                         vehicle_sales=self.vehicles.sales,
+                                         DCFC_EVSE_ratio=self.inputs.dcfc_EVSE_ratio)
 
-            self.chargers.get_base_cost_with_replacement(self.model_years, self.inputs.analysis_year, self.inputs.homel2_makeready,
+            self.chargers.get_base_cost_with_replacement(self.model_years,  self.inputs.homel2_makeready,
                                                          self.inputs.homel2_evse_cost, self.inputs.homel2_reduction,
                                                          self.inputs.workl2_makeready, self.inputs.workl2_evse_cost,
                                                          self.inputs.workl2_reduction, self.inputs.publicl2_makeready, self.inputs.publicl2_evse_cost,
                                                          self.inputs.publicl2_reduction, self.inputs.dcfc_makeready, self.inputs.dcfc_evse_cost, self.inputs.DCFC_cluster_size_per_upgrade,
-                                                         self.inputs.dcfc_reduction)
+                                                         self.inputs.dcfc_reduction, self.inputs.inflation_rate)
 
         else:
             # Load-based charger split methodology
@@ -289,16 +308,12 @@ class ModelInstance(object):
 
             self.chargers.get_base_cost(self.model_years,
                                         self.inputs.homel2_startprice,
-                                        self.inputs.analysis_year,
                                         self.inputs.homel2_reduction,
                                         self.inputs.workl2_startprice,
-                                        self.inputs.analysis_year,
                                         self.inputs.workl2_reduction,
                                         self.inputs.publicl2_startprice,
-                                        self.inputs.analysis_year,
                                         self.inputs.publicl2_reduction,
                                         self.inputs.dcfc_startprice,
-                                        self.inputs.analysis_year,
                                         self.inputs.dcfc_reduction)
 
         # Determine charger population breakdown by load profile
@@ -328,18 +343,28 @@ class ModelInstance(object):
                                                         (old_div(self.inputs.dcfc_chrgrspermeter,
                                                          self.chargers.dcfc_evses[year]))
                 except:
-                    self.total_work_load[year][hour] = self.workplace_building_load[year][hour] + \
-                                                       (self.workplace_loadprofile.annual_load[year][hour] * \
-                                                        (old_div(self.inputs.workl2_chrgrspermeter,
-                                                         self.chargers.workplace_evses[year])))
-                    self.total_public_load[year][hour] = self.public_building_load[year][hour] + \
-                                                       (self.publicl2_loadprofile.annual_load[year][hour] * \
-                                                        (old_div(self.inputs.publicl2_chrgrspermeter,
-                                                         self.chargers.public_l2_evses[year])))
-                    self.dcfc_meter_load[year][hour] = self.dcfc_building_load[year][hour] + \
-                                                       (self.dcfc_loadprofile.annual_load[year][hour] * \
-                                                        (old_div(self.inputs.dcfc_chrgrspermeter,
-                                                         self.chargers.dcfc_evses[year])))
+                    try:
+                        self.total_work_load[year][hour] = self.workplace_building_load[year][hour] + \
+                                                           (self.workplace_loadprofile.annual_load[year][hour] * \
+                                                            (old_div(self.inputs.workl2_chrgrspermeter,
+                                                             self.chargers.workplace_evses[year])))
+                    except ZeroDivisionError:
+                        self.total_work_load[year][hour] = 0
+                    try:
+                        self.total_public_load[year][hour] = self.public_building_load[year][hour] + \
+                                                           (self.publicl2_loadprofile.annual_load[year][hour] * \
+                                                            (old_div(self.inputs.publicl2_chrgrspermeter,
+                                                             self.chargers.public_l2_evses[year])))
+                    except ZeroDivisionError:
+                        self.total_public_load[year][hour] = 0
+
+                    try:
+                        self.dcfc_meter_load[year][hour] = self.dcfc_building_load[year][hour] + \
+                                                           (self.dcfc_loadprofile.annual_load[year][hour] * \
+                                                            (old_div(self.inputs.dcfc_chrgrspermeter,
+                                                             self.chargers.dcfc_evses[year])))
+                    except ZeroDivisionError:
+                        self.dcfc_meter_load[year][hour] = 0
 
         self.workplace_peak_hour = {}
         self.dcfc_peak_hour = {}
@@ -377,22 +402,36 @@ class ModelInstance(object):
                                            self.publicl2_peak_hour, charger_name)
 
             for year in sorted(bill_calculator.annual_bill.keys()):
-                if year in list(self.total_revenue.keys()):
-                    self.total_revenue[year] += bill_calculator.annual_bill[year]
-                else:
-                    self.total_revenue[year] = bill_calculator.annual_bill[year]
+                # if year in list(self.total_revenue.keys()):
+                #     self.total_revenue[year] += bill_calculator.annual_bill[year]
+                # else:
+                #     self.total_revenue[year] = bill_calculator.annual_bill[year]
 
                 if year in list(self.volumetric_revenue.keys()):
                     self.volumetric_revenue[year] += bill_calculator.weekday_energy_bill[year] + bill_calculator.weekend_energy_bill[year]
                 else:
                     self.volumetric_revenue[year] = bill_calculator.weekday_energy_bill[year] + bill_calculator.weekend_energy_bill[year]
 
+                # if year in list(self.demand_revenue.keys()):
+                #     self.demand_revenue[year] += bill_calculator.total_monthly_max_bill[year] + \
+                #                                  bill_calculator.total_onpeak_max_bill[year] + \
+                #                                  bill_calculator.total_partpeak_max_bill1[year] + \
+                #                                  bill_calculator.total_partpeak_max_bill2[year]
+                #
+                #
+                # else:
+                #     self.demand_revenue[year] = bill_calculator.total_monthly_max_bill[year] + \
+                #                                  bill_calculator.total_onpeak_max_bill[year] + \
+                #                                  bill_calculator.total_partpeak_max_bill1[year] + \
+                #                                  bill_calculator.total_partpeak_max_bill2[year]
+
                 if year in list(self.demand_revenue.keys()):
                     self.demand_revenue[year] += bill_calculator.total_monthly_max_bill[year]
+
                 else:
                     self.demand_revenue[year] = bill_calculator.total_monthly_max_bill[year]
 
-                if charger_name == 'Residential L2':
+                if (charger_name == 'Residential L2') or (charger_name == 'Residential L1'):
                     if year in list(self.res_revenue.keys()):
                         self.res_revenue[year] += bill_calculator.annual_bill[year]
                     else:
@@ -403,8 +442,6 @@ class ModelInstance(object):
                         self.work_revenue[year] += bill_calculator.annual_bill[year]
                     else:
                         self.work_revenue[year] = bill_calculator.annual_bill[year]
-
-                    # print year, bill_calculator.weekday_energy_bill[year] + bill_calculator.weekend_energy_bill[year]
 
                 if charger_name == 'Public L2':
                     if year in list(self.publicl2_revenue.keys()):
@@ -419,6 +456,13 @@ class ModelInstance(object):
                         self.dcfc_revenue[year] = bill_calculator.annual_bill[year]
 
 
+        for year in sorted(bill_calculator.annual_bill.keys()):
+            if year in list(self.total_revenue.keys()):
+                self.total_revenue[year] += self.dcfc_revenue[year] + self.publicl2_revenue[year] + \
+                                            self.work_revenue[year] + self.res_revenue[year]
+            else:
+                self.total_revenue[year] = self.dcfc_revenue[year] + self.publicl2_revenue[year] + \
+                                           self.work_revenue[year] + self.res_revenue[year]
 
         # T and D
         if self.inputs.allEVload_onTandD:
@@ -427,9 +471,9 @@ class ModelInstance(object):
             tandd_years = \
                 list(range(min(self.vehicles.adoption_years), self.inputs.end_year + self.vehicles.vehicle_lifetime))
 
-        self.TandD_instance = simple_TandD.SimpleTandD(tandd_years,
-                                                       self.inputs.cost_per_incremental_kw,
-                                                       self.load_profiles_by_rate_and_charger)
+        # self.TandD_instance = simple_TandD.SimpleTandD(tandd_years,
+        #                                                self.inputs.cost_per_incremental_kw,
+        #                                                self.load_profiles_by_rate_and_charger)
 
 
         file_out.export_results(self)
@@ -442,10 +486,12 @@ class ModelInstance(object):
     def divide_chargers(self):
 
         loadprofiles_by_charger = {'Residential L2': [],
+                                   'Residential L1': [],
                                    'Public L2': [],
                                    'DCFC': [],
                                    'Workplace L2': []}
         peaksum_by_charger = {'Residential L2': {},
+                              'Residential L1': {},
                                    'Public L2': {},
                                    'DCFC': {},
                                    'Workplace L2': {}}
@@ -504,7 +550,6 @@ class ModelInstance(object):
                                                                          rate_name,
                                                                          loadprofile_charger)]
 
-
             if loadprofile_charger == 'Workplace L2':
                 self.workplace_loadprofile = \
                     loadprofile_class.add_loadprofiles('AllWorkplace',
@@ -515,7 +560,7 @@ class ModelInstance(object):
                                                        self.vehicles)
 
 
-            elif loadprofile_charger == 'Residential L2':
+            elif (loadprofile_charger == 'Residential L2') or (loadprofile_charger == 'Residential L1'):
                 self.res_loadprofile = \
                     loadprofile_class.add_loadprofiles('AllResidential',
                                                        self.res_loadprofile,
@@ -552,7 +597,7 @@ class ModelInstance(object):
 
         res_loadprofile_names = \
             [key for key in self.inputs.loadprofile_to_charger
-             if self.inputs.loadprofile_to_charger[key] == 'Residential L2']
+             if self.inputs.loadprofile_to_charger[key] == 'Residential L2' or 'Residential L1']
 
         rate_proportions = {'Workplace': {},
                             'Residential': {}}
@@ -561,6 +606,7 @@ class ModelInstance(object):
         workplace_total = 0.0
 
         for loadprofile_name in workplace_loadprofile_names:
+
             for rate_name in list(self.inputs.loadprofile_to_rate[loadprofile_name].keys()):
 
                 workplace_total += self.inputs.loadprofile_to_rate[loadprofile_name][rate_name]

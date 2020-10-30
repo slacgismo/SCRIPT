@@ -1,6 +1,5 @@
 // Helper functions
 import axios from "axios";
-import continuousColorLegend from "react-vis/dist/legends/continuous-color-legend";
 
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
