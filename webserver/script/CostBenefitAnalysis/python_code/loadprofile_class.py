@@ -207,7 +207,7 @@ def add_loadprofiles(name, loadprofile1, loadprofile2, timesteps, model_years, v
 
         return new_loadprofile
 
-def generate_annual_stream_from_load(load_profile, energy_marginal_cost,  capacity_marginal_cost,
+def generate_annual_stream_from_load(load_profile, energy_marginal_cost, capacity_marginal_cost,
                                      distribution_marginal_cost, transmission_marginial_cost, CO2_emissions, NOX_emissions,
                                      PM10_emissions, SOX_emissions, VOC_emissions, vehicle_sales, dcfc_ratio, dcfc_cluster_size,
                                      dcfc_distribution_upgrade_cost, model_years):

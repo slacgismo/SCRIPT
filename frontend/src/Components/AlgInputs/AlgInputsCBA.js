@@ -96,7 +96,7 @@ class AlgInputsCBA extends Component {
     handleAlertOpen = () => {
         this.setState({ openAlert: true});
     };
-  
+
     handleAlertClose = () => {
         this.setState({ openAlert: false});
     };
@@ -133,7 +133,7 @@ class AlgInputsCBA extends Component {
                 url: `${ serverUrl }/cost_benefit_analysis_runner`,
                 method: "post",
                 data: {load_profile: this.state.profileName, county: countyMatch}
-            
+
             });
             // celery-flower monitoring to check task status on cba tool
             const task_id = cba_res.data.task_id;
@@ -165,12 +165,12 @@ class AlgInputsCBA extends Component {
         return preprocessData(dataCBA);
     };
 
-    updateCharts = async () => { 
+    updateCharts = async () => {
         this.props.visualizeResults(await this.getCBAResult());
     }
 
     updateProfileAndCharts = async () => {
-        this.findProfile();       
+        this.findProfile();
         this.props.visualizeResults(await this.getCBAResult());
     };
 
@@ -214,7 +214,7 @@ class AlgInputsCBA extends Component {
                     <DialogTitle id="alert-dialog-title">{"Cost Benefit Analysis Failed"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            The cost benefit analysis failed to run with the given load forecast profile. 
+                            The cost benefit analysis failed to run with the given load forecast profile.
                             Please check your load forecast profile inputs, and try again.
                         </DialogContentText>
                     </DialogContent>
@@ -258,10 +258,10 @@ class AlgInputsCBA extends Component {
                 </Button>
 
                 { !this.state.shouldRender ? <></> : (
-                
+
                     <Dialog open={this.state.openResult} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                         <DialogTitle onClose={this.handleClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
-                        <DialogContent>    
+                        <DialogContent>
                             <ResultCharts
                                 results={ this.state.processedLoadForecastResults }
                                 algId={ 2 }
@@ -279,7 +279,7 @@ class AlgInputsCBA extends Component {
                 <Dialog open={this.state.openUpload} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Upload</DialogTitle>
                     <DialogContent>
-                        <DropzoneArea 
+                        <DropzoneArea
                             acceptedFiles={["text/plain"]}
                             dropzoneText = "Drag and drop a file here or click"
                             showPreviews = {true}
@@ -287,8 +287,8 @@ class AlgInputsCBA extends Component {
                             filesLimit = "1"
                             maxFileSize={5000000}
                             showFileNamesInPreview = "true"
-                            // onChange={uploadFile} 
-                        /> 
+                            // onChange={uploadFile}
+                        />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleClose} color="primary">
