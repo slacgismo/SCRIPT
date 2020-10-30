@@ -135,19 +135,19 @@ class AlgInputsCBA extends Component {
                 data: {load_profile: this.state.profileName, county: countyMatch}
 
             });
-            // celery-flower monitoring to check task status on cba tool
-            const task_id = cba_res.data.task_id;
 
+            const task_id = cba_res.data.task_id;
             let timeout;
-            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 100, async (status) => {
-                if (status === "SUCCESS") {
-                    this.props.loadingResults(false);
+            await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                async () => { 
+                    this.props.loadingResults(false); 
                     this.props.visualizeResults(await this.getCBAResult());
-                } else {
-                    this.props.loadingResults(false);
+                }, 
+                () => {
+                    this.props.loadingResults(false); 
                     this.handleAlertOpen();
                 }
-            });
+            );
         }
     };
 
@@ -167,17 +167,17 @@ class AlgInputsCBA extends Component {
 
     updateCharts = async () => {
         this.props.visualizeResults(await this.getCBAResult());
-    }
+    };
 
     updateProfileAndCharts = async () => {
         this.findProfile();
         this.props.visualizeResults(await this.getCBAResult());
     };
 
-    loadedResultsandCharts = async() => {
+    loadedResultsandCharts = async () => {
         this.props.loadingResults(false);
         this.props.visualizeResults(await this.getCBAResult());
-    }
+    };
 
     componentDidUpdate(prevProps, prevState) {
         // if different dropdown menu category selected (e.g. gas consumption)
@@ -193,7 +193,7 @@ class AlgInputsCBA extends Component {
         if (prevState.profileName !== this.state.profileName) {
             this.getLoadForecastData();
         }
-    }
+    };
 
     uploadFile = () => {
         this.setState({ openUpload: true});

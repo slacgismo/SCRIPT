@@ -1,5 +1,6 @@
 // Helper functions
 import axios from "axios";
+import continuousSizeLegend from "react-vis/dist/legends/continuous-size-legend";
 
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
@@ -74,15 +75,16 @@ export async function checkFlowerTaskStatus (task_id) {
     return task_res.data.state;
 }
 
-export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, callback) {
+export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, successCallback, failureCallback) {
     let status = await checkStatus(task_id);
     if (status === "SUCCESS") {
-        callback.success();
+        successCallback();
     } else if (status === "FAILURE" || max === 0){
-        callback(new Error());
+        failureCallback();
     } else if (status === "PENDING") {
+        clearTimeout(timeout);
         timeout = setTimeout(function() {
-            return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, callback);
+            return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, successCallback, failureCallback);
         }, delay);
-    } 
-}
+    }
+};

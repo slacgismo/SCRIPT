@@ -165,15 +165,16 @@ class AlgInputsLoadForecast extends Component {
 
             const task_id = lf_res.data.task_id;
             let timeout;
-            const lf_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, async (status) => {
-                if(status === "SUCCESS") {
-                    this.props.loadingResults(false);
+            await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                async () => { 
+                    this.props.loadingResults(false); 
                     this.props.visualizeResults(await this.getResult());
-                } else {
-                    this.props.loadingResults(false);
+                }, 
+                () => {
+                    this.props.loadingResults(false); 
                     this.setState({ alertDuplicateDbEntry: true});
                 }
-            });
+            );
         } else {
             this.setState({ alertDuplicateProfileName: true});
         }
