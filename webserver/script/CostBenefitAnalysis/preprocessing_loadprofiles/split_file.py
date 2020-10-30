@@ -57,15 +57,19 @@ def hourly(array):
     return np.mean(np.reshape(array, (int(len(array) / 60), 60)), axis=1) #depending on the unit
 
 
-def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['uncontrolled'], years=['2025']):
+def split_file(county, controlled_types, scenarios={'Scenario 1': 'BaseCase'}, year='2025'):
 
     s3 = S3FileSystem(anon=False)
     bucket = 's3://script.control.tool'
     path = Path(__file__).parent.resolve()
 
-    # Input Loads - currently only setting up for weekday loads
-    WEEKDAY_SLAC_DATA_PATH = str(path)+'/inputs/weekdays/'
-    weekday_load_list = list(WEEKDAY_SLAC_DATA_PATH)
+    # Input Loads
+    weekday_data_path = str(path)+'/inputs/weekdays/'
+    weekend_data_path = str(path)+'/inputs/weekends/'
+
+    weekday_load_list = list(weekday_data_path)
+    weekend_load_list = list(weekend_data_path)
+
 
     # Driver Counts Path
     driver_counts_path = 'Driver Counts'
@@ -77,64 +81,87 @@ def split_file(county, scenarios={'Scenario 1': 'BaseCase'}, controlled_types=['
 
     output_dictionary = {}
 
-    Charger_types = ['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Public L2', 'Fast', 'Total']
-    for field_name in Charger_types:
+    charger_types = ['Residential L1', 'Residential L2', 'Residential MUD', 'Work', 'Public L2', 'Fast', 'Total']
+    for field_name in charger_types:
         output_dictionary[field_name] = pd.DataFrame()
 
-    for Scenario in scenarios.values():
-        for Management in controlled_types:
-            for county in county:
-                for SLAC_Year in years:
+    for scenario in scenarios.values():
+        for controlled_type in controlled_types:
 
-                    # Read SLAC Driver Count
-                    Driver_counts_file_name = "{}_{}_weekday__driver_counts.csv".format(Scenario, SLAC_Year)
-                    driver_count_df = pd.read_csv("{}/{}/{}".format(bucket, driver_counts_path, Driver_counts_file_name))
+            if scenario in ['WorkPublic', 'FastPublic', 'Work', 'Equity']:
 
-                    if Scenario in ['WorkPublic', 'FastPublic', 'Work', 'Equity']:
-                        weekday_file_name = "{}_rescaled_{}_weekday_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
-                    else:
-                        weekday_file_name = "{}_{}_weekday_{}_county_{}_load.csv".format(Scenario, SLAC_Year, county, Management)
+                weekday_file_name_exists = os.path.isfile(weekday_data_path + "{}_rescaled_{}_weekday_{}_county_{}_load.csv".format(Scenario, year, county, controlled_type))
+                weekend_file_name_exists = os.path.isfile(weekend_data_path + "{}_rescaled_{}_weekend_{}_county_{}_load.csv".format(Scenario, year, county, controlled_type))
 
-                    driver_count = float(driver_count_df.loc[driver_count_df['County'] == county]['Num Drivers'])
+                if weekday_file_exists:
+                    weekday_file_name = "{}_rescaled_{}_weekday_{}_county_{}_load.csv".format(scenario, year, county, controlled_type)
+                    driver_counts_file_name = "{}_{}_weekday__driver_counts.csv".format(scenario, year)
 
-                    adoption_spreadsheet_df = \
-                        pd.read_excel(f"{bucket}/{adoption_path}", sheet_name=county).set_index(['year'])[' BEV_population']
+                if weekend_file_name_exists:
+                    weekend_file_name = "{}_rescaled_{}_weekend_{}_county_{}_load.csv".format(scenario, year, county, controlled_type)
+                    driver_counts_file_name = "{}_{}_weekend__driver_counts.csv".format(scenario, year)
 
-                    weekday_all = pd.read_csv(os.path.join(WEEKDAY_SLAC_DATA_PATH,weekday_file_name))
-                    day_type = pd.read_csv(os.path.join(str(path),'day_type.csv'))
-
-                    weekday_all = weekday_all.drop(list(weekday_all)[0],axis=1)
-                    col_names = list(weekday_all.columns)
-
-                    for field_name in col_names:
-                        weekday_array = np.array(weekday_all[field_name])
-                        weekday_aggregated = hourly(weekday_array) # convert from 1-min to 1-hour
-
-                        output = []
-                        for i in range(day_type.shape[0]):
-                            if day_type['DayType'][i] == 1:
-                                output.append(weekday_aggregated)
-                            else:
-                                output.append(weekday_aggregated)
-
-                        annual_output = output * 52
-                        output = np.array(annual_output)
-                        output = np.append(output, output[0])
-                        output = np.reshape(output, 8760)
-                        output = pd.DataFrame(output, columns = {SLAC_Year})
-
-                        per_vehicle_results = output/driver_count
-
-                        if SLAC_Year == "2025":
-                            for year in range(2019, 2031):
-                                output_dictionary[field_name][year] = per_vehicle_results[SLAC_Year] * adoption_spreadsheet_df.loc[year]/1000
+            else:
+                weekday_file_name_exists = os.path.isfile(weekday_data_path + "{}_{}_weekday_{}_county_{}_load.csv".format(scenario, year, county, controlled_type))
+                weekend_file_name_exists = os.path.isfile(weekend_data_path + "{}_{}_weekend_{}_county_{}_load.csv".format(scenario, year, county, controlled_type))
                         
-                        elif SLAC_Year == "2030":
-                            year = 2030
-                            output_dictionary[field_name][year] = per_vehicle_results[SLAC_Year] * adoption_spreadsheet_df.loc[year]/1000
+                if weekday_file_name_exists:
+                    weekday_file_name = "{}_{}_weekday_{}_county_{}_load.csv".format(scenario, year, county, controlled_type)
+                    driver_counts_file_name = "{}_{}_weekday__driver_counts.csv".format(scenario, year)
+                if weekend_file_name_exists:
+                    weekend_file_name = "{}_{}_weekend_{}_county_{}_load.csv".format(scenario, year, county, controlled_type)
+                    driver_counts_file_name = "{}_{}_weekend__driver_counts.csv".format(scenario, year)
+      
 
-                        stock_rollover_output = stock_rollover(2019, 2030, 11, output_dictionary[field_name])
+            driver_count_df = pd.read_csv("{}/{}/{}".format(bucket, driver_counts_path, driver_counts_file_name))
+            driver_count = float(driver_count_df.loc[driver_count_df['County'] == county]['Num Drivers'])
 
-                        stock_rollover_output.to_csv(os.path.join(
-                            str(path), "outputs",  "{}_{}_{}_{}_load.csv".format(
-                                Scenario, county, field_name, Management)),index = True)
+            adoption_spreadsheet_df = \
+                pd.read_excel(f"{bucket}/{adoption_path}", sheet_name=county).set_index(['year'])[' BEV_population']
+                        
+            if weekday_file_name_exists:
+                weekday_all = pd.read_csv(os.path.join(weekday_data_path,weekday_file_name))
+                weekday_all = weekday_all.drop(list(weekday_all)[0],axis=1)
+                col_names = list(weekday_all.columns)
+            if weekend_file_name_exists:
+                weekend_all = pd.read_csv(os.path.join(weekend_data_path,weekend_file_name))
+                weekend_all = weekend_all.drop(list(weekend_all)[0],axis=1)
+                col_names = list(weekend_all.columns)
+
+            day_type = pd.read_csv(os.path.join(str(path),'day_type.csv'))
+
+            for field_name in col_names:
+                if weekday_file_name_exists:
+                    weekday_array = np.array(weekday_all[field_name])
+                    weekday_aggregated = hourly(weekday_array) # convert from 1-min to 1-hour
+                if weekend_file_name_exists:
+                    weekend_array = np.array(weekend_all[field_name])
+                    weekend_aggregated = hourly(weekend_array)
+
+                output = []
+
+                for i in range(day_type.shape[0]):
+                    if day_type['DayType'][i] == 1 and weekday_file_name_exists:
+                        output.append(weekday_aggregated)
+                    elif weekday_file_name_exists:
+                        output.append(weekday_aggregated)
+                    elif weekend_file_name_exists:
+                        output.append(weekend_aggregated)
+
+                annual_output = output * 52
+                output = np.array(annual_output)
+                output = np.append(output, output[0])
+                output = np.reshape(output, 8760)
+                output = pd.DataFrame(output, columns = {year})
+
+                per_vehicle_results = output/driver_count
+
+                for this_year in range(2019, 2031):
+                    output_dictionary[field_name][this_year] = per_vehicle_results[year] * adoption_spreadsheet_df.loc[this_year]/1000
+                            
+
+                stock_rollover_output = stock_rollover(2019, 2030, 11, output_dictionary[field_name])
+
+                stock_rollover_output.to_csv(os.path.join(
+                    str(path.parent), "EV_Loads", "load_profiles",  "{}_{}_{}_{}_load.csv".format(
+                        scenario, county, field_name, controlled_type)),index = True)

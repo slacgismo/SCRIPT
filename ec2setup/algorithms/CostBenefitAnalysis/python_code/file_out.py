@@ -12,6 +12,7 @@ def export_results(model_instance):
     annual_bills = [model_instance.total_revenue[year] for year in model_instance.model_years]
     annual_energy_bills = [model_instance.volumetric_revenue[year] for year in model_instance.model_years]
     annual_demand_bills = [model_instance.demand_revenue[year] for year in model_instance.model_years]
+
     npv_bills = helpers.npv(annual_bills, model_instance.inputs.discount_rate)[0]
     npv_volumetric = helpers.npv(annual_energy_bills, model_instance.inputs.discount_rate)[0]
     npv_demand = helpers.npv(annual_demand_bills, model_instance.inputs.discount_rate)[0]
@@ -69,40 +70,22 @@ def export_results(model_instance):
     annual_gas_consumption_co2 = [model_instance.vehicles.gasoline_consumption_co2[year] for year in
                                     model_instance.vehicles.gas_consumption_range]
 
-    phev10_annual_gas_consumption = [model_instance.vehicles.phev10_gasoline_consumption[year] for year in
+    phev_annual_gas_consumption = [model_instance.vehicles.phev_gasoline_consumption[year] for year in
                               model_instance.vehicles.gas_consumption_range]
 
-    phev10_annual_gas_consumption_mmbtu = [model_instance.vehicles.phev10_gasoline_consumption_mmbtu[year] for year in
+    phev_annual_gas_consumption_mmbtu = [model_instance.vehicles.phev_gasoline_consumption_mmbtu[year] for year in
                                     model_instance.vehicles.gas_consumption_range]
 
-    phev10_annual_gas_consumption_co2 = [model_instance.vehicles.phev10_gasoline_consumption_co2[year] for year in
+    phev_annual_gas_consumption_co2 = [model_instance.vehicles.phev_gasoline_consumption_co2[year] for year in
                                     model_instance.vehicles.gas_consumption_range]
 
-    phev20_annual_gas_consumption = [model_instance.vehicles.phev20_gasoline_consumption[year] for year in
+    bev_annual_gas_consumption = [model_instance.vehicles.bev_gasoline_consumption[year] for year in
                               model_instance.vehicles.gas_consumption_range]
 
-    phev20_annual_gas_consumption_mmbtu = [model_instance.vehicles.phev20_gasoline_consumption_mmbtu[year] for year in
+    bev_annual_gas_consumption_mmbtu = [model_instance.vehicles.bev_gasoline_consumption_mmbtu[year] for year in
                                     model_instance.vehicles.gas_consumption_range]
 
-    phev20_annual_gas_consumption_co2 = [model_instance.vehicles.phev20_gasoline_consumption_co2[year] for year in
-                                    model_instance.vehicles.gas_consumption_range]
-
-    phev40_annual_gas_consumption = [model_instance.vehicles.phev40_gasoline_consumption[year] for year in
-                              model_instance.vehicles.gas_consumption_range]
-
-    phev40_annual_gas_consumption_mmbtu = [model_instance.vehicles.phev40_gasoline_consumption_mmbtu[year] for year in
-                                    model_instance.vehicles.gas_consumption_range]
-
-    phev40_annual_gas_consumption_co2 = [model_instance.vehicles.phev40_gasoline_consumption_co2[year] for year in
-                                    model_instance.vehicles.gas_consumption_range]
-
-    bev100_annual_gas_consumption = [model_instance.vehicles.bev100_gasoline_consumption[year] for year in
-                              model_instance.vehicles.gas_consumption_range]
-
-    bev100_annual_gas_consumption_mmbtu = [model_instance.vehicles.bev100_gasoline_consumption_mmbtu[year] for year in
-                                    model_instance.vehicles.gas_consumption_range]
-
-    bev100_annual_gas_consumption_co2 = [model_instance.vehicles.bev100_gasoline_consumption_co2[year] for year in
+    bev_annual_gas_consumption_co2 = [model_instance.vehicles.bev_gasoline_consumption_co2[year] for year in
                                     model_instance.vehicles.gas_consumption_range]
 
     ev_share = [model_instance.vehicles.ev_share[year] for year in
@@ -132,7 +115,6 @@ def export_results(model_instance):
 
     peak_demand_5to9_pm = [model_instance.peak_demand_5to9_pm[year] for year in model_instance.model_years]
 
-    # SRP Distribution Cost
     annual_tandd = []
     for year in model_instance.model_years:
         try:
@@ -154,7 +136,7 @@ def export_results(model_instance):
         try:
             annual_transmission.append(model_instance.transmission_dict[year])
         except KeyError:
-            annual_tandd.append(0)
+            annual_transmission.append(0)
     npv_transmission = helpers.npv(annual_transmission, model_instance.inputs.discount_rate)[0]
 
     # Energy Supply cost
@@ -165,46 +147,95 @@ def export_results(model_instance):
         except KeyError:
             annual_energy_supply_cost.append(0)
 
-    npv_energy = helpers.npv(annual_energy_supply_cost, model_instance.inputs.discount_rate)[0]
+    npv_energy_supply_cost = helpers.npv(annual_energy_supply_cost, model_instance.inputs.discount_rate)[0]
 
     annual_energy = []
     for year in model_instance.model_years:
         try:
-            annual_energy .append(model_instance.energy_dict[year])
+            annual_energy.append(model_instance.energy_dict[year])
         except KeyError:
-            annual_tandd.append(0)
+            annual_energy.append(0)
     npv_energy = helpers.npv(annual_energy, model_instance.inputs.discount_rate)[0]
+
+    annual_ghg_cost = []
+    for year in model_instance.model_years:
+        try:
+            annual_ghg_cost.append(model_instance.ghg_dict[year])
+        except KeyError:
+            annual_ghg_cost.append(0)
+    npv_ghg_cost = helpers.npv(annual_ghg_cost, model_instance.inputs.discount_rate)[0]
 
     annual_capacity = []
     for year in model_instance.model_years:
         try:
             annual_capacity.append(model_instance.capacity_dict[year])
         except KeyError:
-            annual_tandd.append(0)
+            annual_capacity.append(0)
     npv_capacity = helpers.npv(annual_capacity, model_instance.inputs.discount_rate)[0]
 
-    # SRP Emissions
+    # Emissions from EV
     CO2_emissions = []
     NOX_emissions = []
     PM10_emissions = []
     SO2_emissions = []
     VOC_emissions = []
+    
+    # Emissions Savings
+    
+    CO2_emissions_savings = []
+    annual_carbon_emissions_savings_from_avoided_gasoline = []
+    annual_carbon_emissions_from_ev = []
 
     for year in model_instance.model_years:
         try:
             CO2_emissions.append(model_instance.CO2_emissions_dict[year])
-            NOX_emissions.append(model_instance.NOX_emissions_dict[year])
-            PM10_emissions.append(model_instance.PM10_emissions_dict[year])
-            SO2_emissions.append(model_instance.SO2_emissions_dict[year])
-            VOC_emissions.append(model_instance.VOC_emissions_dict[year])
         except KeyError:
             CO2_emissions.append(0)
+        try:
+            NOX_emissions.append(model_instance.NOX_emissions_dict[year])
+        except KeyError:
             NOX_emissions.append(0)
+        try:
+            PM10_emissions.append(model_instance.PM10_emissions_dict[year])
+        except KeyError:
             PM10_emissions.append(0)
+        try:
+            SO2_emissions.append(model_instance.SO2_emissions_dict[year])
+        except KeyError:
             SO2_emissions.append(0)
+        try:
+            VOC_emissions.append(model_instance.VOC_emissions_dict[year])
+        except KeyError:
             VOC_emissions.append(0)
+        try:
+            CO2_emissions_savings.append(model_instance.vehicles.co2_savings[year])
+        except:
+            CO2_emissions_savings.append(0)
 
-    npv_results_dir = model_instance.inputs.RESULTS_DIR + '/npv_results.csv'
+        try:
+            annual_carbon_emissions_from_ev.append(model_instance.CO2_emissions_dict[year] *
+                                                                  model_instance.inputs.carbon_cost)
+        except:
+            annual_carbon_emissions_from_ev.append(0)
+
+        try:
+            annual_carbon_emissions_savings_from_avoided_gasoline.append(model_instance.vehicles.co2_savings[year] *
+                                                                  model_instance.inputs.carbon_cost)
+        except:
+            annual_carbon_emissions_savings_from_avoided_gasoline.append(0)
+
+    annual_net_carbon_emissions_savings = [a - b for a, b in zip(
+        annual_carbon_emissions_savings_from_avoided_gasoline, annual_carbon_emissions_from_ev)]
+
+    npv_emissions_av_gasoline = helpers.npv(
+        annual_carbon_emissions_savings_from_avoided_gasoline, model_instance.inputs.discount_rate)[0]
+
+    npv_emissions_from_ev = helpers.npv(annual_carbon_emissions_from_ev, model_instance.inputs.discount_rate)[0]
+
+    npv_net_emissions_savings = helpers.npv(annual_net_carbon_emissions_savings,
+                                            model_instance.inputs.discount_rate)[0]
+
+    npv_results_dir = model_instance.inputs.RESULTS_DIR + r'\npv_results.csv'
     with open(npv_results_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
 
@@ -241,9 +272,12 @@ def export_results(model_instance):
 
         # Energy Supply Cost
 
-        writer.writerow(['Energy Supply Cost', npv_energy])
+        writer.writerow(['Total Energy Supply Cost', npv_energy_supply_cost])
         writer.writerow(['Energy Cost', npv_energy])
         writer.writerow(['Generation Capacity Cost', npv_capacity])
+
+        # GHG Costs
+        # writer.writerow(['GHG Costs', npv_ghg_cost])
 
         # Vehicle Sales
         writer.writerow(['Vehicle Sales (NPV)', npv_sales])
@@ -253,7 +287,14 @@ def export_results(model_instance):
         writer.writerow(['Distribution Cost', npv_distribution])
         writer.writerow(['Transmission Cost', npv_transmission])
 
-    annual_results_dir = model_instance.inputs.RESULTS_DIR + '/annual_results.csv'
+        # Emissions Savings
+        writer.writerow(['Emissions Savings from Avoided Gasoline ($)', npv_emissions_av_gasoline])
+
+        writer.writerow(['Emissions associated with EV adoption ($)', npv_emissions_from_ev])
+
+        writer.writerow(['Net emissions savings ($)', npv_net_emissions_savings])
+
+    annual_results_dir = model_instance.inputs.RESULTS_DIR + r'\annual_results.csv'
     with open(annual_results_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
 
@@ -296,6 +337,14 @@ def export_results(model_instance):
         writer.writerow(['Avoided vehicle gasoline (gallons)']
                         + annual_gallons_avoided)
 
+        writer.writerow(['Carbon Emissions Savings From Avoided Gasoline ($)'] +
+                        annual_carbon_emissions_savings_from_avoided_gasoline)
+
+        writer.writerow(['Carbon Emission Costs Associated with EV Adoption ($)'] + annual_carbon_emissions_from_ev)
+
+        writer.writerow(['Net Carbon Emission Savings Associated with EV Adoption ($)']
+                        + annual_net_carbon_emissions_savings)
+
         # Avoided O&M cost
         writer.writerow(['Vehicle O&M Savings']
                         + annual_oandm)
@@ -329,10 +378,12 @@ def export_results(model_instance):
         writer.writerow(['Energy Supply Cost'] + annual_energy_supply_cost)
         writer.writerow(['Energy Cost']
                         + annual_energy)
+        writer.writerow(['GHG Cost']
+                        + annual_ghg_cost)
         writer.writerow(['Capacity Cost']
                         + annual_capacity)
 
-    annual_gas_dir = model_instance.inputs.RESULTS_DIR + '/Emissions.csv'
+    annual_gas_dir = model_instance.inputs.RESULTS_DIR + r'\Emissions.csv'
     with open(annual_gas_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
 
@@ -340,22 +391,23 @@ def export_results(model_instance):
         writer.writerow(['Year']
                         +  model_instance.model_years)
 
-        # Gasoline Consumption
-        writer.writerow(['CO2 emissions']
+        # Emissions from EVs
+        writer.writerow(['CO2 emissions from EVs (metric tons)']
                         + CO2_emissions)
-        writer.writerow(['NOX emissions']
+        writer.writerow(['NOX emissions from EVs (metric tons)']
                         + NOX_emissions)
 
-        writer.writerow(['PM 10 emissions']
+        writer.writerow(['PM 10 emissions from EVs (metric tons)']
                         + PM10_emissions)
 
-        writer.writerow(['SO2 emissions']
+        writer.writerow(['SO2 emissions from EVs (metric tons)']
                         + SO2_emissions)
 
-        writer.writerow(['VOC emissions']
+        writer.writerow(['VOC emissions from EVs (metric tons)']
                         + VOC_emissions)
 
-    annual_gas_dir = model_instance.inputs.RESULTS_DIR + '/annual_gas_consumption.csv'
+
+    annual_gas_dir = model_instance.inputs.RESULTS_DIR + r'\annual_gas_consumption.csv'
     with open(annual_gas_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)
 
@@ -372,41 +424,26 @@ def export_results(model_instance):
         writer.writerow(['Gasoline Emissions (metric tons CO2)']
                         + annual_gas_consumption_co2)
 
-        writer.writerow(['PHEV 10 Gasoline Consumption (gallons)']
-                        + phev10_annual_gas_consumption)
-        writer.writerow(['PHEV 10 Gasoline Consumption (MMBTU)']
-                        + phev10_annual_gas_consumption_mmbtu)
+        writer.writerow(['PHEV Gasoline Consumption (gallons)']
+                        + phev_annual_gas_consumption)
+        writer.writerow(['PHEV Gasoline Consumption (MMBTU)']
+                        + phev_annual_gas_consumption_mmbtu)
 
-        writer.writerow(['PHEV 10 Gasoline Emissions (metric tons CO2)']
-                        + phev10_annual_gas_consumption_co2)
+        writer.writerow(['PHEV Gasoline Emissions (metric tons CO2)']
+                        + phev_annual_gas_consumption_co2)
 
-        writer.writerow(['PHEV 20 Gasoline Consumption (gallons)']
-                        + phev20_annual_gas_consumption)
-        writer.writerow(['PHEV 20 Gasoline Consumption (MMBTU)']
-                        + phev20_annual_gas_consumption_mmbtu)
+        writer.writerow(['BEV Gasoline Consumption (gallons)']
+                        + bev_annual_gas_consumption)
+        writer.writerow(['BEV Gasoline Consumption (MMBTU)']
+                        + bev_annual_gas_consumption_mmbtu)
 
-        writer.writerow(['PHEV 20 Gasoline Emissions (metric tons CO2)']
-                        + phev20_annual_gas_consumption_co2)
-
-        writer.writerow(['PHEV 40 Gasoline Consumption (gallons)']
-                        + phev40_annual_gas_consumption)
-        writer.writerow(['PHEV 40 Gasoline Consumption (MMBTU)']
-                        + phev40_annual_gas_consumption_mmbtu)
-        writer.writerow(['PHEV 40 Gasoline Emissions (metric tons CO2)']
-                        + phev40_annual_gas_consumption_co2)
-
-        writer.writerow(['BEV 100 Gasoline Consumption (gallons)']
-                        + bev100_annual_gas_consumption)
-        writer.writerow(['BEV 100 Gasoline Consumption (MMBTU)']
-                        + bev100_annual_gas_consumption_mmbtu)
-
-        writer.writerow(['BEV 100 Gasoline Emissions (metric tons CO2)']
-                        + bev100_annual_gas_consumption_co2)
+        writer.writerow(['BEV Gasoline Emissions (metric tons CO2)']
+                        + bev_annual_gas_consumption_co2)
 
         writer.writerow(['EV Share (%)'] + ev_share)
 
 def export_loadprofiles(model_instance, data, name):
-    loadprofile_dir = model_instance.inputs.RESULTS_DIR + '/%s_loadprofile.csv' % name
+    loadprofile_dir = model_instance.inputs.RESULTS_DIR + r'\%s_loadprofile.csv' % name
 
     with open(loadprofile_dir, 'w', newline ='') as csvfile:
         writer = csv.writer(csvfile)

@@ -4,17 +4,20 @@ from __future__ import unicode_literals
 demandcharge_components = {1: 'monthly_max',
                            2: 'peak_max',
                            3: 'partpeak_max1',
-                           4: 'partpeak_max2'}
+                           4: 'partpeak_max2',
+                           5: 'additional_demand_charge'}
 inflation = 0.022
 
 charger_name_to_population_attr = {
     'Residential L2': 'res_evses',
+    'Residential L1': 'res_evses',
     'Public L2': 'public_l2_evses',
     'DCFC': 'dcfc_evses',
     'Workplace L2': 'workplace_evses'
 }
 
 charger_name_conversion = {'Residential L2': 'Res',
+                           'Residential L1': 'Res',
                            'Workplace L2': 'Work',
                            'Public L2': 'L2',
                            'DCFC': 'DC'}

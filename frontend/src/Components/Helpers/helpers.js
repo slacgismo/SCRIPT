@@ -1,6 +1,5 @@
 // Helper functions
 import axios from "axios";
-import continuousColorLegend from "react-vis/dist/legends/continuous-color-legend";
 
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
@@ -77,11 +76,13 @@ export async function checkFlowerTaskStatus (task_id) {
 
 export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, callback) {
     let status = await checkStatus(task_id);
-    if (status === "SUCCESS" || status === "FAILURE" || max === 0) {
-        callback(status);
-    } else { 
+    if (status === "SUCCESS") {
+        callback.success();
+    } else if (status === "FAILURE" || max === 0){
+        callback(new Error());
+    } else if (status === "PENDING") {
         timeout = setTimeout(function() {
             return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, callback);
         }, delay);
-    }
+    } 
 }

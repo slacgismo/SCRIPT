@@ -10,10 +10,10 @@ from model_class import ModelInstance
 
 @shared_task
 def run_cba_tool(county_data, profile_name):
-    split_file(county = county_data)
-    ModelInstance()
-    UploadToPostgres(load_profile = profile_name)
-    return
+    split_file(county = county_data[0], controlled_types = ["uncontrolled", "e19controlled"])
+    ModelInstance("BaseCase_" + county_data[0] + "_uncontrolled_load")
+    ModelInstance("BaseCase_" + county_data[0] + "_e19controlled_load")
+    UploadToPostgres(load_profile = profile_name, county=county_data[0])
 
 @shared_task
 def run_lf_runner(lf_argv):

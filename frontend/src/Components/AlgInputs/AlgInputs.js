@@ -43,6 +43,7 @@ export default function AlgInputs (props) {
             <form noValidate autoComplete="off">
                 <AlgInputCustomized
                     category = { props.category }
+                    controlType = {props.controlType }
                     visualizeResults={ (result) => visualizeResults(result) }
                     loadingResults={ (isLoading) => props.loadingResults(isLoading)}
                 />

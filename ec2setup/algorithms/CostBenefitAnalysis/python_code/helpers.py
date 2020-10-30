@@ -8,6 +8,7 @@ import pickle
 import csv as _csv
 import os
 import boolean as _boolean
+from collections import defaultdict
 
 def npv(values, discount_rate):
 
@@ -87,3 +88,13 @@ def FloatOrZero(value):
         return float(value)
     except:
         return 0.0
+
+
+
+def dsum(*dicts):
+    """ Sums keys of two dictionaries together"""
+    ret = defaultdict(int)
+    for d in dicts:
+        for k, v in d.items():
+            ret[k] += v
+    return dict(ret)
