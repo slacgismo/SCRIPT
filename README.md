@@ -14,7 +14,7 @@ SCRIPT/
     utils/                      ---- Utils which can be copied by all images during image build
         mosek/                  ---- mosek license
     variable.env                ---- Configuration for environment variables
-    run.py                      ---- One-key script to start the whole project
+    UploadToCounty/             ---- Includes script to populate the counties table
 ```
 
 # Getting Started with SCRIPT Running Locally
