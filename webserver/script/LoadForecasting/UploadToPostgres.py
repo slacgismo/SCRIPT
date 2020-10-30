@@ -163,9 +163,10 @@ class UploadToPostgres():
         work_control
     ):
 
-        db_length = LoadForecastConfig.objects.count()
+        # replaces the oldest profile when profile count = 4
+        profile_count = LoadForecastConfig.objects.count()
 
-        if (db_length >= 4):
+        if (profile_count >= 4):
             oldest_profile = LoadForecastConfig.objects.order_by('created_at')[0]
             oldest_profile.loadforecast_set.all().delete()
             oldest_profile.delete()
