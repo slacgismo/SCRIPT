@@ -105,3 +105,5 @@ $ flower -A app --port=5555
 $ cd frontend
 $ yarn start
 ```
+
+### Note: Make sure your aws credentials are configured in your local machine
