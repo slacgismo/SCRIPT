@@ -44,6 +44,7 @@ export default function AlgInputs (props) {
                 <AlgInputCustomized
                     category = { props.category }
                     visualizeResults={ (result) => visualizeResults(result) }
+                    setChartTitles={ (chartTitles) => props.setChartTitles(chartTitles) }
                     loadingResults={ (isLoading) => props.loadingResults(isLoading)}
                 />
             </form>    

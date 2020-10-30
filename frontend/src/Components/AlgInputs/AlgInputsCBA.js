@@ -107,6 +107,7 @@ class AlgInputsCBA extends Component {
 
     setLoadForecastResults = () => {
         const processedLoadForecastResults = processResults(this.state.loadForecastResults);
+        this.props.setChartTitles([`${this.state.configName}: Uncontrolled`, `${this.state.configName}: ${this.state.workControl} Controlled`]);
         this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
     };
 
@@ -153,6 +154,7 @@ class AlgInputsCBA extends Component {
     getCBAResult = async () => {
         const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
         const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
+        // this.props.setChartTitles([`${this.state.configName}: Uncontrolled`, `${this.state.configName}: ${this.state.workControl} Controlled`]);
         const dataCBA = {dataValues: []};
         const dataCBASub = [];
         for (var i = 0; i < filteredRes.length; i++) {
@@ -260,6 +262,7 @@ class AlgInputsCBA extends Component {
                             <ResultCharts
                                 results={ this.state.processedLoadForecastResults }
                                 algId={ 2 }
+                                chartTitles={ this.state.chartTitles }
                             />
                         </DialogContent>
                         <DialogActions>

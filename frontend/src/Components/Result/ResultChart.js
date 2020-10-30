@@ -44,10 +44,6 @@ class ResultChart extends React.Component {
             "#911955",
         ];
         const { results } = this.props;
-        console.log("THESE PROPS")
-        console.log(this.props)
-        console.log(this.props.results)
-        console.log()
         const newItems = [];
         const newData = [];
         Object.keys(results).forEach((attr, i) => {
@@ -66,7 +62,7 @@ class ResultChart extends React.Component {
             <div className="chart-grid">
                 {
                     /* title of chart */
-                    <h5 className='chartTitle'>{ this.props.results[Object.keys(this.props.results)[0]].yAxis }</h5>
+                    <h5 className='chartTitle'>{ this.props.chartTitle }</h5>
                 }
 
                 {/* X Axis Label */}
