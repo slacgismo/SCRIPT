@@ -33,7 +33,7 @@ class AlgorithmPage extends Component {
     setChartTitles(chartTitles){
         this.setState({
             chartTitles: chartTitles
-        })
+        });
     }
 
     render() {

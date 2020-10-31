@@ -16,6 +16,7 @@ import "./AlgInputs.css";
 import { checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
 
 
+
 const styles = theme => ({
     container: {
         display: "flex",
@@ -109,7 +110,7 @@ class AlgInputsLoadForecast extends Component {
 
     updateChartTitles = () => {
         this.props.setChartTitles([`${this.state.configName}: Uncontrolled`, `${this.state.configName}: ${this.state.workControl} Controlled`]);
-    }
+    };
 
     getResult = async () => {
         // receives 2 lists (uncontrolled, controlled) when form is saved
