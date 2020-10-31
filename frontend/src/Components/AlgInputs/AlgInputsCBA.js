@@ -50,7 +50,8 @@ class AlgInputsCBA extends Component {
             loadForecastResults: [],
             processedLoadForecastResults: [],
             shouldRender: false,
-            openAlert: false
+            openAlert: false,
+            chartTitles: []
         };
     }
 
@@ -68,8 +69,8 @@ class AlgInputsCBA extends Component {
                     }
                     this.setState({ profileData: profiles, profileNames: profileNames });
                 }
-            });
-        this.getLoadForecastData();
+            this.getLoadForecastData();
+        });
     }
 
     getLoadForecastData = async() => {
@@ -107,6 +108,7 @@ class AlgInputsCBA extends Component {
 
     setLoadForecastResults = () => {
         const processedLoadForecastResults = processResults(this.state.loadForecastResults);
+        this.setState({ chartTitles: [`${this.state.profileName}: Uncontrolled`, `${this.state.profileName}: Controlled`] });
         this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
     };
 
@@ -167,17 +169,17 @@ class AlgInputsCBA extends Component {
 
     updateCharts = async () => {
         this.props.visualizeResults(await this.getCBAResult());
-    }
+    };
 
     updateProfileAndCharts = async () => {
         this.findProfile();
         this.props.visualizeResults(await this.getCBAResult());
     };
 
-    loadedResultsandCharts = async() => {
+    loadedResultsandCharts = async () => {
         this.props.loadingResults(false);
         this.props.visualizeResults(await this.getCBAResult());
-    }
+    };
 
     componentDidUpdate(prevProps, prevState) {
         // if different dropdown menu category selected (e.g. gas consumption)
@@ -193,7 +195,7 @@ class AlgInputsCBA extends Component {
         if (prevState.profileName !== this.state.profileName) {
             this.getLoadForecastData();
         }
-    }
+    };
 
     uploadFile = () => {
         this.setState({ openUpload: true});
@@ -265,6 +267,7 @@ class AlgInputsCBA extends Component {
                             <ResultCharts
                                 results={ this.state.processedLoadForecastResults }
                                 algId={ 2 }
+                                chartTitles={ this.state.chartTitles }
                             />
                         </DialogContent>
                         <DialogActions>

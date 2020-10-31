@@ -20,6 +20,7 @@ export function ResultCharts(props) {
             graphWidth={ 400 }
             graphHeight={ 300 }
             legendPosition={ legendPosition }
+            chartTitle={ props.chartTitles[i] }
         />
     ));
     

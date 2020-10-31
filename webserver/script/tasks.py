@@ -1,7 +1,6 @@
 from celery import shared_task, current_task
 from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
 from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
-from celery.execute import send_task
 
 #for running CBA tool
 import sys

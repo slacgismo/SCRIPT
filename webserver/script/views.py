@@ -63,7 +63,7 @@ class LoadForecastRunner(APIView):
             "work_control": request.data["workControl"],
             "config_name": request.data["configName"]
         }
-
+        
         lf_runner(lf_argv)
         return Response("Load Forecast run succeeded")
 

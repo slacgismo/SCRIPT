@@ -14,6 +14,7 @@ import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
 import { serverUrl } from "../Api/server";
 import "./AlgInputs.css";
 
+
 const styles = theme => ({
     container: {
         display: "flex",
@@ -105,9 +106,14 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ [field]: event.currentTarget.value });
     };
 
+    updateChartTitles = () => {
+        this.props.setChartTitles([`${this.state.configName}: Uncontrolled`, `${this.state.configName}: ${this.state.workControl} Controlled`]);
+    };
+
     getResult = async () => {
         // receives 2 lists (uncontrolled, controlled) when form is saved
         const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?config=${this.state.configName}`);
+        this.updateChartTitles();
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {
             const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};

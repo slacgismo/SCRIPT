@@ -27,7 +27,7 @@ export function processResults(resultArr) {
                 }   
             ));
             data_to_visualize[field] = {
-                yAxis: `${field}`.replace(/_/g, " "),
+                legendLabel: `${field}`.replace(/_/g, " "),
                 unit: "Power (kW)",
                 xAxis: isTimeSeries ? "Time" : "Year",
                 data: dataFormatted,
