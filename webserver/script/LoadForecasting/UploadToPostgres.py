@@ -23,7 +23,7 @@ class UploadToPostgres():
         work_load_controlled,
         fast_load_controlled,
         public_l2_load_controlled,
-        total_load_controlled
+        total_load_controlled,
     ):
 
         with open(settings.BASE_DIR + '/postgres_info.json') as json_file:
@@ -35,6 +35,7 @@ class UploadToPostgres():
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
+        self.max_profiles = 4
         self.residential_l1_load_uncontrolled = residential_l1_load_uncontrolled
         self.residential_l2_load_uncontrolled = residential_l2_load_uncontrolled
         self.residential_mud_load_uncontrolled = residential_mud_load_uncontrolled
@@ -163,9 +164,9 @@ class UploadToPostgres():
         work_control
     ):
 
-        # replaces the oldest profile when profile count = 4
+        # replaces the oldest profile when profile count reaches max
         profile_count = LoadForecastConfig.objects.count()
-        if (profile_count >= 4):
+        if (profile_count >= self.max_profiles):
             oldest_profile = LoadForecastConfig.objects.order_by('created_at')[0]
             oldest_profile.loadforecast_set.all().delete()
             oldest_profile.delete()
