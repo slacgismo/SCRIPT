@@ -141,26 +141,16 @@ class AlgInputsCBA extends Component {
 
             const task_id = cba_res.data.task_id;
             let timeout;
-<<<<<<< HEAD
-            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 100, async (status) => {
-                if (status === "SUCCESS") {
-                    this.props.loadingResults(false);
-=======
             await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
                 async () => { 
                     this.props.loadingResults(false); 
->>>>>>> implement-celery-lf
                     this.props.visualizeResults(await this.getCBAResult());
                 }, 
                 () => {
                     this.props.loadingResults(false); 
                     this.handleAlertOpen();
                 }
-<<<<<<< HEAD
-            });
-=======
             );
->>>>>>> implement-celery-lf
         }
     };
 
