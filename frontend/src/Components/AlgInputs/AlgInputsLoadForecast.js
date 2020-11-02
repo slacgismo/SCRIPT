@@ -50,7 +50,7 @@ class AlgInputsLoadForecast extends Component {
             advancedSettings: false,
             openAlert: false,
             alertDuplicateProfileName: false,
-            alertDuplicateDbEntry: false,
+            alertServerError: false,
             // Alg params
             configName: loadForecastDefaultParams.configName,
             aggregationLevel: loadForecastDefaultParams.aggregationLevel,
@@ -154,27 +154,34 @@ class AlgInputsLoadForecast extends Component {
                 timerControl: this.state.timerControl,
                 workControl: this.state.workControl,
             };
+            
             this.setState({ open: false });
             this.props.loadingResults(true);
+            const postUrl = `${ serverUrl }/load_forecast_runner`;
 
-            const lf_res = await axios({
-                url: `${ serverUrl }/load_forecast_runner`,
+            axios({
                 method: "post",
+                url: postUrl,
                 data: postData
-            });
+            })
+                .then(async (lf_res) => {
+                    const task_id = lf_res.data.task_id;
+                    let timeout;
+                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                        async () => { 
+                            this.props.loadingResults(false); 
+                            this.props.visualizeResults(await this.getResult());
+                        }, 
+                        () => {
+                            this.props.loadingResults(false); 
+                            this.setState({ alertServerError: true});
+                        }
+                    );
+                }, (error) => {
+                    this.props.loadingResults(false);
+                    this.setState({ alertServerError: true});
 
-            const task_id = lf_res.data.task_id;
-            let timeout;
-            await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
-                async () => { 
-                    this.props.loadingResults(false); 
-                    this.props.visualizeResults(await this.getResult());
-                }, 
-                () => {
-                    this.props.loadingResults(false); 
-                    this.setState({ alertDuplicateDbEntry: true});
-                }
-            );
+                });            
         } else {
             this.setState({ alertDuplicateProfileName: true});
         }
@@ -212,7 +219,7 @@ class AlgInputsLoadForecast extends Component {
     handleAlertClose = () => {
         this.setState({ openAlert: false });
         this.setState({ alertDuplicateProfileName: false });
-        this.setState({ alertDuplicateDbEntry: false });
+        this.setState({ alertServerError: false });
     };
 
 
@@ -285,15 +292,15 @@ class AlgInputsLoadForecast extends Component {
                     </DialogActions>
                 </Dialog>
                 <Dialog
-                    open={this.state.alertDuplicateDbEntry}
+                    open={this.state.alertServerError}
                     onClose={this.handleAlertClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Input Error"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"Server Error"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Set of values already exist
+                            Something went wrong
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>

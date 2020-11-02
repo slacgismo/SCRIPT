@@ -68,29 +68,10 @@ class LoadForecastConfig(models.Model):
     mixed_batteries = models.CharField(max_length=50)
     timer_control = models.CharField(max_length=30)
     work_control = models.CharField(max_length=30)
-
+    created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'script_config_ev_load_forecast'
-        unique_together = (('aggregation_level',
-                            'num_evs',
-                            'choice',
-                            'fast_percent',
-                            'work_percent',
-                            'res_percent',
-                            'l1_percent',
-                            'public_l2_percent',
-                            'res_daily_use',
-                            'work_daily_use',
-                            'fast_daily_use',
-                            'rent_percent',
-                            'res_l2_smooth',
-                            'week_day',
-                            'publicl2_daily_use',
-                            'mixed_batteries',
-                            'timer_control',
-                            'work_control',
-                            ),)
 
 
 class LoadProfileConfig(models.Model):
