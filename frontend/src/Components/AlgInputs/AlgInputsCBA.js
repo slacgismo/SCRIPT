@@ -239,7 +239,7 @@ class AlgInputsCBA extends Component {
                 >
                     {
                         this.state.profileNames.map(option => (
-                            <option key={option.id} value={option.name}>
+                            <option key={option.name} value={option.name}>
                                 {option.name}
                             </option>
                         ))
