@@ -136,12 +136,12 @@ class AlgInputsCBA extends Component {
                             }, 
                             () => {
                                 this.props.loadingResults(false); 
-                                this.handleAlertOpen();
+                                this.handleAlertOpen("Error", "Error occurred while running cost benefit analysis.");
                             }
                         );
                     }, (error) => {
                         this.props.loadingResults(false); 
-                        this.handleAlertOpen();
+                        this.handleAlertOpen("Error", "Error occurred while starting cost benefit analysis runner.");
                     });
             } else {
                 this.props.visualizeResults(await this.getCBAResult());
