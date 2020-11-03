@@ -123,7 +123,10 @@ class AlgInputsCBA extends Component {
                 axios({
                     url: `${ serverUrl }/cost_benefit_analysis_runner`,
                     method: "post",
-                    data: {load_profile: this.state.profileName, county: countyMatch}
+                    data: {
+                        load_profile: this.state.profileName, 
+                        county: countyMatch
+                    }
     
                 })
                     .then( async (celeryRes) =>  {
@@ -170,15 +173,15 @@ class AlgInputsCBA extends Component {
     };
 
     handleAlertOpen = (title, description) => {
-        this.setState({ alertTitle: title, alertDescription: description, openAlert: true});
+        this.setState({ alertTitle: title, alertDescription: description, openAlert: true });
     };
 
     handleAlertClose = () => {
-        this.setState({ openAlert: false});
+        this.setState({ openAlert: false });
     };
 
     handleChartsClose = () => {
-        this.setState({ openResult: false, openUpload: false });
+        this.setState({ openResult: false });
     };
 
     updateCBACharts = async () => {
@@ -232,7 +235,7 @@ class AlgInputsCBA extends Component {
                     }}
                     helperText="Please select a profile"
                     margin="normal"
-                    onChange={ e => this.update("profileName", e)}
+                    onChange={e => this.update("profileName", e)}
                 >
                     {
                         this.state.profileNames.map(option => (
@@ -256,9 +259,9 @@ class AlgInputsCBA extends Component {
                         <DialogTitle onClose={this.handleChartsClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
                         <DialogContent>
                             <ResultCharts
-                                results={ this.state.loadForecastResults }
-                                algId={ 2 }
-                                chartTitles={ this.state.chartTitles }
+                                results={this.state.loadForecastResults}
+                                algId={2}
+                                chartTitles={this.state.chartTitles}
                             />
                         </DialogContent>
                         <DialogActions>
