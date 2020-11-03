@@ -6,9 +6,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import {DropzoneArea} from "material-ui-dropzone";
-import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
+import axios from "axios";
 import { ResultCharts } from "../Result/ResultCharts";
 import { serverUrl } from "../Api/server";
 import { processResults, preprocessData, checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
@@ -43,20 +42,23 @@ class AlgInputsCBA extends Component {
         super(props);
         this.state = {
             openResult: false,
-            openUpload: false,
-            profileNames: [],
-            profileData: [],
-            profileName: "",
-            loadForecastResults: [],
-            processedLoadForecastResults: [],
             shouldRender: false,
             openAlert: false,
-            chartTitles: []
+            alertTitle: "",
+            alertDescription: "",
+            profileName: "",
+            profileNames: [],
+            profileData: [],
+            loadForecastResults: [],
+            chartTitles: []  
         };
     }
 
     componentDidMount() {
-        axios("http://127.0.0.1:8000/api/config/load_forecast")
+        axios({
+            url: `${ serverUrl }/config/load_forecast`,
+            method: "get"
+        })
             .then(res => {
                 const profiles = res.data;
                 const profileNames = [];
@@ -68,105 +70,120 @@ class AlgInputsCBA extends Component {
                     }
                     this.setState({ profileData: profiles, profileNames: profileNames, profileName: profileNames[0].name });
                 }
-            this.getLoadForecastData();
-        });
+            }, (error) => {
+                this.handleAlertOpen("", "Server Error");
+            });
     }
 
-    getLoadForecastData = async() => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast", {
+    getLoadForecastData = () => {
+        axios({
+            url: `${ serverUrl }/algorithm/load_forecast`,
+            method: "get",
             params: {
                 config: this.state.profileName
             }
-        });
-        const dataLoadForecast = [];
-        for (var i = 0; i < res.data.length; i++) {
-            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
-            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
-            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
-            dataLoadForecastUnit.work_load = (res.data[i].work_load);
-            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
-            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
-            dataLoadForecastUnit.total_load = (res.data[i].total_load);
-            dataLoadForecast.push(dataLoadForecastUnit);
-        }
-        this.setState({ loadForecastResults: dataLoadForecast });
+        })
+            .then(async (lf_res) => {
+                const dataLoadForecast = [];
+                for (var i = 0; i < lf_res.data.length; i++) {
+                    const dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+                    dataLoadForecastUnit.residential_l1_load = (lf_res.data[i].residential_l1_load);
+                    dataLoadForecastUnit.residential_l2_load = (lf_res.data[i].residential_l2_load);
+                    dataLoadForecastUnit.residential_mud_load = (lf_res.data[i].residential_mud_load);
+                    dataLoadForecastUnit.work_load = (lf_res.data[i].work_load);
+                    dataLoadForecastUnit.fast_load = (lf_res.data[i].fast_load);
+                    dataLoadForecastUnit.public_l2_load = (lf_res.data[i].public_l2_load);
+                    dataLoadForecastUnit.total_load = (lf_res.data[i].total_load);
+                    dataLoadForecast.push(dataLoadForecastUnit);
+                    this.setLoadForecastResults(dataLoadForecast);
+                }
+            }, (error) => {
+                this.handleAlertOpen("Error", "Error occured while loading load forecast profile.");
+            });
     };
 
-    handleAlertOpen = () => {
-        this.setState({ openAlert: true});
+    setLoadForecastResults = (loadForecastData) => {
+        const loadForecastResults = processResults(loadForecastData);
+        const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName)[0];
+        const countyChoice = profileMatch["choice"];
+        const rateStructure = profileMatch["work_control"];
+        this.setState({ chartTitles: [`${this.state.profileName} - ${countyChoice} uncontrolled`, `${this.state.profileName} - ${countyChoice} ${rateStructure} controlled`] });
+        this.setState({ openResult: true, shouldRender: true, loadForecastResults: loadForecastResults  });
+    };
+
+    findProfile = () => {
+        axios({
+            url: `${ serverUrl }/config/${ this.props.category }/`,
+            method: "get",
+            params: {
+                lf_config: this.state.profileName
+            }
+        })
+            .then(async (configRes) => {
+                if(!configRes.data.length){
+                    this.props.loadingResults(true);
+                    const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
+                    const countyMatch = profileMatch.map(profile => profile["choice"]);
+                    axios({
+                        url: `${ serverUrl }/cost_benefit_analysis_runner`,
+                        method: "post",
+                        data: {load_profile: this.state.profileName, county: countyMatch}
+
+                    })
+                        .then(async (cbaRes) =>  {
+                            const taskId = cbaRes.data.task_id;
+                            let timeout;
+                            await exponentialBackoff(checkFlowerTaskStatus, taskId, timeout, 20, 75, 
+                                async () => { 
+                                    this.props.loadingResults(false); 
+                                    this.props.visualizeResults(await this.getCBAResult());
+                                }, 
+                                () => {
+                                    this.props.loadingResults(false); 
+                                    this.handleAlertOpen("Error", "Error occured while running cost benefit analysis.");
+                                }
+                            );
+                        }, (error) => {
+                            this.props.loadingResults(false); 
+                            this.handleAlertOpen("Error", "Error occured while attempting to start the cost benefit analysis runner.");
+                        });
+                }
+            }, (error) => {
+                this.handleAlertOpen("", "Server error");
+            });
+    }
+
+    getCBAResult = async () => {
+        axios({
+            url: `${ serverUrl }/algorithm/cost_benefit_analysis/${ this.props.category }`,
+            method: "get"
+        })
+            .then(async (res) => {
+                const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
+                const dataCBA = {dataValues: []};
+                const dataCBASub = [];
+                for (var i = 0; i < filteredRes.length; i++) {
+                    const dataCBAUnit = filteredRes[i];
+                    dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
+                    dataCBASub.push(dataCBAUnit);
+                }
+                dataCBA.dataValues = dataCBASub;
+                return preprocessData(dataCBA);
+            }, (error) => {
+                this.handleAlertOpen("", "Server error");
+            });
+    };
+
+    handleAlertOpen = (title, description) => {
+        this.setState({ alertTitle: title, alertDescription: description, openAlert: true});
     };
 
     handleAlertClose = () => {
         this.setState({ openAlert: false});
     };
 
-    handleClose = () => {
+    handleChartsClose = () => {
         this.setState({ openResult: false, openUpload: false });
-    };
-
-    setLoadForecastResults = () => {
-        const processedLoadForecastResults = processResults(this.state.loadForecastResults);
-        const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName)[0];
-        const countyChoice = profileMatch["choice"]
-        const rateStructure = profileMatch["work_control"]
-        this.setState({ chartTitles: [`${this.state.profileName} - ${countyChoice} uncontrolled`, `${this.state.profileName} - ${countyChoice} ${rateStructure} controlled`] });
-        this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
-    };
-
-    update = (field, event) => {
-        this.setState({ [field]: event.currentTarget.value });
-    };
-
-
-    findProfile = async () => {
-        const config_res = await axios.get(`http://127.0.0.1:8000/api/config/${this.props.category}/`, {
-            params: {
-                lf_config: this.state.profileName
-            }
-        });
-        if(!config_res.data.length){
-            this.props.loadingResults(true);
-            const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
-            const countyMatch = profileMatch.map(profile => profile["choice"]);
-            axios({
-                url: `${ serverUrl }/cost_benefit_analysis_runner`,
-                method: "post",
-                data: {load_profile: this.state.profileName, county: countyMatch}
-
-            })
-                .then(async (cba_res) =>  {
-                    const task_id = cba_res.data.task_id;
-                    let timeout;
-                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
-                        async () => { 
-                            this.props.loadingResults(false); 
-                            this.props.visualizeResults(await this.getCBAResult());
-                        }, 
-                        () => {
-                            this.props.loadingResults(false); 
-                            this.handleAlertOpen();
-                        }
-                    );
-                }, (error) => {
-                    this.props.loadingResults(false); 
-                    this.handleAlertOpen();
-                });
-        }
-    };
-
-    getCBAResult = async () => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
-        const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
-        const dataCBA = {dataValues: []};
-        const dataCBASub = [];
-        for (var i = 0; i < filteredRes.length; i++) {
-            const dataCBAUnit = filteredRes[i];
-            dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
-            dataCBASub.push(dataCBAUnit);
-        }
-        dataCBA.dataValues = dataCBASub;
-        return preprocessData(dataCBA);
     };
 
     updateCharts = async () => {
@@ -183,6 +200,10 @@ class AlgInputsCBA extends Component {
         this.props.visualizeResults(await this.getCBAResult());
     };
 
+    update = (field, event) => {
+        this.setState({ [field]: event.currentTarget.value });
+    };
+
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.category !== this.props.category) {
             this.updateCharts();
@@ -193,13 +214,7 @@ class AlgInputsCBA extends Component {
         if (prevState.profileName !== this.state.profileName) {
             this.getLoadForecastData();
         }
-    };
-
-    uploadFile = () => {
-        this.setState({ openUpload: true});
-        // TODO: backend
-        // upload a file to EC2 as the input of algorithm 3 (cba)
-    };
+    }
 
     render() {
         const { classes } = this.props;
@@ -211,10 +226,10 @@ class AlgInputsCBA extends Component {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Cost Benefit Analysis Failed"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{this.state.alertTitle}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Something went wrong
+                            {this.state.alertDescription}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -245,12 +260,9 @@ class AlgInputsCBA extends Component {
                         ))
                     }
                 </TextField>
-                <Button variant="contained" className={classes.button} onClick={this.setLoadForecastResults}>
+                <Button variant="contained" className={classes.button} onClick={this.getLoadForecastData}>
                     Review
                 </Button>
-                {/* <Button variant="contained" className={classes.button} onClick={this.uploadFile}>
-                    Upload
-                </Button> */}
                 <p/>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.updateProfileAndCharts}>
                     Run
@@ -258,47 +270,23 @@ class AlgInputsCBA extends Component {
 
                 { !this.state.shouldRender ? <></> : (
 
-                    <Dialog open={this.state.openResult} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle onClose={this.handleClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
+                    <Dialog open={this.state.openResult} onClose={this.handleChartsClose} aria-labelledby="form-dialog-title">
+                        <DialogTitle onClose={this.handleChartsClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
                         <DialogContent>
                             <ResultCharts
-                                results={ this.state.processedLoadForecastResults }
+                                results={ this.state.loadForecastResults }
                                 algId={ 2 }
                                 chartTitles={ this.state.chartTitles }
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={this.handleClose} color="primary">
+                            <Button onClick={this.handleChartsClose} color="primary">
                             Cancel
                             </Button>
                         </DialogActions>
                     </Dialog>
                 )
                 }
-
-                <Dialog open={this.state.openUpload} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Upload</DialogTitle>
-                    <DialogContent>
-                        <DropzoneArea
-                            acceptedFiles={["text/plain"]}
-                            dropzoneText = "Drag and drop a file here or click"
-                            showPreviews = {true}
-                            showPreviewsInDropzone = {false}
-                            filesLimit = "1"
-                            maxFileSize={5000000}
-                            showFileNamesInPreview = "true"
-                            // onChange={uploadFile}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={this.uploadFile} color="primary" >
-                            Upload
-                        </Button>
-                    </DialogActions>
-                </Dialog>
             </div>
         );
     }

@@ -5,7 +5,8 @@ export function processResults(resultArr) {
     const data_to_visualize_all = [];
     let isTimeSeries = false;
 
-    if (!resultArr.length) {
+    if (!resultArr) {
+        resultArr = [];
         isTimeSeries = false;
     } else if (resultArr[0][0] !== undefined && resultArr[0][0].length === 0) {
         isTimeSeries = false;
@@ -17,7 +18,6 @@ export function processResults(resultArr) {
 
     for (const result of resultArr) {
         const data_to_visualize = {};
-
         for (const field of Object.keys(result)) {
             const data = result[field];
             const dataFormatted = data.map((datapoint, i) => (
@@ -30,7 +30,6 @@ export function processResults(resultArr) {
                 legendLabel: `${field}`.replace(/_/g, " "),
                 unit: "Power (kW)",
                 xAxis: isTimeSeries ? "Time" : "Year",
-                unit: "Power (kW)",
                 data: dataFormatted,
             };
         }
