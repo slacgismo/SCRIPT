@@ -1,7 +1,10 @@
-import boto3
 import json
+import boto3
+import datetime
 import psycopg2
 from django.conf import settings
+from script.models.algorithms import LoadForecast
+from script.models.config import LoadForecastConfig
 
 
 class UploadToPostgres():
@@ -20,7 +23,7 @@ class UploadToPostgres():
         work_load_controlled,
         fast_load_controlled,
         public_l2_load_controlled,
-        total_load_controlled
+        total_load_controlled,
     ):
 
         with open(settings.BASE_DIR + '/postgres_info.json') as json_file:
@@ -32,6 +35,7 @@ class UploadToPostgres():
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
+        self.max_profiles = 4
         self.residential_l1_load_uncontrolled = residential_l1_load_uncontrolled
         self.residential_l2_load_uncontrolled = residential_l2_load_uncontrolled
         self.residential_mud_load_uncontrolled = residential_mud_load_uncontrolled
@@ -160,6 +164,13 @@ class UploadToPostgres():
         work_control
     ):
 
+        # replaces the oldest profile when profile count reaches max
+        profile_count = LoadForecastConfig.objects.count()
+        if (profile_count >= self.max_profiles):
+            oldest_profile = LoadForecastConfig.objects.order_by('created_at')[0]
+            oldest_profile.loadforecast_set.all().delete()
+            oldest_profile.delete()
+
         conn = psycopg2.connect(
             host=self.db_host,
             dbname=self.postgres_db,
@@ -167,20 +178,20 @@ class UploadToPostgres():
             password=self.postgres_password,
             port='5432'
         )
-
         cur = conn.cursor()
 
         cur.execute("INSERT INTO " + self.config_table_name + \
             " (config_name, aggregation_level, num_evs, choice," + \
             " fast_percent, work_percent, res_percent, l1_percent, public_l2_percent," + \
             " res_daily_use, work_daily_use, fast_daily_use, rent_percent, res_l2_smooth," + \
-            " week_day, publicl2_daily_use, mixed_batteries, timer_control, work_control)" + \
-            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            " week_day, publicl2_daily_use, mixed_batteries, timer_control, work_control, created_at)" + \
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 str(config_name), str(aggregation_level), str(int(num_evs)), str(county_choice), str(fast_percent), \
                 str(work_percent), str(res_percent), str(l1_percent), str(publicl2_percent), str(res_daily_use), \
                 str(work_daily_use), str(fast_daily_use), str(rent_percent), str(res_l2_smooth), str(week_day), \
-                str(publicl2_daily_use), str(mixed_batteries), str(timer_control), str(work_control)
+                str(publicl2_daily_use), str(mixed_batteries), str(timer_control), str(work_control), \
+                datetime.datetime.now()
             )
         )
 
@@ -200,7 +211,6 @@ class UploadToPostgres():
             self.public_l2_load_uncontrolled,
             self.total_load_uncontrolled,
             )
-
 
         cur.execute("INSERT INTO " + self.table_name + \
             " (config, controlled, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
@@ -231,7 +241,6 @@ class UploadToPostgres():
             self.total_load_controlled,
             )
 
-
         cur.execute("INSERT INTO " + self.table_name + \
             " (config, controlled, residential_l1_load, residential_l2_load, residential_mud_load, fast_load," + \
             " work_load, public_l2_load, total_load)" + \
@@ -243,6 +252,7 @@ class UploadToPostgres():
                 json.dumps(work_load_list_controlled), json.dumps(public_l2_load_list_controlled), json.dumps(total_load_list_controlled)
             )
         )
+
         # Make the changes to the database persistent
         conn.commit()
 

@@ -51,7 +51,7 @@ class AlgInputsLoadForecast extends Component {
             advancedSettings: false,
             openAlert: false,
             alertDuplicateProfileName: false,
-            alertDuplicateDbEntry: false,
+            alertServerError: false,
             // Alg params
             configName: loadForecastDefaultParams.configName,
             aggregationLevel: loadForecastDefaultParams.aggregationLevel,
@@ -218,7 +218,7 @@ class AlgInputsLoadForecast extends Component {
     handleAlertClose = () => {
         this.setState({ openAlert: false });
         this.setState({ alertDuplicateProfileName: false });
-        this.setState({ alertDuplicateDbEntry: false });
+        this.setState({ alertServerError: false });
     };
 
 
@@ -291,15 +291,15 @@ class AlgInputsLoadForecast extends Component {
                     </DialogActions>
                 </Dialog>
                 <Dialog
-                    open={this.state.alertDuplicateDbEntry}
+                    open={this.state.alertServerError}
                     onClose={this.handleAlertClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Input Error"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"Server Error"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Set of values already exist
+                            Something went wrong
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
