@@ -15,8 +15,6 @@ import { serverUrl } from "../Api/server";
 import "./AlgInputs.css";
 import { checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
 
-
-
 const styles = theme => ({
     container: {
         display: "flex",
@@ -109,7 +107,7 @@ class AlgInputsLoadForecast extends Component {
     };
 
     updateChartTitles = () => {
-        this.props.setChartTitles([`${this.state.configName}: Uncontrolled`, `${this.state.configName}: ${this.state.workControl} Controlled`]);
+        this.props.setChartTitles([`${this.state.configName} - uncontrolled`, `${this.state.configName} - ${this.state.workControl} controlled`]);
     };
 
     getResult = async () => {
@@ -160,27 +158,34 @@ class AlgInputsLoadForecast extends Component {
                 timerControl: this.state.timerControl,
                 workControl: this.state.workControl,
             };
+            
             this.setState({ open: false });
             this.props.loadingResults(true);
+            const postUrl = `${ serverUrl }/load_forecast_runner`;
 
-            const lf_res = await axios({
-                url: `${ serverUrl }/load_forecast_runner`,
+            axios({
                 method: "post",
+                url: postUrl,
                 data: postData
-            });
+            })
+                .then(async (lf_res) => {
+                    const task_id = lf_res.data.task_id;
+                    let timeout;
+                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                        async () => { 
+                            this.props.loadingResults(false); 
+                            this.props.visualizeResults(await this.getResult());
+                        }, 
+                        () => {
+                            this.props.loadingResults(false); 
+                            this.setState({ alertServerError: true});
+                        }
+                    );
+                }, (error) => {
+                    this.props.loadingResults(false);
+                    this.setState({ alertServerError: true});
 
-            const task_id = lf_res.data.task_id;
-            let timeout;
-            await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
-                async () => { 
-                    this.props.loadingResults(false); 
-                    this.props.visualizeResults(await this.getResult());
-                }, 
-                () => {
-                    this.props.loadingResults(false); 
-                    this.setState({ alertDuplicateDbEntry: true});
-                }
-            );
+                });            
         } else {
             this.setState({ alertDuplicateProfileName: true});
         }
