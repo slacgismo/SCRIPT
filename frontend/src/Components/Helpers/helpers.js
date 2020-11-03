@@ -4,7 +4,6 @@ import axios from "axios";
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
     let isTimeSeries = false;
-
     if (!resultArr) {
         resultArr = [];
         isTimeSeries = false;

@@ -75,31 +75,29 @@ class AlgInputsCBA extends Component {
             });
     }
 
-    getLoadForecastData = () => {
-        axios({
-            url: `${ serverUrl }/algorithm/load_forecast`,
-            method: "get",
-            params: {
-                config: this.state.profileName
-            }
-        })
-            .then(async (lf_res) => {
-                const dataLoadForecast = [];
-                for (var i = 0; i < lf_res.data.length; i++) {
-                    const dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-                    dataLoadForecastUnit.residential_l1_load = (lf_res.data[i].residential_l1_load);
-                    dataLoadForecastUnit.residential_l2_load = (lf_res.data[i].residential_l2_load);
-                    dataLoadForecastUnit.residential_mud_load = (lf_res.data[i].residential_mud_load);
-                    dataLoadForecastUnit.work_load = (lf_res.data[i].work_load);
-                    dataLoadForecastUnit.fast_load = (lf_res.data[i].fast_load);
-                    dataLoadForecastUnit.public_l2_load = (lf_res.data[i].public_l2_load);
-                    dataLoadForecastUnit.total_load = (lf_res.data[i].total_load);
-                    dataLoadForecast.push(dataLoadForecastUnit);
-                    this.setLoadForecastResults(dataLoadForecast);
+    getLoadForecastData = async () => {
+        try {
+            const lf_res = await axios.get(`${ serverUrl }/algorithm/load_forecast`, {
+                params: {
+                    config: this.state.profileName
                 }
-            }, (error) => {
-                this.handleAlertOpen("Error", "Error occured while loading load forecast profile.");
             });
+            const dataLoadForecast = [];
+            for (var i = 0; i < lf_res.data.length; i++) {
+                const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+                dataLoadForecastUnit.residential_l1_load = (lf_res.data[i].residential_l1_load);
+                dataLoadForecastUnit.residential_l2_load = (lf_res.data[i].residential_l2_load);
+                dataLoadForecastUnit.residential_mud_load = (lf_res.data[i].residential_mud_load);
+                dataLoadForecastUnit.work_load = (lf_res.data[i].work_load);
+                dataLoadForecastUnit.fast_load = (lf_res.data[i].fast_load);
+                dataLoadForecastUnit.public_l2_load = (lf_res.data[i].public_l2_load);
+                dataLoadForecastUnit.total_load = (lf_res.data[i].total_load);
+                dataLoadForecast.push(dataLoadForecastUnit);
+                this.setLoadForecastResults(dataLoadForecast);
+            }
+        } catch (error) {
+            this.handleAlertOpen("Error", "Error occurred while loading load forecast profile.");
+        }
     };
 
     setLoadForecastResults = (loadForecastData) => {
@@ -111,67 +109,64 @@ class AlgInputsCBA extends Component {
         this.setState({ openResult: true, shouldRender: true, loadForecastResults: loadForecastResults  });
     };
 
-    findProfile = () => {
-        axios({
-            url: `${ serverUrl }/config/${ this.props.category }/`,
-            method: "get",
-            params: {
-                lf_config: this.state.profileName
-            }
-        })
-            .then(async (configRes) => {
-                if(!configRes.data.length){
-                    this.props.loadingResults(true);
-                    const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
-                    const countyMatch = profileMatch.map(profile => profile["choice"]);
-                    axios({
-                        url: `${ serverUrl }/cost_benefit_analysis_runner`,
-                        method: "post",
-                        data: {load_profile: this.state.profileName, county: countyMatch}
-
-                    })
-                        .then(async (cbaRes) =>  {
-                            const taskId = cbaRes.data.task_id;
-                            let timeout;
-                            await exponentialBackoff(checkFlowerTaskStatus, taskId, timeout, 20, 75, 
-                                async () => { 
-                                    this.props.loadingResults(false); 
-                                    this.props.visualizeResults(await this.getCBAResult());
-                                }, 
-                                () => {
-                                    this.props.loadingResults(false); 
-                                    this.handleAlertOpen("Error", "Error occured while running cost benefit analysis.");
-                                }
-                            );
-                        }, (error) => {
-                            this.props.loadingResults(false); 
-                            this.handleAlertOpen("Error", "Error occured while attempting to start the cost benefit analysis runner.");
-                        });
+    findProfile = async () => {
+        try {
+            const config_res = await axios.get(`${serverUrl}/config/${this.props.category}/`, {
+                params: {
+                    lf_config: this.state.profileName
                 }
-            }, (error) => {
-                this.handleAlertOpen("", "Server error");
             });
-    }
+            if(!config_res.data.length){
+                this.props.loadingResults(true);
+                const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
+                const countyMatch = profileMatch.map(profile => profile["choice"]);
+                axios({
+                    url: `${ serverUrl }/cost_benefit_analysis_runner`,
+                    method: "post",
+                    data: {load_profile: this.state.profileName, county: countyMatch}
+    
+                })
+                    .then(async (cba_res) =>  {
+                        const task_id = cba_res.data.task_id;
+                        let timeout;
+                        await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                            async () => { 
+                                this.props.loadingResults(false);
+                                this.props.visualizeResults(await this.getCBAResult());
+                            }, 
+                            () => {
+                                this.props.loadingResults(false); 
+                                this.handleAlertOpen();
+                            }
+                        );
+                    }, (error) => {
+                        this.props.loadingResults(false); 
+                        this.handleAlertOpen();
+                    });
+            } else {
+                this.props.visualizeResults(await this.getCBAResult());
+            }
+        } catch (error) {
+            this.handleAlertOpen("", "Server error");
+        }
+    };
 
     getCBAResult = async () => {
-        axios({
-            url: `${ serverUrl }/algorithm/cost_benefit_analysis/${ this.props.category }`,
-            method: "get"
-        })
-            .then(async (res) => {
-                const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
-                const dataCBA = {dataValues: []};
-                const dataCBASub = [];
-                for (var i = 0; i < filteredRes.length; i++) {
-                    const dataCBAUnit = filteredRes[i];
-                    dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
-                    dataCBASub.push(dataCBAUnit);
-                }
-                dataCBA.dataValues = dataCBASub;
-                return preprocessData(dataCBA);
-            }, (error) => {
-                this.handleAlertOpen("", "Server error");
-            });
+        try {
+            const res = await axios.get(`${ serverUrl }/algorithm/cost_benefit_analysis/${ this.props.category }`);
+            const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
+            const dataCBA = {dataValues: []};
+            const dataCBASub = [];
+            for (var i = 0; i < filteredRes.length; i++) {
+                const dataCBAUnit = filteredRes[i];
+                dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
+                dataCBASub.push(dataCBAUnit);
+            }
+            dataCBA.dataValues = dataCBASub;
+            return preprocessData(dataCBA);
+        } catch (error) {
+            this.handleAlertOpen("", "Server error");
+        }
     };
 
     handleAlertOpen = (title, description) => {
@@ -186,17 +181,12 @@ class AlgInputsCBA extends Component {
         this.setState({ openResult: false, openUpload: false });
     };
 
-    updateCharts = async () => {
+    updateCBACharts = async () => {
         this.props.visualizeResults(await this.getCBAResult());
     };
 
     updateProfileAndCharts = async () => {
-        this.findProfile();
-        this.props.visualizeResults(await this.getCBAResult());
-    };
-
-    loadedResultsandCharts = async () => {
-        this.props.loadingResults(false);
+        await this.findProfile();
         this.props.visualizeResults(await this.getCBAResult());
     };
 
@@ -204,15 +194,12 @@ class AlgInputsCBA extends Component {
         this.setState({ [field]: event.currentTarget.value });
     };
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.category !== this.props.category) {
-            this.updateCharts();
+            this.updateCBACharts();
         }
         if (prevProps.controlType !== this.props.controlType) {
-            this.updateCharts();
-        }
-        if (prevState.profileName !== this.state.profileName) {
-            this.getLoadForecastData();
+            this.updateCBACharts();
         }
     }
 
