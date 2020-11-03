@@ -1,7 +1,7 @@
 from celery import shared_task, current_task
 from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
 from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
-from celery.execute import send_task
+from script.LoadForecasting.LoadForecastingRunner import lf_runner
 
 #for running CBA tool
 import sys
@@ -14,3 +14,7 @@ def run_cba_tool(county_data, profile_name):
     ModelInstance("BaseCase_" + county_data[0] + "_uncontrolled_load")
     ModelInstance("BaseCase_" + county_data[0] + "_e19controlled_load")
     UploadToPostgres(load_profile = profile_name, county=county_data[0])
+
+@shared_task
+def run_lf_runner(lf_argv):
+    lf_runner(argv = lf_argv)

@@ -13,6 +13,8 @@ import { countyRes } from "../Api/CountyData";
 import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
 import { serverUrl } from "../Api/server";
 import "./AlgInputs.css";
+import { checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
+
 
 const styles = theme => ({
     container: {
@@ -152,24 +154,36 @@ class AlgInputsLoadForecast extends Component {
                 timerControl: this.state.timerControl,
                 workControl: this.state.workControl,
             };
-
+            
+            this.setState({ open: false });
+            this.props.loadingResults(true);
             const postUrl = `${ serverUrl }/load_forecast_runner`;
 
             axios({
                 method: "post",
                 url: postUrl,
-                data: postData,
+                data: postData
             })
-                .then(async (response) => {
-                    this.props.visualizeResults(await this.getResult());
+                .then(async (lf_res) => {
+                    const task_id = lf_res.data.task_id;
+                    let timeout;
+                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                        async () => { 
+                            this.props.loadingResults(false); 
+                            this.props.visualizeResults(await this.getResult());
+                        }, 
+                        () => {
+                            this.props.loadingResults(false); 
+                            this.setState({ alertServerError: true});
+                        }
+                    );
                 }, (error) => {
-                    this.setState({ alertServerError: true})
+                    this.props.loadingResults(false);
+                    this.setState({ alertServerError: true});
 
-                });
-            this.setState({ open: false });
-        }
-        else {
-            this.setState({ alertDuplicateProfileName: true})
+                });            
+        } else {
+            this.setState({ alertDuplicateProfileName: true});
         }
     };
 
@@ -198,8 +212,8 @@ class AlgInputsLoadForecast extends Component {
     };
 
     advancedSettings = (e) => {
-        e.preventDefault()
-        this.setState({ advancedSettings: !this.state.advancedSettings})
+        e.preventDefault();
+        this.setState({ advancedSettings: !this.state.advancedSettings});
     };
 
     handleAlertClose = () => {
@@ -485,68 +499,68 @@ class AlgInputsLoadForecast extends Component {
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.advancedSettings}>Advanced Settings</Button>
                 {   advancedSettings
                     ?
+                    <fieldset class="field_set">
+                        <legend>Advanced Settings</legend>
+                        <TextField
+                            id="standard-weekDay"
+                            select
+                            value={ this.state.weekDay }
+                            className={classes.textField}
+                            margin="normal"
+                            label="Day Type"
+                            SelectProps={{
+                                native: true,
+                                MenuProps: {
+                                    className: classes.menu,
+                                },
+                            }}
+                            onChange={ e => this.update("weekDay", e) }
+                        >
+                            <option key="true" value="true">
+                                    Week Day
+                            </option>
+                            <option key="false" value="false">
+                                    Week End
+                            </option>
+                        </TextField>
+                        <br/>
+                        <br/>
                         <fieldset class="field_set">
-                            <legend>Advanced Settings</legend>
+                            <legend>Daily Usage Percentage</legend>
                             <TextField
-                                id="standard-weekDay"
-                                select
-                                value={ this.state.weekDay }
+                                id="standard-resDailyUse"
+                                label="Residential"
+                                value={ this.state.resDailyUse }
                                 className={classes.textField}
                                 margin="normal"
-                                label="Day Type"
-                                SelectProps={{
-                                    native: true,
-                                    MenuProps: {
-                                        className: classes.menu,
-                                    },
-                                }}
-                                onChange={ e => this.update("weekDay", e) }
-                            >
-                                <option key="true" value="true">
-                                    Week Day
-                                </option>
-                                <option key="false" value="false">
-                                    Week End
-                                </option>
-                            </TextField>
-                            <br/>
-                            <br/>
-                            <fieldset class="field_set">
-                                <legend>Daily Usage Percentage</legend>
-                                <TextField
-                                    id="standard-resDailyUse"
-                                    label="Residential"
-                                    value={ this.state.resDailyUse }
-                                    className={classes.textField}
-                                    margin="normal"
-                                    onChange={ e => this.update("resDailyUse", e) }
-                                />
-                                <TextField
-                                    id="standard-workDailyUse"
-                                    label="Workplace"
-                                    value={ this.state.workDailyUse }
-                                    className={classes.textField}
-                                    margin="normal"
-                                    onChange={ e => this.update("workDailyUse", e) }
-                                />
-                                <TextField
-                                    id="standard-fastDailyUse"
-                                    label="Fast"
-                                    value={ this.state.fastDailyUse }
-                                    className={classes.textField}
-                                    margin="normal"
-                                    onChange={ e => this.update("fastDailyUse", e) }
-                                />
-                                <TextField
-                                    id="standard-publicL2DailyUse"
-                                    label="Public Level 2"
-                                    value={ this.state.publicL2DailyUse }
-                                    className={classes.textField}
-                                    margin="normal"
-                                    onChange={ e => this.update("publicL2DailyUse", e) }
-                                />
-                            </fieldset>
+                                onChange={ e => this.update("resDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-workDailyUse"
+                                label="Workplace"
+                                value={ this.state.workDailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("workDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-fastDailyUse"
+                                label="Fast"
+                                value={ this.state.fastDailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("fastDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-publicL2DailyUse"
+                                label="Public Level 2"
+                                value={ this.state.publicL2DailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("publicL2DailyUse", e) }
+                            />
                         </fieldset>
+                    </fieldset>
                     : null
                 }
                 <br/>

@@ -74,18 +74,16 @@ export async function checkFlowerTaskStatus (task_id) {
     return task_res.data.state;
 }
 
-export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, callback) {
+export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, successCallback, failureCallback) {
     let status = await checkStatus(task_id);
     if (status === "SUCCESS") {
-        callback();
-    } else {
-        if(status === "FAILURE" || max === 0){
-            clearTimeout(timeout);
-            return "FAILURE";
-        } else if (status === "PENDING") {
-            timeout = setTimeout(function() {
-                return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, callback);
-            }, delay);
-        } 
+        successCallback();
+    } else if (status === "FAILURE" || max === 0){
+        failureCallback();
+    } else if (status === "PENDING") {
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, successCallback, failureCallback);
+        }, delay);
     }
 }

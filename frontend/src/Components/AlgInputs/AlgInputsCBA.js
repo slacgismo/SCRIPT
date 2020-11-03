@@ -61,12 +61,11 @@ class AlgInputsCBA extends Component {
                 const profileNames = [];
                 if (profiles.length > 0) {
                     for (var i = 0; i < profiles.length; i++) {
-                        const profileNamesUnit = {id: "", name: ""};
-                        profileNamesUnit.id = profiles[i]["id"];
+                        const profileNamesUnit = {name: ""};
                         profileNamesUnit.name = profiles[i]["config_name"];
                         profileNames.push(profileNamesUnit);
                     }
-                    this.setState({ profileData: profiles, profileNames: profileNames });
+                    this.setState({ profileData: profiles, profileNames: profileNames, profileName: profileNames[0].name });
                 }
             });
         this.getLoadForecastData();
@@ -115,39 +114,40 @@ class AlgInputsCBA extends Component {
     };
 
     findProfile = async () => {
-        // check for corresponding CBA input table for current load forecast profile
-        const config_res = await axios.get("http://127.0.0.1:8000/api/config/" + this.props.category, {
+        const config_res = await axios.get(`http://127.0.0.1:8000/api/config/${this.props.category}/`, {
             params: {
                 lf_config: this.state.profileName
             }
         });
-        // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
+
         if(!config_res.data.length){
-            // starts progress bar to show loading to user
             this.props.loadingResults(true);
-            // data inputs to run the cba tool
             const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
             const countyMatch = profileMatch.map(profile => profile["choice"]);
-            // runs cba task with celery on backend
-            const cba_res = await axios({
+
+            axios({
                 url: `${ serverUrl }/cost_benefit_analysis_runner`,
                 method: "post",
                 data: {load_profile: this.state.profileName, county: countyMatch}
 
-            });
-            // celery-flower monitoring to check task status on cba tool
-            const task_id = cba_res.data.task_id;
-            // celery-flower monitoring to check task status on cba tool
-            let timeout;
-            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, async () => {
-                this.props.loadingResults(false);
-                this.props.visualizeResults(await this.getCBAResult());
-            });
-            // if cba_tool task failed, open alert
-            if (cba_status === "FAILURE") {
-                this.props.loadingResults(false);
-                this.handleAlertOpen();
-            }
+            })
+                .then(async (cba_res) =>  {
+                    const task_id = cba_res.data.task_id;
+                    let timeout;
+                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                        async () => { 
+                            this.props.loadingResults(false); 
+                            this.props.visualizeResults(await this.getCBAResult());
+                        }, 
+                        () => {
+                            this.props.loadingResults(false); 
+                            this.handleAlertOpen();
+                        }
+                    );
+                }, (error) => {
+                    this.props.loadingResults(false); 
+                    this.handleAlertOpen();
+                });
         }
     };
 
@@ -167,17 +167,17 @@ class AlgInputsCBA extends Component {
 
     updateCharts = async () => {
         this.props.visualizeResults(await this.getCBAResult());
-    }
+    };
 
     updateProfileAndCharts = async () => {
         this.findProfile();
         this.props.visualizeResults(await this.getCBAResult());
     };
 
-    loadedResultsandCharts = async() => {
+    loadedResultsandCharts = async () => {
         this.props.loadingResults(false);
         this.props.visualizeResults(await this.getCBAResult());
-    }
+    };
 
     componentDidUpdate(prevProps, prevState) {
         // if different dropdown menu category selected (e.g. gas consumption)
@@ -214,8 +214,7 @@ class AlgInputsCBA extends Component {
                     <DialogTitle id="alert-dialog-title">{"Cost Benefit Analysis Failed"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            The cost benefit analysis failed to run with the given load forecast profile.
-                            Please check your load forecast profile inputs, and try again.
+                            Something went wrong
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -240,7 +239,7 @@ class AlgInputsCBA extends Component {
                 >
                     {
                         this.state.profileNames.map(option => (
-                            <option key={option.id} value={option.name}>
+                            <option key={option.name} value={option.name}>
                                 {option.name}
                             </option>
                         ))
