@@ -107,8 +107,10 @@ class AlgInputsCBA extends Component {
 
     setLoadForecastResults = () => {
         const processedLoadForecastResults = processResults(this.state.loadForecastResults);
-        const rateStructure = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName)[0]["work_control"];
-        this.setState({ chartTitles: [`${this.state.profileName} - uncontrolled`, `${this.state.profileName} - ${rateStructure} controlled`] });
+        const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName)[0];
+        const countyChoice = profileMatch["choice"]
+        const rateStructure = profileMatch["work_control"]
+        this.setState({ chartTitles: [`${this.state.profileName} - ${countyChoice} uncontrolled`, `${this.state.profileName} - ${countyChoice} ${rateStructure} controlled`] });
         this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
     };
 

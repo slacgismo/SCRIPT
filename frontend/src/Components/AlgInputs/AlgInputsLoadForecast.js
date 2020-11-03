@@ -107,7 +107,7 @@ class AlgInputsLoadForecast extends Component {
     };
 
     updateChartTitles = () => {
-        this.props.setChartTitles([`${this.state.configName} - uncontrolled`, `${this.state.configName} - ${this.state.workControl} controlled`]);
+        this.props.setChartTitles([`${this.state.configName} - ${this.state.countyChoice} uncontrolled`, `${this.state.configName} - ${this.state.countyChoice} ${this.state.workControl} controlled`]);
     };
 
     getResult = async () => {
