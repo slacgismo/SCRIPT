@@ -109,14 +109,14 @@ class AlgInputsCBA extends Component {
         this.setState({ openResult: true, shouldRender: true, loadForecastResults: loadForecastResults  });
     };
 
-    findProfile = async () => {
+    runCBATool = async () => {
         try {
-            const config_res = await axios.get(`${serverUrl}/config/${this.props.category}/`, {
+            const configRes = await axios.get(`${serverUrl}/config/${this.props.category}/`, {
                 params: {
                     lf_config: this.state.profileName
                 }
             });
-            if(!config_res.data.length){
+            if(!configRes.data.length){
                 this.props.loadingResults(true);
                 const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
                 const countyMatch = profileMatch.map(profile => profile["choice"]);
@@ -126,10 +126,10 @@ class AlgInputsCBA extends Component {
                     data: {load_profile: this.state.profileName, county: countyMatch}
     
                 })
-                    .then(async (cba_res) =>  {
-                        const task_id = cba_res.data.task_id;
+                    .then( async (celeryRes) =>  {
+                        const taskId = celeryRes.data.task_id;
                         let timeout;
-                        await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                        await exponentialBackoff(checkFlowerTaskStatus, taskId, timeout, 20, 75, 
                             async () => { 
                                 this.props.loadingResults(false);
                                 this.props.visualizeResults(await this.getCBAResult());
@@ -153,8 +153,8 @@ class AlgInputsCBA extends Component {
 
     getCBAResult = async () => {
         try {
-            const res = await axios.get(`${ serverUrl }/algorithm/cost_benefit_analysis/${ this.props.category }`);
-            const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
+            const cbaRes = await axios.get(`${ serverUrl }/algorithm/cost_benefit_analysis/${ this.props.category }`);
+            const filteredRes = cbaRes.data.filter((item) => item.config.lf_config === this.state.profileName);
             const dataCBA = {dataValues: []};
             const dataCBASub = [];
             for (var i = 0; i < filteredRes.length; i++) {
@@ -182,11 +182,6 @@ class AlgInputsCBA extends Component {
     };
 
     updateCBACharts = async () => {
-        this.props.visualizeResults(await this.getCBAResult());
-    };
-
-    updateProfileAndCharts = async () => {
-        await this.findProfile();
         this.props.visualizeResults(await this.getCBAResult());
     };
 
@@ -251,7 +246,7 @@ class AlgInputsCBA extends Component {
                     Review
                 </Button>
                 <p/>
-                <Button variant="contained" color="primary" className={classes.button} onClick={this.updateProfileAndCharts}>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.runCBATool}>
                     Run
                 </Button>
 
