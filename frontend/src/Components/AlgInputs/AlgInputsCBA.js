@@ -77,21 +77,21 @@ class AlgInputsCBA extends Component {
 
     getLoadForecastData = async () => {
         try {
-            const lf_res = await axios.get(`${ serverUrl }/algorithm/load_forecast`, {
+            const lfRes = await axios.get(`${ serverUrl }/algorithm/load_forecast`, {
                 params: {
                     config: this.state.profileName
                 }
             });
             const dataLoadForecast = [];
-            for (var i = 0; i < lf_res.data.length; i++) {
+            for (var i = 0; i < lfRes.data.length; i++) {
                 const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-                dataLoadForecastUnit.residential_l1_load = (lf_res.data[i].residential_l1_load);
-                dataLoadForecastUnit.residential_l2_load = (lf_res.data[i].residential_l2_load);
-                dataLoadForecastUnit.residential_mud_load = (lf_res.data[i].residential_mud_load);
-                dataLoadForecastUnit.work_load = (lf_res.data[i].work_load);
-                dataLoadForecastUnit.fast_load = (lf_res.data[i].fast_load);
-                dataLoadForecastUnit.public_l2_load = (lf_res.data[i].public_l2_load);
-                dataLoadForecastUnit.total_load = (lf_res.data[i].total_load);
+                dataLoadForecastUnit.residential_l1_load = (lfRes.data[i].residential_l1_load);
+                dataLoadForecastUnit.residential_l2_load = (lfRes.data[i].residential_l2_load);
+                dataLoadForecastUnit.residential_mud_load = (lfRes.data[i].residential_mud_load);
+                dataLoadForecastUnit.work_load = (lfRes.data[i].work_load);
+                dataLoadForecastUnit.fast_load = (lfRes.data[i].fast_load);
+                dataLoadForecastUnit.public_l2_load = (lfRes.data[i].public_l2_load);
+                dataLoadForecastUnit.total_load = (lfRes.data[i].total_load);
                 dataLoadForecast.push(dataLoadForecastUnit);
                 this.setLoadForecastResults(dataLoadForecast);
             }
