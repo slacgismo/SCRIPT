@@ -8,7 +8,7 @@ import OverviewMapLegend from "./Components/OverviewMap/OverviewMapLegend";
 import Upload from "./Components/Upload/Upload";
 import Download from "./Components/Download/Download";
 
-import AlgorithmPageLoadControll from "./Components/AlgorithmPage/AlgorithmPageLoadControll";
+import AlgorithmPageLoadControl from "./Components/AlgorithmPage/AlgorithmPageLoadControl";
 import AlgorithmPageLoadForecast from "./Components/AlgorithmPage/AlgorithmPageLoadForecast";
 import AlgorithmPageCBA from "./Components/AlgorithmPage/AlgorithmPageCBA";
 
@@ -23,7 +23,7 @@ render((
     <Router>
         <Route exact path="/" component={ Overview } />
         <Route exact path="/upload" component={ Download } />
-        <Route exact path="/alg-loadcontrol" component={ AlgorithmPageLoadControll } />
+        <Route exact path="/alg-loadcontrol" component={ AlgorithmPageLoadControl } />
         <Route exact path="/alg-loadforecast" component={ AlgorithmPageLoadForecast } />
         <Route exact path="/alg-cba" component={ AlgorithmPageCBA } />
         <Route exact path="/about" component={ About } />

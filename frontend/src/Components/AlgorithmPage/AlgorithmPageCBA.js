@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function AlgorithmPageLoadControll(props) {
+function AlgorithmPageLoadControl(props) {
     const [category, setCategory] = React.useState("gas_consumption");
 
     const [controlType, setControlType] = React.useState("uncontrolled_values");
@@ -81,4 +81,4 @@ function AlgorithmPageLoadControll(props) {
     );
 }
 
-export default AlgorithmPageLoadControll;
+export default AlgorithmPageLoadControl;
