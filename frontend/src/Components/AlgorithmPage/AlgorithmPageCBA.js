@@ -28,8 +28,8 @@ function AlgorithmPageLoadControll(props) {
     };
 
     const handleControlTypeChange = event => {
-        setControlType(event.target.value)
-    }
+        setControlType(event.target.value);
+    };
       
     const classes = useStyles();
 
@@ -38,43 +38,43 @@ function AlgorithmPageLoadControll(props) {
             categoryProp = {category}
             controlType = {controlType}
             compo =
-            {
-                <div>
-                    <FormControl className={classes.formControl}>
-                        <Select
-                            labelId="label-standard-category"
-                            id="standard-category"
-                            onChange={handleControlTypeChange}
-                            value={controlType}
-                            className={classes.selectEmpty}
-                        >
-                            <MenuItem value={"uncontrolled_values"}>
+                {
+                    <div>
+                        <FormControl className={classes.formControl}>
+                            <Select
+                                labelId="label-standard-category"
+                                id="standard-category"
+                                onChange={handleControlTypeChange}
+                                value={controlType}
+                                className={classes.selectEmpty}
+                            >
+                                <MenuItem value={"uncontrolled_values"}>
                             Uncontrolled
-                            </MenuItem>
-                            <MenuItem value={"controlled_values"}>Controlled</MenuItem>
-                        </Select>
-                        <FormHelperText>View uncontrolled or controlled</FormHelperText>
-                    </FormControl>
-                    <FormControl className={classes.formControl}>
-                        <Select
-                            labelId="label-standard-category"
-                            id="standard-category"
-                            onChange={handleChange}
-                            value={category}
-                            className={classes.selectEmpty}
-                        >
-                            <MenuItem value="gas_consumption">
+                                </MenuItem>
+                                <MenuItem value={"controlled_values"}>Controlled</MenuItem>
+                            </Select>
+                            <FormHelperText>View uncontrolled or controlled</FormHelperText>
+                        </FormControl>
+                        <FormControl className={classes.formControl}>
+                            <Select
+                                labelId="label-standard-category"
+                                id="standard-category"
+                                onChange={handleChange}
+                                value={category}
+                                className={classes.selectEmpty}
+                            >
+                                <MenuItem value="gas_consumption">
                             Gas consumption
-                            </MenuItem>
-                            <MenuItem value={"load_profile"}>Load profile</MenuItem>
-                            <MenuItem value={"cost_benefit"}>Cost benefit</MenuItem>
-                            <MenuItem value={"net_present_value"}>Net present value</MenuItem>
-                            <MenuItem value={"emission"}>Emission</MenuItem>
-                        </Select>
-                        <FormHelperText>Choose a category</FormHelperText>
-                    </FormControl>
-                </div>
-            }
+                                </MenuItem>
+                                <MenuItem value={"load_profile"}>Load profile</MenuItem>
+                                <MenuItem value={"cost_benefit"}>Cost benefit</MenuItem>
+                                <MenuItem value={"net_present_value"}>Net present value</MenuItem>
+                                <MenuItem value={"emission"}>Emission</MenuItem>
+                            </Select>
+                            <FormHelperText>Choose a category</FormHelperText>
+                        </FormControl>
+                    </div>
+                }
             title={ "Cost Benefit Analysis" }
             algInputs={ AlgInputsCBA }
         />

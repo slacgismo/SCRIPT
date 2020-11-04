@@ -42,6 +42,7 @@ class AlgInputsLoadControl extends Component {
             county: "Santa Clara",
             rateStructures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
             rateStructure: "PGEe19",
+            chartTitles: []
         };
     }
 
@@ -63,6 +64,7 @@ class AlgInputsLoadControl extends Component {
         })
             .then((response) => {
                 const sca_data = [JSON.parse(response.data)];
+                this.props.setChartTitles([`${this.state.county} - ${this.state.rateStructure}`]);
                 this.props.visualizeResults(sca_data);
 
             }, (error) => {
@@ -75,7 +77,7 @@ class AlgInputsLoadControl extends Component {
         return !this.state.counties ? <></> : (
             <>
                 <TextField
-                    id="standart-county"
+                    id="standard-county"
                     select
                     className={classes.textField}
                     SelectProps={{
