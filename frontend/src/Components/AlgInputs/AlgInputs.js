@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { processResults } from "../Helpers/helpers";
+import { processResults } from "../Helpers/Helpers";
 
 const useStyles = makeStyles(theme => ({
     container: {

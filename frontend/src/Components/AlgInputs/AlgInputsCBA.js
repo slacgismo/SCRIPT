@@ -9,8 +9,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { ResultCharts } from "../Result/ResultCharts";
-import { serverUrl } from "../Api/server";
-import { processResults, preprocessData, checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
+import { serverUrl } from "../Api/Server";
+import { processResults, preprocessData, checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/Helpers";
 
 const styles = theme => ({
     container: {
@@ -71,7 +71,7 @@ class AlgInputsCBA extends Component {
                     this.setState({ profileData: profiles, profileNames: profileNames, profileName: profileNames[0].name });
                 }
             }, (error) => {
-                this.handleAlertOpen("", "Server Error");
+                this.handleAlertOpen("Server Error", "Something went wrong");
             });
     }
 
@@ -150,7 +150,7 @@ class AlgInputsCBA extends Component {
                 this.props.visualizeResults(await this.getCBAResult());
             }
         } catch (error) {
-            this.handleAlertOpen("", "Server error");
+            this.handleAlertOpen("Server Error", "Something went wrong");
         }
     };
 
@@ -168,7 +168,7 @@ class AlgInputsCBA extends Component {
             dataCBA.dataValues = dataCBASub;
             return preprocessData(dataCBA);
         } catch (error) {
-            this.handleAlertOpen("", "Server error");
+            this.handleAlertOpen("Server Error", "Something went wrong");
         }
     };
 

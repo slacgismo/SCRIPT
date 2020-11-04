@@ -8,7 +8,7 @@
 // console.log(uncontrolledLoad);
 // console.log(controlledLoad);
 
-import { serverUrl } from "./server";
+import { serverUrl } from "./Server";
 import axios from "axios";
 
 /*****  data of Load Control algorithm  *****/

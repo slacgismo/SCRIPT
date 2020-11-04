@@ -3,9 +3,14 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import { countyRes } from "../Api/CountyData";
 import { loadControlPromise } from "../Api/AlgorithmData";
-import { serverUrl } from "../Api/server";
+import { serverUrl } from "../Api/Server";
 import axios from "axios";
 
 const styles = theme => ({
@@ -42,12 +47,23 @@ class AlgInputsLoadControl extends Component {
             county: "Santa Clara",
             rateStructures: ["PGEcev", "PGEcev_demand", "PGEcev_energy", "PGEe19", "SCEtouev8", "SDGEmedian", "SDGErandom", "cap", "minpeak"],
             rateStructure: "PGEe19",
+            openAlert: false,
+            alertTitle: "",
+            alertDescription: "",
             chartTitles: []
         };
     }
 
     update = (field, event) => {
         this.setState({ [field]: event.currentTarget.value });
+    };
+
+    handleAlertOpen = (title, description) => {
+        this.setState({ alertTitle: title, alertDescription: description, openAlert: true });
+    };
+
+    handleAlertClose = () => {
+        this.setState({ openAlert: false });
     };
 
     runAlgorithm = async () => {
@@ -68,7 +84,7 @@ class AlgInputsLoadControl extends Component {
                 this.props.visualizeResults(sca_data);
 
             }, (error) => {
-                console.log(error);
+                this.handleAlertOpen("Server Error", "Something went wrong");
             });
     }
 
@@ -76,6 +92,24 @@ class AlgInputsLoadControl extends Component {
         const { classes } = this.props;
         return !this.state.counties ? <></> : (
             <>
+                <Dialog
+                    open={this.state.openAlert}
+                    onClose={this.handleAlertClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{this.state.alertTitle}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {this.state.alertDescription}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleAlertClose} color="primary" autoFocus>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <TextField
                     id="standard-county"
                     select
@@ -90,7 +124,6 @@ class AlgInputsLoadControl extends Component {
                     margin="normal"
                     value={ this.state.county }
                     onChange={ e => this.update("county", e) }
-                    // value={ this.state.county }
                 >
                     {
                         this.state.counties.map(option => (
@@ -100,7 +133,6 @@ class AlgInputsLoadControl extends Component {
                         ))
                     }
                 </TextField>
-
                 <TextField
                     id="rateStructure"
                     select

@@ -27,7 +27,7 @@ import {
     getExtremeValuesOfAttr,
     getBasicColor,
     getColorPercentageEsp,
-} from "./overviewMapStyled";
+} from "./OverviewMapStyled";
 import OverviewMapLegend from "./OverviewMapLegend";
 import { countyRes } from "../Api/CountyData";
 

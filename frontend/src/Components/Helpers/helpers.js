@@ -73,11 +73,21 @@ export async function checkFlowerTaskStatus (task_id) {
     return task_res.data.state;
 }
 
+export async function revokeCeleryTask (task_id) {
+    await axios({
+        url: `http://localhost:5555/api/task/revoke/${task_id}?terminate=true`,
+        method: "post"
+    });
+}
+
 export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, successCallback, failureCallback) {
     let status = await checkStatus(task_id);
     if (status === "SUCCESS") {
         successCallback();
-    } else if (status === "FAILURE" || max === 0){
+    } else if (status === "FAILURE") {
+        failureCallback();
+    } else if (max === 0){
+        revokeCeleryTask(task_id);
         failureCallback();
     } else if (status === "PENDING") {
         clearTimeout(timeout);

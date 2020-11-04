@@ -10,10 +10,10 @@ import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { loadForecastPromise, fieldsLoadForecast } from "../Api/AlgorithmData";
 import { countyRes } from "../Api/CountyData";
-import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
-import { serverUrl } from "../Api/server";
+import { loadForecastDefaultParams } from "../Api/AlgorithmDefaultParams";
+import { serverUrl } from "../Api/Server";
 import "./AlgInputs.css";
-import { checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
+import { checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/Helpers";
 
 const styles = theme => ({
     container: {
@@ -48,8 +48,8 @@ class AlgInputsLoadForecast extends Component {
             counties: [],
             advancedSettings: false,
             openAlert: false,
-            alertDuplicateProfileName: false,
-            alertServerError: false,
+            alertTitle: "",
+            alertDescription: "",
             // Alg params
             configName: loadForecastDefaultParams.configName,
             aggregationLevel: loadForecastDefaultParams.aggregationLevel,
@@ -131,7 +131,7 @@ class AlgInputsLoadForecast extends Component {
 
     saveResults = async() => {
         // check if current load forecast profile already exists before saving
-        const config_res = await axios.get(`http://127.0.0.1:8000/api/config/load_forecast?config_name=${this.state.configName}`);
+        const config_res = await axios.get(`${ serverUrl }/config/load_forecast?config_name=${this.state.configName}`);
         // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
         if(config_res.data.length === 0){
             // change var name
@@ -171,36 +171,24 @@ class AlgInputsLoadForecast extends Component {
                 .then(async (lf_res) => {
                     const task_id = lf_res.data.task_id;
                     let timeout;
-                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 3, 75, 
                         async () => { 
                             this.props.loadingResults(false); 
                             this.props.visualizeResults(await this.getResult());
                         }, 
                         () => {
-                            this.props.loadingResults(false); 
-                            this.setState({ alertServerError: true});
+                            this.props.loadingResults(false);
+                            this.handleAlertOpen("Error", "Error occurred while running load forecast algorithm."); 
                         }
                     );
                 }, (error) => {
                     this.props.loadingResults(false);
-                    this.setState({ alertServerError: true});
-
+                    this.handleAlertOpen("Server Error", "Something went wrong");
                 });            
         } else {
-            this.setState({ alertDuplicateProfileName: true});
+            this.handleAlertOpen("Input Error", "Profile name already exists");
         }
     };
-
-    useDefaultParameters = () => {
-        // TODO: backend * 3
-        // Get default parameter set
-
-        Object.keys(loadForecastDefaultParams).forEach(param => {
-            this.setState({
-                [param]: loadForecastDefaultParams[param],
-            });
-        });
-    }
 
     runAlgorithm = () => {
         // check if values add up to 1 for residential and battery capacity
@@ -211,7 +199,7 @@ class AlgInputsLoadForecast extends Component {
         if (residential === "1.0" && batteryMix === "1.0") {
             this.setState({ open: true });
         } else {
-            this.setState({ openAlert: true});
+            this.handleAlertOpen("Input Error", "Battery Capacity and Residential fields must add up to 1");
         }
     };
 
@@ -220,12 +208,13 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ advancedSettings: !this.state.advancedSettings});
     };
 
-    handleAlertClose = () => {
-        this.setState({ openAlert: false });
-        this.setState({ alertDuplicateProfileName: false });
-        this.setState({ alertServerError: false });
+    handleAlertOpen = (title, description) => {
+        this.setState({ alertTitle: title, alertDescription: description, openAlert: true });
     };
 
+    handleAlertClose = () => {
+        this.setState({ openAlert: false });
+    };
 
     render() {
         const { classes } = this.props;
@@ -265,46 +254,10 @@ class AlgInputsLoadForecast extends Component {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Input Error"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{this.state.alertTitle}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Battery Capacity and Residential fields must add up to 1
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleAlertClose} color="primary" autoFocus>
-                            OK
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-                <Dialog
-                    open={this.state.alertDuplicateProfileName}
-                    onClose={this.handleAlertClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">{"Input Error"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Profile name already exists
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleAlertClose} color="primary" autoFocus>
-                            OK
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-                <Dialog
-                    open={this.state.alertServerError}
-                    onClose={this.handleAlertClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">{"Server Error"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Something went wrong
+                            {this.state.alertDescription}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
