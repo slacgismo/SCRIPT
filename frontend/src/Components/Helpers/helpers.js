@@ -4,8 +4,8 @@ import axios from "axios";
 export function processResults(resultArr) {
     const data_to_visualize_all = [];
     let isTimeSeries = false;
-
-    if (!resultArr.length) {
+    if (!resultArr) {
+        resultArr = [];
         isTimeSeries = false;
     } else if (resultArr[0][0] !== undefined && resultArr[0][0].length === 0) {
         isTimeSeries = false;
@@ -17,7 +17,6 @@ export function processResults(resultArr) {
 
     for (const result of resultArr) {
         const data_to_visualize = {};
-
         for (const field of Object.keys(result)) {
             const data = result[field];
             const dataFormatted = data.map((datapoint, i) => (
@@ -27,7 +26,7 @@ export function processResults(resultArr) {
                 }   
             ));
             data_to_visualize[field] = {
-                yAxis: `${field}`.replace(/_/g, " "),
+                legendLabel: `${field}`.replace(/_/g, " "),
                 unit: "Power (kW)",
                 xAxis: isTimeSeries ? "Time" : "Year",
                 data: dataFormatted,
@@ -74,18 +73,16 @@ export async function checkFlowerTaskStatus (task_id) {
     return task_res.data.state;
 }
 
-export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, callback) {
+export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, successCallback, failureCallback) {
     let status = await checkStatus(task_id);
     if (status === "SUCCESS") {
-        callback();
-    } else {
-        if(status === "FAILURE" || max === 0){
-            clearTimeout(timeout);
-            return "FAILURE";
-        } else if (status === "PENDING") {
-            timeout = setTimeout(function() {
-                return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, callback);
-            }, delay);
-        } 
+        successCallback();
+    } else if (status === "FAILURE" || max === 0){
+        failureCallback();
+    } else if (status === "PENDING") {
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, successCallback, failureCallback);
+        }, delay);
     }
 }

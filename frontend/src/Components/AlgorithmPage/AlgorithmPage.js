@@ -13,7 +13,8 @@ class AlgorithmPage extends Component {
         super(props);
         this.state = {
             results: [],
-            loading: false
+            loading: false,
+            chartTitles: []
         };
     }
 
@@ -26,6 +27,12 @@ class AlgorithmPage extends Component {
     visualizeResults(results) {
         this.setState({
             results: results
+        });
+    }
+
+    setChartTitles(chartTitles){
+        this.setState({
+            chartTitles: chartTitles
         });
     }
 
@@ -43,6 +50,7 @@ class AlgorithmPage extends Component {
                                         controlType = { this.props.controlType }
                                         title={ this.props.title }
                                         visualizeResults={ this.visualizeResults.bind(this) }
+                                        setChartTitles={ this.setChartTitles.bind(this) }
                                         loadingResults={ this.loadingResults.bind(this) }
                                         algInputs={ this.props.algInputs }
                                     />
@@ -65,6 +73,7 @@ class AlgorithmPage extends Component {
                                     compo={              
                                         <ResultCharts
                                             results={ this.state.results }
+                                            chartTitles={ this.state.chartTitles }
                                             algId={2}
                                         />
                                     }

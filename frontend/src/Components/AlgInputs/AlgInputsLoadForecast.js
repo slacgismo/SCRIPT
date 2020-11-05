@@ -13,6 +13,7 @@ import { countyRes } from "../Api/CountyData";
 import { loadForecastDefaultParams } from "../Api/algorithmDefaultParams";
 import { serverUrl } from "../Api/server";
 import "./AlgInputs.css";
+import { checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
 
 const styles = theme => ({
     container: {
@@ -48,7 +49,7 @@ class AlgInputsLoadForecast extends Component {
             advancedSettings: false,
             openAlert: false,
             alertDuplicateProfileName: false,
-            alertDuplicateDbEntry: false,
+            alertServerError: false,
             // Alg params
             configName: loadForecastDefaultParams.configName,
             aggregationLevel: loadForecastDefaultParams.aggregationLevel,
@@ -105,9 +106,14 @@ class AlgInputsLoadForecast extends Component {
         this.setState({ [field]: event.currentTarget.value });
     };
 
+    updateChartTitles = () => {
+        this.props.setChartTitles([`${this.state.configName} - ${this.state.countyChoice} uncontrolled`, `${this.state.configName} - ${this.state.countyChoice} ${this.state.workControl} controlled`]);
+    };
+
     getResult = async () => {
         // receives 2 lists (uncontrolled, controlled) when form is saved
         const res = await axios.get(`${ serverUrl }/algorithm/load_forecast?config=${this.state.configName}`);
+        this.updateChartTitles();
         const dataLoadForecast = [];
         for (var i = 0; i < res.data.length; i++) {
             const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
@@ -152,24 +158,36 @@ class AlgInputsLoadForecast extends Component {
                 timerControl: this.state.timerControl,
                 workControl: this.state.workControl,
             };
-
+            
+            this.setState({ open: false });
+            this.props.loadingResults(true);
             const postUrl = `${ serverUrl }/load_forecast_runner`;
 
             axios({
                 method: "post",
                 url: postUrl,
-                data: postData,
+                data: postData
             })
-                .then(async (response) => {
-                    this.props.visualizeResults(await this.getResult());
+                .then(async (lf_res) => {
+                    const task_id = lf_res.data.task_id;
+                    let timeout;
+                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
+                        async () => { 
+                            this.props.loadingResults(false); 
+                            this.props.visualizeResults(await this.getResult());
+                        }, 
+                        () => {
+                            this.props.loadingResults(false); 
+                            this.setState({ alertServerError: true});
+                        }
+                    );
                 }, (error) => {
-                    this.setState({ alertDuplicateDbEntry: true})
+                    this.props.loadingResults(false);
+                    this.setState({ alertServerError: true});
 
-                });
-            this.setState({ open: false });
-        }
-        else {
-            this.setState({ alertDuplicateProfileName: true})
+                });            
+        } else {
+            this.setState({ alertDuplicateProfileName: true});
         }
     };
 
@@ -198,14 +216,14 @@ class AlgInputsLoadForecast extends Component {
     };
 
     advancedSettings = (e) => {
-        e.preventDefault()
-        this.setState({ advancedSettings: !this.state.advancedSettings})
+        e.preventDefault();
+        this.setState({ advancedSettings: !this.state.advancedSettings});
     };
 
     handleAlertClose = () => {
         this.setState({ openAlert: false });
         this.setState({ alertDuplicateProfileName: false });
-        this.setState({ alertDuplicateDbEntry: false });
+        this.setState({ alertServerError: false });
     };
 
 
@@ -278,15 +296,15 @@ class AlgInputsLoadForecast extends Component {
                     </DialogActions>
                 </Dialog>
                 <Dialog
-                    open={this.state.alertDuplicateDbEntry}
+                    open={this.state.alertServerError}
                     onClose={this.handleAlertClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Input Error"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"Server Error"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Set of values already exist
+                            Something went wrong
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -485,68 +503,68 @@ class AlgInputsLoadForecast extends Component {
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.advancedSettings}>Advanced Settings</Button>
                 {   advancedSettings
                     ?
+                    <fieldset class="field_set">
+                        <legend>Advanced Settings</legend>
+                        <TextField
+                            id="standard-weekDay"
+                            select
+                            value={ this.state.weekDay }
+                            className={classes.textField}
+                            margin="normal"
+                            label="Day Type"
+                            SelectProps={{
+                                native: true,
+                                MenuProps: {
+                                    className: classes.menu,
+                                },
+                            }}
+                            onChange={ e => this.update("weekDay", e) }
+                        >
+                            <option key="true" value="true">
+                                    Week Day
+                            </option>
+                            <option key="false" value="false">
+                                    Week End
+                            </option>
+                        </TextField>
+                        <br/>
+                        <br/>
                         <fieldset class="field_set">
-                            <legend>Advanced Settings</legend>
+                            <legend>Daily Usage Percentage</legend>
                             <TextField
-                                id="standard-weekDay"
-                                select
-                                value={ this.state.weekDay }
+                                id="standard-resDailyUse"
+                                label="Residential"
+                                value={ this.state.resDailyUse }
                                 className={classes.textField}
                                 margin="normal"
-                                label="Day Type"
-                                SelectProps={{
-                                    native: true,
-                                    MenuProps: {
-                                        className: classes.menu,
-                                    },
-                                }}
-                                onChange={ e => this.update("weekDay", e) }
-                            >
-                                <option key="true" value="true">
-                                    Week Day
-                                </option>
-                                <option key="false" value="false">
-                                    Week End
-                                </option>
-                            </TextField>
-                            <br/>
-                            <br/>
-                            <fieldset class="field_set">
-                                <legend>Daily Usage Percentage</legend>
-                                <TextField
-                                    id="standard-resDailyUse"
-                                    label="Residential"
-                                    value={ this.state.resDailyUse }
-                                    className={classes.textField}
-                                    margin="normal"
-                                    onChange={ e => this.update("resDailyUse", e) }
-                                />
-                                <TextField
-                                    id="standard-workDailyUse"
-                                    label="Workplace"
-                                    value={ this.state.workDailyUse }
-                                    className={classes.textField}
-                                    margin="normal"
-                                    onChange={ e => this.update("workDailyUse", e) }
-                                />
-                                <TextField
-                                    id="standard-fastDailyUse"
-                                    label="Fast"
-                                    value={ this.state.fastDailyUse }
-                                    className={classes.textField}
-                                    margin="normal"
-                                    onChange={ e => this.update("fastDailyUse", e) }
-                                />
-                                <TextField
-                                    id="standard-publicL2DailyUse"
-                                    label="Public Level 2"
-                                    value={ this.state.publicL2DailyUse }
-                                    className={classes.textField}
-                                    margin="normal"
-                                    onChange={ e => this.update("publicL2DailyUse", e) }
-                                />
-                            </fieldset>
+                                onChange={ e => this.update("resDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-workDailyUse"
+                                label="Workplace"
+                                value={ this.state.workDailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("workDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-fastDailyUse"
+                                label="Fast"
+                                value={ this.state.fastDailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("fastDailyUse", e) }
+                            />
+                            <TextField
+                                id="standard-publicL2DailyUse"
+                                label="Public Level 2"
+                                value={ this.state.publicL2DailyUse }
+                                className={classes.textField}
+                                margin="normal"
+                                onChange={ e => this.update("publicL2DailyUse", e) }
+                            />
                         </fieldset>
+                    </fieldset>
                     : null
                 }
                 <br/>

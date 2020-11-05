@@ -17,7 +17,7 @@ from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerial
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
-from script.tasks import run_cba_tool
+from script.tasks import run_cba_tool, run_lf_runner
 
 class LoadControlRunner(APIView):
     def post(self, request, format=None):
@@ -63,8 +63,10 @@ class LoadForecastRunner(APIView):
             "config_name": request.data["configName"]
         }
 
-        lf_runner(lf_argv)
-        return Response("Load Forecast run succeeded")
+        task = run_lf_runner.delay(lf_argv)
+        lf_response = {"task_id": task.id, "status": task.status}
+
+        return Response(lf_response)
 
 class CountyViewSet(viewsets.ModelViewSet):
     queryset = County.objects.all()

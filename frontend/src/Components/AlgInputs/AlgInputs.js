@@ -45,6 +45,7 @@ export default function AlgInputs (props) {
                     category = { props.category }
                     controlType = {props.controlType }
                     visualizeResults={ (result) => visualizeResults(result) }
+                    setChartTitles={ (chartTitles) => props.setChartTitles(chartTitles) }
                     loadingResults={ (isLoading) => props.loadingResults(isLoading)}
                 />
             </form>    

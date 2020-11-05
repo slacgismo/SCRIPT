@@ -6,9 +6,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import {DropzoneArea} from "material-ui-dropzone";
-import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
+import axios from "axios";
 import { ResultCharts } from "../Result/ResultCharts";
 import { serverUrl } from "../Api/server";
 import { processResults, preprocessData, checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
@@ -43,163 +42,164 @@ class AlgInputsCBA extends Component {
         super(props);
         this.state = {
             openResult: false,
-            openUpload: false,
+            shouldRender: false,
+            openAlert: false,
+            alertTitle: "",
+            alertDescription: "",
+            profileName: "",
             profileNames: [],
             profileData: [],
-            profileName: "",
             loadForecastResults: [],
-            processedLoadForecastResults: [],
-            shouldRender: false,
-            openAlert: false
+            chartTitles: []  
         };
     }
 
     componentDidMount() {
-        axios("http://127.0.0.1:8000/api/config/load_forecast")
+        axios({
+            url: `${ serverUrl }/config/load_forecast`,
+            method: "get"
+        })
             .then(res => {
                 const profiles = res.data;
                 const profileNames = [];
                 if (profiles.length > 0) {
                     for (var i = 0; i < profiles.length; i++) {
-                        const profileNamesUnit = {id: "", name: ""};
-                        profileNamesUnit.id = profiles[i]["id"];
+                        const profileNamesUnit = {name: ""};
                         profileNamesUnit.name = profiles[i]["config_name"];
                         profileNames.push(profileNamesUnit);
                     }
-                    this.setState({ profileData: profiles, profileNames: profileNames });
+                    this.setState({ profileData: profiles, profileNames: profileNames, profileName: profileNames[0].name });
                 }
+            }, (error) => {
+                this.handleAlertOpen("", "Server Error");
             });
-        this.getLoadForecastData();
     }
 
-    getLoadForecastData = async() => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/load_forecast", {
-            params: {
-                config: this.state.profileName
+    getLoadForecastData = async () => {
+        try {
+            const lfRes = await axios.get(`${ serverUrl }/algorithm/load_forecast`, {
+                params: {
+                    config: this.state.profileName
+                }
+            });
+            const dataLoadForecast = [];
+            for (var i = 0; i < lfRes.data.length; i++) {
+                const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
+                dataLoadForecastUnit.residential_l1_load = (lfRes.data[i].residential_l1_load);
+                dataLoadForecastUnit.residential_l2_load = (lfRes.data[i].residential_l2_load);
+                dataLoadForecastUnit.residential_mud_load = (lfRes.data[i].residential_mud_load);
+                dataLoadForecastUnit.work_load = (lfRes.data[i].work_load);
+                dataLoadForecastUnit.fast_load = (lfRes.data[i].fast_load);
+                dataLoadForecastUnit.public_l2_load = (lfRes.data[i].public_l2_load);
+                dataLoadForecastUnit.total_load = (lfRes.data[i].total_load);
+                dataLoadForecast.push(dataLoadForecastUnit);
+                this.setLoadForecastResults(dataLoadForecast);
             }
-        });
-        const dataLoadForecast = [];
-        for (var i = 0; i < res.data.length; i++) {
-            const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-            dataLoadForecastUnit.residential_l1_load = (res.data[i].residential_l1_load);
-            dataLoadForecastUnit.residential_l2_load = (res.data[i].residential_l2_load);
-            dataLoadForecastUnit.residential_mud_load = (res.data[i].residential_mud_load);
-            dataLoadForecastUnit.work_load = (res.data[i].work_load);
-            dataLoadForecastUnit.fast_load = (res.data[i].fast_load);
-            dataLoadForecastUnit.public_l2_load = (res.data[i].public_l2_load);
-            dataLoadForecastUnit.total_load = (res.data[i].total_load);
-            dataLoadForecast.push(dataLoadForecastUnit);
+        } catch (error) {
+            this.handleAlertOpen("Error", "Error occurred while loading load forecast profile.");
         }
-        this.setState({ loadForecastResults: dataLoadForecast });
     };
 
-    handleAlertOpen = () => {
-        this.setState({ openAlert: true});
+    setLoadForecastResults = (loadForecastData) => {
+        const loadForecastResults = processResults(loadForecastData);
+        const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName)[0];
+        const countyChoice = profileMatch["choice"];
+        const rateStructure = profileMatch["work_control"];
+        this.setState({ chartTitles: [`${this.state.profileName} - ${countyChoice} uncontrolled`, `${this.state.profileName} - ${countyChoice} ${rateStructure} controlled`] });
+        this.setState({ openResult: true, shouldRender: true, loadForecastResults: loadForecastResults  });
+    };
+
+    runCBATool = async () => {
+        try {
+            const configRes = await axios.get(`${serverUrl}/config/${this.props.category}/`, {
+                params: {
+                    lf_config: this.state.profileName
+                }
+            });
+            if(!configRes.data.length){
+                this.props.loadingResults(true);
+                const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
+                const countyMatch = profileMatch.map(profile => profile["choice"]);
+                axios({
+                    url: `${ serverUrl }/cost_benefit_analysis_runner`,
+                    method: "post",
+                    data: {
+                        load_profile: this.state.profileName, 
+                        county: countyMatch
+                    }
+    
+                })
+                    .then( async (celeryRes) =>  {
+                        const taskId = celeryRes.data.task_id;
+                        let timeout;
+                        await exponentialBackoff(checkFlowerTaskStatus, taskId, timeout, 20, 75, 
+                            async () => { 
+                                this.props.loadingResults(false);
+                                this.props.visualizeResults(await this.getCBAResult());
+                            }, 
+                            () => {
+                                this.props.loadingResults(false); 
+                                this.handleAlertOpen("Error", "Error occurred while running cost benefit analysis.");
+                            }
+                        );
+                    }, (error) => {
+                        this.props.loadingResults(false); 
+                        this.handleAlertOpen("Error", "Error occurred while starting cost benefit analysis runner.");
+                    });
+            } else {
+                this.props.visualizeResults(await this.getCBAResult());
+            }
+        } catch (error) {
+            this.handleAlertOpen("", "Server error");
+        }
+    };
+
+    getCBAResult = async () => {
+        try {
+            const cbaRes = await axios.get(`${ serverUrl }/algorithm/cost_benefit_analysis/${ this.props.category }`);
+            const filteredRes = cbaRes.data.filter((item) => item.config.lf_config === this.state.profileName);
+            const dataCBA = {dataValues: []};
+            const dataCBASub = [];
+            for (var i = 0; i < filteredRes.length; i++) {
+                const dataCBAUnit = filteredRes[i];
+                dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
+                dataCBASub.push(dataCBAUnit);
+            }
+            dataCBA.dataValues = dataCBASub;
+            return preprocessData(dataCBA);
+        } catch (error) {
+            this.handleAlertOpen("", "Server error");
+        }
+    };
+
+    handleAlertOpen = (title, description) => {
+        this.setState({ alertTitle: title, alertDescription: description, openAlert: true });
     };
 
     handleAlertClose = () => {
-        this.setState({ openAlert: false});
+        this.setState({ openAlert: false });
     };
 
-    handleClose = () => {
-        this.setState({ openResult: false, openUpload: false });
+    handleChartsClose = () => {
+        this.setState({ openResult: false });
     };
 
-    setLoadForecastResults = () => {
-        const processedLoadForecastResults = processResults(this.state.loadForecastResults);
-        this.setState({ openResult: true, shouldRender: true, processedLoadForecastResults: processedLoadForecastResults  });
+    updateCBACharts = async () => {
+        this.props.visualizeResults(await this.getCBAResult());
     };
 
     update = (field, event) => {
         this.setState({ [field]: event.currentTarget.value });
     };
 
-    findProfile = async () => {
-        // check for corresponding CBA input table for current load forecast profile
-        const config_res = await axios.get("http://127.0.0.1:8000/api/config/" + this.props.category, {
-            params: {
-                lf_config: this.state.profileName
-            }
-        });
-        // if the CBA input relationship doesn't exist, insert new CBA input table rows to db
-        if(!config_res.data.length){
-            // starts progress bar to show loading to user
-            this.props.loadingResults(true);
-            // data inputs to run the cba tool
-            const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
-            const countyMatch = profileMatch.map(profile => profile["choice"]);
-            // runs cba task with celery on backend
-            const cba_res = await axios({
-                url: `${ serverUrl }/cost_benefit_analysis_runner`,
-                method: "post",
-                data: {load_profile: this.state.profileName, county: countyMatch}
-
-            });
-            // celery-flower monitoring to check task status on cba tool
-            const task_id = cba_res.data.task_id;
-            // celery-flower monitoring to check task status on cba tool
-            let timeout;
-            const cba_status = await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, async () => {
-                this.props.loadingResults(false);
-                this.props.visualizeResults(await this.getCBAResult());
-            });
-            // if cba_tool task failed, open alert
-            if (cba_status === "FAILURE") {
-                this.props.loadingResults(false);
-                this.handleAlertOpen();
-            }
-        }
-    };
-
-    getCBAResult = async () => {
-        const res = await axios.get("http://127.0.0.1:8000/api/algorithm/cost_benefit_analysis/" + this.props.category);
-        const filteredRes = res.data.filter((item) => item.config.lf_config === this.state.profileName);
-        const dataCBA = {dataValues: []};
-        const dataCBASub = [];
-        for (var i = 0; i < filteredRes.length; i++) {
-            const dataCBAUnit = filteredRes[i];
-            dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
-            dataCBASub.push(dataCBAUnit);
-        }
-        dataCBA.dataValues = dataCBASub;
-        return preprocessData(dataCBA);
-    };
-
-    updateCharts = async () => {
-        this.props.visualizeResults(await this.getCBAResult());
-    }
-
-    updateProfileAndCharts = async () => {
-        this.findProfile();
-        this.props.visualizeResults(await this.getCBAResult());
-    };
-
-    loadedResultsandCharts = async() => {
-        this.props.loadingResults(false);
-        this.props.visualizeResults(await this.getCBAResult());
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        // if different dropdown menu category selected (e.g. gas consumption)
+    componentDidUpdate(prevProps) {
         if (prevProps.category !== this.props.category) {
-            this.updateCharts();
+            this.updateCBACharts();
         }
-
         if (prevProps.controlType !== this.props.controlType) {
-            this.updateCharts();
-        }
-
-        // if different load forecast profile selected, change load forecast chart
-        if (prevState.profileName !== this.state.profileName) {
-            this.getLoadForecastData();
+            this.updateCBACharts();
         }
     }
-
-    uploadFile = () => {
-        this.setState({ openUpload: true});
-        // TODO: backend
-        // upload a file to EC2 as the input of algorithm 3 (cba)
-    };
 
     render() {
         const { classes } = this.props;
@@ -211,11 +211,10 @@ class AlgInputsCBA extends Component {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Cost Benefit Analysis Failed"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{this.state.alertTitle}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            The cost benefit analysis failed to run with the given load forecast profile.
-                            Please check your load forecast profile inputs, and try again.
+                            {this.state.alertDescription}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -236,69 +235,43 @@ class AlgInputsCBA extends Component {
                     }}
                     helperText="Please select a profile"
                     margin="normal"
-                    onChange={ e => this.update("profileName", e)}
+                    onChange={e => this.update("profileName", e)}
                 >
                     {
                         this.state.profileNames.map(option => (
-                            <option key={option.id} value={option.name}>
+                            <option key={option.name} value={option.name}>
                                 {option.name}
                             </option>
                         ))
                     }
                 </TextField>
-                <Button variant="contained" className={classes.button} onClick={this.setLoadForecastResults}>
+                <Button variant="contained" className={classes.button} onClick={this.getLoadForecastData}>
                     Review
                 </Button>
-                {/* <Button variant="contained" className={classes.button} onClick={this.uploadFile}>
-                    Upload
-                </Button> */}
                 <p/>
-                <Button variant="contained" color="primary" className={classes.button} onClick={this.updateProfileAndCharts}>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.runCBATool}>
                     Run
                 </Button>
 
                 { !this.state.shouldRender ? <></> : (
 
-                    <Dialog open={this.state.openResult} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle onClose={this.handleClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
+                    <Dialog open={this.state.openResult} onClose={this.handleChartsClose} aria-labelledby="form-dialog-title">
+                        <DialogTitle onClose={this.handleChartsClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
                         <DialogContent>
                             <ResultCharts
-                                results={ this.state.processedLoadForecastResults }
-                                algId={ 2 }
+                                results={this.state.loadForecastResults}
+                                algId={2}
+                                chartTitles={this.state.chartTitles}
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={this.handleClose} color="primary">
+                            <Button onClick={this.handleChartsClose} color="primary">
                             Cancel
                             </Button>
                         </DialogActions>
                     </Dialog>
                 )
                 }
-
-                <Dialog open={this.state.openUpload} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Upload</DialogTitle>
-                    <DialogContent>
-                        <DropzoneArea
-                            acceptedFiles={["text/plain"]}
-                            dropzoneText = "Drag and drop a file here or click"
-                            showPreviews = {true}
-                            showPreviewsInDropzone = {false}
-                            filesLimit = "1"
-                            maxFileSize={5000000}
-                            showFileNamesInPreview = "true"
-                            // onChange={uploadFile}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={this.uploadFile} color="primary" >
-                            Upload
-                        </Button>
-                    </DialogActions>
-                </Dialog>
             </div>
         );
     }
