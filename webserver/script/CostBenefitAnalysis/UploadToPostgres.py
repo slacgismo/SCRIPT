@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-import boto3
 import json
 import csv
 import psycopg2
@@ -21,7 +20,7 @@ class UploadToPostgres():
         self.postgres_db = postgres_info['POSTGRES_DB']
         self.postgres_user = postgres_info['POSTGRES_USER']
         self.postgres_password = postgres_info['POSTGRES_PASSWORD']
-        
+
         self.conn = psycopg2.connect(
             host=self.db_host,
             dbname=self.postgres_db,
@@ -53,7 +52,7 @@ class UploadToPostgres():
                 self.uncontrolled_load_profile_result_dict['All'][row[0]][row[1]] = []
                 for i in range(2, len(row)):
                     self.uncontrolled_load_profile_result_dict['All'][row[0]][row[1]].append(row[i])
-        
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_e19controlled_load/results/aggregate_loadprofile.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.controlled_load_profile_result_dict['All'] = {}
@@ -86,7 +85,7 @@ class UploadToPostgres():
                 self.controlled_load_profile_result_dict['DC Fast Charger'][row[0]][row[1]] = []
                 for i in range(2, len(row)):
                     self.controlled_load_profile_result_dict['DC Fast Charger'][row[0]][row[1]].append(row[i])
-        
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/AllPublicL2_loadprofile.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.uncontrolled_load_profile_result_dict['Public L2'] = {}
@@ -106,7 +105,7 @@ class UploadToPostgres():
                 self.controlled_load_profile_result_dict['Public L2'][row[0]][row[1]] = []
                 for i in range(2, len(row)):
                     self.controlled_load_profile_result_dict['Public L2'][row[0]][row[1]].append(row[i])
-        
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_uncontrolled_load/results/AllResidential_loadprofile.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             self.uncontrolled_load_profile_result_dict['Residential'] = {}
@@ -147,7 +146,7 @@ class UploadToPostgres():
                 for i in range(2, len(row)):
                     self.controlled_load_profile_result_dict['Workplace'][row[0]][row[1]].append(row[i])
 
-        # gas consumption result related 
+        # gas consumption result related
         self.gas_consumption_year_len = 0
         self.uncontrolled_gas_consumption_result_dict = {}
         self.controlled_gas_consumption_result_dict = {}
@@ -159,7 +158,7 @@ class UploadToPostgres():
                 self.uncontrolled_gas_consumption_result_dict[row[0]] = []
                 for i in range(1, len(row)):
                     self.uncontrolled_gas_consumption_result_dict[row[0]].append(row[i])
-        
+
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_e19controlled_load/results/annual_gas_consumption.csv'.format(county)) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
@@ -167,7 +166,7 @@ class UploadToPostgres():
                 for i in range(1, len(row)):
                     self.controlled_gas_consumption_result_dict[row[0]].append(row[i])
 
-        # cost benefit result related 
+        # cost benefit result related
         self.cost_benefit_year_len = 0
         self.uncontrolled_cost_benefit_result_dict = {}
         self.controlled_cost_benefit_result_dict = {}
@@ -197,7 +196,7 @@ class UploadToPostgres():
                         self.controlled_cost_benefit_result_dict[row[0]].append(fill_up_value[0])
                         self.controlled_cost_benefit_result_dict[row[0]].append(fill_up_value[1])
 
-        # emission result related 
+        # emission result related
         self.emission_year_len = 0
         self.uncontrolled_emission_result_dict = {}
         self.controlled_emission_result_dict = {}
@@ -405,14 +404,14 @@ class UploadToPostgres():
         controlled_tmp_load = {}
 
         for i in range(self.load_profile_year_len):
-        
+
             for uncontrolled_poi, controlled_poi in zip_longest(self.uncontrolled_load_profile_result_dict.keys(), self.controlled_load_profile_result_dict.keys()):
-                
+
                 uncontrolled_tmp_load[uncontrolled_poi] = {}
                 controlled_tmp_load[controlled_poi] = {}
-                
+
                 cur_year = str(self.load_profile_start_year + i)
-                
+
                 uncontrolled_tmp_load[uncontrolled_poi][cur_year] = {}
                 controlled_tmp_load[controlled_poi][cur_year] = {}
 
@@ -451,7 +450,7 @@ class UploadToPostgres():
 
         # Make the changes to the database persistent
         self.conn.commit()
-    
+
 
     def run_cost_benefit(self):
 
@@ -462,7 +461,7 @@ class UploadToPostgres():
             for key in self.uncontrolled_cost_benefit_result_dict.keys():
                 if key != 'Year':
                     uncontrolled_tmp_res[key] = self.uncontrolled_cost_benefit_result_dict[key][i]
-            
+
             for key in self.controlled_cost_benefit_result_dict.keys():
                 if key != 'Year':
                     controlled_tmp_res[key] = self.controlled_cost_benefit_result_dict[key][i]
@@ -496,7 +495,7 @@ class UploadToPostgres():
             for key in self.uncontrolled_gas_consumption_result_dict.keys():
                 if key != 'Year':
                     uncontrolled_tmp_res[key] = self.uncontrolled_gas_consumption_result_dict[key][i]
-            
+
             for key in self.controlled_gas_consumption_result_dict.keys():
                 if key != 'Year':
                     controlled_tmp_res[key] = self.controlled_gas_consumption_result_dict[key][i]
@@ -534,7 +533,7 @@ class UploadToPostgres():
 
         self.cur.execute("SELECT id FROM "+self.config_cba_net_present_table_name + " ORDER BY id DESC LIMIT 1")
         config_net_present_id = self.cur.fetchone()[0]
-        
+
         self.cur.execute("INSERT INTO " + self.cba_net_present_table_name + " (config, uncontrolled_values, controlled_values) VALUES (%s, %s, %s)",
             (
                 str(config_net_present_id), json.dumps(self.uncontrolled_npv_result_dict), json.dumps(self.controlled_npv_result_dict)
@@ -543,7 +542,7 @@ class UploadToPostgres():
 
         # Make the changes to the database persistent
         self.conn.commit()
-    
+
     def run_emission(self):
 
         for i in range(self.emission_year_len):
@@ -553,11 +552,11 @@ class UploadToPostgres():
             for key in self.uncontrolled_emission_result_dict.keys():
                 if key != 'Year':
                     uncontrolled_tmp_res[key] = self.uncontrolled_emission_result_dict[key][i]
-            
+
             for key in self.controlled_emission_result_dict.keys():
                 if key != 'Year':
                     controlled_tmp_res[key] = self.controlled_emission_result_dict[key][i]
-            
+
             self.cur.execute("INSERT INTO " + self.config_cba_emission_table_name + " (lf_config, year) VALUES (%s, %s)",
                 (
                     self.load_profile, str(self.uncontrolled_emission_result_dict['Year'][i])

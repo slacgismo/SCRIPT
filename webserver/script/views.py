@@ -15,7 +15,6 @@ from script.models.algorithms import LoadController, LoadForecast, LoadProfile, 
 from script.serializers import LoadControllerConfigSerializer, LoadForecastConfigSerializer, LoadProfileConfigSerializer, EmissionConfigSerializer, NetPresentValueConfigSerializer, CostBenefitConfigSerializer, GasConsumptionConfigSerializer
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
 from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
-from script.SmartCharging.SmartChargingAlgorithm import *
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
 from script.SmartCharging.SmartChargingDefault import getScaData
 from script.tasks import run_cba_tool

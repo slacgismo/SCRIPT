@@ -1,4 +1,3 @@
-import boto3
 import json
 import psycopg2
 from django.conf import settings
