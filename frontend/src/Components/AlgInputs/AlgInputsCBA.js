@@ -101,7 +101,7 @@ class AlgInputsCBA extends Component {
     };
 
     setLoadForecastResults = (loadForecastData) => {
-        const loadForecastResults = processResults(loadForecastData);
+        const loadForecastResults = processResults(loadForecastData, false);
         const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName)[0];
         const countyChoice = profileMatch["choice"];
         const rateStructure = profileMatch["work_control"];
@@ -135,7 +135,8 @@ class AlgInputsCBA extends Component {
                         await exponentialBackoff(checkFlowerTaskStatus, taskId, timeout, 20, 75, 
                             async () => { 
                                 this.props.loadingResults(false);
-                                this.props.visualizeResults(await this.getCBAResult());
+                                this.props.checkCBA(true);
+                                this.props.visualizeResults(await this.getCBAResult(), true);
                             }, 
                             () => {
                                 this.props.loadingResults(false); 
@@ -147,7 +148,8 @@ class AlgInputsCBA extends Component {
                         this.handleAlertOpen("Error", "Error occurred while starting cost benefit analysis runner.");
                     });
             } else {
-                this.props.visualizeResults(await this.getCBAResult());
+                this.props.checkCBA(true);
+                this.props.visualizeResults(await this.getCBAResult(), true);
             }
         } catch (error) {
             this.handleAlertOpen("Server Error", "Something went wrong");
@@ -185,7 +187,8 @@ class AlgInputsCBA extends Component {
     };
 
     updateCBACharts = async () => {
-        this.props.visualizeResults(await this.getCBAResult());
+        this.props.checkCBA(true);
+        this.props.visualizeResults(await this.getCBAResult(), true);
     };
 
     update = (field, event) => {
@@ -261,6 +264,7 @@ class AlgInputsCBA extends Component {
                             <ResultCharts
                                 results={this.state.loadForecastResults}
                                 algId={2}
+                                isCBA={false}
                                 chartTitles={this.state.chartTitles}
                             />
                         </DialogContent>

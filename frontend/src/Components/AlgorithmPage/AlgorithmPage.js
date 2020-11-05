@@ -14,13 +14,20 @@ class AlgorithmPage extends Component {
         this.state = {
             results: [],
             loading: false,
-            chartTitles: []
+            chartTitles: [],
+            isCBA: false
         };
     }
 
     loadingResults(isLoading) {
         this.setState({
             loading: isLoading
+        });
+    }
+
+    checkCBA(isCBA){
+        this.setState({
+            isCBA: isCBA
         });
     }
 
@@ -51,6 +58,7 @@ class AlgorithmPage extends Component {
                                         title={ this.props.title }
                                         visualizeResults={ this.visualizeResults.bind(this) }
                                         setChartTitles={ this.setChartTitles.bind(this) }
+                                        checkCBA={ this.checkCBA.bind(this) }
                                         loadingResults={ this.loadingResults.bind(this) }
                                         algInputs={ this.props.algInputs }
                                     />
@@ -73,6 +81,7 @@ class AlgorithmPage extends Component {
                                     compo={              
                                         <ResultCharts
                                             results={ this.state.results }
+                                            isCBA={ this.state.isCBA }
                                             chartTitles={ this.state.chartTitles }
                                             algId={2}
                                         />

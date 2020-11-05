@@ -81,7 +81,8 @@ class AlgInputsLoadControl extends Component {
             .then((response) => {
                 const sca_data = [JSON.parse(response.data)];
                 this.props.setChartTitles([`${this.state.county} - ${this.state.rateStructure}`]);
-                this.props.visualizeResults(sca_data);
+                this.props.checkCBA(false);
+                this.props.visualizeResults(sca_data, false);
 
             }, (error) => {
                 this.handleAlertOpen("Server Error", "Something went wrong");

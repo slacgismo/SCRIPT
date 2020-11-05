@@ -1,7 +1,7 @@
 // Helper functions
 import axios from "axios";
 
-export function processResults(resultArr) {
+export function processResults(resultArr, isCBA) {
     const data_to_visualize_all = [];
     let isTimeSeries = false;
     if (!resultArr) {
@@ -26,8 +26,8 @@ export function processResults(resultArr) {
                 }   
             ));
             data_to_visualize[field] = {
-                legendLabel: `${field}`.replace(/_/g, " "),
-                unit: "Power (kW)",
+                legendLabel: isCBA ? " " : `${field}`.replace(/_/g, " "),
+                unit: isCBA ? `${field}`.replace(/_/g, " ") : "Power (kW)",
                 xAxis: isTimeSeries ? "Time" : "Year",
                 data: dataFormatted,
             };
@@ -40,8 +40,6 @@ export function processResults(resultArr) {
 export function preprocessData(allData) {
     const data = allData.dataValues;
     const fields = data[0] ? Object.keys(data[0].values): [0];
-
-    // Init result
     const result = {};
     for (const field of fields) {
         result[field] = [];

@@ -71,6 +71,7 @@ class ResultChart extends React.Component {
                 <XYPlot height={ this.props.graphHeight } width={ this.props.graphWidth }>
                     {
                         this.props.legendPosition === "right" &&
+                        this.props.isCBA === false &&
                         <DiscreteColorLegend
                             style={{
                                 position: "absolute",

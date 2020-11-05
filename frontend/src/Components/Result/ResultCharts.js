@@ -21,6 +21,7 @@ export function ResultCharts(props) {
             graphHeight={ 300 }
             legendPosition={ legendPosition }
             chartTitle={ props.chartTitles[i] }
+            isCBA = { props.isCBA }
         />
     ));
     

@@ -30,8 +30,8 @@ const useStyles = makeStyles(theme => ({
 export default function AlgInputs (props) {
 
 
-    const visualizeResults = (resultArr) => {
-        props.visualizeResults(processResults(resultArr));
+    const visualizeResults = (resultArr, isCBA) => {
+        props.visualizeResults(processResults(resultArr, isCBA));
     };
 
     const classes = useStyles();
@@ -44,8 +44,9 @@ export default function AlgInputs (props) {
                 <AlgInputCustomized
                     category = { props.category }
                     controlType = {props.controlType }
-                    visualizeResults={ (result) => visualizeResults(result) }
+                    visualizeResults={ (result, isCBA) => visualizeResults(result, isCBA) }
                     setChartTitles={ (chartTitles) => props.setChartTitles(chartTitles) }
+                    checkCBA={ (isCBA) => props.checkCBA(isCBA) }
                     loadingResults={ (isLoading) => props.loadingResults(isLoading)}
                 />
             </form>    

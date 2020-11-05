@@ -171,10 +171,11 @@ class AlgInputsLoadForecast extends Component {
                 .then(async (lf_res) => {
                     const task_id = lf_res.data.task_id;
                     let timeout;
-                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 3, 75, 
+                    await exponentialBackoff(checkFlowerTaskStatus, task_id, timeout, 20, 75, 
                         async () => { 
                             this.props.loadingResults(false); 
-                            this.props.visualizeResults(await this.getResult());
+                            this.props.checkCBA(false);
+                            this.props.visualizeResults(await this.getResult(), false);
                         }, 
                         () => {
                             this.props.loadingResults(false);
