@@ -6,6 +6,7 @@ function AlgorithmPageLoadControl(props) {
     return (
         <AlgorithmPage
             title={ "Load Control" }
+            graphWidth={ 800 }
             algInputs={ AlgorithmInputsLoadControl }
         />
     );

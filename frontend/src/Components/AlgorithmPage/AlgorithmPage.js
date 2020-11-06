@@ -84,6 +84,7 @@ class AlgorithmPage extends Component {
                                             isCBA={ this.state.isCBA }
                                             chartTitles={ this.state.chartTitles }
                                             algId={2}
+                                            graphWidth={ this.props.graphWidth }
                                         />
                                     }
                                 />
