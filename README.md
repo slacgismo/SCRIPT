@@ -57,15 +57,16 @@ $ conda activate venv_script
 $ conda deactivate
 ```
 
-
 ## Migrate the DB
 ```sh
-$ python ./webserver/manage.py migrate --settings=app.settings.base
+$ cd webserver
+$ python manage.py migrate --settings=app.settings.base
 ```
 
 ## Upload County Data (this part will take about 15 minutes)
 ```sh
-$ python ./UploadToCounty/UploadToPostgresCountiesZips.py
+$ cd UploadToCounty
+$ python UploadToPostgresCountiesZips.py
 ```
 
 ## Install JS dependencies
