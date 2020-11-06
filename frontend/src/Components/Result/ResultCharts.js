@@ -8,7 +8,7 @@ export function ResultCharts(props) {
     const graphWidth = props.results.length <= MAX_GRAPH_PER_LINE ?
         FULL_WIDTH / props.results.length :
         FULL_WIDTH / MAX_GRAPH_PER_LINE ;
-    
+
     // If no results, no legend is needed.
     const legendPosition = !props.results.length ? "none" : "right";
 
@@ -17,7 +17,7 @@ export function ResultCharts(props) {
             key={ i }
             results={ result }
             algId={ props.algId }
-            graphWidth={ 400 }
+            graphWidth={ props.graphWidth ? props.graphWidth : graphWidth }
             graphHeight={ 300 }
             legendPosition={ legendPosition }
             chartTitle={ props.chartTitles[i] }

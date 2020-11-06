@@ -35,6 +35,9 @@ const styles = theme => ({
     button: {
         margin: theme.spacing(1),
     },
+    dialog: {
+        maxWidth: 700,
+      }
 });
 
 class AlgInputsCBA extends Component {
@@ -258,19 +261,33 @@ class AlgInputsCBA extends Component {
 
                 { !this.state.shouldRender ? <></> : (
 
-                    <Dialog open={this.state.openResult} onClose={this.handleChartsClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle onClose={this.handleChartsClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
+                    <Dialog
+                        classes={{
+                            paper: classes.dialog,
+                        }}
+                        open={this.state.openResult} 
+                        onClose={this.handleChartsClose} 
+                        aria-labelledby="form-dialog-title">
+                        <DialogTitle
+                            onClose={this.handleChartsClose}
+                            id="form-dialog-title">
+                                Load Forecast Profile
+                        </DialogTitle>
                         <DialogContent>
                             <ResultCharts
                                 results={this.state.loadForecastResults}
                                 algId={2}
                                 isCBA={false}
+                                graphWidth={400}
                                 chartTitles={this.state.chartTitles}
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={this.handleChartsClose} color="primary">
-                            Cancel
+                            <Button
+                            onClick={this.handleChartsClose}
+                            color="primary"
+                            >
+                                Cancel
                             </Button>
                         </DialogActions>
                     </Dialog>

@@ -492,18 +492,15 @@ class UploadToPostgres():
         for i in range(self.gas_consumption_year_len):
             uncontrolled_tmp_res = {}
             controlled_tmp_res = {}
-            print(self.uncontrolled_gas_consumption_result_dict['Year'][i])
 
             for key in self.uncontrolled_gas_consumption_result_dict.keys():
                 if key != 'Year':
                     uncontrolled_tmp_res[key] = self.uncontrolled_gas_consumption_result_dict[key][i]
-                    print("GAS CONSUMP UNCONTROLLED")
-                    print(self.uncontrolled_gas_consumption_result_dict[key][i])
+
             for key in self.controlled_gas_consumption_result_dict.keys():
                 if key != 'Year':
                     controlled_tmp_res[key] = self.controlled_gas_consumption_result_dict[key][i]
-                    print("GAS CONSUMP CONTROLLED")
-                    print(self.controlled_gas_consumption_result_dict[key][i])
+
             self.cur.execute("INSERT INTO " + self.config_gas_consumption_table_name + " (lf_config, year) VALUES (%s, %s)",
                 (
                     self.load_profile, str(self.uncontrolled_gas_consumption_result_dict['Year'][i])

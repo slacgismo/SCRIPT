@@ -62,7 +62,7 @@ def split_file(load_profile, county, controlled_types, scenarios={'Scenario 1': 
     s3 = S3FileSystem(anon=False)
     bucket = 's3://script.control.tool'
     path = Path(__file__).parent.resolve()
-    print(load_profile)
+
     # Input Loads
     weekday_data_path = str(path)+'/inputs/weekdays/'
     weekend_data_path = str(path)+'/inputs/weekends/'

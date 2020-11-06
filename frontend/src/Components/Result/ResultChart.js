@@ -6,7 +6,6 @@ import {
     HorizontalGridLines,
     XAxis,
     YAxis,
-    // Borders,
     ChartLabel,
     DiscreteColorLegend
 } from "react-vis";
@@ -57,7 +56,7 @@ class ResultChart extends React.Component {
                 color: colors[i],
             });
         });
-
+ 
         return (
             <div className="chart-grid">
                 {
@@ -65,10 +64,7 @@ class ResultChart extends React.Component {
                     <h5 className='chartTitle'>{ this.props.chartTitle }</h5>
                 }
 
-                {/* X Axis Label */}
-                <h5 className='chartXLabel'>{ this.props.results[Object.keys(this.props.results)[0]].xAxis }</h5>
-
-                <XYPlot height={ this.props.graphHeight } width={ this.props.graphWidth }>
+                <XYPlot margin={{top: 20, right: 25}} height={ this.props.graphHeight } width={ this.props.graphWidth }>
                     {
                         this.props.legendPosition === "right" &&
                         this.props.isCBA === false &&
@@ -83,8 +79,7 @@ class ResultChart extends React.Component {
                             items={ newItems }
                         />
                     }
-                    
-                            
+        
                     <HorizontalGridLines />
                             
                     {
@@ -98,10 +93,9 @@ class ResultChart extends React.Component {
                     }
                             
                     <XAxis
-                        // title={ this.props.results[Object.keys(this.props.results)[0]].xAxis }
                         position="end"
                         tickFormat={(d) => {
-                            if (this.props.results[Object.keys(this.props.results)[0]].xAxis === "Time") { // options (time / year)
+                            if (this.props.results[Object.keys(this.props.results)[0]].xAxis === "Time") {
                                 const minute = d * 15;
                                 return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
                             } else {
@@ -110,25 +104,29 @@ class ResultChart extends React.Component {
                         }}
                     />
 
-                    {/* <ChartLabel
-                        text={ this.props.results[Object.keys(this.props.results)[0]].xAxis }  // TODO: should not use the xAxis of a specified attribute 
-                        className="alt-x-label"
-                        includeMargin={false}
-                        xPercent={0.5}
-                        yPercent={1.09}
-                        style={{
-                            fontWeight: "bold"
-                        }}
-                    /> */}
-
-                    {
+                    { 
                         this.props.legendPosition !== "none" &&
                         <ChartLabel
-                            text={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
+                            text={ this.props.results[Object.keys(this.props.results)[0]].xAxis }
+                            className="alt-x-axis"
+                            includeMargin={false}
+                            xPercent={1.03}
+                            yPercent={1.23}
+                            style={{
+                                textAnchor: "end",
+                                fontWeight: "bold"
+                            }}
+                        />
+                    }
+
+                    {            
+                        this.props.legendPosition !== "none" &&
+                        <ChartLabel
+                            text={ this.props.results[Object.keys(this.props.results)[0]].unit } 
                             className="alt-y-label"
                             includeMargin={false}
-                            xPercent={0.02}
-                            yPercent={0.05}
+                            xPercent={0.00}
+                            yPercent={0.035}
                             style={{
                                 fontWeight: "bold"
                             }}
@@ -136,7 +134,6 @@ class ResultChart extends React.Component {
                     }
 
                     <YAxis
-                        // title={ this.props.results[Object.keys(this.props.results)[0]].unit }
                         position="end"
                         tickLabelAngle={ -70 }
                         tickTotal={ 4 }
