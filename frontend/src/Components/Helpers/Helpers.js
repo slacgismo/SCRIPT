@@ -2,21 +2,15 @@
 import axios from "axios";
 
 export function processResults(resultArr, isCBA) {
-    const data_to_visualize_all = [];
+    const dataToVisualizeAll = [];
     let isTimeSeries = false;
     if (!resultArr) {
         resultArr = [];
-        isTimeSeries = false;
-    } else if (resultArr[0][0] !== undefined && resultArr[0][0].length === 0) {
-        isTimeSeries = false;
     } else if (resultArr[0][Object.keys(resultArr[0])[0]][0].time) {
         isTimeSeries = true;
-    } else {
-        isTimeSeries = false;
     }
-
     for (const result of resultArr) {
-        const data_to_visualize = {};
+        const dataToVisualize = {};
         for (const field of Object.keys(result)) {
             const data = result[field];
             const dataFormatted = data.map((datapoint, i) => ({
@@ -25,16 +19,16 @@ export function processResults(resultArr, isCBA) {
                     ? parseFloat(datapoint.load)
                     : parseFloat(datapoint.data),
             }));
-            data_to_visualize[field] = {
+            dataToVisualize[field] = {
                 legendLabel: isCBA ? " " : `${field}`.replace(/_/g, " "),
                 unit: isCBA ? `${field}`.replace(/_/g, " ") : "Power (kW)",
                 xAxis: isTimeSeries ? "Time" : "Year",
                 data: dataFormatted,
             };
         }
-        data_to_visualize_all.push(data_to_visualize);
+        dataToVisualizeAll.push(dataToVisualize);
     }
-    return data_to_visualize_all;
+    return dataToVisualizeAll;
 }
 
 export function preprocessData(allData) {
@@ -63,44 +57,44 @@ export function preprocessData(allData) {
     return resultFlattened;
 }
 
-export async function checkFlowerTaskStatus(task_id) {
-    const task_res = await axios({
-        url: `http://localhost:5555/api/task/result/${task_id}`,
+export async function checkFlowerTaskStatus(taskId) {
+    const taskRes = await axios({
+        url: `http://localhost:5555/api/task/result/${taskId}`,
         method: "get",
     });
-    return task_res.data.state;
+    return taskRes.data.state;
 }
 
-export async function revokeCeleryTask(task_id) {
+export async function revokeCeleryTask(taskId) {
     await axios({
-        url: `http://localhost:5555/api/task/revoke/${task_id}?terminate=true`,
+        url: `http://localhost:5555/api/task/revoke/${taskId}?terminate=true`,
         method: "post",
     });
 }
 
 export async function exponentialBackoff(
     checkStatus,
-    task_id,
+    taskId,
     timeout,
     max,
     delay,
     successCallback,
     failureCallback
 ) {
-    let status = await checkStatus(task_id);
+    let status = await checkStatus(taskId);
     if (status === "SUCCESS") {
         successCallback();
     } else if (status === "FAILURE") {
         failureCallback();
     } else if (max === 0) {
-        revokeCeleryTask(task_id);
+        revokeCeleryTask(taskId);
         failureCallback();
     } else if (status === "PENDING") {
         clearTimeout(timeout);
         timeout = setTimeout(function () {
             return exponentialBackoff(
                 checkStatus,
-                task_id,
+                taskId,
                 timeout,
                 --max,
                 delay * 2,
