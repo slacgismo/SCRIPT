@@ -376,10 +376,9 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/macos,django,python,windows,pycharm,sublimetext,visualstudiocode
 
-webserver/script/costbenefitanalysis/cases/test_files
-webserver/script/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/*
-webserver/script/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/*
-webserver/script/costbenefitanalysis/preprocessing_loadprofiles/outputs/*
-webserver/script/costbenefitanalysis/cases/*
-webserver/script/costbenefitanalysis/EV_Loads/load_profiles/*
+webserver/script/CostBenefitAnalysis/preprocessing_loadprofiles/inputs/weekdays/*
+webserver/script/CostBenefitAnalysis/preprocessing_loadprofiles/inputs/weekends/*
+webserver/script/CostBenefitAnalysis/preprocessing_loadprofiles/outputs/*
+webserver/script/CostBenefitAnalysis/cases/*
+webserver/script/CostBenefitAnalysis/EV_Loads/load_profiles/*
 dump.rdb

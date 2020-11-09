@@ -57,7 +57,7 @@ def hourly(array):
     return np.mean(np.reshape(array, (int(len(array) / 60), 60)), axis=1) #depending on the unit
 
 
-def split_file(county, controlled_types, scenarios={'Scenario 1': 'BaseCase'}, year='2025'):
+def split_file(load_profile, county, controlled_types, scenarios={'Scenario 1': 'BaseCase'}, year='2025'):
 
     s3 = S3FileSystem(anon=False)
     bucket = 's3://script.control.tool'
@@ -90,26 +90,27 @@ def split_file(county, controlled_types, scenarios={'Scenario 1': 'BaseCase'}, y
 
             if scenario in ['WorkPublic', 'FastPublic', 'Work', 'Equity']:
 
-                weekday_file_name_exists = os.path.isfile(weekday_data_path + "{}_rescaled_{}_weekday_{}_county_{}_load.csv".format(Scenario, year, county, controlled_type))
-                weekend_file_name_exists = os.path.isfile(weekend_data_path + "{}_rescaled_{}_weekend_{}_county_{}_load.csv".format(Scenario, year, county, controlled_type))
+                weekday_file_name_exists = os.path.isfile(weekday_data_path + "{}_rescaled_{}_weekday_{}_county_{}_load_{}.csv".format(Scenario, year, county, controlled_type, load_profile))
+                weekend_file_name_exists = os.path.isfile(weekend_data_path + "{}_rescaled_{}_weekend_{}_county_{}_load_{}.csv".format(Scenario, year, county, controlled_type, load_profile))
 
                 if weekday_file_exists:
-                    weekday_file_name = "{}_rescaled_{}_weekday_{}_county_{}_load.csv".format(scenario, year, county, controlled_type)
+                    weekday_file_name = "{}_rescaled_{}_weekday_{}_county_{}_load_{}.csv".format(scenario, year, county, controlled_type, load_profile)
                     driver_counts_file_name = "{}_{}_weekday__driver_counts.csv".format(scenario, year)
 
                 if weekend_file_name_exists:
-                    weekend_file_name = "{}_rescaled_{}_weekend_{}_county_{}_load.csv".format(scenario, year, county, controlled_type)
+                    weekend_file_name = "{}_rescaled_{}_weekend_{}_county_{}_load_{}.csv".format(scenario, year, county, controlled_type, load_profile)
                     driver_counts_file_name = "{}_{}_weekend__driver_counts.csv".format(scenario, year)
 
             else:
-                weekday_file_name_exists = os.path.isfile(weekday_data_path + "{}_{}_weekday_{}_county_{}_load.csv".format(scenario, year, county, controlled_type))
-                weekend_file_name_exists = os.path.isfile(weekend_data_path + "{}_{}_weekend_{}_county_{}_load.csv".format(scenario, year, county, controlled_type))
+
+                weekday_file_name_exists = os.path.isfile(weekday_data_path + "{}_{}_weekday_{}_county_{}_load_{}.csv".format(scenario, year, county, controlled_type, load_profile))
+                weekend_file_name_exists = os.path.isfile(weekend_data_path + "{}_{}_weekend_{}_county_{}_load_{}.csv".format(scenario, year, county, controlled_type, load_profile))
                         
                 if weekday_file_name_exists:
-                    weekday_file_name = "{}_{}_weekday_{}_county_{}_load.csv".format(scenario, year, county, controlled_type)
+                    weekday_file_name = "{}_{}_weekday_{}_county_{}_load_{}.csv".format(scenario, year, county, controlled_type, load_profile)
                     driver_counts_file_name = "{}_{}_weekday__driver_counts.csv".format(scenario, year)
                 if weekend_file_name_exists:
-                    weekend_file_name = "{}_{}_weekend_{}_county_{}_load.csv".format(scenario, year, county, controlled_type)
+                    weekend_file_name = "{}_{}_weekend_{}_county_{}_load_{}.csv".format(scenario, year, county, controlled_type, load_profile)
                     driver_counts_file_name = "{}_{}_weekend__driver_counts.csv".format(scenario, year)
       
 
@@ -165,3 +166,9 @@ def split_file(county, controlled_types, scenarios={'Scenario 1': 'BaseCase'}, y
                 stock_rollover_output.to_csv(os.path.join(
                     str(path.parent), "EV_Loads", "load_profiles",  "{}_{}_{}_{}_load.csv".format(
                         scenario, county, field_name, controlled_type)),index = True)
+                
+            if weekday_file_name_exists:
+                os.remove(os.path.join(weekday_data_path,weekday_file_name))
+
+            if weekend_file_name_exists:
+                os.remove(os.path.join(weekend_data_path,weekend_file_name))

@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -9,10 +9,15 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { ResultCharts } from "../Result/ResultCharts";
-import { serverUrl } from "../Api/server";
-import { processResults, preprocessData, checkFlowerTaskStatus, exponentialBackoff } from "../Helpers/helpers";
+import { serverUrl } from "../Api/Server";
+import {
+    processResults,
+    preprocessData,
+    checkFlowerTaskStatus,
+    exponentialBackoff,
+} from "../Helpers/Helpers";
 
-const styles = theme => ({
+const styles = (theme) => ({
     container: {
         display: "flex",
         flexWrap: "wrap",
@@ -30,10 +35,13 @@ const styles = theme => ({
     },
     root: {
         width: 500,
-        marginLeft: theme.spacing(1)
+        marginLeft: theme.spacing(1),
     },
     button: {
         margin: theme.spacing(1),
+    },
+    dialog: {
+        maxWidth: 700,
     },
 });
 
@@ -50,130 +58,197 @@ class AlgInputsCBA extends Component {
             profileNames: [],
             profileData: [],
             loadForecastResults: [],
-            chartTitles: []  
+            chartTitles: [],
         };
     }
 
     componentDidMount() {
         axios({
-            url: `${ serverUrl }/config/load_forecast`,
-            method: "get"
-        })
-            .then(res => {
+            url: `${serverUrl}/config/load_forecast`,
+            method: "get",
+        }).then(
+            (res) => {
                 const profiles = res.data;
                 const profileNames = [];
                 if (profiles.length > 0) {
                     for (var i = 0; i < profiles.length; i++) {
-                        const profileNamesUnit = {name: ""};
+                        const profileNamesUnit = { name: "" };
                         profileNamesUnit.name = profiles[i]["config_name"];
                         profileNames.push(profileNamesUnit);
                     }
-                    this.setState({ profileData: profiles, profileNames: profileNames, profileName: profileNames[0].name });
+                    this.setState({
+                        profileData: profiles,
+                        profileNames: profileNames,
+                        profileName: profileNames[0].name,
+                    });
                 }
-            }, (error) => {
-                this.handleAlertOpen("", "Server Error");
-            });
+            },
+            (error) => {
+                this.handleAlertOpen("Server Error", "Something went wrong");
+            }
+        );
     }
 
     getLoadForecastData = async () => {
         try {
-            const lfRes = await axios.get(`${ serverUrl }/algorithm/load_forecast`, {
-                params: {
-                    config: this.state.profileName
+            const lfRes = await axios.get(
+                `${serverUrl}/algorithm/load_forecast`,
+                {
+                    params: {
+                        config: this.state.profileName,
+                    },
                 }
-            });
+            );
             const dataLoadForecast = [];
             for (var i = 0; i < lfRes.data.length; i++) {
-                const  dataLoadForecastUnit = {residential_l1_load: "", residential_l2_load: "", residential_mud_load: "", work_load: "", fast_load: "", public_l2_load: "", total_load: ""};
-                dataLoadForecastUnit.residential_l1_load = (lfRes.data[i].residential_l1_load);
-                dataLoadForecastUnit.residential_l2_load = (lfRes.data[i].residential_l2_load);
-                dataLoadForecastUnit.residential_mud_load = (lfRes.data[i].residential_mud_load);
-                dataLoadForecastUnit.work_load = (lfRes.data[i].work_load);
-                dataLoadForecastUnit.fast_load = (lfRes.data[i].fast_load);
-                dataLoadForecastUnit.public_l2_load = (lfRes.data[i].public_l2_load);
-                dataLoadForecastUnit.total_load = (lfRes.data[i].total_load);
+                const dataLoadForecastUnit = {
+                    residential_l1_load: "",
+                    residential_l2_load: "",
+                    residential_mud_load: "",
+                    work_load: "",
+                    fast_load: "",
+                    public_l2_load: "",
+                    total_load: "",
+                };
+                dataLoadForecastUnit.residential_l1_load =
+                    lfRes.data[i].residential_l1_load;
+                dataLoadForecastUnit.residential_l2_load =
+                    lfRes.data[i].residential_l2_load;
+                dataLoadForecastUnit.residential_mud_load =
+                    lfRes.data[i].residential_mud_load;
+                dataLoadForecastUnit.work_load = lfRes.data[i].work_load;
+                dataLoadForecastUnit.fast_load = lfRes.data[i].fast_load;
+                dataLoadForecastUnit.public_l2_load =
+                    lfRes.data[i].public_l2_load;
+                dataLoadForecastUnit.total_load = lfRes.data[i].total_load;
                 dataLoadForecast.push(dataLoadForecastUnit);
                 this.setLoadForecastResults(dataLoadForecast);
             }
         } catch (error) {
-            this.handleAlertOpen("Error", "Error occurred while loading load forecast profile.");
+            this.handleAlertOpen(
+                "Error",
+                "Error occurred while loading load forecast profile."
+            );
         }
     };
 
     setLoadForecastResults = (loadForecastData) => {
-        const loadForecastResults = processResults(loadForecastData);
-        const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName)[0];
+        const loadForecastResults = processResults(loadForecastData, false);
+        const profileMatch = this.state.profileData.filter(
+            (profile) => profile.config_name === this.state.profileName
+        )[0];
         const countyChoice = profileMatch["choice"];
         const rateStructure = profileMatch["work_control"];
-        this.setState({ chartTitles: [`${this.state.profileName} - ${countyChoice} uncontrolled`, `${this.state.profileName} - ${countyChoice} ${rateStructure} controlled`] });
-        this.setState({ openResult: true, shouldRender: true, loadForecastResults: loadForecastResults  });
+        this.setState({
+            chartTitles: [
+                `${this.state.profileName} - ${countyChoice} uncontrolled`,
+                `${this.state.profileName} - ${countyChoice} ${rateStructure} controlled`,
+            ],
+        });
+        this.setState({
+            openResult: true,
+            shouldRender: true,
+            loadForecastResults: loadForecastResults,
+        });
     };
 
     runCBATool = async () => {
         try {
-            const configRes = await axios.get(`${serverUrl}/config/${this.props.category}/`, {
-                params: {
-                    lf_config: this.state.profileName
+            const configRes = await axios.get(
+                `${serverUrl}/config/${this.props.category}/`,
+                {
+                    params: {
+                        lf_config: this.state.profileName,
+                    },
                 }
-            });
-            if(!configRes.data.length){
+            );
+            if (!configRes.data.length) {
                 this.props.loadingResults(true);
-                const profileMatch = this.state.profileData.filter((profile) => profile.config_name === this.state.profileName);
-                const countyMatch = profileMatch.map(profile => profile["choice"]);
+                const profileMatch = this.state.profileData.filter(
+                    (profile) => profile.config_name === this.state.profileName
+                );
+                const countyMatch = profileMatch.map(
+                    (profile) => profile["choice"]
+                );
                 axios({
-                    url: `${ serverUrl }/cost_benefit_analysis_runner`,
+                    url: `${serverUrl}/cost_benefit_analysis_runner`,
                     method: "post",
                     data: {
-                        load_profile: this.state.profileName, 
-                        county: countyMatch
-                    }
-    
-                })
-                    .then( async (celeryRes) =>  {
+                        load_profile: this.state.profileName,
+                        county: countyMatch,
+                    },
+                }).then(
+                    async (celeryRes) => {
                         const taskId = celeryRes.data.task_id;
                         let timeout;
-                        await exponentialBackoff(checkFlowerTaskStatus, taskId, timeout, 20, 75, 
-                            async () => { 
+                        await exponentialBackoff(
+                            checkFlowerTaskStatus,
+                            taskId,
+                            timeout,
+                            20,
+                            75,
+                            async () => {
                                 this.props.loadingResults(false);
-                                this.props.visualizeResults(await this.getCBAResult());
-                            }, 
+                                this.props.checkCBA(true);
+                                this.props.visualizeResults(
+                                    await this.getCBAResult(),
+                                    true
+                                );
+                            },
                             () => {
-                                this.props.loadingResults(false); 
-                                this.handleAlertOpen("Error", "Error occurred while running cost benefit analysis.");
+                                this.props.loadingResults(false);
+                                this.handleAlertOpen(
+                                    "Error",
+                                    "Error occurred while running cost benefit analysis."
+                                );
                             }
                         );
-                    }, (error) => {
-                        this.props.loadingResults(false); 
-                        this.handleAlertOpen("Error", "Error occurred while starting cost benefit analysis runner.");
-                    });
+                    },
+                    (error) => {
+                        this.props.loadingResults(false);
+                        this.handleAlertOpen(
+                            "Error",
+                            "Error occurred while starting cost benefit analysis runner."
+                        );
+                    }
+                );
             } else {
-                this.props.visualizeResults(await this.getCBAResult());
+                this.props.checkCBA(true);
+                this.props.visualizeResults(await this.getCBAResult(), true);
             }
         } catch (error) {
-            this.handleAlertOpen("", "Server error");
+            this.handleAlertOpen("Server Error", "Something went wrong");
         }
     };
 
     getCBAResult = async () => {
         try {
-            const cbaRes = await axios.get(`${ serverUrl }/algorithm/cost_benefit_analysis/${ this.props.category }`);
-            const filteredRes = cbaRes.data.filter((item) => item.config.lf_config === this.state.profileName);
-            const dataCBA = {dataValues: []};
+            const cbaRes = await axios.get(
+                `${serverUrl}/algorithm/cost_benefit_analysis/${this.props.category}`
+            );
+            const filteredRes = cbaRes.data.filter(
+                (item) => item.config.lf_config === this.state.profileName
+            );
+            const dataCBA = { dataValues: [] };
             const dataCBASub = [];
             for (var i = 0; i < filteredRes.length; i++) {
                 const dataCBAUnit = filteredRes[i];
-                dataCBAUnit.values = (filteredRes[i][this.props.controlType]); 
+                dataCBAUnit.values = filteredRes[i][this.props.controlType];
                 dataCBASub.push(dataCBAUnit);
             }
             dataCBA.dataValues = dataCBASub;
             return preprocessData(dataCBA);
         } catch (error) {
-            this.handleAlertOpen("", "Server error");
+            this.handleAlertOpen("Server Error", "Something went wrong");
         }
     };
 
     handleAlertOpen = (title, description) => {
-        this.setState({ alertTitle: title, alertDescription: description, openAlert: true });
+        this.setState({
+            alertTitle: title,
+            alertDescription: description,
+            openAlert: true,
+        });
     };
 
     handleAlertClose = () => {
@@ -185,7 +260,8 @@ class AlgInputsCBA extends Component {
     };
 
     updateCBACharts = async () => {
-        this.props.visualizeResults(await this.getCBAResult());
+        this.props.checkCBA(true);
+        this.props.visualizeResults(await this.getCBAResult(), true);
     };
 
     update = (field, event) => {
@@ -211,14 +287,20 @@ class AlgInputsCBA extends Component {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{this.state.alertTitle}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">
+                        {this.state.alertTitle}
+                    </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             {this.state.alertDescription}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleAlertClose} color="primary" autoFocus>
+                        <Button
+                            onClick={this.handleAlertClose}
+                            color="primary"
+                            autoFocus
+                        >
                             OK
                         </Button>
                     </DialogActions>
@@ -235,46 +317,70 @@ class AlgInputsCBA extends Component {
                     }}
                     helperText="Please select a profile"
                     margin="normal"
-                    onChange={e => this.update("profileName", e)}
+                    onChange={(e) => this.update("profileName", e)}
                 >
-                    {
-                        this.state.profileNames.map(option => (
-                            <option key={option.name} value={option.name}>
-                                {option.name}
-                            </option>
-                        ))
-                    }
+                    {this.state.profileNames.map((option) => (
+                        <option key={option.name} value={option.name}>
+                            {option.name}
+                        </option>
+                    ))}
                 </TextField>
-                <Button variant="contained" className={classes.button} onClick={this.getLoadForecastData}>
+                <Button
+                    variant="contained"
+                    className={classes.button}
+                    onClick={this.getLoadForecastData}
+                >
                     Review
                 </Button>
-                <p/>
-                <Button variant="contained" color="primary" className={classes.button} onClick={this.runCBATool}>
+                <p />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    onClick={this.runCBATool}
+                >
                     Run
                 </Button>
 
-                { !this.state.shouldRender ? <></> : (
-
-                    <Dialog open={this.state.openResult} onClose={this.handleChartsClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle onClose={this.handleChartsClose} id="form-dialog-title">Load Forecast Profile</DialogTitle>
+                {!this.state.shouldRender ? (
+                    <></>
+                ) : (
+                    <Dialog
+                        classes={{
+                            paper: classes.dialog,
+                        }}
+                        open={this.state.openResult}
+                        onClose={this.handleChartsClose}
+                        aria-labelledby="form-dialog-title"
+                    >
+                        <DialogTitle
+                            onClose={this.handleChartsClose}
+                            id="form-dialog-title"
+                        >
+                            Load Forecast Profile
+                        </DialogTitle>
                         <DialogContent>
                             <ResultCharts
                                 results={this.state.loadForecastResults}
                                 algId={2}
+                                isCBA={false}
+                                graphWidth={400}
                                 chartTitles={this.state.chartTitles}
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={this.handleChartsClose} color="primary">
-                            Cancel
+                            <Button
+                                onClick={this.handleChartsClose}
+                                color="primary"
+                            >
+                                Cancel
                             </Button>
                         </DialogActions>
                     </Dialog>
-                )
-                }
+                )}
             </div>
         );
     }
 }
 
-export default withStyles(styles, { withTheme: true})(AlgInputsCBA);
+export default withStyles(styles, { withTheme: true })(AlgInputsCBA);

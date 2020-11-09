@@ -98,12 +98,12 @@ def lf_runner(argv):
     # save uncontrolled and uncontrolled models
     if argv['week_day']:
         week_choice = 'weekday'
-        pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_' + week_choice + '_' + county + '_county_uncontrolled_load.csv') 
-        pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_'+ week_choice + '_' + county + '_county_e19controlled_load.csv')
+        pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_' + week_choice + '_' + county + '_county_uncontrolled_load_' + argv['config_name'] + '.csv') 
+        pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekdays/BaseCase_2025_'+ week_choice + '_' + county + '_county_e19controlled_load_' + argv['config_name'] + '.csv')
     else:
         week_choice = 'weekend'
-        pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/BaseCase_2025_' + week_choice + '_' + county + '_county_uncontrolled_load.csv')
-        pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/BaseCase_2025_'+ week_choice + '_' + county + '_county_e19controlled_load.csv')
+        pd.DataFrame(model.sampled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/BaseCase_2025_' + week_choice + '_' + county + '_county_uncontrolled_load_' + argv['config_name'] + '.csv')
+        pd.DataFrame(model.sampled_controlled_loads_dict).to_csv(str(parent_path)+'/costbenefitanalysis/preprocessing_loadprofiles/inputs/weekends/BaseCase_2025_'+ week_choice + '_' + county + '_county_e19controlled_load_' + argv['config_name'] + '.csv')
 
 
     logger.info('Upload to Postgres for Load Forecasting succeeded.')

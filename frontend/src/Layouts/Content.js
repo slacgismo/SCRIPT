@@ -4,10 +4,9 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 
-const styles = theme => ({
+const styles = (theme) => ({
     paper: {
         maxWidth: "auto",
         margin: "auto",
@@ -28,17 +27,17 @@ function Content(props) {
     const { classes } = props;
 
     return (
-    // <Paper>
         <Paper className={classes.paper}>
-            <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
+            <AppBar
+                className={classes.searchBar}
+                position="static"
+                color="default"
+                elevation={0}
+            >
                 <Toolbar>
-                    {/* <div className={classes.contentWrapper}> */}
                     <Typography color="textSecondary" align="center">
                         {props.text}
-          
                     </Typography>
-                    {/* </div> */}
-      
                 </Toolbar>
             </AppBar>
             <div className={classes.contentWrapper}>
@@ -47,8 +46,6 @@ function Content(props) {
                 {props.compo}
             </div>
         </Paper>
-    // </Paper>
-
     );
 }
 

@@ -474,7 +474,7 @@ class UploadToPostgres():
             )
             self.conn.commit()
 
-            self.cur.execute("SELECT id FROM "+self.config_cba_cost_benefit_table_name + " ORDER BY id DESC LIMIT 1")
+            self.cur.execute("SELECT id FROM " + self.config_cba_cost_benefit_table_name + " ORDER BY id DESC LIMIT 1")
             config_cost_benefit_id = self.cur.fetchone()[0]
 
             self.cur.execute("INSERT INTO " + self.cba_cost_benefit_table_name + " (config, uncontrolled_values, controlled_values) VALUES (%s, %s, %s)",
@@ -496,7 +496,7 @@ class UploadToPostgres():
             for key in self.uncontrolled_gas_consumption_result_dict.keys():
                 if key != 'Year':
                     uncontrolled_tmp_res[key] = self.uncontrolled_gas_consumption_result_dict[key][i]
-            
+
             for key in self.controlled_gas_consumption_result_dict.keys():
                 if key != 'Year':
                     controlled_tmp_res[key] = self.controlled_gas_consumption_result_dict[key][i]

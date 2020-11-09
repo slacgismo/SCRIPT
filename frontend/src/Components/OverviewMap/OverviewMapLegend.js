@@ -1,5 +1,4 @@
 import React from "react";
-
 import { ContinuousColorLegend } from "react-vis";
 
 function OverviewMapLegend(props) {
@@ -8,16 +7,12 @@ function OverviewMapLegend(props) {
             style={{
                 margin: "3rem",
             }}
-            startTitle={ `${props.startValue} ${props.unit}` }
-            midTitle={ `${props.midValue} ${props.unit}` }
-            endTitle={ `${props.endValue} ${props.unit}` }
-            startColor={
-                props.startColor
-            }
-            endColor={
-                props.endColor
-            }
-            width={ 250 }
+            startTitle={`${props.startValue} ${props.unit}`}
+            midTitle={`${props.midValue} ${props.unit}`}
+            endTitle={`${props.endValue} ${props.unit}`}
+            startColor={props.startColor}
+            endColor={props.endColor}
+            width={250}
         />
     );
 }

@@ -6,9 +6,8 @@ import {
     HorizontalGridLines,
     XAxis,
     YAxis,
-    // Borders,
     ChartLabel,
-    DiscreteColorLegend
+    DiscreteColorLegend,
 } from "react-vis";
 import "./ResultChart.css";
 
@@ -26,7 +25,7 @@ class ResultChart extends React.Component {
             "#3b22e0",
             "#c921db",
             "#911955",
-            
+
             "#e62020",
             "#e3b920",
             "#63b81a",
@@ -62,83 +61,97 @@ class ResultChart extends React.Component {
             <div className="chart-grid">
                 {
                     /* title of chart */
-                    <h5 className='chartTitle'>{ this.props.chartTitle }</h5>
+                    <h5 className="chartTitle">{this.props.chartTitle}</h5>
                 }
 
-                {/* X Axis Label */}
-                <h5 className='chartXLabel'>{ this.props.results[Object.keys(this.props.results)[0]].xAxis }</h5>
-
-                <XYPlot height={ this.props.graphHeight } width={ this.props.graphWidth }>
-                    {
-                        this.props.legendPosition === "right" &&
-                        <DiscreteColorLegend
-                            style={{
-                                position: "absolute",
-                                left: this.props.graphWidth + 40,
-                                top: "15px",
-                                width: "13rem",
-                            }}
-                            orientation="vertical"
-                            items={ newItems }
-                        />
-                    }
-                    
-                            
-                    <HorizontalGridLines />
-                            
-                    {
-                        newData.map(newDataPiece => (
-                            <LineSeries
-                                key={ newDataPiece.key }
-                                data={ newDataPiece.data }
-                                color={ newDataPiece.color }
+                <XYPlot
+                    margin={{ top: 20, right: 25 }}
+                    height={this.props.graphHeight}
+                    width={this.props.graphWidth}
+                >
+                    {this.props.legendPosition === "right" &&
+                        this.props.isCBA === false && (
+                            <DiscreteColorLegend
+                                style={{
+                                    position: "absolute",
+                                    left: this.props.graphWidth + 40,
+                                    top: "15px",
+                                    width: "13rem",
+                                }}
+                                orientation="vertical"
+                                items={newItems}
                             />
-                        ))
-                    }
-                            
+                        )}
+
+                    <HorizontalGridLines />
+
+                    {newData.map((newDataPiece) => (
+                        <LineSeries
+                            key={newDataPiece.key}
+                            data={newDataPiece.data}
+                            color={newDataPiece.color}
+                        />
+                    ))}
+
                     <XAxis
-                        // title={ this.props.results[Object.keys(this.props.results)[0]].xAxis }
                         position="end"
                         tickFormat={(d) => {
-                            if (this.props.results[Object.keys(this.props.results)[0]].xAxis === "Time") { // options (time / year)
+                            if (
+                                this.props.results[
+                                    Object.keys(this.props.results)[0]
+                                ].xAxis === "Time"
+                            ) {
                                 const minute = d * 15;
-                                return `${Math.floor(minute / 60).toString().padStart(2, "0")}:${(minute % 60).toString().padStart(2, "0")}`;
+                                return `${Math.floor(minute / 60)
+                                    .toString()
+                                    .padStart(2, "0")}:${(minute % 60)
+                                    .toString()
+                                    .padStart(2, "0")}`;
                             } else {
                                 return d;
                             }
                         }}
                     />
 
-                    {/* <ChartLabel
-                        text={ this.props.results[Object.keys(this.props.results)[0]].xAxis }  // TODO: should not use the xAxis of a specified attribute 
-                        className="alt-x-label"
-                        includeMargin={false}
-                        xPercent={0.5}
-                        yPercent={1.09}
-                        style={{
-                            fontWeight: "bold"
-                        }}
-                    /> */}
-
-                    {
-                        this.props.legendPosition !== "none" &&
+                    {this.props.legendPosition !== "none" && (
                         <ChartLabel
-                            text={ this.props.results[Object.keys(this.props.results)[0]].unit }  // TODO: should not use the unit of a specified attribute 
-                            className="alt-y-label"
+                            text={
+                                this.props.results[
+                                    Object.keys(this.props.results)[0]
+                                ].xAxis
+                            }
+                            className="alt-x-axis"
                             includeMargin={false}
-                            xPercent={0.02}
-                            yPercent={0.05}
+                            xPercent={1.03}
+                            yPercent={1.23}
                             style={{
-                                fontWeight: "bold"
+                                textAnchor: "end",
+                                fontWeight: "bold",
                             }}
                         />
-                    }
+                    )}
+
+                    {this.props.legendPosition !== "none" && (
+                        <ChartLabel
+                            text={
+                                this.props.results[
+                                    Object.keys(this.props.results)[0]
+                                ].unit
+                            }
+                            className="alt-y-label"
+                            includeMargin={false}
+                            xPercent={0.0}
+                            yPercent={0.035}
+                            style={{
+                                fontWeight: "bold",
+                            }}
+                        />
+                    )}
 
                     <YAxis
-                        // title={ this.props.results[Object.keys(this.props.results)[0]].unit }
                         position="end"
-                        tickLabelAngle={ -70 }
-                        tickTotal={ 4 }
+                        tickLabelAngle={-70}
+                        tickTotal={4}
                         tickFormat={(d) => {
                             if (d >= Math.pow(10, 15)) {
                                 return `${d / Math.pow(10, 15)}P`;
