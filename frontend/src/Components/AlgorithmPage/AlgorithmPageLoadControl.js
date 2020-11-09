@@ -5,9 +5,9 @@ import AlgorithmInputsLoadControl from "../AlgInputs/AlgInputsLoadControl";
 function AlgorithmPageLoadControl(props) {
     return (
         <AlgorithmPage
-            title={ "Load Control" }
-            graphWidth={ 800 }
-            algInputs={ AlgorithmInputsLoadControl }
+            title={"Load Control"}
+            graphWidth={800}
+            algInputs={AlgorithmInputsLoadControl}
         />
     );
 }

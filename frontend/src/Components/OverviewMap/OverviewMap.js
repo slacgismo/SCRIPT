@@ -1,24 +1,15 @@
 import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
 import VectorMap from "@south-paw/react-vector-maps";
 import caMapData from "@south-paw/react-vector-maps/maps/json/usa-ca.json";
 import svgPanZoom from "svg-pan-zoom";
-import OverviewMapTabs from "./OverviewMapTabs";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
 import { rgba } from "polished";
 
 import {
-    Wrapper,
-    Output,
-    MapWrapper,
     Tooltip,
     ParamTabs,
     LegendWrapper,
@@ -31,7 +22,7 @@ import {
 import OverviewMapLegend from "./OverviewMapLegend";
 import { countyRes } from "../Api/CountyData";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     formControl: {
         margin: theme.spacing(1),
         marginLeft: theme.spacing(1.5),
@@ -57,7 +48,7 @@ const allOverviewParams = {
         id: "peak-energy",
         text: "Peak Energy",
         unit: "kWh",
-    }
+    },
 };
 
 const ParamSelect = (props) => {
@@ -65,27 +56,29 @@ const ParamSelect = (props) => {
     return (
         <>
             <FormControl className={classes.formControl}>
-                <InputLabel id="overview-param-select-label">Overview Parameter</InputLabel>
+                <InputLabel id="overview-param-select-label">
+                    Overview Parameter
+                </InputLabel>
                 <Select
                     labelId="overview-param-select-label"
                     id="overview-param-select"
-                    value={ props.overviewAttr }
-                    onChange={ event => props.changeOverviewAttr(event.target.value) }
-                >
-                    {
-                        Object.keys(props.allOverviewParams).map(param => (
-                            <MenuItem
-                                key={ props.allOverviewParams[param].id }
-                                value={ param }
-                            >
-                                { props.allOverviewParams[param].text }
-                            </MenuItem>
-                        ))
+                    value={props.overviewAttr}
+                    onChange={(event) =>
+                        props.changeOverviewAttr(event.target.value)
                     }
+                >
+                    {Object.keys(props.allOverviewParams).map((param) => (
+                        <MenuItem
+                            key={props.allOverviewParams[param].id}
+                            value={param}
+                        >
+                            {props.allOverviewParams[param].text}
+                        </MenuItem>
+                    ))}
                 </Select>
             </FormControl>
         </>
-    ); 
+    );
 };
 
 const counties = {};
@@ -112,9 +105,7 @@ class OverviewMap extends React.PureComponent {
         };
 
         addCountyColorByAttr(counties, this.props.overviewParam);
-        this.styledMap = getStyledMapWrapperByCountyColors(
-            counties,
-        );
+        this.styledMap = getStyledMapWrapperByCountyColors(counties);
         this.Viewer = null;
         this.updateMap = this.updateMap.bind(this);
     }
@@ -137,9 +128,9 @@ class OverviewMap extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        countyRes.then(res => {
+        countyRes.then((res) => {
             const countyData = res.data;
-            countyData.forEach(data => {
+            countyData.forEach((data) => {
                 counties[data.name] = {
                     total_energy: data.total_energy,
                     total_session: data.total_session,
@@ -149,13 +140,13 @@ class OverviewMap extends React.PureComponent {
             this.updateMap("total_energy");
             svgPanZoom("#usa-ca");
         });
-    }
+    };
 
     componentDidUpdate() {
         // const panZoomMap = svgPanZoom("#usa-ca");
     }
 
-    render () {
+    render() {
         // if (!counties) {
         //     return <></>;
         // }
@@ -181,67 +172,87 @@ class OverviewMap extends React.PureComponent {
                         <h2>Overview Map of California</h2>
                         {
                             <ParamSelect
-                                allOverviewParams={ allOverviewParams }
-                                changeOverviewAttr={ newAttr => this.changeOverviewAttr(newAttr) }
-                                overviewAttr={ this.state.chosenParam }
+                                allOverviewParams={allOverviewParams}
+                                changeOverviewAttr={(newAttr) =>
+                                    this.changeOverviewAttr(newAttr)
+                                }
+                                overviewAttr={this.state.chosenParam}
                             />
                         }
                     </ParamTabs>
                     <LegendWrapper>
                         <OverviewMapLegend
-                            startValue={ this.state.minValue }
-                            midValue={
-                                parseFloat(((this.state.maxValue + this.state.minValue) / 2).toPrecision(2))
+                            startValue={this.state.minValue}
+                            midValue={parseFloat(
+                                (
+                                    (this.state.maxValue +
+                                        this.state.minValue) /
+                                    2
+                                ).toPrecision(2)
+                            )}
+                            endValue={this.state.maxValue}
+                            unit={
+                                allOverviewParams[this.state.chosenParam].unit
                             }
-                            endValue={ this.state.maxValue }
-                            unit={ allOverviewParams[this.state.chosenParam].unit }
-                            startColor={ rgba(...getBasicColor(), getColorPercentageEsp() / (1 + getColorPercentageEsp())) }
-                            endColor={ rgba(...getBasicColor(), 1) }
+                            startColor={rgba(
+                                ...getBasicColor(),
+                                getColorPercentageEsp() /
+                                    (1 + getColorPercentageEsp())
+                            )}
+                            endColor={rgba(...getBasicColor(), 1)}
                         />
                     </LegendWrapper>
                     <VectorMap
                         id={"overview-map"}
-                        { ...caMapData }
-                        layerProps={ layerProps } 
+                        {...caMapData}
+                        layerProps={layerProps}
                     />
                     <Tooltip style={tooltipStyle}>
-                        <b>County:</b> { current.countyName }
+                        <b>County:</b> {current.countyName}
                         <br />
-                        <b>{ allOverviewParams[this.state.chosenParam].text }:</b> { parseFloat(current[this.state.chosenParam] / 1000) } { allOverviewParams[this.state.chosenParam].unit }
+                        <b>
+                            {allOverviewParams[this.state.chosenParam].text}:
+                        </b>{" "}
+                        {parseFloat(current[this.state.chosenParam] / 1000)}{" "}
+                        {allOverviewParams[this.state.chosenParam].unit}
                     </Tooltip>
-          
                 </this.state.styledMap>
             );
         } else {
             return <></>;
         }
-    
     }
 
-  onMouseOver = e => {
-      if (!counties[e.target.attributes.name.value]) {
-          return;
-      }
-      let newState = { current: {
-          countyName: e.target.attributes.name.value,
-          [this.state.chosenParam]: (counties[e.target.attributes.name.value][this.state.chosenParam] * 1000).toFixed(1),
-      } };
-      this.setState(newState);
-  }
+    onMouseOver = (e) => {
+        if (!counties[e.target.attributes.name.value]) {
+            return;
+        }
+        let newState = {
+            current: {
+                countyName: e.target.attributes.name.value,
+                [this.state.chosenParam]: (
+                    counties[e.target.attributes.name.value][
+                        this.state.chosenParam
+                    ] * 1000
+                ).toFixed(1),
+            },
+        };
+        this.setState(newState);
+    };
 
-  onMouseMove = e => {
-      this.setState({
-          isTooltipVisible: true,
-          tooltipY: e.pageY + 10,
-          tooltipX: e.pageX + 10,
-      });
-  }
+    onMouseMove = (e) => {
+        this.setState({
+            isTooltipVisible: true,
+            tooltipY: e.pageY + 10,
+            tooltipX: e.pageX + 10,
+        });
+    };
 
-  onMouseOut = e => {
-      this.setState({
-          isTooltipVisible: false
-      });
-  }
+    onMouseOut = (e) => {
+        this.setState({
+            isTooltipVisible: false,
+        });
+    };
 }
 
 export default OverviewMap;

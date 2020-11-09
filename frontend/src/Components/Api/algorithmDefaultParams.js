@@ -1,5 +1,4 @@
 export const loadForecastDefaultParams = {
-
     configName: "",
     aggregationLevel: "county",
     numEvs: 100000,

@@ -20,17 +20,29 @@ const categories = [
     {
         id: "Algorithms",
         children: [
-            { id: "alg-loadcontrol", name: "Load Control", icon: <DnsRoundedIcon />},
-            { id: "alg-loadforecast", name: "Load Forecast", icon: <PermMediaOutlinedIcon /> },
-            { id: "alg-cba", name: "Cost Benefit Analysis", icon: <PublicIcon /> },
+            {
+                id: "alg-loadcontrol",
+                name: "Load Control",
+                icon: <DnsRoundedIcon />,
+            },
+            {
+                id: "alg-loadforecast",
+                name: "Load Forecast",
+                icon: <PermMediaOutlinedIcon />,
+            },
+            {
+                id: "alg-cba",
+                name: "Cost Benefit Analysis",
+                icon: <PublicIcon />,
+            },
         ],
     },
 ];
 
-const styles = theme => ({
+const styles = (theme) => ({
     card: {
         maxWidth: 345,
-        paddingTop:10
+        paddingTop: 10,
     },
     media: {
         height: 140,
@@ -55,7 +67,7 @@ const styles = theme => ({
         boxShadow: "0 -1px 0 #404854 inset",
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
-        fontSize: 20
+        fontSize: 20,
     },
     firebase: {
         fontSize: 30,
@@ -63,7 +75,7 @@ const styles = theme => ({
     },
     active: {
         color: "#4fc3f7",
-        backgroundColor: "rgba(255, 255, 255, 0.08)"
+        backgroundColor: "rgba(255, 255, 255, 0.08)",
     },
     itemPrimary: {
         fontSize: "inherit",
@@ -79,20 +91,28 @@ const styles = theme => ({
 
 function Navigator(props) {
     const { classes, ...other } = props;
-  
+
     return (
         <Drawer variant="permanent" {...other}>
             <List disablePadding>
-                <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
-          SLAC
+                <ListItem
+                    className={clsx(
+                        classes.firebase,
+                        classes.item,
+                        classes.itemCategory
+                    )}
+                >
+                    SLAC
                 </ListItem>
-        
-                <ListItem 
-                    className={clsx(classes.item, classes.itemCategory)} 
-                    button 
+
+                <ListItem
+                    className={clsx(classes.item, classes.itemCategory)}
+                    button
                     component={NavLink}
-                    exact to={"/"}
-                    activeClassName={classes.active}>
+                    exact
+                    to={"/"}
+                    activeClassName={classes.active}
+                >
                     <ListItemIcon className={classes.itemIcon}>
                         <HomeIcon />
                     </ListItemIcon>
@@ -101,16 +121,18 @@ function Navigator(props) {
                             primary: classes.itemPrimary,
                         }}
                     >
-                    Overview
+                        Overview
                     </ListItemText>
                 </ListItem>
 
-                <ListItem 
-                    className={clsx(classes.item, classes.itemCategory)} 
-                    button 
+                <ListItem
+                    className={clsx(classes.item, classes.itemCategory)}
+                    button
                     component={NavLink}
-                    exact to={"/Upload"}
-                    activeClassName={classes.active}>
+                    exact
+                    to={"/Upload"}
+                    activeClassName={classes.active}
+                >
                     <ListItemIcon className={classes.itemIcon}>
                         <PermMediaOutlinedIcon />
                     </ListItemIcon>
@@ -119,10 +141,9 @@ function Navigator(props) {
                             primary: classes.itemPrimary,
                         }}
                     >
-            Upload
+                        Upload
                     </ListItemText>
                 </ListItem>
-
 
                 {categories.map(({ id, children }) => (
                     <React.Fragment key={id}>
@@ -138,44 +159,57 @@ function Navigator(props) {
                                 {id}
                             </ListItemText>
                         </ListItem>
-                        {children.map(({ id: childId, name: childName, icon, active }) => (
-                            <ListItem
-                                key={childId}
-                                button
-                                className={clsx(classes.item)}
-                                component={NavLink}
-                                exact to={"/"+childId}
-                                activeClassName={classes.active}
-                            >
-                                <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
-                                <ListItemText
-                                    classes={{
-                                        primary: classes.itemPrimary,
-                                    }}
+                        {children.map(
+                            ({
+                                id: childId,
+                                name: childName,
+                                icon,
+                                active,
+                            }) => (
+                                <ListItem
+                                    key={childId}
+                                    button
+                                    className={clsx(classes.item)}
+                                    component={NavLink}
+                                    exact
+                                    to={"/" + childId}
+                                    activeClassName={classes.active}
                                 >
-                                    { childName }
-                                </ListItemText>
-                            </ListItem>
-                        ))}
+                                    <ListItemIcon className={classes.itemIcon}>
+                                        {icon}
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        classes={{
+                                            primary: classes.itemPrimary,
+                                        }}
+                                    >
+                                        {childName}
+                                    </ListItemText>
+                                </ListItem>
+                            )
+                        )}
 
                         <Divider className={classes.divider} />
                     </React.Fragment>
                 ))}
 
-                <ListItem 
-                    className={clsx(classes.item, classes.itemCategory)} 
-                    button 
-                    component={NavLink} 
-                    exact to={"/About"}
-                    activeClassName={classes.active}>
+                <ListItem
+                    className={clsx(classes.item, classes.itemCategory)}
+                    button
+                    component={NavLink}
+                    exact
+                    to={"/About"}
+                    activeClassName={classes.active}
+                >
                     <ListItemIcon className={classes.itemIcon}>
                         <PeopleIcon />
                     </ListItemIcon>
                     <ListItemText
                         classes={{
                             primary: classes.itemPrimary,
-                        }} >
-           About    
+                        }}
+                    >
+                        About
                     </ListItemText>
                 </ListItem>
             </List>

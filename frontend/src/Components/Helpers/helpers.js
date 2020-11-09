@@ -19,12 +19,12 @@ export function processResults(resultArr, isCBA) {
         const data_to_visualize = {};
         for (const field of Object.keys(result)) {
             const data = result[field];
-            const dataFormatted = data.map((datapoint, i) => (
-                {
-                    x: isTimeSeries ? i : datapoint.year,
-                    y: isTimeSeries ? parseFloat(datapoint.load) : parseFloat(datapoint.data)
-                }   
-            ));
+            const dataFormatted = data.map((datapoint, i) => ({
+                x: isTimeSeries ? i : datapoint.year,
+                y: isTimeSeries
+                    ? parseFloat(datapoint.load)
+                    : parseFloat(datapoint.data),
+            }));
             data_to_visualize[field] = {
                 legendLabel: isCBA ? " " : `${field}`.replace(/_/g, " "),
                 unit: isCBA ? `${field}`.replace(/_/g, " ") : "Power (kW)",
@@ -39,12 +39,12 @@ export function processResults(resultArr, isCBA) {
 
 export function preprocessData(allData) {
     const data = allData.dataValues;
-    const fields = data[0] ? Object.keys(data[0].values): [0];
+    const fields = data[0] ? Object.keys(data[0].values) : [0];
     const result = {};
     for (const field of fields) {
         result[field] = [];
     }
-    data.forEach(dataItem => {
+    data.forEach((dataItem) => {
         const year = dataItem.config.year;
         const allFields = dataItem.values;
         for (const field of fields) {
@@ -63,34 +63,50 @@ export function preprocessData(allData) {
     return resultFlattened;
 }
 
-export async function checkFlowerTaskStatus (task_id) {
+export async function checkFlowerTaskStatus(task_id) {
     const task_res = await axios({
         url: `http://localhost:5555/api/task/result/${task_id}`,
-        method: "get"
+        method: "get",
     });
     return task_res.data.state;
 }
 
-export async function revokeCeleryTask (task_id) {
+export async function revokeCeleryTask(task_id) {
     await axios({
         url: `http://localhost:5555/api/task/revoke/${task_id}?terminate=true`,
-        method: "post"
+        method: "post",
     });
 }
 
-export async function exponentialBackoff (checkStatus, task_id, timeout, max, delay, successCallback, failureCallback) {
+export async function exponentialBackoff(
+    checkStatus,
+    task_id,
+    timeout,
+    max,
+    delay,
+    successCallback,
+    failureCallback
+) {
     let status = await checkStatus(task_id);
     if (status === "SUCCESS") {
         successCallback();
     } else if (status === "FAILURE") {
         failureCallback();
-    } else if (max === 0){
+    } else if (max === 0) {
         revokeCeleryTask(task_id);
         failureCallback();
     } else if (status === "PENDING") {
         clearTimeout(timeout);
-        timeout = setTimeout(function() {
-            return exponentialBackoff(checkStatus, task_id, timeout, --max, delay * 2, successCallback, failureCallback);
+        timeout = setTimeout(function () {
+            return exponentialBackoff(
+                checkStatus,
+                task_id,
+                timeout,
+                --max,
+                delay * 2,
+                successCallback,
+                failureCallback
+            );
         }, delay);
     }
 }

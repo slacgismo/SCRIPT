@@ -8,7 +8,7 @@ import Paper from "@material-ui/core/Paper";
 
 const lightColor = "rgba(255, 255, 255, 0.7)";
 
-const styles = theme => ({
+const styles = (theme) => ({
     secondaryBar: {
         zIndex: 0,
     },
@@ -33,7 +33,7 @@ const styles = theme => ({
 function Header(props) {
     return (
         <React.Fragment>
-            <Paper >
+            <Paper>
                 <AppBar
                     position="sticky"
                     elevation={3}
@@ -41,8 +41,8 @@ function Header(props) {
                     style={{ padding: "2rem 1rem 0.5rem 1rem" }}
                 >
                     <Toolbar>
-                        <Typography variant="h5" >
-            			          Smart Charging Infrastructure Planning Tool
+                        <Typography variant="h5">
+                            Smart Charging Infrastructure Planning Tool
                         </Typography>
                     </Toolbar>
                 </AppBar>

@@ -1,12 +1,9 @@
-import React, {Component} from "react";
-
+import React, { Component } from "react";
 import Base from "../../Layouts/Base";
 import Content from "../../Layouts/Content";
-
 import AlgInputs from "../AlgInputs/AlgInputs";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import ResultCharts from "../Result/ResultCharts";
-
 
 class AlgorithmPage extends Component {
     constructor(props) {
@@ -15,82 +12,92 @@ class AlgorithmPage extends Component {
             results: [],
             loading: false,
             chartTitles: [],
-            isCBA: false
+            isCBA: false,
         };
     }
 
     loadingResults(isLoading) {
         this.setState({
-            loading: isLoading
+            loading: isLoading,
         });
     }
 
-    checkCBA(isCBA){
+    checkCBA(isCBA) {
         this.setState({
-            isCBA: isCBA
+            isCBA: isCBA,
         });
     }
 
     visualizeResults(results) {
         this.setState({
-            results: results
+            results: results,
         });
     }
 
-    setChartTitles(chartTitles){
+    setChartTitles(chartTitles) {
         this.setState({
-            chartTitles: chartTitles
+            chartTitles: chartTitles,
         });
     }
 
     render() {
         return (
             <div>
-                <Base 
+                <Base
                     content={
                         <div>
                             <Content
-                                text={`${ this.props.title } Inputs`}
+                                text={`${this.props.title} Inputs`}
                                 compo={
                                     <AlgInputs
-                                        category={ this.props.categoryProp }
-                                        controlType = { this.props.controlType }
-                                        title={ this.props.title }
-                                        visualizeResults={ this.visualizeResults.bind(this) }
-                                        setChartTitles={ this.setChartTitles.bind(this) }
-                                        checkCBA={ this.checkCBA.bind(this) }
-                                        loadingResults={ this.loadingResults.bind(this) }
-                                        algInputs={ this.props.algInputs }
+                                        category={this.props.categoryProp}
+                                        controlType={this.props.controlType}
+                                        title={this.props.title}
+                                        visualizeResults={this.visualizeResults.bind(
+                                            this
+                                        )}
+                                        setChartTitles={this.setChartTitles.bind(
+                                            this
+                                        )}
+                                        checkCBA={this.checkCBA.bind(this)}
+                                        loadingResults={this.loadingResults.bind(
+                                            this
+                                        )}
+                                        algInputs={this.props.algInputs}
                                     />
                                 }
                             />
-                            <br/>
-                            {   this.state.loading === true &&
+                            <br />
+                            {this.state.loading === true && (
                                 <Content
                                     text={"Loading..."}
-                                    compo={ <ProgressBar/> }
+                                    compo={<ProgressBar />}
                                 />
-                            }
-                            <br/>
-                            {
-                                this.state.results.length > 0 &&
-                                this.state.loading === false &&
-                                <Content
-                                    text={`${ this.props.title } Results`}
-                                    textField = {this.props.compo}
-                                    compo={              
-                                        <ResultCharts
-                                            results={ this.state.results }
-                                            isCBA={ this.state.isCBA }
-                                            chartTitles={ this.state.chartTitles }
-                                            algId={2}
-                                            graphWidth={ this.props.graphWidth }
-                                        />
-                                    }
-                                />
-                            }
+                            )}
+                            <br />
+                            {this.state.results.length > 0 &&
+                                this.state.loading === false && (
+                                    <Content
+                                        text={`${this.props.title} Results`}
+                                        textField={this.props.compo}
+                                        compo={
+                                            <ResultCharts
+                                                results={this.state.results}
+                                                isCBA={this.state.isCBA}
+                                                chartTitles={
+                                                    this.state.chartTitles
+                                                }
+                                                algId={2}
+                                                graphWidth={
+                                                    this.props.graphWidth
+                                                }
+                                            />
+                                        }
+                                    />
+                                )}
                         </div>
-                    }/>
+                    }
+                />
             </div>
         );
     }

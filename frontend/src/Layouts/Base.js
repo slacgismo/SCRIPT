@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createMuiTheme, withStyles } from "@material-ui/core/styles";
-import {ThemeProvider} from "@material-ui/styles";
+import { ThemeProvider } from "@material-ui/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Hidden from "@material-ui/core/Hidden";
 import Typography from "@material-ui/core/Typography";
@@ -14,7 +14,7 @@ function Copyright() {
         <Typography variant="body2" color="textSecondary" align="center">
             {"Copyright © "}
             <Link color="inherit" href="">
-            SLAC
+                SLAC
             </Link>{" "}
             {new Date().getFullYear()}
             {"."}
@@ -169,8 +169,8 @@ function Base(props) {
         setMobileOpen(!mobileOpen);
     };
 
-    const isTextContent = (props.hasOwnProperty("isTextContent") &&
-        props.isTextContent);
+    const isTextContent =
+        props.hasOwnProperty("isTextContent") && props.isTextContent;
 
     return (
         <ThemeProvider theme={theme}>
@@ -186,31 +186,24 @@ function Base(props) {
                         />
                     </Hidden>
                     <Hidden xsDown implementation="css">
-                        <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+                        <Navigator
+                            PaperProps={{ style: { width: drawerWidth } }}
+                        />
                     </Hidden>
                 </nav>
                 <div className={classes.app}>
                     <Header onDrawerToggle={handleDrawerToggle} />
 
-                    {
-                        isTextContent ? 
-                            (
-                                <main
-                                    className={classes.main}
-                                    style={{ padding: "3rem 10%" }}
-                                    dangerouslySetInnerHTML={{__html: props.content}}>
-                                </main>
-                            ) :
-                            (
-                                <main
-                                    className={classes.main}
-                                >
-                                    { props.content }
-                                </main>
-                            )
-                    }
+                    {isTextContent ? (
+                        <main
+                            className={classes.main}
+                            style={{ padding: "3rem 10%" }}
+                            dangerouslySetInnerHTML={{ __html: props.content }}
+                        ></main>
+                    ) : (
+                        <main className={classes.main}>{props.content}</main>
+                    )}
 
-                    
                     <footer className={classes.footer}>
                         <Copyright />
                     </footer>
