@@ -346,7 +346,9 @@ class AlgInputsCBA extends Component {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Cost Benefit Analysis zip files for controlled and uncontrolled {this.state.profileName} load profile will be found in your local Downloads folder.
+                            Cost Benefit Analysis zip files for controlled and
+                            uncontrolled {this.state.profileName} load profile
+                            will be found in your local Downloads folder.
                             <br></br>
                             <br></br>
                             Warning: You will not be asked this again
