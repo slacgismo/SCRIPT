@@ -4,7 +4,7 @@ from script.views import CountyViewSet, ZipCodeViewSet, EnergyViewSet
 from script.views import LoadControllerConfigViewSet, LoadForecastConfigViewSet, LoadProfileConfigViewSet, GasConsumptionConfigViewSet, NetPresentValueConfigViewSet, EmissionConfigViewSet, CostBenefitConfigViewSet
 from script.views import LoadForecastViewSet, LoadControllerViewSet, LoadProfileViewSet, GasConsumptionViewSet, CostBenefitViewSet, NetPresentValueViewSet, EmissionViewSet
 from script.views import  CostBenefitAnalysisRunner
-from script.views import LoadControlRunner, LoadForecastRunner
+from script.views import LoadControlRunner, LoadForecastRunner, DownloadCBAZip
 # set up a router for RESTful API
 # ref1: https://www.django-rest-framework.org/api-guide/routers/
 # ref2: https://www.django-rest-framework.org/api-guide/filtering/
@@ -49,5 +49,6 @@ urlpatterns = [
     path('load_control_runner', LoadControlRunner.as_view()),
     path('cost_benefit_analysis_runner', CostBenefitAnalysisRunner.as_view()),
     path('load_forecast_runner', LoadForecastRunner.as_view()),
+    path('download_cba_zip', DownloadCBAZip.as_view()),
     path('', include(router.urls)),
 ]

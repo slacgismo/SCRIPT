@@ -52,6 +52,7 @@ class AlgInputsCBA extends Component {
             openResult: false,
             shouldRender: false,
             openAlert: false,
+            openDownloadCbaPopUp: false,
             alertTitle: "",
             alertDescription: "",
             profileName: "",
@@ -190,6 +191,7 @@ class AlgInputsCBA extends Component {
                             async () => {
                                 this.props.loadingResults(false);
                                 this.props.checkCBA(true);
+                                this.downloadCbaOpen();
                                 this.props.visualizeResults(
                                     await this.getCBAResult(),
                                     true
@@ -255,6 +257,33 @@ class AlgInputsCBA extends Component {
         this.setState({ openAlert: false });
     };
 
+    downloadCbaOpen = () => {
+        this.setState({ openDownloadCbaPopUp: true });
+    };
+
+    downloadCbaClose = () => {
+        this.setState({ openDownloadCbaPopUp: false });
+    };
+
+    downloadCba = async () => {
+        try {
+            const profileMatch = this.state.profileData.filter(
+                (profile) => profile.config_name === this.state.profileName
+            );
+            const countyMatch = profileMatch.map(
+                (profile) => profile["choice"]
+            );
+            const params = {
+                load_profile: this.state.profileName,
+                county: countyMatch,
+            };
+            await axios.post(`${serverUrl}/download_cba_zip`, params);
+            this.downloadCbaClose();
+        } catch (error) {
+            this.handleAlertOpen("Server Error", "Something went wrong");
+        }
+    };
+
     handleChartsClose = () => {
         this.setState({ openResult: false });
     };
@@ -302,6 +331,42 @@ class AlgInputsCBA extends Component {
                             autoFocus
                         >
                             OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog
+                    open={this.state.openDownloadCbaPopUp}
+                    onClose={this.downloadCbaClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        Would you like to download the Cost Benefit Analysis
+                        results?
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Cost Benefit Analysis zip files for controlled and uncontrolled {this.state.profileName} load profile will be found in your local Downloads folder.
+                            <br></br>
+                            <br></br>
+                            Warning: You will not be asked this again
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={this.downloadCbaClose}
+                            color="primary"
+                            autoFocus
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={this.downloadCba}
+                            variant="contained"
+                            color="primary"
+                            autoFocus
+                        >
+                            Download
                         </Button>
                     </DialogActions>
                 </Dialog>

@@ -397,10 +397,6 @@ class AlgInputsLoadForecast extends Component {
                 </fieldset>
                 <br />
                 <br />
-                {/* <br/>
-                <Button variant="contained" className={classes.button} onClick={this.changeDefaultParameters}>
-                    Set parameters as default
-                </Button> */}
                 <fieldset class="field_set">
                     <legend>Charging Types Percentage</legend>
                     <TextField
