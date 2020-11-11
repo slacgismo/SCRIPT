@@ -52,7 +52,7 @@ class AlgInputsCBA extends Component {
             openResult: false,
             shouldRender: false,
             openAlert: false,
-            openDownloadCbaPopUp: false,
+            openDownloadCbaPopUp: true,
             alertTitle: "",
             alertDescription: "",
             profileName: "",
@@ -275,14 +275,53 @@ class AlgInputsCBA extends Component {
             );
             const params = {
                 load_profile: this.state.profileName,
-                county: countyMatch,
+                county: countyMatch[0],
             };
-            await axios.post(`${serverUrl}/download_cba_zip`, params);
-            this.downloadCbaClose();
+            axios
+                .get(`${serverUrl}/download_cba_zip`, {
+                    params: params,
+                })
+                .then(
+                    (zipRes) => {
+                        console.log(zipRes);
+                        console.log(zipRes.data);
+                        const url = window.URL.createObjectURL(
+                            new Blob([zipRes], { type: "application/zip" })
+                        );
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.setAttribute(
+                            "download",
+                            "hotsauce_BaseCase_Santa Clara_uncontrolled_load.zip"
+                        );
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    },
+                    (error) => {
+                        console.log(error);
+                        this.handleAlertOpen(
+                            "Server Error",
+                            "Something went wrong"
+                        );
+                    }
+                );
         } catch (error) {
             this.handleAlertOpen("Server Error", "Something went wrong");
         }
     };
+
+    // const urlTwo = window.URL.createObjectURL(new Blob([zipRes.data], {type:'application/zip'}));
+    // const linkTwo = document.createElement('a');
+    // linkTwo.href = urlTwo;
+    // linkTwo.setAttribute('download', 'file.zip');
+    // document.body.appendChild(linkTwo);
+    // linkTwo.click();
+    // linkTwo.parentNode.removeChild(linkTwo);
+    //     } catch (error) {
+
+    //     }
+    // };
 
     handleChartsClose = () => {
         this.setState({ openResult: false });
@@ -342,15 +381,10 @@ class AlgInputsCBA extends Component {
                 >
                     <DialogTitle id="alert-dialog-title">
                         Would you like to download the Cost Benefit Analysis
-                        results?
+                        results for {this.state.profileName}?
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Cost Benefit Analysis zip files for controlled and
-                            uncontrolled {this.state.profileName} load profile
-                            will be found in your local Downloads folder.
-                            <br></br>
-                            <br></br>
                             Warning: You will not be asked this again
                         </DialogContentText>
                     </DialogContent>
