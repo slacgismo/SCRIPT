@@ -125,26 +125,6 @@ function Navigator(props) {
                     </ListItemText>
                 </ListItem>
 
-                <ListItem
-                    className={clsx(classes.item, classes.itemCategory)}
-                    button
-                    component={NavLink}
-                    exact
-                    to={"/Upload"}
-                    activeClassName={classes.active}
-                >
-                    <ListItemIcon className={classes.itemIcon}>
-                        <PermMediaOutlinedIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                        classes={{
-                            primary: classes.itemPrimary,
-                        }}
-                    >
-                        Upload
-                    </ListItemText>
-                </ListItem>
-
                 {categories.map(({ id, children }) => (
                     <React.Fragment key={id}>
                         <ListItem className={classes.categoryHeader}>

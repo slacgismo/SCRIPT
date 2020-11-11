@@ -45,6 +45,19 @@ class ResultChart extends React.Component {
         const { results } = this.props;
         const newItems = [];
         const newData = [];
+        const xAxisVals = [
+            '00:00',
+            '02:30',
+            '05:00',
+            '07:30',
+            '10:00',
+            '12:30',
+            '15:00',
+            '17:30',
+            '20:00',
+            '22:30'
+        ];
+        var timeIterator = 0;
         Object.keys(results).forEach((attr, i) => {
             newItems.push({
                 title: results[attr].legendLabel,
@@ -65,7 +78,7 @@ class ResultChart extends React.Component {
                 }
 
                 <XYPlot
-                    margin={{ top: 20, right: 25 }}
+                    margin={{ top: 20, right: 40 }}
                     height={this.props.graphHeight}
                     width={this.props.graphWidth}
                 >
@@ -76,7 +89,7 @@ class ResultChart extends React.Component {
                                     position: "absolute",
                                     left: this.props.graphWidth + 40,
                                     top: "15px",
-                                    width: "13rem",
+                                    width: "15rem",
                                 }}
                                 orientation="vertical"
                                 items={newItems}
@@ -101,12 +114,9 @@ class ResultChart extends React.Component {
                                     Object.keys(this.props.results)[0]
                                 ].xAxis === "Time"
                             ) {
-                                const minute = d * 15;
-                                return `${Math.floor(minute / 60)
-                                    .toString()
-                                    .padStart(2, "0")}:${(minute % 60)
-                                    .toString()
-                                    .padStart(2, "0")}`;
+                                const time = xAxisVals[timeIterator];
+                                timeIterator += 1;
+                                return time;
                             } else {
                                 return d;
                             }

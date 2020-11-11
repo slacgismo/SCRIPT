@@ -77,12 +77,10 @@ class UploadToPostgres():
         time_point_len = len(residential_l1_load)
 
         for i in range(time_point_len):
-            hour_str = str((start_hour + i // 4) % 24)
-            minute = 15 * (i % 4)
-            if minute is 0:
-                minute_str = '00'
-            else:
-                minute_str = str(minute)
+            hour_str = str((start_hour + i // 60) % 24)
+            minute = str(i % 60)
+            if len(minute) < 2:
+                minute_str = '0' + minute
 
             residential_l1_load_list.append(
                 {
@@ -132,6 +130,7 @@ class UploadToPostgres():
                     'load': str(round(total_load[i], 2))
                 }
             )
+            
         return (residential_l1_load_list,
                 residential_l2_load_list,
                 residential_mud_load_list,
@@ -163,7 +162,6 @@ class UploadToPostgres():
         timer_control,
         work_control
     ):
-
         # replaces the oldest profile when profile count reaches max
         profile_count = LoadForecastConfig.objects.count()
         if (profile_count >= self.max_profiles):
