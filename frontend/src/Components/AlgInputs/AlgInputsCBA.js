@@ -55,7 +55,7 @@ class AlgInputsCBA extends Component {
             openDownloadCbaPopUp: true,
             alertTitle: "",
             alertDescription: "",
-            profileName: "",
+            profileName: "test",
             profileNames: [],
             profileData: [],
             loadForecastResults: [],
@@ -80,7 +80,7 @@ class AlgInputsCBA extends Component {
                     this.setState({
                         profileData: profiles,
                         profileNames: profileNames,
-                        profileName: profileNames[0].name,
+                        profileName: profileNames[3].name,
                     });
                 }
             },
@@ -277,26 +277,15 @@ class AlgInputsCBA extends Component {
                 load_profile: this.state.profileName,
                 county: countyMatch[0],
             };
+            const FileDownload = require('js-file-download');
             axios
                 .get(`${serverUrl}/download_cba_zip`, {
                     params: params,
+                    responseType: 'blob'
                 })
                 .then(
                     (zipRes) => {
-                        console.log(zipRes);
-                        console.log(zipRes.data);
-                        const url = window.URL.createObjectURL(
-                            new Blob([zipRes], { type: "application/zip" })
-                        );
-                        const link = document.createElement("a");
-                        link.href = url;
-                        link.setAttribute(
-                            "download",
-                            "hotsauce_BaseCase_Santa Clara_uncontrolled_load.zip"
-                        );
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                        FileDownload(zipRes.data, `${this.state.profileName}.zip`);
                     },
                     (error) => {
                         console.log(error);
@@ -310,18 +299,6 @@ class AlgInputsCBA extends Component {
             this.handleAlertOpen("Server Error", "Something went wrong");
         }
     };
-
-    // const urlTwo = window.URL.createObjectURL(new Blob([zipRes.data], {type:'application/zip'}));
-    // const linkTwo = document.createElement('a');
-    // linkTwo.href = urlTwo;
-    // linkTwo.setAttribute('download', 'file.zip');
-    // document.body.appendChild(linkTwo);
-    // linkTwo.click();
-    // linkTwo.parentNode.removeChild(linkTwo);
-    //     } catch (error) {
-
-    //     }
-    // };
 
     handleChartsClose = () => {
         this.setState({ openResult: false });

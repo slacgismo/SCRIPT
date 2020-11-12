@@ -8,6 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from itertools import zip_longest
 import zipfile
 import io
+from django.http import FileResponse
 from rest_framework import views, viewsets, permissions, mixins, generics
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -24,47 +25,44 @@ from script.serializers import LoadControllerSerializer, LoadForecastSerializer,
 from script.SmartCharging.SmartChargingAlgorithm import *
 from script.SmartCharging.SmartChargingDefault import getScaData
 from script.tasks import run_cba_tool, run_lf_runner
-# other_path = path + "/CostBenefitAnalysis/cases/BaseCase_" + county + "_uncontrolled_load"
-# this_path = path + "/CostBenefitAnalysis/cases/BaseCase_" + county + "_e19controlled_load"
-# with zipfile.ZipFile(load_profile + "_BaseCase_" + county,'w') as zf:
-#     # writing each file one by one
-#     for dirname, subdirs, files in os.walk(other_path):
-#         zf.write(dirname)
-#         for filename in files:
-#             zf.write(os.path.join(dirname, filename))
-#     for dirname, subdirs, files in os.walk(this_path):
-#         zf.write(dirname)
-#         for filename in files:
-#             zf.write(os.path.join(dirname, filename))
-#     zf.close()
-
-
-        # file_two = shutil.make_archive(load_profile + "_BaseCase_" + county +
-        #                     "_uncontrolled_load", "zip", path + "/CostBenefitAnalysis/cases/BaseCase_" + county + "_uncontrolled_load")
 
 class DownloadCBAZip(APIView):
     def get(self, request, format=None):
-
         load_profile = request.GET.get('load_profile')
         county = request.GET.get('county')
 
         path = str(Path(__file__).parent.resolve())
+        output = io.BytesIO()
 
-        s = io.StringIO()
+        uncontrolled_path = path + "/CostBenefitAnalysis/cases/BaseCase_" + \
+            county + "_uncontrolled_load/results"
+        controlled_path = path + "/CostBenefitAnalysis/cases/BaseCase_" + \
+            county + "_e19controlled_load/results"
+        uncontrolled_zip_path_name = load_profile + \
+            "_" + county + "/uncontrolled_results/"
+        controlled_zip_path_name = load_profile + \
+            "_" + county + "/controlled_results/"
 
-        file_one = shutil.make_archive(load_profile + "_BaseCase_" + county +
-                                       "_e19controlled_load", "zip", path + 
-                                       "/CostBenefitAnalysis/cases/BaseCase_" + 
-                                       county + "_e19controlled_load")
+        with zipfile.ZipFile(output, 'w') as zf:
+            for dirname, subdirs, files in os.walk(uncontrolled_path):
+                for filename in files:
+                    zf.write(os.path.join(uncontrolled_path, filename), uncontrolled_zip_path_name +
+                            filename, zipfile.ZIP_DEFLATED)
 
-        response = HttpResponse(s.getvalue(),  mimetype = "application/x-zip-compressed")
+            for dirname, subdirs, files in os.walk(controlled_path):
+                for filename in files:
+                    zf.write(os.path.join(controlled_path, filename), controlled_zip_path_name +
+                            filename, zipfile.ZIP_DEFLATED)
 
-        uncontrolled_file_name = load_profile + \
-            "_BaseCase_" + county + "_uncontrolled_load.zip"
-        controlled_file = load_profile + "_BaseCase_" + county + "_e19controlled_load.zip"
+            zf.close()
 
-        response["Content-Disposition"] = f"attachment; filename={uncontrolled_file_name}"
+        zip_file_name = load_profile + \
+            "_BaseCase_" + county + ".zip"
 
+        response = HttpResponse(
+            output.getvalue(), content_type='application/x-zip-compressed')
+        response['Content-Disposition'] = 'attachment; filename={}'.format(
+            zip_file_name)
         return response
 
 
