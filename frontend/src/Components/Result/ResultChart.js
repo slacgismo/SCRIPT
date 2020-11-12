@@ -96,7 +96,6 @@ class ResultChart extends React.Component {
                     <XAxis
                         position="end"
                         tickFormat={(d) => {
-                            console.log(d)
                             if (
                                 this.props.results[
                                     Object.keys(this.props.results)[0]
