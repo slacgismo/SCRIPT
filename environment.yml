@@ -1,4 +1,4 @@
-name: venv_script1
+name: venv_script
 channels:
   - mosek
   - conda-forge
