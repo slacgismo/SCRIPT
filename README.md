@@ -77,7 +77,7 @@ $ python UploadToPostgresCountiesZips.py
 ## Install JS dependencies (make sure npm is installed)
 ```sh
 $ cd frontend
-$ npm install
+$ yarn install
 ```
 
 # Running The App (make sure venv_script env is active on all the below terminals)
