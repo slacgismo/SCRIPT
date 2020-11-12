@@ -10,11 +10,11 @@ import json
 
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
-from script.models.config import LoadControllerConfig, LoadForecastConfig, LoadProfileConfig, GasConsumptionConfig, CostBenefitConfig, NetPresentValueConfig, EmissionConfig
-from script.models.algorithms import LoadController, LoadForecast, LoadProfile, GasConsumption, CostBenefit, NetPresentValue, Emission
-from script.serializers import LoadControllerConfigSerializer, LoadForecastConfigSerializer, LoadProfileConfigSerializer, EmissionConfigSerializer, NetPresentValueConfigSerializer, CostBenefitConfigSerializer, GasConsumptionConfigSerializer
+from script.models.config import LoadControllerConfig, LoadForecastConfig, GasConsumptionConfig, CostBenefitConfig, EmissionConfig
+from script.models.algorithms import LoadController, LoadForecast, GasConsumption, CostBenefit, Emission
+from script.serializers import LoadControllerConfigSerializer, LoadForecastConfigSerializer, EmissionConfigSerializer, CostBenefitConfigSerializer, GasConsumptionConfigSerializer
 from script.serializers import CountySerializer, ZipCodeSerializer, EnergySerializer
-from script.serializers import LoadControllerSerializer, LoadForecastSerializer, LoadProfileSerializer, GasConsumptionSerializer, CostBenefitSerializer, NetPresentValueSerializer, EmissionSerializer
+from script.serializers import LoadControllerSerializer, LoadForecastSerializer, GasConsumptionSerializer, CostBenefitSerializer, EmissionSerializer
 from script.SmartCharging.SmartChargingAlgorithm import *
 from script.SmartCharging.SmartChargingDefault import getScaData
 from script.tasks import run_cba_tool, run_lf_runner
@@ -127,16 +127,16 @@ class LoadForecastConfigViewSet(viewsets.ModelViewSet):
                     'public_l2_percent') # using django-filter
 
 
-class LoadProfileConfigViewSet(viewsets.ModelViewSet):
-    queryset = LoadProfileConfig.objects.all()
-    permission_classes = [
-        permissions.AllowAny,
-    ]
-    serializer_class = LoadProfileConfigSerializer
-    filter_fields = ('lf_config',
-                    'poi',
-                    'year',
-                    'day_type') # using django-filter
+# class LoadProfileConfigViewSet(viewsets.ModelViewSet):
+#     queryset = LoadProfileConfig.objects.all()
+#     permission_classes = [
+#         permissions.AllowAny,
+#     ]
+#     serializer_class = LoadProfileConfigSerializer
+#     filter_fields = ('lf_config',
+#                     'poi',
+#                     'year',
+#                     'day_type') # using django-filter
 
 
 class GasConsumptionConfigViewSet(viewsets.ModelViewSet):
@@ -149,14 +149,14 @@ class GasConsumptionConfigViewSet(viewsets.ModelViewSet):
                     'year') # using django-filter
 
 
-class NetPresentValueConfigViewSet(viewsets.ModelViewSet):
-    queryset = NetPresentValueConfig.objects.all()
-    permission_classes = [
-        permissions.AllowAny,
-    ]
-    serializer_class = NetPresentValueConfigSerializer
-    filter_fields = ('lf_config',
-                    'year') # using django-filter
+# class NetPresentValueConfigViewSet(viewsets.ModelViewSet):
+#     queryset = NetPresentValueConfig.objects.all()
+#     permission_classes = [
+#         permissions.AllowAny,
+#     ]
+#     serializer_class = NetPresentValueConfigSerializer
+#     filter_fields = ('lf_config',
+#                     'year') # using django-filter
 
 
 class EmissionConfigViewSet(viewsets.ModelViewSet):
@@ -197,13 +197,13 @@ class LoadForecastViewSet(viewsets.ModelViewSet):
     filter_fields = ('config',) # using django-filter
 
 
-class LoadProfileViewSet(viewsets.ModelViewSet):
-    queryset = LoadProfile.objects.all()
-    permission_classes = [
-        permissions.AllowAny,
-    ]
-    serializer_class = LoadProfileSerializer
-    filter_fields = ('config',) # using django-filter
+# class LoadProfileViewSet(viewsets.ModelViewSet):
+#     queryset = LoadProfile.objects.all()
+#     permission_classes = [
+#         permissions.AllowAny,
+#     ]
+#     serializer_class = LoadProfileSerializer
+#     filter_fields = ('config',) # using django-filter
 
 
 class GasConsumptionViewSet(viewsets.ModelViewSet):
@@ -224,13 +224,13 @@ class CostBenefitViewSet(viewsets.ModelViewSet):
     filter_fields = ('config',) # using django-filter
 
 
-class NetPresentValueViewSet(viewsets.ModelViewSet):
-    queryset = NetPresentValue.objects.all()
-    permission_classes = [
-        permissions.AllowAny,
-    ]
-    serializer_class = NetPresentValueSerializer
-    filter_fields = ('config',) # using django-filter
+# class NetPresentValueViewSet(viewsets.ModelViewSet):
+#     queryset = NetPresentValue.objects.all()
+#     permission_classes = [
+#         permissions.AllowAny,
+#     ]
+#     serializer_class = NetPresentValueSerializer
+#     filter_fields = ('config',) # using django-filter
 
 
 class EmissionViewSet(viewsets.ModelViewSet):

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from script.models.config import LoadControllerConfig, LoadForecastConfig, LoadProfileConfig, GasConsumptionConfig, CostBenefitConfig, NetPresentValueConfig, EmissionConfig
+from script.models.config import LoadControllerConfig, LoadForecastConfig, GasConsumptionConfig, CostBenefitConfig, EmissionConfig
 from script.validators import validate_positive, validate_year
 
 # Create your models of algorithm results here.
@@ -61,26 +61,6 @@ class LoadForecast(models.Model):
     class Meta:
         db_table = 'script_algorithm_ev_load_forecast'
         unique_together = (('config', 'controlled',),)
-
-
-class LoadProfile(models.Model):
-    """Algorithm: Cost Benefit Analysis of Load Profile
-        inputs:
-            (1) config of LoadProfileConfig
-        outputs:
-            (1) Aggregate/DCFC/Residential/Public L2/Workplace load profile throughout 24 hours of a weekday/weekend/peak
-        visualizations:
-            (1) Aggregate&DCFC&Residential&Public L2&Workplace load profile throughout 24 hours of a weekday&weekend&peak
-    """
-
-    config = models.ForeignKey(LoadProfileConfig, on_delete=models.CASCADE, db_column="config")
-    uncontrolled_values = JSONField()
-    controlled_values = JSONField()
-
-    class Meta:
-        db_table = 'script_algorithm_cba_load_profile'
-        unique_together = (('config',),)
-
 
 class GasConsumption(models.Model):
     """Algorithm: Cost Benefit Analysis of Annual Gas Consumption
@@ -197,70 +177,6 @@ class CostBenefit(models.Model):
 
     class Meta:
         db_table = 'script_algorithm_cba_cost_benefit'
-        unique_together = (('config',),)
-
-
-class NetPresentValue(models.Model):
-    """Algorithm: Cost Benefit Analysis of Net Present Value
-
-        inputs:
-            (1) config of NetPresentValueConfig
-        outputs:
-            (1) NPV of Utility Bills by the certain year
-            (2) NPV of Utility Bills (volumetric) by the certain year
-            (3) NPV of Utility Bills (demand) by the certain year
-            (4) NPV of Utility Bills (res) by the certain year
-            (5) NPV of Utility Bills (work) by the certain year
-            (6) NPV of Utility Bills (pub L2) by the certain year
-            (7) NPV of Utility Bills (DCFC) by the certain year
-            (8) NPV of Incremental upfront vehicle cost by the certain year
-            (9) NPV of Charging infrastructure cost by the certain year
-            (10) NPV of Charging infrastructure cost (res) by the certain year
-            (11) NPV of Charging infrastructure cost (work L2) by the certain year
-            (12) NPV of Charging infrastructure cost (public L2) by the certain year
-            (13) NPV of Charging infrastructure cost (DCFC) by the certain year
-            (14) NPV of Avoided vehicle gasoline by the certain year
-            (15) NPV of Vehicle O&M Savings by the certain year
-            (16) NPV of Federal EV Tax Credit by the certain year
-            (17) NPV of Energy Supply Cost by the certain year
-            (18) NPV of Energy Cost by the certain year
-            (19) NPV of Generation Capacity Cost by the certain year
-            (20) NPV of Vehicle Sales (NPV) by the certain year
-            (21) NPV of Transmission and Distribution Cost by the certain year
-            (22) NPV of Distribution Cost by the certain year
-            (23) NPV of Transmission by the certain year
-        visualizations:
-            (1) NPV of Utility Bills by the certain year
-            (2) NPV of Utility Bills (volumetric) by the certain year
-            (3) NPV of Utility Bills (demand) by the certain year
-            (4) NPV of Utility Bills (res) by the certain year
-            (5) NPV of Utility Bills (work) by the certain year
-            (6) NPV of Utility Bills (pub L2) by the certain year
-            (7) NPV of Utility Bills (DCFC) by the certain year
-            (8) NPV of Incremental upfront vehicle cost by the certain year
-            (9) NPV of Charging infrastructure cost by the certain year
-            (10) NPV of Charging infrastructure cost (res) by the certain year
-            (11) NPV of Charging infrastructure cost (work L2) by the certain year
-            (12) NPV of Charging infrastructure cost (public L2) by the certain year
-            (13) NPV of Charging infrastructure cost (DCFC) by the certain year
-            (14) NPV of Avoided vehicle gasoline by the certain year
-            (15) NPV of Vehicle O&M Savings by the certain year
-            (16) NPV of Federal EV Tax Credit by the certain year
-            (17) NPV of Energy Supply Cost by the certain year
-            (18) NPV of Energy Cost by the certain year
-            (19) NPV of Generation Capacity Cost by the certain year
-            (20) NPV of Vehicle Sales (NPV) by the certain year
-            (21) NPV of Transmission and Distribution Cost by the certain year
-            (22) NPV of Distribution Cost by the certain year
-            (23) NPV of Transmission Cost by the certain year
-    """
-
-    config = models.ForeignKey(NetPresentValueConfig, on_delete=models.CASCADE, db_column="config")
-    uncontrolled_values = JSONField()
-    controlled_values = JSONField()
-
-    class Meta:
-        db_table = 'script_algorithm_cba_net_present_value'
         unique_together = (('config',),)
 
 

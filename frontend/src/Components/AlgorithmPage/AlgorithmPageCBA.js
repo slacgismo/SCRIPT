@@ -68,16 +68,18 @@ function AlgorithmPageLoadControl(props) {
                             <MenuItem value="gas_consumption">
                                 Gas consumption
                             </MenuItem>
-                            <MenuItem value={"load_profile"}>
+                            {/* <MenuItem value={"load_profile"}>
                                 Load profile
-                            </MenuItem>
+                            </MenuItem> */}
                             <MenuItem value={"cost_benefit"}>
                                 Cost benefit
                             </MenuItem>
-                            <MenuItem value={"net_present_value"}>
+                            {/* <MenuItem value={"net_present_value"}>
                                 Net present value
+                            </MenuItem> */}
+                            <MenuItem value={"emission"}>
+                                Emission
                             </MenuItem>
-                            <MenuItem value={"emission"}>Emission</MenuItem>
                         </Select>
                         <FormHelperText>Choose a category</FormHelperText>
                     </FormControl>
