@@ -1,4 +1,4 @@
-name: venv_script
+name: venv_script1
 channels:
   - mosek
   - conda-forge
@@ -26,7 +26,6 @@ dependencies:
   - multiprocess=0.70.10=py37h9bfed18_0
   - ncurses=6.2=h0a44026_1
   - numpy=1.19.1=py37h7e69742_0
-  - openblas=0.3.7=hd44dcd8_1
   - openssl=1.1.1h=haf1e3a3_0
   - osqp=0.6.1=py37h94625e5_2
   - pip=20.2.2=py37_0

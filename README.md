@@ -29,7 +29,12 @@ $ brew install postgresql
 $ brew services start postgresql
 ```
 
-#### Create a database named `scriptdb` - I used [TablePlus](https://tableplus.com/) to create a DB with that name on my `localhost`. You can easily achieve the same thing via the cmd line. Also, connection params for development are the postgres defaults. You can also check the settings file to find them: `webserver/app/settings/base.py`
+## to create the DB
+```sh
+$ createdb scriptdb
+```
+
+#### To connect to the DB - I used [TablePlus](https://tableplus.com/). Connection params for development are the postgres defaults. You can also check the settings file to find them: `webserver/app/settings/base.py`. For now just save the new connection - we will connect to it once the Django Server is running
 
 
 ## Creating the env - ensure you are running the anaconda `4.5.x +`
@@ -69,10 +74,10 @@ $ cd UploadToCounty
 $ python UploadToPostgresCountiesZips.py
 ```
 
-## Install JS dependencies
+## Install JS dependencies (make sure npm is installed)
 ```sh
 $ cd frontend
-$ yarn install
+$ npm install
 ```
 
 # Running The App (make sure venv_script env is active on all the below terminals)
@@ -108,3 +113,4 @@ $ yarn start
 ```
 
 ### Note: Make sure your aws credentials are configured in your local machine
+### Note: If you run into errors when getting started, attempting to install dependencies individually might lead to breakage due to inconsistencies in versioning. Your best option would be to remove conda env and recreate it with the existing environment.yml filter.
