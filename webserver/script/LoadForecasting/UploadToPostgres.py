@@ -78,9 +78,12 @@ class UploadToPostgres():
 
         for i in range(time_point_len):
             hour_str = str((start_hour + i // 60) % 24)
-            minute = str(i % 60)
-            if len(minute) < 2:
-                minute_str = '0' + minute
+            minute = i % 60
+            if minute in range(10):
+                minute_str = '0' + str(minute)
+            else:
+                minute_str = str(minute)
+
 
             residential_l1_load_list.append(
                 {
@@ -130,7 +133,7 @@ class UploadToPostgres():
                     'load': str(round(total_load[i], 2))
                 }
             )
-            
+
         return (residential_l1_load_list,
                 residential_l2_load_list,
                 residential_mud_load_list,
