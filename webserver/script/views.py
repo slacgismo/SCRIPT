@@ -1,14 +1,12 @@
 import os
+import io
 import json
-import shutil
+import zipfile
 from pathlib import Path
 from wsgiref.util import FileWrapper
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from itertools import zip_longest
-import zipfile
-import io
-from django.http import FileResponse
 from rest_framework import views, viewsets, permissions, mixins, generics
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -38,31 +36,25 @@ class DownloadCBAZip(APIView):
             county + "_uncontrolled_load/results"
         controlled_path = path + "/CostBenefitAnalysis/cases/BaseCase_" + \
             county + "_e19controlled_load/results"
-        uncontrolled_zip_path_name = load_profile + \
-            "_" + county + "/uncontrolled_results/"
-        controlled_zip_path_name = load_profile + \
-            "_" + county + "/controlled_results/"
+        uncontrolled_zip_path = "CBA_Results_" + load_profile + \
+            "_" + county + "/uncontrolled/uncontrolled_"
+        controlled_zip_path = "CBA_Results_" + load_profile + \
+            "_" + county + "/controlled/controlled_"
 
         with zipfile.ZipFile(output, 'w') as zf:
             for dirname, subdirs, files in os.walk(uncontrolled_path):
                 for filename in files:
-                    zf.write(os.path.join(uncontrolled_path, filename), uncontrolled_zip_path_name +
+                    zf.write(os.path.join(uncontrolled_path, filename), uncontrolled_zip_path +
                             filename, zipfile.ZIP_DEFLATED)
-
             for dirname, subdirs, files in os.walk(controlled_path):
                 for filename in files:
-                    zf.write(os.path.join(controlled_path, filename), controlled_zip_path_name +
+                    zf.write(os.path.join(controlled_path, filename), controlled_zip_path +
                             filename, zipfile.ZIP_DEFLATED)
-
             zf.close()
 
-        zip_file_name = load_profile + \
-            "_BaseCase_" + county + ".zip"
-
         response = HttpResponse(
-            output.getvalue(), content_type='application/x-zip-compressed')
-        response['Content-Disposition'] = 'attachment; filename={}'.format(
-            zip_file_name)
+            output.getvalue(), content_type='application/zip')
+
         return response
 
 

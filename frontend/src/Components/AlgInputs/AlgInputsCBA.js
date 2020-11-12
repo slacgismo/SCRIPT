@@ -52,10 +52,10 @@ class AlgInputsCBA extends Component {
             openResult: false,
             shouldRender: false,
             openAlert: false,
-            openDownloadCbaPopUp: true,
+            openDownloadCbaPopUp: false,
             alertTitle: "",
             alertDescription: "",
-            profileName: "test",
+            profileName: "",
             profileNames: [],
             profileData: [],
             loadForecastResults: [],
@@ -80,7 +80,7 @@ class AlgInputsCBA extends Component {
                     this.setState({
                         profileData: profiles,
                         profileNames: profileNames,
-                        profileName: profileNames[3].name,
+                        profileName: profileNames[0].name,
                     });
                 }
             },
@@ -285,10 +285,11 @@ class AlgInputsCBA extends Component {
                 })
                 .then(
                     (zipRes) => {
-                        FileDownload(zipRes.data, `${this.state.profileName}.zip`);
+                        FileDownload(zipRes.data, `CBA_Results_${this.state.profileName}_${countyMatch[0]}.zip`);
+                        this.downloadCbaClose();
                     },
                     (error) => {
-                        console.log(error);
+                        this.downloadCbaClose();
                         this.handleAlertOpen(
                             "Server Error",
                             "Something went wrong"
@@ -362,7 +363,7 @@ class AlgInputsCBA extends Component {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Warning: You will not be asked this again
+                            Warning: You will not be able to download these results at a later time
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
