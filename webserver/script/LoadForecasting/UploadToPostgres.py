@@ -84,7 +84,6 @@ class UploadToPostgres():
             else:
                 minute_str = str(minute)
 
-
             residential_l1_load_list.append(
                 {
                     'time': hour_str + ':' + minute_str,
