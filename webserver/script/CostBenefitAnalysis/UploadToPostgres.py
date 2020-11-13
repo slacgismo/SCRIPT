@@ -43,7 +43,6 @@ class UploadToPostgres():
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 if row[0] == 'Year' or row[0] == 'EV Share (%)':
-                    self.gas_consumption_year_len = len(row) - 1
                     self.uncontrolled_gas_consumption_result_dict[row[0]] = []
                     for item in row[1:]:
                         self.uncontrolled_gas_consumption_result_dict[row[0]].append(
@@ -70,14 +69,12 @@ class UploadToPostgres():
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 if row[0] == 'CO2 emissions from EVs (metric tons)':
-                    self.emission_year_len = len(row) - 1
                     self.uncontrolled_emission_result_dict[row[0]] = []
                     for item in row[1:]:
                         self.uncontrolled_emission_result_dict[row[0]].append(item)
                         self.uncontrolled_co2_emissions.append(item)
 
-                if row[0] == 'NOX emissions from EVs (metric tons)' or row[0] == 'PM 10 emissions from EVs (metric tons)':
-                    self.emission_year_len = len(row) - 1
+                if row[0] == 'NOX emissions from EVs (metric tons)'or row[0] == 'Year' or row[0] == 'PM 10 emissions from EVs (metric tons)':
                     self.uncontrolled_emission_result_dict[row[0]] = []
                     for item in row[1:]:
                         self.uncontrolled_emission_result_dict[row[0]].append(item)
@@ -91,7 +88,7 @@ class UploadToPostgres():
                         self.controlled_emission_result_dict[row[0]].append(item)
                         self.controlled_co2_emissions.append(item)
 
-                if row[0] == 'NOX emissions from EVs (metric tons)' or row[0] == 'PM 10 emissions from EVs (metric tons)':
+                if row[0] == 'NOX emissions from EVs (metric tons)' or row[0] == 'Year' or row[0] == 'PM 10 emissions from EVs (metric tons)':
                     self.controlled_emission_result_dict[row[0]] = []
                     for item in row[1:]:
                         self.controlled_emission_result_dict[row[0]].append(item)
@@ -110,7 +107,6 @@ class UploadToPostgres():
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 if row[0] == 'Energy Supply Cost' or row[0] == 'Capacity Cost' or row[0] == 'Distribution Cost' or row[0] == 'Transmission Cost' or row[0] == 'GHG Cost':
-                    self.cost_benefit_year_len = len(row) - 1
                     for idx, item in enumerate(row[1:]):
                         if len(self.uncontrolled_electricity_supply_cost_list) > idx:
                             self.uncontrolled_electricity_supply_cost_list[idx] = self.uncontrolled_electricity_supply_cost_list[idx] + float(item)
@@ -118,23 +114,21 @@ class UploadToPostgres():
                             self.uncontrolled_electricity_supply_cost_list.append(float(item))
                     self.uncontrolled_cost_benefit_result_dict['Electricity Supply Cost'] = [str(item) for item in self.uncontrolled_electricity_supply_cost_list]
                 
-                if row[0] == 'Utility Bills' or row[0] == 'Cumulative personal light-duty EV population':
-                    self.cost_benefit_year_len = len(row) - 1
+                if row[0] == 'Utility Bills' or row[0] == 'Year' or row[0] == 'Cumulative personal light-duty EV population':
                     self.uncontrolled_cost_benefit_result_dict[row[0]] = []
                     for item in row[1:]:
                         self.uncontrolled_cost_benefit_result_dict[row[0]].append(item)
 
                 if row[0] == 'Avoided vehicle gasoline (gallons)':
-                    self.cost_benefit_year_len = len(row) - 1
                     self.uncontrolled_cost_benefit_result_dict[row[0]] = []
                     for item in row[1:]:
                         self.uncontrolled_cost_benefit_result_dict[row[0]].append(item)
                         self.uncontrolled_avoided_gasoline_gallons.append(item)
 
-            self.uncontrolled_cost_benefit_result_dict['Carbon Emissions Savings From Avoided Gasoline ($)'] = []
+            self.uncontrolled_cost_benefit_result_dict['Net Carbon Emission Savings ($)'] = []
             for idx, item in enumerate(self.uncontrolled_avoided_gasoline_gallons):
                 co2_savings = float(item) * 0.008887 - float(self.uncontrolled_co2_emissions[idx])
-                self.uncontrolled_cost_benefit_result_dict['Carbon Emissions Savings From Avoided Gasoline ($)'].append(str(co2_savings))
+                self.uncontrolled_cost_benefit_result_dict['Net Carbon Emission Savings ($)'].append(str(co2_savings))
 
 
         with open(settings.BASE_DIR[:-3] + 'script/CostBenefitAnalysis/cases/BaseCase_{0}_e19controlled_load/results/annual_results.csv'.format(county)) as csv_file:
@@ -148,7 +142,7 @@ class UploadToPostgres():
                             self.controlled_electricity_supply_cost_list.append(float(item))
                     self.controlled_cost_benefit_result_dict['Electricity Supply Cost'] = [str(item) for item in self.controlled_electricity_supply_cost_list]
                 
-                if row[0] == 'Utility Bills' or row[0] == 'Cumulative personal light-duty EV population':
+                if row[0] == 'Utility Bills' or row[0] == 'Year' or row[0] == 'Cumulative personal light-duty EV population':
                     self.controlled_cost_benefit_result_dict[row[0]] = []
                     for item in row[1:]:
                         self.controlled_cost_benefit_result_dict[row[0]].append(item)
@@ -159,10 +153,10 @@ class UploadToPostgres():
                         self.controlled_cost_benefit_result_dict[row[0]].append(item)
                         self.controlled_avoided_gasoline_gallons.append(item)
             
-            self.controlled_cost_benefit_result_dict['Carbon Emissions Savings From Avoided Gasoline ($)'] = []
+            self.controlled_cost_benefit_result_dict['Net Carbon Emission Savings ($)'] = []
             for idx, item in enumerate(self.controlled_avoided_gasoline_gallons):
                 co2_savings = float(item) * 0.008887 - float(self.controlled_co2_emissions[idx])
-                self.controlled_cost_benefit_result_dict['Carbon Emissions Savings From Avoided Gasoline ($)'].append(str(co2_savings))
+                self.controlled_cost_benefit_result_dict['Net Carbon Emission Savings ($)'].append(str(co2_savings))
 
         self.gas_consumption_table_name = "script_algorithm_cba_gas_consumption"
         self.cba_emission_table_name = "script_algorithm_cba_emission"
@@ -187,8 +181,7 @@ class UploadToPostgres():
 
         print(self.uncontrolled_cost_benefit_result_dict)
         print(self.controlled_cost_benefit_result_dict)
-        for i in range(self.cost_benefit_year_len):
-            print(i)
+        for i in range(11):
             uncontrolled_tmp_res = {}
             controlled_tmp_res = {}
 
@@ -203,11 +196,11 @@ class UploadToPostgres():
                     controlled_tmp_res[key] = self.controlled_cost_benefit_result_dict[key][i]
 
             self.cur.execute("INSERT INTO " + self.config_cba_cost_benefit_table_name + " (lf_config, year) VALUES (%s, %s)",
-                             (
-                                 self.load_profile, str(
-                                     self.uncontrolled_cost_benefit_result_dict['Year'][i])
-                             )
-                             )
+                            (
+                                self.load_profile, str(
+                                    self.uncontrolled_cost_benefit_result_dict['Year'][i])
+                            )
+                            )
             self.conn.commit()
 
             self.cur.execute(
@@ -215,29 +208,27 @@ class UploadToPostgres():
             config_cost_benefit_id = self.cur.fetchone()[0]
 
             self.cur.execute("INSERT INTO " + self.cba_cost_benefit_table_name + " (config, uncontrolled_values, controlled_values) VALUES (%s, %s, %s)",
-                             (
-                                 str(config_cost_benefit_id), json.dumps(
-                                     uncontrolled_tmp_res), json.dumps(controlled_tmp_res)
-                             )
-                             )
+                            (
+                                str(config_cost_benefit_id), json.dumps(
+                                    uncontrolled_tmp_res), json.dumps(controlled_tmp_res)
+                            )
+                            )
 
         # Make the changes to the database persistent
         self.conn.commit()
 
     def run_gas_consumption(self):
 
-        for i in range(self.gas_consumption_year_len):
+        for i in range(11):
             uncontrolled_tmp_res = {}
             controlled_tmp_res = {}
 
             for key in self.uncontrolled_gas_consumption_result_dict.keys():
                 if key != 'Year':
-                    print(key)
                     uncontrolled_tmp_res[key] = self.uncontrolled_gas_consumption_result_dict[key][i]
 
             for key in self.controlled_gas_consumption_result_dict.keys():
                 if key != 'Year':
-                    print(key)
                     controlled_tmp_res[key] = self.controlled_gas_consumption_result_dict[key][i]
 
             self.cur.execute("INSERT INTO " + self.config_gas_consumption_table_name + " (lf_config, year) VALUES (%s, %s)",
@@ -265,7 +256,7 @@ class UploadToPostgres():
 
     def run_emission(self):
 
-        for i in range(self.emission_year_len):
+        for i in range(11):
             uncontrolled_tmp_res = {}
             controlled_tmp_res = {}
 

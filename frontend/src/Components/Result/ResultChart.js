@@ -63,14 +63,13 @@ class ResultChart extends React.Component {
                     /* title of chart */
                     <h5 className="chartTitle">{this.props.chartTitle}</h5>
                 }
-
                 <XYPlot
-                    margin={{ top: 20, right: 25 }}
+                    margin={{ top: 20, right: 60 }}
                     height={this.props.graphHeight}
                     width={this.props.graphWidth}
                 >
                     {this.props.legendPosition === "right" &&
-                        this.props.isCBA === false && (
+                        !this.props.isCBA && (
                             <DiscreteColorLegend
                                 style={{
                                     position: "absolute",
@@ -84,7 +83,6 @@ class ResultChart extends React.Component {
                         )}
 
                     <HorizontalGridLines />
-
                     {newData.map((newDataPiece) => (
                         <LineSeries
                             key={newDataPiece.key}
@@ -92,7 +90,6 @@ class ResultChart extends React.Component {
                             color={newDataPiece.color}
                         />
                     ))}
-
                     <XAxis
                         position="end"
                         tickFormat={(d) => {
@@ -112,7 +109,6 @@ class ResultChart extends React.Component {
                             }
                         }}
                     />
-
                     {this.props.legendPosition !== "none" && (
                         <ChartLabel
                             text={
@@ -130,7 +126,6 @@ class ResultChart extends React.Component {
                             }}
                         />
                     )}
-
                     {this.props.legendPosition !== "none" && (
                         <ChartLabel
                             text={
@@ -147,12 +142,13 @@ class ResultChart extends React.Component {
                             }}
                         />
                     )}
-
                     <YAxis
                         position="end"
-                        tickLabelAngle={-70}
-                        tickTotal={4}
+                        tickLabelAngle={-30}
+                        tickTotal={7}
                         tickFormat={(d) => {
+                            console.log("D")
+                            console.log(d);
                             if (d >= Math.pow(10, 15)) {
                                 return `${d / Math.pow(10, 15)}P`;
                             } else if (d >= Math.pow(10, 12)) {
@@ -166,8 +162,8 @@ class ResultChart extends React.Component {
                             } else {
                                 return d;
                             }
-                        }}
-                    />
+                            }}
+                        />
                 </XYPlot>
             </div>
         );

@@ -229,6 +229,7 @@ class AlgInputsCBA extends Component {
             const filteredRes = cbaRes.data.filter(
                 (item) => item.config.lf_config === this.state.profileName
             );
+            // filteredRes = _.orderBy(filteredRes,'year','asc');
             const dataCBA = { dataValues: [] };
             const dataCBASub = [];
             for (var i = 0; i < filteredRes.length; i++) {

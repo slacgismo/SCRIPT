@@ -166,7 +166,7 @@ def split_file(load_profile, county, controlled_types, scenarios={'Scenario 1': 
                 stock_rollover_output.to_csv(os.path.join(
                     str(path.parent), "EV_Loads", "load_profiles",  "{}_{}_{}_{}_load.csv".format(
                         scenario, county, field_name, controlled_type)),index = True)
-                
+             
             if weekday_file_name_exists:
                 os.remove(os.path.join(weekday_data_path,weekday_file_name))
 
