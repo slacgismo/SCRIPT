@@ -101,7 +101,8 @@ class ResultChart extends React.Component {
                                     Object.keys(this.props.results)[0]
                                 ].xAxis === "Time"
                             ) {
-                                const minute = d * 15;
+                                const HOUR_INCREMENT = 15
+                                let minute = !(d % 100) ? d : d * HOUR_INCREMENT
                                 return `${Math.floor(minute / 60)
                                     .toString()
                                     .padStart(2, "0")}:${(minute % 60)
