@@ -17,6 +17,8 @@ import {
     exponentialBackoff,
 } from "../Helpers/Helpers";
 
+const FileDownload = require("js-file-download");
+
 const styles = (theme) => ({
     container: {
         display: "flex",
@@ -277,15 +279,17 @@ class AlgInputsCBA extends Component {
                 load_profile: this.state.profileName,
                 county: countyMatch[0],
             };
-            const FileDownload = require('js-file-download');
             axios
                 .get(`${serverUrl}/download_cba_zip`, {
                     params: params,
-                    responseType: 'blob'
+                    responseType: "blob",
                 })
                 .then(
                     (zipRes) => {
-                        FileDownload(zipRes.data, `CBA_Results_${this.state.profileName}_${countyMatch[0]}.zip`);
+                        FileDownload(
+                            zipRes.data,
+                            `CBA_Results_${this.state.profileName}_${countyMatch[0]}.zip`
+                        );
                         this.downloadCbaClose();
                     },
                     (error) => {
@@ -363,7 +367,8 @@ class AlgInputsCBA extends Component {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Warning: You will not be able to download these results at a later time
+                            Warning: You will not be able to download these
+                            results at a later time
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
