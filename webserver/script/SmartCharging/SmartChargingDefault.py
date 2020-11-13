@@ -6,7 +6,7 @@ def getScaData(item_name, bucket_name="script.data.control.study"):
     ''' gets and cleans the sca data when there is no user data input '''
     s3 = S3FileSystem()
     df = np.load(s3.open("{}/{}".format(bucket_name, item_name)))
-    sca_load = (0.25*np.arange(0, 96), np.sum(df, axis=0))
+    sca_load = (0.25*np.arange(0, 96), df[0, :]) # sample first profile for examples
 
     data_final = []
     for x in range(len(sca_load[0])):
