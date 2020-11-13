@@ -19,6 +19,7 @@ h5.chartXLabel {
 .rv-xy-plot, .chart-grid {
     display: inline-block;
     padding: 2rem;
+    margin-right: 50px;
     position: relative;
 }
 
