@@ -1,10 +1,9 @@
+import sys
 from celery import shared_task, current_task
 from script.CostBenefitAnalysis.preprocessing_loadprofiles.split_file import split_file
 from script.CostBenefitAnalysis.UploadToPostgres import UploadToPostgres
 from script.LoadForecasting.LoadForecastingRunner import lf_runner
-
 #for running CBA tool
-import sys
 sys.path.append("script/CostBenefitAnalysis/python_code/")
 from model_class import ModelInstance
 
