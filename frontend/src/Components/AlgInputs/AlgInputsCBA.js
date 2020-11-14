@@ -17,6 +17,8 @@ import {
     exponentialBackoff,
 } from "../Helpers/Helpers";
 
+const FileDownload = require("js-file-download");
+
 const styles = (theme) => ({
     container: {
         display: "flex",
@@ -52,6 +54,7 @@ class AlgInputsCBA extends Component {
             openResult: false,
             shouldRender: false,
             openAlert: false,
+            openDownloadCbaPopUp: false,
             alertTitle: "",
             alertDescription: "",
             profileName: "",
@@ -155,7 +158,7 @@ class AlgInputsCBA extends Component {
     runCBATool = async () => {
         try {
             const configRes = await axios.get(
-                `${serverUrl}/config/${this.props.category}/`,
+                `${serverUrl}/config/cost_benefit/`,
                 {
                     params: {
                         lf_config: this.state.profileName,
@@ -190,6 +193,7 @@ class AlgInputsCBA extends Component {
                             async () => {
                                 this.props.loadingResults(false);
                                 this.props.checkCBA(true);
+                                this.downloadCbaOpen();
                                 this.props.visualizeResults(
                                     await this.getCBAResult(),
                                     true
@@ -224,12 +228,11 @@ class AlgInputsCBA extends Component {
     getCBAResult = async () => {
         try {
             const cbaRes = await axios.get(
-                `${serverUrl}/algorithm/cost_benefit_analysis/${this.props.category}`
+                `${serverUrl}/algorithm/cost_benefit_analysis/cost_benefit`
             );
             const filteredRes = cbaRes.data.filter(
                 (item) => item.config.lf_config === this.state.profileName
             );
-            // filteredRes = _.orderBy(filteredRes,'year','asc');
             const dataCBA = { dataValues: [] };
             const dataCBASub = [];
             for (var i = 0; i < filteredRes.length; i++) {
@@ -256,6 +259,52 @@ class AlgInputsCBA extends Component {
         this.setState({ openAlert: false });
     };
 
+    downloadCbaOpen = () => {
+        this.setState({ openDownloadCbaPopUp: true });
+    };
+
+    downloadCbaClose = () => {
+        this.setState({ openDownloadCbaPopUp: false });
+    };
+
+    downloadCba = async () => {
+        try {
+            const profileMatch = this.state.profileData.filter(
+                (profile) => profile.config_name === this.state.profileName
+            );
+            const countyMatch = profileMatch.map(
+                (profile) => profile["choice"]
+            );
+            const params = {
+                load_profile: this.state.profileName,
+                county: countyMatch[0],
+            };
+            axios
+                .get(`${serverUrl}/download_cba_zip`, {
+                    params: params,
+                    responseType: "blob",
+                })
+                .then(
+                    (zipRes) => {
+                        FileDownload(
+                            zipRes.data,
+                            `CBA_Results_${this.state.profileName}_${countyMatch[0]}.zip`
+                        );
+                        this.downloadCbaClose();
+                    },
+                    (error) => {
+                        this.downloadCbaClose();
+                        this.handleAlertOpen(
+                            "Server Error",
+                            "Something went wrong"
+                        );
+                    }
+                );
+        } catch (error) {
+            this.handleAlertOpen("Server Error", "Something went wrong");
+        }
+    };
+
     handleChartsClose = () => {
         this.setState({ openResult: false });
     };
@@ -270,9 +319,6 @@ class AlgInputsCBA extends Component {
     };
 
     componentDidUpdate(prevProps) {
-        if (prevProps.category !== this.props.category) {
-            this.updateCBACharts();
-        }
         if (prevProps.controlType !== this.props.controlType) {
             this.updateCBACharts();
         }
@@ -303,6 +349,40 @@ class AlgInputsCBA extends Component {
                             autoFocus
                         >
                             OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog
+                    open={this.state.openDownloadCbaPopUp}
+                    onClose={this.downloadCbaClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        Would you like to download the Cost Benefit Analysis
+                        results for {this.state.profileName}?
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Warning: You will not be able to download these
+                            results at a later time
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={this.downloadCbaClose}
+                            color="primary"
+                            autoFocus
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={this.downloadCba}
+                            variant="contained"
+                            color="primary"
+                            autoFocus
+                        >
+                            Download
                         </Button>
                     </DialogActions>
                 </Dialog>

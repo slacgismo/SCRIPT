@@ -1,11 +1,11 @@
 import React from "react";
-import AlgorithmPage from "./AlgorithmPage";
-import AlgInputsCBA from "../AlgInputs/AlgInputsCBA";
 import { makeStyles } from "@material-ui/core/styles";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
+import AlgorithmPage from "./AlgorithmPage";
+import AlgInputsCBA from "../AlgInputs/AlgInputsCBA";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -18,13 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AlgorithmPageLoadControl(props) {
-    const [category, setCategory] = React.useState("gas_consumption");
-
     const [controlType, setControlType] = React.useState("uncontrolled_values");
-
-    const handleChange = (event) => {
-        setCategory(event.target.value);
-    };
 
     const handleControlTypeChange = (event) => {
         setControlType(event.target.value);
@@ -34,7 +28,6 @@ function AlgorithmPageLoadControl(props) {
 
     return (
         <AlgorithmPage
-            categoryProp={category}
             controlType={controlType}
             compo={
                 <div>
@@ -54,34 +47,8 @@ function AlgorithmPageLoadControl(props) {
                             </MenuItem>
                         </Select>
                         <FormHelperText>
-                            View uncontrolled or controlled
+                            View uncontrolled or controlled results
                         </FormHelperText>
-                    </FormControl>
-                    <FormControl className={classes.formControl}>
-                        <Select
-                            labelId="label-standard-category"
-                            id="standard-category"
-                            onChange={handleChange}
-                            value={category}
-                            className={classes.selectEmpty}
-                        >
-                            <MenuItem value="gas_consumption">
-                                Gas consumption
-                            </MenuItem>
-                            {/* <MenuItem value={"load_profile"}>
-                                Load profile
-                            </MenuItem> */}
-                            <MenuItem value={"cost_benefit"}>
-                                Cost benefit
-                            </MenuItem>
-                            {/* <MenuItem value={"net_present_value"}>
-                                Net present value
-                            </MenuItem> */}
-                            <MenuItem value={"emission"}>
-                                Emission
-                            </MenuItem>
-                        </Select>
-                        <FormHelperText>Choose a category</FormHelperText>
                     </FormControl>
                 </div>
             }

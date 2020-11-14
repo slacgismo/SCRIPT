@@ -50,7 +50,6 @@ class AlgorithmPage extends Component {
                                 text={`${this.props.title} Inputs`}
                                 compo={
                                     <AlgInputs
-                                        category={this.props.categoryProp}
                                         controlType={this.props.controlType}
                                         title={this.props.title}
                                         visualizeResults={this.visualizeResults.bind(

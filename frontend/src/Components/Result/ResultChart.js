@@ -98,7 +98,10 @@ class ResultChart extends React.Component {
                                     Object.keys(this.props.results)[0]
                                 ].xAxis === "Time"
                             ) {
-                                const minute = d * 15;
+                                const HOUR_INCREMENT = 15;
+                                let minute = !(d % 100)
+                                    ? d
+                                    : d * HOUR_INCREMENT;
                                 return `${Math.floor(minute / 60)
                                     .toString()
                                     .padStart(2, "0")}:${(minute % 60)
@@ -144,11 +147,9 @@ class ResultChart extends React.Component {
                     )}
                     <YAxis
                         position="end"
-                        tickLabelAngle={-30}
-                        tickTotal={7}
+                        tickLabelAngle={-20}
+                        tickTotal={9}
                         tickFormat={(d) => {
-                            console.log("D")
-                            console.log(d);
                             if (d >= Math.pow(10, 15)) {
                                 return `${d / Math.pow(10, 15)}P`;
                             } else if (d >= Math.pow(10, 12)) {
@@ -162,8 +163,8 @@ class ResultChart extends React.Component {
                             } else {
                                 return d;
                             }
-                            }}
-                        />
+                        }}
+                    />
                 </XYPlot>
             </div>
         );

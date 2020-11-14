@@ -1,10 +1,10 @@
+import datetime
 from rest_framework import serializers
 from script.models.data import County, ZipCode
 from script.models.statistics import Energy
-from script.models.config import LoadControllerConfig, LoadForecastConfig, GasConsumptionConfig, CostBenefitConfig, EmissionConfig
-from script.models.algorithms import LoadController, LoadForecast, GasConsumption, CostBenefit, Emission
+from script.models.config import LoadControllerConfig, LoadForecastConfig, CostBenefitConfig
+from script.models.algorithms import LoadController, LoadForecast, CostBenefit
 
-import datetime
 
 class CountySerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,33 +35,9 @@ class LoadForecastConfigSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class LoadProfileConfigSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = LoadProfileConfig
-#         fields = '__all__'
-
-
-class EmissionConfigSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EmissionConfig
-        fields = '__all__'
-
-
-# class NetPresentValueConfigSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = NetPresentValueConfig
-#         fields = '__all__'
-
-
 class CostBenefitConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = CostBenefitConfig
-        fields = '__all__'
-
-
-class GasConsumptionConfigSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GasConsumptionConfig
         fields = '__all__'
 
 
@@ -77,33 +53,8 @@ class LoadForecastSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class LoadProfileSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = LoadProfile
-#         fields = '__all__'
-#         depth = 1
-
-class GasConsumptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GasConsumption
-        fields = '__all__'
-        depth = 1
-
-
 class CostBenefitSerializer(serializers.ModelSerializer):
     class Meta:
         model = CostBenefit
-        fields = '__all__'
-        depth = 1
-
-# class NetPresentValueSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = NetPresentValue
-#         fields = '__all__'
-#         depth = 1
-
-class EmissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Emission
         fields = '__all__'
         depth = 1

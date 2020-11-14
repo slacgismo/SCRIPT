@@ -1,6 +1,6 @@
 // Helper functions
 import axios from "axios";
-const _ = require('lodash');
+const _ = require("lodash");
 
 export function processResults(resultArr, isCBA) {
     const dataToVisualizeAll = [];
@@ -14,7 +14,9 @@ export function processResults(resultArr, isCBA) {
         const dataToVisualize = {};
         for (const field of Object.keys(result)) {
             let data = result[field];
-            data = _.orderBy(data,['year'],['asc'])
+            if (!isTimeSeries) {
+                data = _.orderBy(data, ["year"], ["asc"]);
+            }
             const dataFormatted = data.map((datapoint, i) => ({
                 x: isTimeSeries ? i : datapoint.year,
                 y: isTimeSeries
