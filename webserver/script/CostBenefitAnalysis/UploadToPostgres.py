@@ -103,47 +103,38 @@ class UploadToPostgres():
                 if row[0] == 'Energy Supply Cost' or row[0] == 'Capacity Cost' or row[0] == 'Distribution Cost' or row[0] == 'Transmission Cost' or row[0] == 'GHG Cost':
                     for idx, item in enumerate(row[1:]):
                         if len(self.uncontrolled_electricity_supply_cost_list) > idx:
-                            self.uncontrolled_electricity_supply_cost_list[
-                                idx] = self.uncontrolled_electricity_supply_cost_list[idx] + float(item)
+                            self.uncontrolled_electricity_supply_cost_list[idx] = self.uncontrolled_electricity_supply_cost_list[idx] + float(item)
                         else:
-                            self.uncontrolled_electricity_supply_cost_list.append(
-                                float(item))
-                    self.uncontrolled_cost_benefit_result_dict['Electricity Supply Cost ($)'] = [str(
-                        item) for item in self.uncontrolled_electricity_supply_cost_list]
+                            self.uncontrolled_electricity_supply_cost_list.append(float(item))
+                    self.uncontrolled_cost_benefit_result_dict['Electricity Supply Cost ($)'] = [str(item) for item in self.uncontrolled_electricity_supply_cost_list]
 
                 if row[0] == 'Utility Bills':
                     self.uncontrolled_cost_benefit_result_dict['Utility Bills ($)'] = []
                     for item in row[1:]:
-                        self.uncontrolled_cost_benefit_result_dict['Utility Bills ($)'].append(
-                            item)
+                        self.uncontrolled_cost_benefit_result_dict['Utility Bills ($)'].append(item)
 
                 if row[0] == 'Year' or row[0] == 'Cumulative personal light-duty EV population':
                     self.uncontrolled_cost_benefit_result_dict[row[0]] = []
                     for item in row[1:]:
-                        self.uncontrolled_cost_benefit_result_dict[row[0]].append(
-                            item)
+                        self.uncontrolled_cost_benefit_result_dict[row[0]].append(item)
 
                 if row[0] == 'Avoided vehicle gasoline (gallons)':
                     self.uncontrolled_cost_benefit_result_dict[row[0]] = []
                     for item in row[1:]:
-                        self.uncontrolled_cost_benefit_result_dict[row[0]].append(
-                            item)
+                        self.uncontrolled_cost_benefit_result_dict[row[0]].append(item)
                         # Store uncontrolled avoided vehicle gasoline to calculate uncontrolled Net Carbon Emission Savings
                         self.uncontrolled_avoided_gasoline_gallons.append(item)
 
             self.uncontrolled_cost_benefit_result_dict[self.uncontrolled_ev_share_results[0]] = []
             for item in self.uncontrolled_ev_share_results[1:]:
-                self.uncontrolled_cost_benefit_result_dict[self.uncontrolled_ev_share_results[0]].append(
-                    item)
+                self.uncontrolled_cost_benefit_result_dict[self.uncontrolled_ev_share_results[0]].append(item)
 
             # Calculate uncontrolled Net Carbon Emission Savings
             # Net Carbon Emission Savings (per year) = Avoided Gasoline (gallons) (per year) * 0.008887 (metric tons CO2 / gallon) – CO2 Emissions (metric tons) (per year)
             self.uncontrolled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'] = []
             for idx, item in enumerate(self.uncontrolled_avoided_gasoline_gallons):
-                co2_savings = float(item) * 0.008887 - \
-                    float(self.uncontrolled_co2_emissions[idx])
-                self.uncontrolled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'].append(
-                    str(co2_savings))
+                co2_savings = float(item) * 0.008887 - float(self.uncontrolled_co2_emissions[idx])
+                self.uncontrolled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'].append(str(co2_savings))
 
         ###########################################
         ### Controlled Cost Benefit CSV Results ###
@@ -162,47 +153,38 @@ class UploadToPostgres():
                 if row[0] == 'Energy Supply Cost' or row[0] == 'Capacity Cost' or row[0] == 'Distribution Cost' or row[0] == 'Transmission Cost' or row[0] == 'GHG Cost':
                     for idx, item in enumerate(row[1:]):
                         if len(self.controlled_electricity_supply_cost_list) > idx:
-                            self.controlled_electricity_supply_cost_list[idx] = self.controlled_electricity_supply_cost_list[idx] + float(
-                                item)
+                            self.controlled_electricity_supply_cost_list[idx] = self.controlled_electricity_supply_cost_list[idx] + float(item)
                         else:
-                            self.controlled_electricity_supply_cost_list.append(
-                                float(item))
-                    self.controlled_cost_benefit_result_dict['Electricity Supply Cost ($)'] = [str(
-                        item) for item in self.controlled_electricity_supply_cost_list]
+                            self.controlled_electricity_supply_cost_list.append(float(item))
+                    self.controlled_cost_benefit_result_dict['Electricity Supply Cost ($)'] = [str(item) for item in self.controlled_electricity_supply_cost_list]
 
                 if row[0] == 'Utility Bills':
                     self.controlled_cost_benefit_result_dict['Utility Bills ($)'] = []
                     for item in row[1:]:
-                        self.controlled_cost_benefit_result_dict['Utility Bills ($)'].append(
-                            item)
+                        self.controlled_cost_benefit_result_dict['Utility Bills ($)'].append(item)
 
                 if row[0] == 'Year' or row[0] == 'Cumulative personal light-duty EV population':
                     self.controlled_cost_benefit_result_dict[row[0]] = []
                     for item in row[1:]:
-                        self.controlled_cost_benefit_result_dict[row[0]].append(
-                            item)
+                        self.controlled_cost_benefit_result_dict[row[0]].append(item)
 
                 if row[0] == 'Avoided vehicle gasoline (gallons)':
                     self.controlled_cost_benefit_result_dict[row[0]] = []
                     for item in row[1:]:
-                        self.controlled_cost_benefit_result_dict[row[0]].append(
-                            item)
+                        self.controlled_cost_benefit_result_dict[row[0]].append(item)
                         # Store controlled avoided vehicle gasoline to calculate controlled Net Carbon Emission Savings
                         self.controlled_avoided_gasoline_gallons.append(item)
 
             self.controlled_cost_benefit_result_dict[self.controlled_ev_share_results[0]] = []
             for item in self.controlled_ev_share_results[1:]:
-                self.controlled_cost_benefit_result_dict[self.controlled_ev_share_results[0]].append(
-                    item)
+                self.controlled_cost_benefit_result_dict[self.controlled_ev_share_results[0]].append(item)
 
             # Calculate controlled Net Carbon Emission Savings
             # Net Carbon Emission Savings (per year) = Avoided Gasoline (gallons) (per year) * 0.008887 (metric tons CO2 / gallon) – CO2 Emissions (metric tons) (per year)
             self.controlled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'] = []
             for idx, item in enumerate(self.controlled_avoided_gasoline_gallons):
-                co2_savings = float(item) * 0.008887 - \
-                    float(self.controlled_co2_emissions[idx])
-                self.controlled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'].append(
-                    str(co2_savings))
+                co2_savings = float(item) * 0.008887 - float(self.controlled_co2_emissions[idx])
+                self.controlled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'].append(str(co2_savings))
 
         self.cba_cost_benefit_table_name = "script_algorithm_cba_cost_benefit"
         self.config_cba_cost_benefit_table_name = "script_config_cba_cost_benefit"
