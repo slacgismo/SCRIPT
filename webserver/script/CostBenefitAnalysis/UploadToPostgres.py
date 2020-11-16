@@ -112,8 +112,7 @@ class UploadToPostgres():
                         item) for item in self.uncontrolled_electricity_supply_cost_list]
 
                 if row[0] == 'Utility Bills':
-                    self.uncontrolled_cost_benefit_result_dict['Utility Bills ($)'] = [
-                    ]
+                    self.uncontrolled_cost_benefit_result_dict['Utility Bills ($)'] = []
                     for item in row[1:]:
                         self.uncontrolled_cost_benefit_result_dict['Utility Bills ($)'].append(
                             item)
@@ -132,16 +131,14 @@ class UploadToPostgres():
                         # Store uncontrolled avoided vehicle gasoline to calculate uncontrolled Net Carbon Emission Savings
                         self.uncontrolled_avoided_gasoline_gallons.append(item)
 
-            self.uncontrolled_cost_benefit_result_dict[self.uncontrolled_ev_share_results[0]] = [
-            ]
+            self.uncontrolled_cost_benefit_result_dict[self.uncontrolled_ev_share_results[0]] = []
             for item in self.uncontrolled_ev_share_results[1:]:
                 self.uncontrolled_cost_benefit_result_dict[self.uncontrolled_ev_share_results[0]].append(
                     item)
 
             # Calculate uncontrolled Net Carbon Emission Savings
             # Net Carbon Emission Savings (per year) = Avoided Gasoline (gallons) (per year) * 0.008887 (metric tons CO2 / gallon) – CO2 Emissions (metric tons) (per year)
-            self.uncontrolled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'] = [
-            ]
+            self.uncontrolled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'] = []
             for idx, item in enumerate(self.uncontrolled_avoided_gasoline_gallons):
                 co2_savings = float(item) * 0.008887 - \
                     float(self.uncontrolled_co2_emissions[idx])
@@ -174,8 +171,7 @@ class UploadToPostgres():
                         item) for item in self.controlled_electricity_supply_cost_list]
 
                 if row[0] == 'Utility Bills':
-                    self.controlled_cost_benefit_result_dict['Utility Bills ($)'] = [
-                    ]
+                    self.controlled_cost_benefit_result_dict['Utility Bills ($)'] = []
                     for item in row[1:]:
                         self.controlled_cost_benefit_result_dict['Utility Bills ($)'].append(
                             item)
@@ -194,16 +190,14 @@ class UploadToPostgres():
                         # Store controlled avoided vehicle gasoline to calculate controlled Net Carbon Emission Savings
                         self.controlled_avoided_gasoline_gallons.append(item)
 
-            self.controlled_cost_benefit_result_dict[self.controlled_ev_share_results[0]] = [
-            ]
+            self.controlled_cost_benefit_result_dict[self.controlled_ev_share_results[0]] = []
             for item in self.controlled_ev_share_results[1:]:
                 self.controlled_cost_benefit_result_dict[self.controlled_ev_share_results[0]].append(
                     item)
 
             # Calculate controlled Net Carbon Emission Savings
             # Net Carbon Emission Savings (per year) = Avoided Gasoline (gallons) (per year) * 0.008887 (metric tons CO2 / gallon) – CO2 Emissions (metric tons) (per year)
-            self.controlled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'] = [
-            ]
+            self.controlled_cost_benefit_result_dict['Net Carbon Emission Savings (metric tons CO2)'] = []
             for idx, item in enumerate(self.controlled_avoided_gasoline_gallons):
                 co2_savings = float(item) * 0.008887 - \
                     float(self.controlled_co2_emissions[idx])
