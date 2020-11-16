@@ -158,7 +158,7 @@ class AlgInputsCBA extends Component {
     runCBATool = async () => {
         try {
             const configRes = await axios.get(
-                `${serverUrl}/config/${this.props.category}/`,
+                `${serverUrl}/config/cost_benefit/`,
                 {
                     params: {
                         lf_config: this.state.profileName,
@@ -228,7 +228,7 @@ class AlgInputsCBA extends Component {
     getCBAResult = async () => {
         try {
             const cbaRes = await axios.get(
-                `${serverUrl}/algorithm/cost_benefit_analysis/${this.props.category}`
+                `${serverUrl}/algorithm/cost_benefit_analysis/cost_benefit`
             );
             const filteredRes = cbaRes.data.filter(
                 (item) => item.config.lf_config === this.state.profileName
@@ -319,9 +319,6 @@ class AlgInputsCBA extends Component {
     };
 
     componentDidUpdate(prevProps) {
-        if (prevProps.category !== this.props.category) {
-            this.updateCBACharts();
-        }
         if (prevProps.controlType !== this.props.controlType) {
             this.updateCBACharts();
         }

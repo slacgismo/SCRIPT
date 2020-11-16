@@ -12,7 +12,6 @@ export default function AlgInputs(props) {
         <div>
             <form noValidate autoComplete="off">
                 <AlgInputCustomized
-                    category={props.category}
                     controlType={props.controlType}
                     visualizeResults={(result, isCBA) =>
                         visualizeResults(result, isCBA)

@@ -74,42 +74,6 @@ class LoadForecastConfig(models.Model):
         db_table = 'script_config_ev_load_forecast'
 
 
-class LoadProfileConfig(models.Model):
-    """Algorithm: Load Profile inputs:
-        (1) lf_config of LoadForecastConfig
-        (2) poi
-        (3) year
-        (4) day_type
-    """
-
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
-    poi = models.CharField(max_length=20, choices=POI.choices(), default=POI.UNKNOWN)
-    year = models.IntegerField()
-    day_type = models.CharField(max_length=20, choices=DayType.choices(), default=DayType.WEEKDAY)
-
-    class Meta:
-        db_table = 'script_config_cba_load_profile'
-        unique_together = (('lf_config',
-                            'poi',
-                            'year',
-                            'day_type'),)
-
-
-class GasConsumptionConfig(models.Model):
-    """Algorithm: Gas Consumption inputs:
-        (1) lf_config of LoadForecastConfig
-        (2) year
-    """
-
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
-    year = models.IntegerField()
-
-    class Meta:
-        db_table = 'script_config_cba_gas_consumption'
-        unique_together = (('lf_config',
-                            'year'),)
-
-
 class CostBenefitConfig(models.Model):
     """Algorithm: Cost Benefit inputs:
         (1) lf_config of LoadForecastConfig
@@ -121,35 +85,5 @@ class CostBenefitConfig(models.Model):
 
     class Meta:
         db_table = 'script_config_cba_cost_benefit'
-        unique_together = (('lf_config',
-                            'year'),)
-
-
-class NetPresentValueConfig(models.Model):
-    """Algorithm: Net Present Value inputs:
-        (1) lf_config of LoadForecastConfig
-        (2) year
-    """
-
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
-    year = models.IntegerField()
-
-    class Meta:
-        db_table = 'script_config_cba_net_present_value'
-        unique_together = (('lf_config',
-                            'year'),)
-
-
-class EmissionConfig(models.Model):
-    """Algorithm: Emission inputs:
-        (1) lf_config of LoadForecastConfig
-        (2) year
-    """
-
-    lf_config = models.ForeignKey(LoadForecastConfig, on_delete=models.CASCADE, db_column="lf_config")
-    year = models.IntegerField()
-
-    class Meta:
-        db_table = 'script_config_cba_emission'
         unique_together = (('lf_config',
                             'year'),)

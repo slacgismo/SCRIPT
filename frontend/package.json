@@ -10,6 +10,7 @@
     "eslint": "^6.6.0",
     "eslint-plugin-react": "^7.17.0",
     "js-file-download": "^0.4.12",
+    "lodash.orderby": "^4.6.0",
     "material-ui-dropzone": "^2.4.5",
     "material-ui-upload": "^1.2.1",
     "package.json": "^2.0.1",

@@ -63,14 +63,13 @@ class ResultChart extends React.Component {
                     /* title of chart */
                     <h5 className="chartTitle">{this.props.chartTitle}</h5>
                 }
-
                 <XYPlot
-                    margin={{ top: 20, right: 25 }}
+                    margin={{ top: 20, right: 60 }}
                     height={this.props.graphHeight}
                     width={this.props.graphWidth}
                 >
                     {this.props.legendPosition === "right" &&
-                        this.props.isCBA === false && (
+                        !this.props.isCBA && (
                             <DiscreteColorLegend
                                 style={{
                                     position: "absolute",
@@ -84,7 +83,6 @@ class ResultChart extends React.Component {
                         )}
 
                     <HorizontalGridLines />
-
                     {newData.map((newDataPiece) => (
                         <LineSeries
                             key={newDataPiece.key}
@@ -92,7 +90,6 @@ class ResultChart extends React.Component {
                             color={newDataPiece.color}
                         />
                     ))}
-
                     <XAxis
                         position="end"
                         tickFormat={(d) => {
@@ -101,8 +98,10 @@ class ResultChart extends React.Component {
                                     Object.keys(this.props.results)[0]
                                 ].xAxis === "Time"
                             ) {
-                                const HOUR_INCREMENT = 15
-                                let minute = !(d % 100) ? d : d * HOUR_INCREMENT
+                                const HOUR_INCREMENT = 15;
+                                let minute = !(d % 100)
+                                    ? d
+                                    : d * HOUR_INCREMENT;
                                 return `${Math.floor(minute / 60)
                                     .toString()
                                     .padStart(2, "0")}:${(minute % 60)
@@ -113,7 +112,6 @@ class ResultChart extends React.Component {
                             }
                         }}
                     />
-
                     {this.props.legendPosition !== "none" && (
                         <ChartLabel
                             text={
@@ -131,7 +129,6 @@ class ResultChart extends React.Component {
                             }}
                         />
                     )}
-
                     {this.props.legendPosition !== "none" && (
                         <ChartLabel
                             text={
@@ -148,11 +145,10 @@ class ResultChart extends React.Component {
                             }}
                         />
                     )}
-
                     <YAxis
                         position="end"
-                        tickLabelAngle={-70}
-                        tickTotal={4}
+                        tickLabelAngle={-20}
+                        tickTotal={9}
                         tickFormat={(d) => {
                             if (d >= Math.pow(10, 15)) {
                                 return `${d / Math.pow(10, 15)}P`;
