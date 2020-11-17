@@ -74,6 +74,12 @@ $ cd UploadToCounty
 $ python UploadToPostgresCountiesZips.py
 ```
 
+## Ensure that node version is loaded and consistent with the .nvmrc file
+```sh
+$ cd frontend
+$ node use
+```
+
 ## Install JS dependencies (make sure npm is installed)
 ```sh
 $ cd frontend
@@ -113,4 +119,4 @@ $ yarn start
 ```
 
 ### Note: Make sure your aws credentials are configured in your local machine
-### Note: If you run into errors when getting started, attempting to install dependencies individually might lead to breakage due to inconsistencies in versioning. Your best option would be to remove conda env and recreate it with the existing environment.yml filter.
+### Note: If you run into errors when getting started, attempting to install dependencies individually might lead to breakage due to inconsistencies in versioning. Your best option would be to remove conda env and recreate it with the existing environment.yml file. Further make sure the node version being used matches with the .nvmrc file.
