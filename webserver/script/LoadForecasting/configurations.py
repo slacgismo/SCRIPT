@@ -20,13 +20,13 @@ class FinalReport(object):
             self.mixed_distribution_proportions = mixed_batteries
 
         self.week_day = week_day
-        self.gmm_bucket = 'script.chargepoint.data'
+        self.gmm_bucket = 'script.control.tool'
         self.s3client = boto3.client('s3')
         self.gmm_folder_path = 'Up_to_date_Combined_Cleaned/All_Together/Years/GMMs/'
         self.joint_gmms = True  # always true now
         self.reweight_gmms = False
 
-        self.control_bucket = 'script.forecast.inputsoutputs'
+        self.control_bucket = 'script.control.tool'
         self.control_folder_path = 'Control_Objects/AllCounties_250cars_noagg_tuned'
 
         self.aggregation_level = aggregation_level
@@ -38,7 +38,7 @@ class FinalReport(object):
             else:
                 if geo is None:
                     geo_distribution = pd.read_csv(
-                        's3://script.forecast.inputsoutputs/new_distribution_of_lightduty_evs_by_county.csv')
+                        's3://script.control.tool/geo_distribution/new_distribution_of_lightduty_evs_by_county.csv')
                 else:
                     geo_distribution = geo.copy(deep=True)
                 geo_distribution['Fraction'] = geo_distribution['EVs'].values / geo_distribution['EVs'].sum()
@@ -48,8 +48,8 @@ class FinalReport(object):
         self.num_fast = int(fast_daily_use * fast_percent * self.num_ev_owners)
         self.num_publicl2 = int(publicl2_daily_use * publicl2_percent * self.num_ev_owners)
         self.num_work = int(work_daily_use * work_percent * self.num_ev_owners)
-        
-        # For the tool: 
+
+        # For the tool:
         # residential is what remains after removing fast, public, and workplace
         # the res_percent, l1_percent, and rent_percent values split that up
 
@@ -108,4 +108,3 @@ class FinalReport(object):
 
         if res_l2_smooth:
             self.categories_dict['GMM Sub Path'][1] = self.categories_dict['GMM Sub Path'][0]
-
