@@ -38,7 +38,7 @@ class FinalReport(object):
             else:
                 if geo is None:
                     geo_distribution = pd.read_csv(
-                        's3://script.forecast.inputsoutputs/new_distribution_of_lightduty_evs_by_county.csv')
+                        's3://script.control.tool/geo_distribution/new_distribution_of_lightduty_evs_by_county.csv')
                 else:
                     geo_distribution = geo.copy(deep=True)
                 geo_distribution['Fraction'] = geo_distribution['EVs'].values / geo_distribution['EVs'].sum()
