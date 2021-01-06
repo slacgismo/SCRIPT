@@ -6,7 +6,7 @@
     "@material-ui/core": "^4.4.3",
     "@material-ui/icons": "^4.4.3",
     "@south-paw/react-vector-maps": "^2.0.2",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "eslint": "^6.6.0",
     "eslint-plugin-react": "^7.17.0",
     "js-file-download": "^0.4.12",
