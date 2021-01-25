@@ -77,7 +77,7 @@ $ python UploadToPostgresCountiesZips.py
 ## Ensure that node version is loaded and consistent with the .nvmrc file
 ```sh
 $ cd frontend
-$ node use
+$ nvm use
 ```
 
 ## Install JS dependencies (make sure npm is installed)
