@@ -3,7 +3,9 @@ This repository comprises two parts:
 1. Information about the journal paper "Large Scale Scenarios of Electric Vehicle Charging with a Data-Driven Model of Control", and
 2. Code to run the tool itself.
 
-This project was funded by the California Energy Commission under grant EPC-16-057. Principal Investigator: Gustavo Vianna Cezar. 
+This project was funded by the California Energy Commission under grant EPC-16-057. 
+
+Principal Investigator: Gustavo Vianna Cezar. 
 
 For more information about the Grid Integration Systems and Mobility (GISMo) group within SLAC National Accelerator Laboratory visit https://gismo.slac.stanford.edu/. SLAC National Accelerator Laboratory is operated for the US Department of Energy by Stanford University under Contract DE-AC02-76SF00515.
 
@@ -41,7 +43,9 @@ The main model code is also embedded and used in the tool below to generate new 
 
 # Tool
 Developers: Anna Peery, Derin Serbetcioglu, Jonathan Goncalves
+
 Supervised by: Gustavo Vianna Cezar
+
 Contributors: Robbie Shaw, Siobhan Powell, Yanqing Wang, Heather Zhang, Proverbs Xu, Leezki, and xinyile
 
 ### Structure
