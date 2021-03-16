@@ -22,12 +22,12 @@ class FinalReport(object):
         self.week_day = week_day
         self.gmm_bucket = 'script.control.tool'
         self.s3client = boto3.client('s3')
-        self.gmm_folder_path = 'Up_to_date_Combined_Cleaned/All_Together/Years/GMMs/'
+        self.gmm_folder_path = 'Sessions_Model_Objects/'
         self.joint_gmms = True  # always true now
         self.reweight_gmms = False
 
         self.control_bucket = 'script.control.tool'
-        self.control_folder_path = 'Control_Objects/AllCounties_250cars_noagg_tuned'
+        self.control_folder_path = 'Control_Objects'
 
         self.aggregation_level = aggregation_level
         if self.aggregation_level == 'state':

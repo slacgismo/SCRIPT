@@ -253,7 +253,7 @@ class EVLoadModel(object):
     def apply_control(self, control_rule='PGEe19', segment='Work'):
 
         response = self.config.s3client.get_object(Bucket=self.config.control_bucket,
-                                                   Key=self.config.control_folder_path+'/control_'+str(control_rule)+'.p')
+                                                   Key=self.config.control_folder_path+'/control_'+str(control_rule)+'_rerun.p')
         self.control_object = pickle.loads(response['Body'].read())
 
         x = self.load_segments[segment]['Load'].copy()
