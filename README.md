@@ -18,21 +18,8 @@ Many scenario tools today, however, are expensive to scale and cannot represent 
 
 Core to our methodology is the separation of model training from scenario generation. The tool below does not reference the raw data directly but uses pre-trained model objects. To make those easy to access by the research community, we have made the model objects available for download here: 
 
-* At https://s3-us-west-1.amazonaws.com/script.control.tool/Control_Objects/control_minpeak_rerun.p
-    * Replace "minpeak" with any of "PGEe19", "PGEcev", "PGEcev_demand", "PGEcev_energy", "SCEtouev8", or "custom_solar"
-* At https://s3-us-west-1.amazonaws.com/script.control.tool/Sessions_Model_Objects/sessions2019_home_slow_weekday_allbatt_se_5_gmm.p
-    * Replace "home_slow_weekday_allbatt_se_5_gmm.p" with:
-    * "home_slow_weekend_allbatt_se_6_gmm.p"
-    * "home_slow_smoothl1_weekday_allbatt_se_5_gmm.p"
-    * "home_slow_smoothl1_weekend_allbatt_se_6_gmm.p"
-    * "mud_slow_weekday_allbatt_se_6_gmm.p"
-    * "mud_slow_weekend_allbatt_se_8_gmm.p"
-    * "work_slow_weekday_allbatt_se_5_gmm.p"
-    * "work_slow_weekend_allbatt_se_4_gmm.p"
-    * "other_slow_weekday_allbatt_se_6_gmm.p"
-    * "other_slow_weekend_allbatt_se_6_gmm.p"
-    * "other_fast_weekday_allbatt_se_4_gmm.p"
-    * "other_fast_weekend_allbatt_se_5_gmm.p"
+* Control models: https://s3-us-west-1.amazonaws.com/script.control.tool/Control_Objects/public_control_model_objects.zip
+* Sessions models: https://s3-us-west-1.amazonaws.com/script.control.tool/Sessions_Model_Objects/public_sessions_model_objects.zip
 
 
 ### Paper Code 
