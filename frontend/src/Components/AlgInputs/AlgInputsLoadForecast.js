@@ -117,10 +117,17 @@ class AlgInputsLoadForecast extends Component {
     };
 
     updateChartTitles = () => {
-        this.props.setChartTitles([
-            `${this.state.configName} - ${this.state.countyChoice} uncontrolled`,
-            `${this.state.configName} - ${this.state.countyChoice} ${this.state.workControl} controlled`,
-        ]);
+        if (this.state.aggregationLevel == "county") {
+            this.props.setChartTitles([
+                `${this.state.configName} - ${this.state.countyChoice} uncontrolled`,
+                `${this.state.configName} - ${this.state.countyChoice} ${this.state.workControl} controlled`,
+            ]);
+        } else {
+            this.props.setChartTitles([
+                `${this.state.configName} - state uncontrolled`,
+                `${this.state.configName} - state ${this.state.workControl} controlled`,
+            ]);
+        }
     };
 
     getResult = async () => {
