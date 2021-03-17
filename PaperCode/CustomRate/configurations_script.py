@@ -49,14 +49,10 @@ class FinalReport(object):
         self.num_publicl2 = int(publicl2_daily_use * publicl2_percent * self.num_ev_owners)
         self.num_work = int(work_daily_use * work_percent * self.num_ev_owners)
 
-        # For the tool:
-        # residential is what remains after removing fast, public, and workplace
-        # the res_percent, l1_percent, and rent_percent values split that up
-
-        self.num_res = int(res_daily_use * ( 1 - fast_percent - publicl2_percent - work_percent) * self.num_ev_owners)
+        self.num_res = int(res_daily_use * res_percent * self.num_ev_owners)
         self.num_mud = int(rent_percent * self.num_res)
-        self.num_res_l1 = int(l1_percent * self.num_res)
-        self.num_res_l2 = int(res_percent * self.num_res)
+        self.num_res_l1 = int(l1_percent * (self.num_res - self.num_mud))
+        self.num_res_l2 = int(self.num_res - self.num_mud - self.num_res_l1)
 
         # 1 minute vs 15 minute intervals
         self.sample_fast = False
@@ -108,3 +104,4 @@ class FinalReport(object):
 
         if res_l2_smooth:
             self.categories_dict['GMM Sub Path'][1] = self.categories_dict['GMM Sub Path'][0]
+

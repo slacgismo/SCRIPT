@@ -2,7 +2,9 @@ import numpy as np
 from s3fs.core import S3FileSystem
 import json
 
-def getScaData(item_name, bucket_name="script.data.control.study"):
+# Loads and displays pre-calculated load profiles for the given control rate and county. 
+
+def getScaData(item_name, bucket_name="script.control.tool"):
     ''' gets and cleans the sca data when there is no user data input '''
     s3 = S3FileSystem()
     df = np.load(s3.open("{}/{}".format(bucket_name, item_name)))

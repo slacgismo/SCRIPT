@@ -15,7 +15,7 @@ class EVLoadModel(object):
     def __init__(self, config):
 
         self.config = config
-
+        
         self.num_segments = len(config.categories_dict['Segment'])
         self.labels = list(set(self.config.categories_dict['Label']))
         self.num_labels = len(self.labels)
@@ -305,9 +305,9 @@ class EVLoadModel(object):
         self.controlled_segmented_load = segmented_load
         self.controlled_load = total_load
         self.sampled_controlled_loads_dict = sampled_load_dict
-
+        
     def rebalance_gmm(self, joint_gmm, segment_number):
-
+        
         new_weights = self.config.new_gmm_weights[segment_number]
 
         all_inds = np.arange(0, np.shape(joint_gmm.weights_)[0])
@@ -355,3 +355,5 @@ class EVLoadModel(object):
         self.controlled_segmented_load = segmented_load
         self.controlled_load = total_load
         self.sampled_controlled_loads_dict = sampled_load_dict
+
+
